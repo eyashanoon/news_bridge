@@ -1,0 +1,4158 @@
+﻿[
+  {
+    "url": "https://en.wikipedia.org/wiki/Blockchain",
+    "label": 1
+  },
+  {
+    "url": "https://www.bestbuy.com/site/electronics/top-deals/pcmcat1563299784494.c",
+    "label": 0
+  },
+  {
+    "url": "https://www.theverge.com/gadgets/899580/best-amazon-big-spring-sale-2026-deals",
+    "label": 1
+  },
+  {
+    "url": "https://www.economist.com/paywalled/article",
+    "label": 0
+  },
+  {
+    "url": "https://blog.cloudflare.com/workflow-diagrams",
+    "label": 1
+  },
+  {
+    "url": "https://www.notion.com",
+    "label": 0
+  },
+  {
+    "url": "https://github.blog/news-insights/product-news/whats-coming-to-our-github-actions-2026-security-roadmap",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:British_companies_established_in_1710",
+    "label": 0
+  },
+  {
+    "url": "https://www.20minutes.fr/monde/123456-article-title",
+    "label": 1
+  },
+  {
+    "url": "https://www.npr.org/2026/03/31/nx-s1-5766478/farmworker-movement-delano-grape-workers-strike-cesar-chavez-sexual-assault-allegations-dolores-huerta-united-farm-workers-labor-union-larry-itliong",
+    "label": 1
+  },
+  {
+    "url": "https://go.dev",
+    "label": 0
+  },
+  {
+    "url": "https://news.yale.edu/2024/01/15/new-findings-published",
+    "label": 1
+  },
+  {
+    "url": "https://aws.amazon.com/blogs/aws/our-first-2026-heroes-cohort-is-here",
+    "label": 1
+  },
+  {
+    "url": "https://www.lastampa.it/politica/2024/01/15/news/articolo-123456",
+    "label": 1
+  },
+  {
+    "url": "https://www.aliexpress.com/wholesale",
+    "label": 0
+  },
+  {
+    "url": "https://www.newscientist.com/article/2521185-why-the-lack-of-water-on-mars-is-so-mysterious",
+    "label": 1
+  },
+  {
+    "url": "https://www.corriere.it/politica/24_gennaio_15/articolo-123456.shtml",
+    "label": 1
+  },
+  {
+    "url": "https://www.walmart.com/browse/electronics/1234",
+    "label": 0
+  },
+  {
+    "url": "https://www.cnet.com/tech/computing/article-tech-news/",
+    "label": 1
+  },
+  {
+    "url": "https://pandas.pydata.org/docs/whatsnew/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://nautil.us/these-seals-brave-polar-bear-country-to-access-an-ocean-buffet-1279355",
+    "label": 1
+  },
+  {
+    "url": "https://www.youtube.com/feed/trending",
+    "label": 0
+  },
+  {
+    "url": "https://kubernetes.io/docs/concepts/",
+    "label": 0
+  },
+  {
+    "url": "https://www.berkeley.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/abs/1409.0473",
+    "label": 1
+  },
+  {
+    "url": "https://www.ebay.com/sch/i.html?_nkw=python+book",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:2010_disestablishments_in_Ghana",
+    "label": 0
+  },
+  {
+    "url": "https://admissions.yale.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://realpython.com/quizzes/interacting-rest-apis-python",
+    "label": 1
+  },
+  {
+    "url": "https://flask.palletsprojects.com/en/latest/",
+    "label": 0
+  },
+  {
+    "url": "https://www.medicalnewstoday.com/articles/123456",
+    "label": 1
+  },
+  {
+    "url": "https://www.infoq.com/news/2026/03/ai-agency-team-topologies",
+    "label": 1
+  },
+  {
+    "url": "https://www.ietf.org",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Random_forest",
+    "label": 1
+  },
+  {
+    "url": "https://www.caltech.edu/about/news/new-study-reveals",
+    "label": 1
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "label": 0
+  },
+  {
+    "url": "https://docs.python.org/3/py-modindex.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.ibm.com/solutions/cloud",
+    "label": 0
+  },
+  {
+    "url": "https://dev.to/t/azure",
+    "label": 1
+  },
+  {
+    "url": "https://g1.globo.com/politica/noticia/2024/01/15/noticia-123456.ghtml",
+    "label": 1
+  },
+  {
+    "url": "https://slack.com/features",
+    "label": 0
+  },
+  {
+    "url": "https://www.eldiario.es/economia/articulo_123456.html",
+    "label": 1
+  },
+  {
+    "url": "https://www.theverge.com/policy/903999/okcupid-settles-claims-it-shared-user-photos-with-a-facial-recognition-company",
+    "label": 1
+  },
+  {
+    "url": "https://arstechnica.com/security/2026/03/irans-hackers-are-on-the-offensive-against-the-us-and-israel",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Protecting_Ontario_Elections_Act%2C_2021",
+    "label": 1
+  },
+  {
+    "url": "https://kubernetes.io",
+    "label": 0
+  },
+  {
+    "url": "https://www.foxnews.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.kdnuggets.com/7-free-web-apis-every-developer-and-vibe-coder-should-know",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Continuous_integration",
+    "label": 1
+  },
+  {
+    "url": "https://www.engadget.com/gaming/pc/nvidias-dlss-45-multi-frame-generation-tech-is-now-available-to-boost-your-hz-130035249.html?src=rss",
+    "label": 1
+  },
+  {
+    "url": "https://distill.pub/2021/understanding-gnns",
+    "label": 1
+  },
+  {
+    "url": "https://www.smashingmagazine.com/2026/03/dropdowns-scrollable-containers-why-break-how-fix",
+    "label": 1
+  },
+  {
+    "url": "https://www.fda.gov/news-events/press-announcements/fda-approves-new-treatment",
+    "label": 1
+  },
+  {
+    "url": "https://www.analytics-tool.com/product/overview",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/S%C3%B6rberge",
+    "label": 1
+  },
+  {
+    "url": "https://towardsdatascience.com/self-healing-neural-networks-in-pytorch-fix-model-drift-in-real-time-without-retraining",
+    "label": 1
+  },
+  {
+    "url": "https://engineering.fb.com/2026/03/30/data-center-engineering/ai-for-american-produced-cement-and-concrete",
+    "label": 1
+  },
+  {
+    "url": "https://www.technologyreview.com/2026/03/30/1134881/the-pentagons-culture-war-tactic-against-anthropic-has-backfired",
+    "label": 1
+  },
+  {
+    "url": "https://www.udemy.com/course/python-bootcamp/",
+    "label": 0
+  },
+  {
+    "url": "https://www.tensorflow.org/guide",
+    "label": 0
+  },
+  {
+    "url": "https://www.cnbc.com/2024/01/15/stock-market-news.html",
+    "label": 1
+  },
+  {
+    "url": "https://kubernetes.io/docs/home",
+    "label": 0
+  },
+  {
+    "url": "https://nextjs.org",
+    "label": 0
+  },
+  {
+    "url": "https://kubernetes.io/docs/tasks/",
+    "label": 0
+  },
+  {
+    "url": "https://github.blog/ai-and-ml/github-copilot/agent-driven-development-in-copilot-applied-science",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/List_of_students%27_unions_in_the_United_Kingdom_not_affiliated_with_the_NUS",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Transport_Layer_Security",
+    "label": 1
+  },
+  {
+    "url": "https://openjdk.org",
+    "label": 0
+  },
+  {
+    "url": "https://stripe.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.smashingmagazine.com/about",
+    "label": 0
+  },
+  {
+    "url": "https://www.congress.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://news.columbia.edu/news/breakthrough-research-announced",
+    "label": 1
+  },
+  {
+    "url": "https://www.figma.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.digitalocean.com",
+    "label": 0
+  },
+  {
+    "url": "https://stackoverflow.blog/2026/03/16/domain-expertise-still-wanted-the-latest-trends-in-ai",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Elasticsearch",
+    "label": 1
+  },
+  {
+    "url": "https://support.mozilla.org",
+    "label": 0
+  },
+  {
+    "url": "https://www.ft.com/content/abc-123-business-news",
+    "label": 1
+  },
+  {
+    "url": "https://www.netlify.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.djangoproject.com",
+    "label": 0
+  },
+  {
+    "url": "https://trello.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.nydailynews.com/2024/01/15/nyc-local-news/",
+    "label": 1
+  },
+  {
+    "url": "https://www.google.com/search?q=python",
+    "label": 0
+  },
+  {
+    "url": "https://news.ycombinator.com/",
+    "label": 0
+  },
+  {
+    "url": "https://dev.to/t/kubernetes",
+    "label": 1
+  },
+  {
+    "url": "https://www.energy.gov/articles/doe-announces-breakthrough",
+    "label": 1
+  },
+  {
+    "url": "https://www.lenovo.com/eg/en",
+    "label": 0
+  },
+  {
+    "url": "https://www.aljazeera.com/sports/liveblog/2026/3/31/live-bosnia-vs-italy-world-cup-2026-qualifying-final?traffic_source=rss",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Arkus",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Skyscraper_office_buildings_in_Tulsa%2C_Oklahoma",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/High_Sheriff_of_Hereford_and_Worcester",
+    "label": 1
+  },
+  {
+    "url": "https://www.technologyreview.com/2026/03/30/1134795/there-are-more-ai-health-tools-than-ever-but-how-well-do-they-work",
+    "label": 1
+  },
+  {
+    "url": "https://ocw.mit.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Alopoglossus_grandisquamatus",
+    "label": 1
+  },
+  {
+    "url": "https://www.pcmag.com/news/tech-industry-development",
+    "label": 1
+  },
+  {
+    "url": "https://variety.com/2024/film/news/movie-announcement-1234567890/",
+    "label": 1
+  },
+  {
+    "url": "https://www.amazon.com/deal/",
+    "label": 0
+  },
+  {
+    "url": "https://www.linkedin.com/feed/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Internet_of_things",
+    "label": 1
+  },
+  {
+    "url": "https://www.instagram.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.sciencedaily.com/releases/2026/03/260330001137.htm",
+    "label": 1
+  },
+  {
+    "url": "https://azure.microsoft.com/en-us/blog/",
+    "label": 0
+  },
+  {
+    "url": "https://docs.python.org/3/download.html",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/abs/1512.03385",
+    "label": 1
+  },
+  {
+    "url": "https://www.epa.gov/newsreleases/epa-proposes-new-standards",
+    "label": 1
+  },
+  {
+    "url": "https://www.allrecipes.com/recipe/12345/best-chocolate-cake/",
+    "label": 1
+  },
+  {
+    "url": "https://www.reddit.com/r/MachineLearning/",
+    "label": 0
+  },
+  {
+    "url": "https://www.loopwerk.io/articles/2026/alpine-ajax-django-revisited",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Transport_in_Nachikatsuura",
+    "label": 0
+  },
+  {
+    "url": "https://www.baidu.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.vox.com/explain-it-to-me/483964/american-accent-history-identity-southern-new-england-language",
+    "label": 1
+  },
+  {
+    "url": "https://github.blog/ai-and-ml/github-copilot/building-ai-powered-github-issue-triage-with-the-copilot-sdk",
+    "label": 1
+  },
+  {
+    "url": "https://www.seriouseats.com/recipes/2024/01/perfect-chocolate-chip-cookies",
+    "label": 1
+  },
+  {
+    "url": "https://github.blog/developer-skills/github/github-for-beginners-getting-started-with-github-security",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Arcade_of_Frohse",
+    "label": 1
+  },
+  {
+    "url": "https://www.twitch.tv/directory/game/Science%20%26%20Technology",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Francisco_de_Mello",
+    "label": 1
+  },
+  {
+    "url": "https://www.aliexpress.com/item/1005001234567890.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.liberation.fr/politique/2024/01/15/article-title_123456/",
+    "label": 1
+  },
+  {
+    "url": "https://online.stanford.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://store.steampowered.com/app/123456",
+    "label": 0
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=9bZkp7q19f0",
+    "label": 0
+  },
+  {
+    "url": "https://www.theinformation.com/articles/exclusive-tech-news",
+    "label": 1
+  },
+  {
+    "url": "https://css-tricks.com/generative-ui-notes",
+    "label": 1
+  },
+  {
+    "url": "https://twitter.com/explore",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/PHP",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2106.01345",
+    "label": 1
+  },
+  {
+    "url": "https://arilamstein.com/blog/2026/03/24/upcoming-oreilly-workshop-building-data-apps-with-streamlit-and-copilot",
+    "label": 1
+  },
+  {
+    "url": "https://engineering.fb.com/2026/03/17/developer-tools/ranking-engineer-agent-rea-autonomous-ai-system-accelerating-meta-ads-ranking-innovation",
+    "label": 1
+  },
+  {
+    "url": "https://rust-lang.org",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/abs/1810.04805",
+    "label": 1
+  },
+  {
+    "url": "https://www.f5.com/products/nginx",
+    "label": 0
+  },
+  {
+    "url": "https://mkennedy.codes/posts/fire-and-forget-at-textual",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Victoria_Day_(album)",
+    "label": 1
+  },
+  {
+    "url": "https://pycoders.com/issues/727",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:1729_establishments_in_Pennsylvania",
+    "label": 0
+  },
+  {
+    "url": "https://www.hp.com/us-en/home.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.twitch.tv/username",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Ada_Lovelace",
+    "label": 1
+  },
+  {
+    "url": "https://angular.dev",
+    "label": 0
+  },
+  {
+    "url": "https://www.usa.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://cooperpress.com/publications",
+    "label": 0
+  },
+  {
+    "url": "https://www.amazon.com/your-orders",
+    "label": 0
+  },
+  {
+    "url": "https://github.com/explore",
+    "label": 0
+  },
+  {
+    "url": "https://www.vox.com/today-explained-newsletter/484296/american-air-travel-crisis",
+    "label": 1
+  },
+  {
+    "url": "https://www.linkedin.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.wired.com/review/aston-martin-valhalla",
+    "label": 1
+  },
+  {
+    "url": "https://github.com/python/cpython",
+    "label": 0
+  },
+  {
+    "url": "https://azure.microsoft.com/en-us/blog/unpacking-your-top-questions-on-agentic-ai-the-shift-podcast",
+    "label": 1
+  },
+  {
+    "url": "https://www.rollingstone.com/music/music-news/article-title-123456/",
+    "label": 1
+  },
+  {
+    "url": "https://github.com/torvalds",
+    "label": 0
+  },
+  {
+    "url": "https://www.youtube.com/live/xyz789",
+    "label": 0
+  },
+  {
+    "url": "https://jupyter.org",
+    "label": 0
+  },
+  {
+    "url": "https://www.dropbox.com/plans",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/list/cs.CV/recent",
+    "label": 0
+  },
+  {
+    "url": "https://www.youtube.com/feed/subscriptions",
+    "label": 0
+  },
+  {
+    "url": "https://arstechnica.com/gadgets/2024/01/product-review-analysis/",
+    "label": 1
+  },
+  {
+    "url": "https://www.newscientist.com/article/2521236-the-shroud-of-turin-bears-dna-from-many-people-plants-and-animals",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2403.00001",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2401.00001",
+    "label": 1
+  },
+  {
+    "url": "https://realpython.com/quizzes/using-jupyter-notebooks",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Utah_State_Routes_in_Tooele_County%2C_Utah",
+    "label": 0
+  },
+  {
+    "url": "https://stackoverflow.blog/2026/03/20/was-2025-really-the-year-of-ai-agents",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Wikipedia:About",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/1896_AAA_Championships",
+    "label": 1
+  },
+  {
+    "url": "https://towardsdatascience.com/how-to-lie-with-statistics-with-your-robot-best-friend",
+    "label": 1
+  },
+  {
+    "url": "https://docs.python.org/3/search.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.reddit.com/r/webdev/",
+    "label": 0
+  },
+  {
+    "url": "https://scikit-learn.org/stable/modules/classes.html",
+    "label": 0
+  },
+  {
+    "url": "https://blog.cloudflare.com/gen13-config",
+    "label": 1
+  },
+  {
+    "url": "https://www.newscientist.com/article/2521037-the-weird-physics-of-plant-based-milks-is-only-just-coming-to-light",
+    "label": 1
+  },
+  {
+    "url": "https://www.technologyreview.com/2026/03/28/1134766/womans-uterus-kept-alive-outside-the-body-first",
+    "label": 1
+  },
+  {
+    "url": "https://developer.apple.com",
+    "label": 0
+  },
+  {
+    "url": "https://twitter.com/elonmusk",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Interpreter_(computing)",
+    "label": 1
+  },
+  {
+    "url": "https://engineering.fb.com/2026/03/02/data-infrastructure/investing-in-infrastructure-metas-renewed-commitment-to-jemalloc",
+    "label": 1
+  },
+  {
+    "url": "https://techcrunch.com/2026/03/31/nomadic-raises-8-4-million-to-wrangle-the-data-pouring-off-avs",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/news/articles/c7vq76g45rvo?at_medium=RSS&at_campaign=rss",
+    "label": 1
+  },
+  {
+    "url": "https://github.com/microsoft/vscode",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Rust_(programming_language)",
+    "label": 1
+  },
+  {
+    "url": "https://www.adidas.com/us/shoes",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/James_Clerk_Maxwell",
+    "label": 1
+  },
+  {
+    "url": "https://github.com/trending",
+    "label": 0
+  },
+  {
+    "url": "https://www.zdnet.com/article/last-minute-amazon-spring-sale-2026-headphones-deals",
+    "label": 1
+  },
+  {
+    "url": "https://kubernetes.io/docs/reference/",
+    "label": 0
+  },
+  {
+    "url": "https://careers.google.com/jobs/results/12345/",
+    "label": 0
+  },
+  {
+    "url": "https://arstechnica.com/science/2026/03/whats-the-best-cabin-layout-for-aircraft-evacuation",
+    "label": 1
+  },
+  {
+    "url": "https://www.newscientist.com/article/2521256-ai-data-centres-can-warm-surrounding-areas-by-up-to-9-1c",
+    "label": 1
+  },
+  {
+    "url": "https://github.blog/security/supply-chain-security/a-year-of-open-source-vulnerability-trends-cves-advisories-and-malware",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/news/articles/cg54v6p98rjo?at_medium=RSS&at_campaign=rss",
+    "label": 1
+  },
+  {
+    "url": "https://azure.microsoft.com/en-us/blog/many-agents-one-team-scaling-modernization-on-azure",
+    "label": 1
+  },
+  {
+    "url": "https://www.tldrnewsletter.com/archives",
+    "label": 0
+  },
+  {
+    "url": "https://www.house.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/I%27ll_Always_Love_You",
+    "label": 1
+  },
+  {
+    "url": "https://www.whitehouse.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://www.crm-software.com/why-choose-us",
+    "label": 0
+  },
+  {
+    "url": "https://www.reuters.com/business/finance/company-earnings-2024-01-15/",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:University_of_Bristol_people",
+    "label": 0
+  },
+  {
+    "url": "https://huggingface.co/blog/ibm-granite/granite-4-vision",
+    "label": 1
+  },
+  {
+    "url": "https://www.amazon.com/s?k=laptop",
+    "label": 0
+  },
+  {
+    "url": "https://www.youtube.com",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Red_Garland_live_albums",
+    "label": 0
+  },
+  {
+    "url": "https://www.tiktok.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.scientificamerican.com/article/new-discovery-announced/",
+    "label": 1
+  },
+  {
+    "url": "https://phys.org/news/2024-01-scientific-discovery.html",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2110.08207",
+    "label": 1
+  },
+  {
+    "url": "https://stackoverflow.blog/2026/03/19/ai-is-becoming-a-second-brain-at-the-expense-of-your-first-one",
+    "label": 1
+  },
+  {
+    "url": "https://www.iana.org",
+    "label": 0
+  },
+  {
+    "url": "https://www.reddit.com/r/learnprogramming/",
+    "label": 0
+  },
+  {
+    "url": "https://aws.amazon.com/blogs/aws/aws-weekly-roundup-amazon-s3-turns-20-amazon-route-53-global-resolver-general-availability-and-more-march-16-2026",
+    "label": 1
+  },
+  {
+    "url": "https://www.aliexpress.com/category/123/electronics.html",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Civil_Aviation_Authority_of_Fiji",
+    "label": 1
+  },
+  {
+    "url": "https://www.cnet.com/tech/mobile/samsung-galaxy-watch-blood-pressure-monitoring-united-states-us-launch",
+    "label": 1
+  },
+  {
+    "url": "https://blog.python.org/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Gertrude_L._Thebaud",
+    "label": 1
+  },
+  {
+    "url": "https://search.maven.org",
+    "label": 0
+  },
+  {
+    "url": "https://www.newegg.com/p/N82E16834233445",
+    "label": 0
+  },
+  {
+    "url": "https://www.justice.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/abs/2402.00001",
+    "label": 1
+  },
+  {
+    "url": "https://x.com/sama",
+    "label": 0
+  },
+  {
+    "url": "https://www.twitch.tv",
+    "label": 0
+  },
+  {
+    "url": "https://www.technologyreview.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.engadget.com/ai/amazon-adds-dynamic-food-delivery-ordering-to-alexa-130000065.html?src=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.infoq.com/news/2026/03/kubernetes-observability",
+    "label": 1
+  },
+  {
+    "url": "https://www.apache.org",
+    "label": 0
+  },
+  {
+    "url": "https://numpy.org/doc/stable/release.html",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Grace_Hopper",
+    "label": 1
+  },
+  {
+    "url": "https://www.cnet.com/tech/services-and-software/watch-sydney-sweeneys-the-housemaid",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:2022_in_women%27s_fencing",
+    "label": 0
+  },
+  {
+    "url": "https://www.aljazeera.com/news/2026/3/31/war-on-iran-uss-history-of-making-other-nations-pay-for-conflicts?traffic_source=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.ted.com/talks/example_talk",
+    "label": 0
+  },
+  {
+    "url": "https://fastapi.tiangolo.com/tutorial/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Robotics",
+    "label": 1
+  },
+  {
+    "url": "https://www.mozilla.org",
+    "label": 0
+  },
+  {
+    "url": "https://flask.palletsprojects.com/en/latest/quickstart/",
+    "label": 0
+  },
+  {
+    "url": "https://twitter.com/AndrewYNg",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/list/stat.ML/recent",
+    "label": 0
+  },
+  {
+    "url": "https://www.amazon.com/Apple-MacBook-Laptop-10-core-16-core/dp/B0CM5JV268",
+    "label": 0
+  },
+  {
+    "url": "https://engineering.fb.com/",
+    "label": 0
+  },
+  {
+    "url": "https://arstechnica.com/tech-policy/2026/03/judge-halts-nexstar-tegna-merger-after-fcc-let-firms-exceed-tv-ownership-limit",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Frank_Spring",
+    "label": 1
+  },
+  {
+    "url": "https://nautil.us/how-did-evolution-come-up-with-so-many-squids-1279371",
+    "label": 1
+  },
+  {
+    "url": "https://www.sciencedaily.com/releases/2026/03/260330001156.htm",
+    "label": 1
+  },
+  {
+    "url": "https://twitter.com/Microsoft",
+    "label": 0
+  },
+  {
+    "url": "https://www.ebay.com/itm/234567890123",
+    "label": 0
+  },
+  {
+    "url": "https://bitbucket.org",
+    "label": 0
+  },
+  {
+    "url": "https://fortune.com/2024/01/15/business-leadership-article/",
+    "label": 1
+  },
+  {
+    "url": "https://www.sec.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://svelte.dev",
+    "label": 0
+  },
+  {
+    "url": "https://ew.com/tv/new-series-announcement/",
+    "label": 1
+  },
+  {
+    "url": "https://dev.to/t/python",
+    "label": 1
+  },
+  {
+    "url": "https://www.youtube.com/c/3Blue1Brown",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Internet",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Data_science",
+    "label": 1
+  },
+  {
+    "url": "https://techcrunch.com/2026/03/31/fedex-chooses-partnerships-over-proprietary-tech-for-its-automation-strategy",
+    "label": 1
+  },
+  {
+    "url": "https://www.yomiuri.co.jp/politics/20240115-OYT1T12345/",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Van_Dam%27s_vanga",
+    "label": 1
+  },
+  {
+    "url": "https://www.dailymotion.com/video/x123456",
+    "label": 0
+  },
+  {
+    "url": "https://www.vox.com/the-highlight/484080/welcome-to-the-april-issue-of-the-highlight",
+    "label": 1
+  },
+  {
+    "url": "https://www.ebay.com/b/Computers-Tablets-Network-Hardware/58058/bn_1865069",
+    "label": 0
+  },
+  {
+    "url": "https://techcrunch.com/2024/01/15/startup-raises-funding/",
+    "label": 1
+  },
+  {
+    "url": "https://arstechnica.com/ai/2026/03/how-did-anthropic-measure-ais-theoretical-capabilities-in-the-job-market",
+    "label": 1
+  },
+  {
+    "url": "https://www.wired.com/story/dangerzone-app-for-safe-pdfs-word-docs",
+    "label": 1
+  },
+  {
+    "url": "https://www.skynewsarabia.com/middle-east/12345/article",
+    "label": 1
+  },
+  {
+    "url": "https://www.businessinsider.com/tech-company-strategy-2024-1",
+    "label": 1
+  },
+  {
+    "url": "https://towardsdatascience.com/how-to-become-an-ai-engineer-fast-skills-projects-salary",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Hypothetical_chemical_elements",
+    "label": 0
+  },
+  {
+    "url": "https://www.technologyreview.com/2026/03/31/1134762/shifting-to-ai-model-customization-is-an-architectural-imperative",
+    "label": 1
+  },
+  {
+    "url": "https://www.mongodb.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.nytimes.com/video/science/100000010234095/synthetic-drugs-overdoses-fentanyl.html",
+    "label": 1
+  },
+  {
+    "url": "https://www.engadget.com/ar-vr/rec-room-a-roblox-style-vr-game-is-shutting-down-154350384.html?src=rss",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Portal:Science",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Convolutional_neural_network",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Computer_simulation",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Special:RecentChanges",
+    "label": 0
+  },
+  {
+    "url": "https://aws.amazon.com/blogs/aws/customize-your-aws-management-console-experience-with-visual-settings-including-account-color-region-and-service-visibility",
+    "label": 1
+  },
+  {
+    "url": "https://blog.europython.eu/march-newsletter-sponsorship-early-bird-ending-programme-due-soon",
+    "label": 1
+  },
+  {
+    "url": "https://roya.tv/news/12345/article-title",
+    "label": 1
+  },
+  {
+    "url": "https://www.salesforce.com/customer-success-stories/example/",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Operating_systems",
+    "label": 0
+  },
+  {
+    "url": "https://docs.python.org/3/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Biology",
+    "label": 0
+  },
+  {
+    "url": "https://www.infoq.com/articles/event-driven-banking-architecture",
+    "label": 1
+  },
+  {
+    "url": "https://www.nytimes.com/subscription/article-preview",
+    "label": 0
+  },
+  {
+    "url": "https://arabic.cnn.com/middle-east/article/2024/01/15/news-story",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Fatal_Frame",
+    "label": 0
+  },
+  {
+    "url": "https://www.linkedin.com/company/microsoft/",
+    "label": 0
+  },
+  {
+    "url": "https://www.rbc.ru/politics/15/01/2024/65a12345",
+    "label": 1
+  },
+  {
+    "url": "https://www.nih.gov/news-events/news-releases/new-study-shows-benefits",
+    "label": 1
+  },
+  {
+    "url": "https://www.samsung.com/ps",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/abs/2312.10001",
+    "label": 1
+  },
+  {
+    "url": "https://github.com/tensorflow/tensorflow",
+    "label": 0
+  },
+  {
+    "url": "https://www.walmart.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.mit.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://example-store.myshopify.com/products/cool-gadget",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/List_of_National_Trust_land_in_England",
+    "label": 0
+  },
+  {
+    "url": "https://www.theguardian.com/sport/2024/jan/15/match-report",
+    "label": 1
+  },
+  {
+    "url": "https://redis.io",
+    "label": 0
+  },
+  {
+    "url": "https://www.theverge.com/2024/1/15/12345/new-tech-announcement",
+    "label": 1
+  },
+  {
+    "url": "https://huggingface.co/blog/ServiceNow-AI/eva",
+    "label": 1
+  },
+  {
+    "url": "https://www.engadget.com/computing/all-google-users-in-the-us-can-now-change-their-gmail-address-141818676.html?src=rss",
+    "label": 1
+  },
+  {
+    "url": "https://blog.jetbrains.com/rscpp/2026/03/30/resharper-cpp-2026-1-released",
+    "label": 1
+  },
+  {
+    "url": "https://helm.sh",
+    "label": 0
+  },
+  {
+    "url": "https://www.asahi.com/articles/ASR1H12345.html",
+    "label": 1
+  },
+  {
+    "url": "https://twitter.com/OpenAI",
+    "label": 0
+  },
+  {
+    "url": "https://www.billboard.com/music/music-news/artist-album-announcement-123456/",
+    "label": 1
+  },
+  {
+    "url": "https://dev.to/t/rust",
+    "label": 1
+  },
+  {
+    "url": "https://www.linkedin.com/jobs/",
+    "label": 0
+  },
+  {
+    "url": "https://www.theatlantic.com/ideas/2026/03/maxxing-tiktok-internet-clavicular/686616",
+    "label": 1
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/research/blog/systematic-debugging-for-ai-agents-introducing-the-agentrx-framework",
+    "label": 1
+  },
+  {
+    "url": "https://blog.google/products-and-platforms/products/workspace/google-account-username-change",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2312.10003",
+    "label": 1
+  },
+  {
+    "url": "https://newsletter.substack.com/p/understanding-llms",
+    "label": 1
+  },
+  {
+    "url": "https://www.microsoft.com",
+    "label": 0
+  },
+  {
+    "url": "https://huggingface.co/blog/trl-v1",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:21st-century_Turkish_physicians",
+    "label": 0
+  },
+  {
+    "url": "https://www.smashingmagazine.com/2026/03/desktop-wallpaper-calendars-april-2026",
+    "label": 1
+  },
+  {
+    "url": "https://www.twitch.tv/videos/123456789",
+    "label": 0
+  },
+  {
+    "url": "https://www.amazon.com/gp/bestsellers/",
+    "label": 0
+  },
+  {
+    "url": "https://scikit-learn.org/stable/",
+    "label": 0
+  },
+  {
+    "url": "https://www.cnn.com/",
+    "label": 0
+  },
+  {
+    "url": "https://changelog.com/news/article-title",
+    "label": 1
+  },
+  {
+    "url": "https://www.aljazeera.com/news/2026/3/31/where-to-invest-during-iran-war-ask-or-dont-mohammad-bagher-ghalibaf?traffic_source=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.technologyreview.com/2026/03/31/1134833/ai-benchmarks-are-broken-heres-what-we-need-instead",
+    "label": 1
+  },
+  {
+    "url": "https://www.cnet.com/tech/mobile/apple-airpods-max-2-review",
+    "label": 1
+  },
+  {
+    "url": "https://medium.com/@example/building-neural-networks-from-scratch",
+    "label": 1
+  },
+  {
+    "url": "https://www.publico.es/politica/articulo-noticia-123456.html",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Indigenous_music_of_Australia",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Idukki_Wikipedians",
+    "label": 0
+  },
+  {
+    "url": "https://www.target.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.infoq.com/news/2026/03/tanstack-import-protection",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2006.03654",
+    "label": 1
+  },
+  {
+    "url": "https://www.npr.org/2026/03/31/g-s1-115928/up-first-newsletter-dubai-iran-middle-east-trump-tsa-dhs-asylum",
+    "label": 1
+  },
+  {
+    "url": "https://distill.pub/2020/circuits/branch-specialization",
+    "label": 1
+  },
+  {
+    "url": "https://www.marketing-platform.com/features/automation",
+    "label": 0
+  },
+  {
+    "url": "https://www.nature.com/articles/d41586-024-00123-4",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:1931_in_Asian_domestic_association_football_cups",
+    "label": 0
+  },
+  {
+    "url": "https://www.cloudflarestatus.com",
+    "label": 0
+  },
+  {
+    "url": "https://km.visamiddleeast.com/en_KM",
+    "label": 0
+  },
+  {
+    "url": "https://towardsdatascience.com/why-data-scientists-should-care-about-quantum-computing",
+    "label": 1
+  },
+  {
+    "url": "https://www.target.com/p/product-name/-/A-12345678",
+    "label": 0
+  },
+  {
+    "url": "https://www.business.com/who-we-are",
+    "label": 0
+  },
+  {
+    "url": "https://www.theatlantic.com/national-security/2026/03/europe-ukraine-ambassador-hungary-orban/686617",
+    "label": 1
+  },
+  {
+    "url": "https://www.stanford.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://blog.jetbrains.com/dataspell/2026/03/dataspell-2026-1-ai-agents-ecosystem-export-notebooks-to-pdf-editor-improvements",
+    "label": 1
+  },
+  {
+    "url": "https://blog.jetbrains.com/amper/2026/03/amper-0-10",
+    "label": 1
+  },
+  {
+    "url": "https://css-tricks.com/4-reasons-that-make-tailwind-great-for-building-layouts",
+    "label": 1
+  },
+  {
+    "url": "https://vimeo.com/ondemand",
+    "label": 0
+  },
+  {
+    "url": "https://catalog.mit.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://stackoverflow.com/questions/tagged/python",
+    "label": 0
+  },
+  {
+    "url": "https://stackoverflow.blog/2026/03/24/multi-stage-attacks-are-the-final-fantasy-bosses-of-security",
+    "label": 1
+  },
+  {
+    "url": "https://www.smashingmagazine.com/2026/03/testing-font-scaling-accessibility-figma-variables",
+    "label": 1
+  },
+  {
+    "url": "https://blog.jetbrains.com/dotnet/2026/03/31/profile-dotnet-apps-without-restarting-monitoring-comes-to-resharper",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Doctor_Who_serials_written_by_Brian_Hayles",
+    "label": 0
+  },
+  {
+    "url": "https://www.linkedin.com/company/google/",
+    "label": 0
+  },
+  {
+    "url": "https://www.amazon.com/gp/product/B09G9FPHY6",
+    "label": 0
+  },
+  {
+    "url": "https://www.oracle.com/database",
+    "label": 0
+  },
+  {
+    "url": "https://towardsdatascience.com/building-a-personal-ai-agent-in-a-couple-of-hours",
+    "label": 1
+  },
+  {
+    "url": "https://blog.google/innovation-and-ai/technology/safety-security/evolving-expectations-of-whats-possible",
+    "label": 1
+  },
+  {
+    "url": "https://www.bing.com/",
+    "label": 0
+  },
+  {
+    "url": "https://distill.pub/2021/distill-hiatus",
+    "label": 1
+  },
+  {
+    "url": "https://www.spiegel.de/politik/deutschland/article-a-123456.html",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Sportspeople_from_Colchester_by_sport",
+    "label": 0
+  },
+  {
+    "url": "https://yandex.com",
+    "label": 0
+  },
+  {
+    "url": "https://slack.com",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Ethnic_organizations_based_in_Azerbaijan",
+    "label": 0
+  },
+  {
+    "url": "https://www.nasa.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/research/podcast/trailer-the-shape-of-things-to-come",
+    "label": 1
+  },
+  {
+    "url": "https://distill.pub",
+    "label": 0
+  },
+  {
+    "url": "https://www.france24.com/ar/article-title",
+    "label": 1
+  },
+  {
+    "url": "https://www.aljazeera.com/sports/2026/3/31/iran-will-play-world-cup-games-in-us-despite-war-fifas-infantino-says?traffic_source=rss",
+    "label": 1
+  },
+  {
+    "url": "https://docs.python.org/3/contents.html",
+    "label": 0
+  },
+  {
+    "url": "https://numpy.org/doc/stable/search.html",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Internet",
+    "label": 1
+  },
+  {
+    "url": "https://pytorch.org",
+    "label": 0
+  },
+  {
+    "url": "https://engineering.fb.com/2026/03/02/video-engineering/ffmpeg-at-meta-media-processing-at-scale",
+    "label": 1
+  },
+  {
+    "url": "https://distill.pub/selforg/2021/textures",
+    "label": 1
+  },
+  {
+    "url": "https://dev.to/t/programming",
+    "label": 1
+  },
+  {
+    "url": "https://www.healthline.com/health-news/new-study-shows-12345",
+    "label": 1
+  },
+  {
+    "url": "https://www.google.com/",
+    "label": 0
+  },
+  {
+    "url": "https://azure.microsoft.com/en-us/blog/fabcon-and-sqlcon-2026-unifying-databases-and-fabric-on-a-single-data-platform",
+    "label": 1
+  },
+  {
+    "url": "https://docs.python.org/3/howto/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://nautil.us/what-the-insects-of-the-jurassic-period-sounded-like-1279350",
+    "label": 1
+  },
+  {
+    "url": "https://www.ai-platform.com/get-started",
+    "label": 0
+  },
+  {
+    "url": "https://www.theguardian.com/technology",
+    "label": 0
+  },
+  {
+    "url": "https://dev.to/t/tutorial",
+    "label": 1
+  },
+  {
+    "url": "https://www.elmundo.es/espana/2024/01/15/65a123456789.html",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2203.02155",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)",
+    "label": 1
+  },
+  {
+    "url": "https://httpd.apache.org",
+    "label": 0
+  },
+  {
+    "url": "https://arstechnica.com/cars/2026/03/gm-idles-electric-truck-factory-lays-off-1300-workers-for-a-month",
+    "label": 1
+  },
+  {
+    "url": "https://www.wsj.com/articles/opinion-commentary-12345",
+    "label": 1
+  },
+  {
+    "url": "https://techcrunch.com/2026/03/31/carecloud-breach-hackers-accessed-patients-medical-records-ehr",
+    "label": 1
+  },
+  {
+    "url": "https://github.com/pytorch/pytorch",
+    "label": 0
+  },
+  {
+    "url": "https://mainichi.jp/articles/20240115/k00/123/456/789000c",
+    "label": 1
+  },
+  {
+    "url": "https://react.dev",
+    "label": 0
+  },
+  {
+    "url": "https://cloud.google.com",
+    "label": 0
+  },
+  {
+    "url": "https://blog.pythonlibrary.org/2026/03/30/vibe-coding-pong-with-python-and-pygame",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Harry_Lehrer",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Help:Contents",
+    "label": 0
+  },
+  {
+    "url": "https://towardsdatascience.com/understanding-transformers-in-nlp-123456",
+    "label": 1
+  },
+  {
+    "url": "https://www.smashingmagazine.com/2026/03/site-search-paradox-why-big-box-always-wins",
+    "label": 1
+  },
+  {
+    "url": "https://docs.python.org/3/reference/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.lavanguardia.com/politica/20240115/articulo.html",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2312.10000",
+    "label": 1
+  },
+  {
+    "url": "https://www.ox.ac.uk/news/2024-01-15-oxford-researchers-make-discovery",
+    "label": 1
+  },
+  {
+    "url": "https://www.nytimes.com/2024/01/15/opinion/editorial-opinion.html",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2312.10002",
+    "label": 1
+  },
+  {
+    "url": "https://www.zoom.us/products",
+    "label": 0
+  },
+  {
+    "url": "https://example.substack.com/p/weekly-ai-news-roundup",
+    "label": 1
+  },
+  {
+    "url": "https://www.tiktok.com/@username",
+    "label": 0
+  },
+  {
+    "url": "https://tomcat.apache.org",
+    "label": 0
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/research/blog/groundedplanbench-spatially-grounded-long-horizon-task-planning-for-robot-manipulation",
+    "label": 1
+  },
+  {
+    "url": "https://www.engadget.com/audio/headphones/apple-airpods-max-2-review-better-late-than-never-130000982.html?src=rss",
+    "label": 1
+  },
+  {
+    "url": "https://distill.pub/2021/gnn-intro",
+    "label": 1
+  },
+  {
+    "url": "https://cooperpress.com/archive/issue-123",
+    "label": 1
+  },
+  {
+    "url": "https://www.theguardian.com/us-news/2026/mar/30/ilhan-omar-false-reports-somaliland",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/PostgreSQL",
+    "label": 1
+  },
+  {
+    "url": "https://docs.python.org/3/genindex.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.npr.org/2026/03/31/nx-s1-5763689/alex-jones-infowars-josh-owens-the-madness-of-believing",
+    "label": 1
+  },
+  {
+    "url": "https://tass.ru/politika/12345678",
+    "label": 1
+  },
+  {
+    "url": "https://www.ft.com/content/premium-article-id",
+    "label": 0
+  },
+  {
+    "url": "https://stackoverflow.com/tags",
+    "label": 0
+  },
+  {
+    "url": "https://vercel.com",
+    "label": 0
+  },
+  {
+    "url": "https://aws.amazon.com/solutions/case-studies/example-company/",
+    "label": 1
+  },
+  {
+    "url": "https://www.ai-expo.com/schedule",
+    "label": 0
+  },
+  {
+    "url": "https://huggingface.co/blog/nvidia/domain-specific-embedding-finetune",
+    "label": 1
+  },
+  {
+    "url": "https://status.openai.com",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Software_engineering",
+    "label": 1
+  },
+  {
+    "url": "https://www.twitch.tv/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Gitta_Gradova",
+    "label": 1
+  },
+  {
+    "url": "https://www.reddit.com/r/worldnews/new/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
+    "label": 1
+  },
+  {
+    "url": "https://distill.pub/selforg/2021/adversarial",
+    "label": 1
+  },
+  {
+    "url": "https://www.bestbuy.com/site/product/1234567.p",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Databases",
+    "label": 0
+  },
+  {
+    "url": "https://www.harvard.edu/admissions/",
+    "label": 0
+  },
+  {
+    "url": "https://www.sciencedaily.com/releases/2026/03/260330084511.htm",
+    "label": 1
+  },
+  {
+    "url": "https://www.wired.com/story/future-of-technology/",
+    "label": 1
+  },
+  {
+    "url": "https://www.wired.com/story/how-to-back-up-your-digital-life",
+    "label": 1
+  },
+  {
+    "url": "https://distill.pub/2020/circuits/weight-banding",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Support_vector_machine",
+    "label": 1
+  },
+  {
+    "url": "https://www.wired.com/story/ai-has-flooded-all-the-weather-apps",
+    "label": 1
+  },
+  {
+    "url": "https://twitter.com/home",
+    "label": 0
+  },
+  {
+    "url": "https://dev.to/t/webdev",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Kunming_North_railway_station",
+    "label": 1
+  },
+  {
+    "url": "https://www.wired.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.technologyreview.com/2026/03/30/1134780/r3-bio-brainless-human-clones-full-body-replacement-john-schloendorn-aging-longevity",
+    "label": 1
+  },
+  {
+    "url": "https://www.ebay.com/b/Electronics/bn_7000259124",
+    "label": 0
+  },
+  {
+    "url": "https://www.sfchronicle.com/local/article/city-news-12345678.php",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/JavaScript",
+    "label": 1
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/research/podcast/will-machines-ever-be-intelligent",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Ghanaian_academic_administrators",
+    "label": 0
+  },
+  {
+    "url": "https://www.wikidata.org/wiki/Wikidata:Main_Page",
+    "label": 0
+  },
+  {
+    "url": "https://vimeo.com/channels/staffpicks",
+    "label": 0
+  },
+  {
+    "url": "https://www.sciencedaily.com/releases/2026/03/260330210905.htm",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:December_2007_sports_events_in_Canada",
+    "label": 0
+  },
+  {
+    "url": "https://thenewstack.io/hightower-ai-open-source-kubecon",
+    "label": 1
+  },
+  {
+    "url": "https://www.vox.com/advice/484072/how-to-talk-to-strangers-small-talk",
+    "label": 1
+  },
+  {
+    "url": "https://www.statnews.com/2024/01/15/medical-research-article/",
+    "label": 1
+  },
+  {
+    "url": "https://huggingface.co/blog/huggingface/state-of-os-hf-spring-2026",
+    "label": 1
+  },
+  {
+    "url": "https://www.defense.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://scikit-learn.org/stable/user_guide.html",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:France-Hawaii_relations",
+    "label": 0
+  },
+  {
+    "url": "https://dev.to/t/devops",
+    "label": 1
+  },
+  {
+    "url": "https://www.java.com/en",
+    "label": 0
+  },
+  {
+    "url": "https://www.linkedin.com/learning/",
+    "label": 0
+  },
+  {
+    "url": "https://jobs.apple.com/en-us/details/200123456/software-engineer",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:FISU_World_University_Games_bronze_medalists_for_Slovakia",
+    "label": 0
+  },
+  {
+    "url": "https://www.tiktok.com/@user/video/1234567890123456789",
+    "label": 0
+  },
+  {
+    "url": "https://blogs.microsoft.com/blog/2026/03/16/microsoft-at-nvidia-gtc-new-solutions-for-microsoft-foundry-azure-ai-infrastructure-and-physical-ai",
+    "label": 1
+  },
+  {
+    "url": "https://www.netflix.com/browse",
+    "label": 0
+  },
+  {
+    "url": "https://www.chinadaily.com.cn/a/202401/15/WS65a12345a31082fc273b1234.html",
+    "label": 1
+  },
+  {
+    "url": "https://www.alarabiya.net/arab-and-world/2024/01/15/news-article",
+    "label": 1
+  },
+  {
+    "url": "https://twitter.com/GoogleAI",
+    "label": 0
+  },
+  {
+    "url": "https://holgerkrekel.net/hello-world",
+    "label": 1
+  },
+  {
+    "url": "https://www.atlassian.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.engadget.com/new-product-announced-123456.html",
+    "label": 1
+  },
+  {
+    "url": "https://www.nih.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://nuxt.com",
+    "label": 0
+  },
+  {
+    "url": "https://martinfowler.com/bliki/ArchitectureDecisionRecord.html",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Large_language_model",
+    "label": 1
+  },
+  {
+    "url": "https://www.amazon.com/Best-Sellers-Electronics/zgbs/electronics",
+    "label": 0
+  },
+  {
+    "url": "https://www.nytimes.com/video/world/100000010774146/inside-russia-during-an-internet-crackdown.html",
+    "label": 1
+  },
+  {
+    "url": "https://nautil.us/the-science-behind-being-one-of-a-kind-1279329",
+    "label": 1
+  },
+  {
+    "url": "https://realpython.com/quizzes/test-driven-development-pytest",
+    "label": 1
+  },
+  {
+    "url": "https://techcrunch.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.whitehouse.gov/briefing-room/statements-releases/2024/01/15/statement-by-president",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Probability",
+    "label": 1
+  },
+  {
+    "url": "https://www.cnet.com/news-live/best-amazon-spring-sale-deals-live-tracker-2026",
+    "label": 1
+  },
+  {
+    "url": "https://github.com/search?q=python",
+    "label": 0
+  },
+  {
+    "url": "https://news.ycombinator.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.apple.com/iphone-15/",
+    "label": 0
+  },
+  {
+    "url": "https://www.theverge.com/tech/903954/art-schools-generative-ai-education-creative-jobs",
+    "label": 1
+  },
+  {
+    "url": "https://dev.to/t/mobile",
+    "label": 1
+  },
+  {
+    "url": "https://thenewstack.io/ai-modernization-human-developers",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/2021_Cornell_Big_Red_football_team",
+    "label": 1
+  },
+  {
+    "url": "https://www.summit.com/tickets",
+    "label": 0
+  },
+  {
+    "url": "https://pandas.pydata.org/docs/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Mathematics",
+    "label": 0
+  },
+  {
+    "url": "https://towardsdatascience.com/explainable-ai-in-production-a-neuro-symbolic-model-for-real-time-fraud-detection",
+    "label": 1
+  },
+  {
+    "url": "https://www.theguardian.com/commentisfree/2024/jan/15/opinion-article",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/List_of_Nigerian_films_of_1998",
+    "label": 0
+  },
+  {
+    "url": "https://www.chicagotribune.com/2024/01/15/local-news-story/",
+    "label": 1
+  },
+  {
+    "url": "https://deadline.com/2024/01/tv-show-renewal-1234567890/",
+    "label": 1
+  },
+  {
+    "url": "https://twitter.com/search?q=AI",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/abs/1506.01497",
+    "label": 1
+  },
+  {
+    "url": "https://www.cnet.com/tech/mobile/att-unlimited-plan-price-hike-april-2026",
+    "label": 1
+  },
+  {
+    "url": "https://www.xinhuanet.com/english/20240115/abc123.htm",
+    "label": 1
+  },
+  {
+    "url": "https://www.walmart.com/search?q=laptop",
+    "label": 0
+  },
+  {
+    "url": "https://vimeo.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.berkeley.edu/news/2024/01/15/breakthrough-in-quantum-computing",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/news/articles/c74v5jd5zkjo?at_medium=RSS&at_campaign=rss",
+    "label": 1
+  },
+  {
+    "url": "https://techcrunch.com/2026/03/31/the-company-behind-classpass-and-mindbody-just-got-a-lot-bigger-with-a-7-5b-merger",
+    "label": 1
+  },
+  {
+    "url": "https://www.latimes.com/california/story/2024-01-15/local-news-article",
+    "label": 1
+  },
+  {
+    "url": "https://www.cdc.gov/media/releases/2024/p0115-covid-update.html",
+    "label": 1
+  },
+  {
+    "url": "https://www.sciencedaily.com/releases/2026/03/260330001143.htm",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/SQLite",
+    "label": 1
+  },
+  {
+    "url": "https://stackoverflow.blog/2026/03/19/building-a-global-engineering-team-netlify",
+    "label": 1
+  },
+  {
+    "url": "https://hub.docker.com",
+    "label": 0
+  },
+  {
+    "url": "https://kubernetes.io/docs/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Tim_Berners-Lee",
+    "label": 1
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/research/blog/asgardbench-a-benchmark-for-visually-grounded-interactive-planning",
+    "label": 1
+  },
+  {
+    "url": "https://mkennedy.codes/posts/raw-dc-a-retrospective",
+    "label": 1
+  },
+  {
+    "url": "https://vuejs.org",
+    "label": 0
+  },
+  {
+    "url": "https://blog.google/innovation-and-ai/technology/ai/veo-3-1-lite",
+    "label": 1
+  },
+  {
+    "url": "https://vimeo.com/123456789",
+    "label": 0
+  },
+  {
+    "url": "https://www.elconfidencial.com/tecnologia/2024-01-15/noticia_123456/",
+    "label": 1
+  },
+  {
+    "url": "https://careers.amazon.com/en/jobs/12345",
+    "label": 0
+  },
+  {
+    "url": "https://aws.amazon.com/blogs/",
+    "label": 0
+  },
+  {
+    "url": "https://www.sciencedaily.com/releases/2026/03/260329222938.htm",
+    "label": 1
+  },
+  {
+    "url": "https://stackoverflow.com/questions/tagged/machine-learning",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/list/cs.LG/recent",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Defunct_organisations_based_in_the_United_Arab_Emirates",
+    "label": 0
+  },
+  {
+    "url": "https://www.khanacademy.org/computing/computer-science",
+    "label": 0
+  },
+  {
+    "url": "https://www.aljazeera.com/video/doha-debates/2026/3/31/is-our-timeline-of-human-history-accurate?traffic_source=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.smashingmagazine.com/2026/03/moving-from-moment-to-temporal-api",
+    "label": 1
+  },
+  {
+    "url": "https://towardsdatascience.com/pandas-data-cleaning-guide",
+    "label": 1
+  },
+  {
+    "url": "https://www.smashingmagazine.com/2026/03/modal-separate-page-ux-decision-tree",
+    "label": 1
+  },
+  {
+    "url": "https://www.treasury.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Google_Cloud_Platform",
+    "label": 1
+  },
+  {
+    "url": "https://engineering.fb.com/2026/03/18/ml-applications/friend-bubbles-enhancing-social-discovery-on-facebook-reels",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/1706.03762",
+    "label": 1
+  },
+  {
+    "url": "https://www.si.com/nfl/2024/01/15/team-news-article",
+    "label": 1
+  },
+  {
+    "url": "https://huggingface.co/blog/storage-buckets",
+    "label": 1
+  },
+  {
+    "url": "https://www.npr.org/2026/03/31/nx-s1-5766171/2026-international-booker-prize-shortlist",
+    "label": 1
+  },
+  {
+    "url": "https://www.youtube.com/results?search_query=machine+learning",
+    "label": 0
+  },
+  {
+    "url": "https://www.20minutos.es/noticia/12345/articulo-noticia/",
+    "label": 1
+  },
+  {
+    "url": "https://www.target.com/s?searchTerm=laptop",
+    "label": 0
+  },
+  {
+    "url": "https://blog.jetbrains.com/rust/2026/03/30/whats-new-in-rustrover-2026-1",
+    "label": 1
+  },
+  {
+    "url": "https://thenewstack.io/sparky-linux-9-brings-a-rolling-release-to-debian",
+    "label": 1
+  },
+  {
+    "url": "https://dev.to/t/ai",
+    "label": 1
+  },
+  {
+    "url": "https://blog.jetbrains.com/kotlin/2026/03/kodees-kotlin-roundup-march-26-edition",
+    "label": 1
+  },
+  {
+    "url": "https://aws.amazon.com/blogs/aws/aws-weekly-roundup-nvidia-nemotron-3-super-on-amazon-bedrock-nova-forge-sdk-amazon-corretto-26-and-more-march-23-2026",
+    "label": 1
+  },
+  {
+    "url": "https://www.quantamagazine.org/in-expanding-de-sitter-space-quantum-mechanics-gets-even-more-elusive-20260330",
+    "label": 1
+  },
+  {
+    "url": "https://www.brand.com/about/history",
+    "label": 0
+  },
+  {
+    "url": "https://www.aljazeera.com/opinions/2026/3/31/the-attack-on-the-right-to-protest-in-the-uk-is-not-just-about-palestine?traffic_source=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.nasa.gov/feature/artemis-program-update",
+    "label": 1
+  },
+  {
+    "url": "https://www.reddit.com/r/AskReddit/top/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:806_deaths",
+    "label": 0
+  },
+  {
+    "url": "https://martinfowler.com/bliki/FutureOfSoftwareDevelopment.html",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Wikipedia:Community_portal",
+    "label": 0
+  },
+  {
+    "url": "https://www.reddit.com/r/python/",
+    "label": 0
+  },
+  {
+    "url": "https://www.sec.gov/news/press-release/2024-15",
+    "label": 1
+  },
+  {
+    "url": "https://realpython.com/quizzes/django-portfolio-project",
+    "label": 1
+  },
+  {
+    "url": "https://www.npr.org/2026/03/31/nx-s1-5766459/warty-frogfish-shedd-aquarium",
+    "label": 1
+  },
+  {
+    "url": "https://docs.docker.com/",
+    "label": 0
+  },
+  {
+    "url": "https://pandas.pydata.org/docs/reference/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://aws.amazon.com/blogs/aws/announcing-amazon-aurora-postgresql-serverless-database-creation-in-seconds",
+    "label": 1
+  },
+  {
+    "url": "https://www.commerce.gov/news/press-releases/2024/01/commerce-department-releases-report",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Decision_tree_learning",
+    "label": 1
+  },
+  {
+    "url": "https://www.reddit.com/user/example/",
+    "label": 0
+  },
+  {
+    "url": "https://www.bing.com/search?q=python",
+    "label": 0
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "label": 0
+  },
+  {
+    "url": "https://www.kdnuggets.com/5-useful-python-scripts-for-effective-feature-selection",
+    "label": 1
+  },
+  {
+    "url": "https://stackoverflow.blog/2026/03/27/prevent-agentic-identity-theft",
+    "label": 1
+  },
+  {
+    "url": "https://flask.palletsprojects.com/",
+    "label": 0
+  },
+  {
+    "url": "https://blog.google/innovation-and-ai/infrastructure-and-cloud/google-cloud/how-google-does-it-security-series",
+    "label": 1
+  },
+  {
+    "url": "https://martinfowler.com/bliki/AgenticEmail.html",
+    "label": 1
+  },
+  {
+    "url": "https://shop.nike.com/product/air-max",
+    "label": 0
+  },
+  {
+    "url": "https://www.kommersant.ru/doc/1234567",
+    "label": 1
+  },
+  {
+    "url": "https://www.faz.net/aktuell/wirtschaft/article-123456.html",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Microservices",
+    "label": 1
+  },
+  {
+    "url": "https://www.vmware.com",
+    "label": 0
+  },
+  {
+    "url": "https://arstechnica.com/",
+    "label": 0
+  },
+  {
+    "url": "https://gitLab.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.abc.es/tecnologia/redes/articulo-123456.html",
+    "label": 1
+  },
+  {
+    "url": "https://www.theguardian.com/world/2026/mar/30/deaths-in-gang-attack-haitian-farming-area-far-exceed-initial-estimate",
+    "label": 1
+  },
+  {
+    "url": "https://www.dailymotion.com/tech",
+    "label": 0
+  },
+  {
+    "url": "https://exploredegrees.stanford.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://www.theverge.com/tech/904081/meta-mpa-agreement-pg-13-rating",
+    "label": 1
+  },
+  {
+    "url": "https://nautil.us/new-ape-fossil-could-shift-our-evolutionary-origins-northward-1279335",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2303.08774",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Computer_network",
+    "label": 1
+  },
+  {
+    "url": "https://dev.to/t/productivity",
+    "label": 1
+  },
+  {
+    "url": "https://events.company.com/webinar/ai-trends",
+    "label": 0
+  },
+  {
+    "url": "https://sqlite.org",
+    "label": 0
+  },
+  {
+    "url": "https://www.etsy.com/market/tech_accessories",
+    "label": 0
+  },
+  {
+    "url": "https://css-tricks.com/abusing-customizable-selects",
+    "label": 1
+  },
+  {
+    "url": "https://www.linkedin.com/company/openai/",
+    "label": 0
+  },
+  {
+    "url": "https://realpython.com/how-to-use-git",
+    "label": 1
+  },
+  {
+    "url": "https://www.wired.com/story/in-a-big-reversal-zohran-mamdani-tells-nyc-agencies-to-use-tiktok",
+    "label": 1
+  },
+  {
+    "url": "https://ec.europa.eu/commission/presscorner/detail/en/ip_24_123",
+    "label": 1
+  },
+  {
+    "url": "https://www.reddit.com/r/news/",
+    "label": 0
+  },
+  {
+    "url": "https://www.reddit.com/r/programming/",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/abs/2310.06825",
+    "label": 1
+  },
+  {
+    "url": "https://www.theguardian.com/football/2026/mar/30/congo-brazzaville-jean-guy-blaise-mayolas-fifa-interpol-arrest-warrant",
+    "label": 1
+  },
+  {
+    "url": "https://www.webmd.com/news/20240115/health-breakthrough",
+    "label": 1
+  },
+  {
+    "url": "https://www.zdnet.com/article/last-minute-amazon-spring-sale-2026-phone-deals",
+    "label": 1
+  },
+  {
+    "url": "https://blog.cloudflare.com/gen13-launch",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/news/articles/cjd8nkezdyxo?at_medium=RSS&at_campaign=rss",
+    "label": 1
+  },
+  {
+    "url": "https://thenewstack.io/webassembly-component-model-future",
+    "label": 1
+  },
+  {
+    "url": "https://dev.to/t/typescript",
+    "label": 1
+  },
+  {
+    "url": "https://www.princeton.edu/news/2024/01/15/discovery-advances-field",
+    "label": 1
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/research/blog/phi-4-reasoning-vision-and-the-lessons-of-training-a-multimodal-reasoning-model",
+    "label": 1
+  },
+  {
+    "url": "https://www.folha.uol.com.br/mundo/2024/01/noticia-123456.shtml",
+    "label": 1
+  },
+  {
+    "url": "https://www.reddit.com/r/science/",
+    "label": 0
+  },
+  {
+    "url": "https://www.amazon.com/b?node=16225007011",
+    "label": 0
+  },
+  {
+    "url": "https://www.bbc.com/news/articles/cwykq2lqjw7o?at_medium=RSS&at_campaign=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.tesla.com/model3",
+    "label": 0
+  },
+  {
+    "url": "https://www.wired.com/review/vitesy-shelfy-2",
+    "label": 1
+  },
+  {
+    "url": "https://blog.google/products-and-platforms/devices/fitbit/fitbit-personal-health-coach-new-features",
+    "label": 1
+  },
+  {
+    "url": "https://www.theguardian.com/world/2026/mar/31/bolivia-clown-protests-decree-school-holiday-parties",
+    "label": 1
+  },
+  {
+    "url": "https://www.quantamagazine.org/how-writing-changes-mathematical-thought-20260325",
+    "label": 1
+  },
+  {
+    "url": "https://www.bhphotovideo.com/c/product/1234567-REG",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Basketball_in_Latvia",
+    "label": 0
+  },
+  {
+    "url": "https://www.espn.com/nfl/story/_/id/12345678/game-recap",
+    "label": 1
+  },
+  {
+    "url": "https://changelog.com/news",
+    "label": 0
+  },
+  {
+    "url": "https://www.guancha.cn/politics/2024_01_15_123456.shtml",
+    "label": 1
+  },
+  {
+    "url": "https://www.wsj.com/articles/premium-content-12345",
+    "label": 0
+  },
+  {
+    "url": "https://www.cnet.com/tech/services-and-software/daredevil-born-again-season-2-episodes-2-and-3",
+    "label": 1
+  },
+  {
+    "url": "https://flask.palletsprojects.com/en/latest/api/",
+    "label": 0
+  },
+  {
+    "url": "https://www.theatlantic.com/health/2026/03/cpac-kennedy-maha-maga-iran/686621",
+    "label": 1
+  },
+  {
+    "url": "https://www.npr.org/2026/03/31/nx-s1-5759679/us-gas-price-4-dollars-gallon-iran",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Authorization",
+    "label": 1
+  },
+  {
+    "url": "https://azure.microsoft.com/en-us",
+    "label": 0
+  },
+  {
+    "url": "https://news.ycombinator.com/best",
+    "label": 0
+  },
+  {
+    "url": "https://www.google.com/search?q=machine+learning",
+    "label": 0
+  },
+  {
+    "url": "https://www.cdc.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://www.meetup.com/tech-group/events/12345/",
+    "label": 0
+  },
+  {
+    "url": "https://stackoverflow.blog/2026/03/26/coding-guidelines-for-ai-agents-and-people-too",
+    "label": 1
+  },
+  {
+    "url": "https://packagist.org",
+    "label": 0
+  },
+  {
+    "url": "https://nautil.us/why-you-should-root-for-the-apex-predator-1279365",
+    "label": 1
+  },
+  {
+    "url": "https://prometheus.io",
+    "label": 0
+  },
+  {
+    "url": "https://azure.microsoft.com/en-us/blog/introducing-fireworks-ai-on-microsoft-foundry-bringing-high-performance-low-latency-open-model-inference-to-azure",
+    "label": 1
+  },
+  {
+    "url": "https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF",
+    "label": 0
+  },
+  {
+    "url": "https://techcrunch.com/2026/03/31/hacker-hijacks-axios-open-source-project-used-by-millions-to-push-malware",
+    "label": 1
+  },
+  {
+    "url": "https://azure.microsoft.com/en-us/blog/from-legacy-to-leadership-how-postgresql-on-azure-powers-enterprise-agility-and-innovation",
+    "label": 1
+  },
+  {
+    "url": "https://numpy.org/doc",
+    "label": 0
+  },
+  {
+    "url": "https://www.startup.com/company/values",
+    "label": 0
+  },
+  {
+    "url": "https://www.amazon.com/SAMSUNG-Smartphone-Unlocked-Android-Processor/dp/B0BLP45GYF",
+    "label": 0
+  },
+  {
+    "url": "https://www.etsy.com/listing/123456789/handmade-item",
+    "label": 0
+  },
+  {
+    "url": "https://css-tricks.com/form-automation-tips-for-happier-user-and-clients",
+    "label": 1
+  },
+  {
+    "url": "https://docs.docker.com/engine/",
+    "label": 0
+  },
+  {
+    "url": "https://www.senate.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://techwriter.substack.com/p/future-of-programming",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Melaleuca_nesophila",
+    "label": 1
+  },
+  {
+    "url": "https://www.theverge.com/gadgets/904119/sony-xm5-noise-canceling-headphones-amazon-big-spring-sale-2026-deal",
+    "label": 1
+  },
+  {
+    "url": "https://www.startup.com/about-us",
+    "label": 0
+  },
+  {
+    "url": "https://blog.cloudflare.com/programmable-flow-protection",
+    "label": 1
+  },
+  {
+    "url": "https://nautil.us/ordinary-lab-gloves-may-have-skewed-microplastic-data-1279386",
+    "label": 1
+  },
+  {
+    "url": "https://discord.com",
+    "label": 0
+  },
+  {
+    "url": "https://techcrunch.com/2026/03/31/meta-launches-two-new-ray-ban-glasses-designed-for-prescription-wearers",
+    "label": 1
+  },
+  {
+    "url": "https://serverfault.com",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Harald_Normann",
+    "label": 1
+  },
+  {
+    "url": "https://www.cloud-service.com/enterprise",
+    "label": 0
+  },
+  {
+    "url": "https://www.wired.com/story/the-big-interview-podcast-luis-von-ahn-duolingo",
+    "label": 1
+  },
+  {
+    "url": "https://www.lefigaro.fr/actualite-france/article-123456",
+    "label": 1
+  },
+  {
+    "url": "https://fastapi.tiangolo.com/reference/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Sur_Kshetra",
+    "label": 1
+  },
+  {
+    "url": "https://www.washingtonpost.com/opinions/2024/01/15/opinion-piece/",
+    "label": 1
+  },
+  {
+    "url": "https://stackoverflow.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.theguardian.com/environment/2026/mar/30/weather-tracker-thunderstorms-uae-united-arab-emirates-saudi-arabia",
+    "label": 1
+  },
+  {
+    "url": "https://techcrunch.com/2026/03/31/roku-launches-a-standalone-app-for-howdy-its-2-99-streaming-service",
+    "label": 1
+  },
+  {
+    "url": "https://realpython.com/ollama",
+    "label": 1
+  },
+  {
+    "url": "https://github.blog/",
+    "label": 0
+  },
+  {
+    "url": "https://pytorch.org/docs/stable/",
+    "label": 0
+  },
+  {
+    "url": "https://blog.europython.eu/humans-of-ep-jodie",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Wesley_Englehorn",
+    "label": 1
+  },
+  {
+    "url": "https://www.sciencedaily.com/releases/2026/03/260330001133.htm",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Video_games_scored_by_Hitomi_Shimizu",
+    "label": 0
+  },
+  {
+    "url": "https://dev.to/t/aws",
+    "label": 1
+  },
+  {
+    "url": "https://www.theguardian.com/world",
+    "label": 0
+  },
+  {
+    "url": "https://www.company.com/about/mission",
+    "label": 0
+  },
+  {
+    "url": "https://blog.google/company-news/outreach-and-initiatives/arts-culture/benjamin-franklin-notebooklm",
+    "label": 1
+  },
+  {
+    "url": "https://www.theverge.com/tech/904162/tcl-sony-joint-venture-bravia-inc-tv-home-theater-business",
+    "label": 1
+  },
+  {
+    "url": "https://docs.docker.com/get-started/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Voacanga_africana",
+    "label": 1
+  },
+  {
+    "url": "https://blog.google/products-and-platforms/products/maps/google-maps-simplifies-battery-predictions-and-trip-planning-for-350-android-auto-ev-models",
+    "label": 1
+  },
+  {
+    "url": "https://docs.docker.com/compose/",
+    "label": 0
+  },
+  {
+    "url": "https://dev.to/t/cloud",
+    "label": 1
+  },
+  {
+    "url": "https://www.princeton.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://www.fda.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://rubyonrails.org",
+    "label": 0
+  },
+  {
+    "url": "https://www.harvard.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://www.infoq.com/news/2026/03/cloudflare-api-vulnerability",
+    "label": 1
+  },
+  {
+    "url": "https://www.shopify.com/success-stories/brand-name",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Computer_science",
+    "label": 0
+  },
+  {
+    "url": "https://www.nvidia.com/en-me/geforce",
+    "label": 0
+  },
+  {
+    "url": "https://www.company.com/case-studies/customer-success-story",
+    "label": 1
+  },
+  {
+    "url": "https://distill.pub/about",
+    "label": 0
+  },
+  {
+    "url": "https://www.zeit.de/politik/2024-01/article-title",
+    "label": 1
+  },
+  {
+    "url": "https://www.engadget.com/computing/laptops/the-ram-crisis-is-apples-best-chance-in-decades-to-capture-the-pc-market-130000672.html?src=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.tiktok.com/discover",
+    "label": 0
+  },
+  {
+    "url": "https://www.cnet.com/tech/mobile/shopping-for-a-new-iphone-or-android-phone-read-this-before-you-buy",
+    "label": 1
+  },
+  {
+    "url": "https://www.theguardian.com/us-news/2026/mar/31/gulf-of-mexico-drilling-endangered-species",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Artificial_intelligence",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Portal:Technology",
+    "label": 0
+  },
+  {
+    "url": "https://aws.amazon.com/blogs/aws/twenty-years-of-amazon-s3-and-building-whats-next",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/list/cs.AI/recent",
+    "label": 0
+  },
+  {
+    "url": "https://www.zdnet.com/home-and-office/yard-outdoors/dewalt-deals-amazon-spring-sale-2026",
+    "label": 1
+  },
+  {
+    "url": "https://css-tricks.com/experimenting-with-scroll-driven-corner-shape-animations",
+    "label": 1
+  },
+  {
+    "url": "https://store.example.com/collections/electronics",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Cargill_MacMillan_Jr.",
+    "label": 1
+  },
+  {
+    "url": "https://www.newscientist.com/article/2521218-what-kind-of-olive-oil-is-best-for-the-brain",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/list/cs.CL/recent",
+    "label": 0
+  },
+  {
+    "url": "https://www.reddit.com/r/artificial/",
+    "label": 0
+  },
+  {
+    "url": "https://www.saas-product.com/pricing",
+    "label": 0
+  },
+  {
+    "url": "https://www.sciencedaily.com/releases/2024/01/240115123456.htm",
+    "label": 1
+  },
+  {
+    "url": "https://www.target.com/c/electronics/-/N-5xtg6",
+    "label": 0
+  },
+  {
+    "url": "https://www.infoq.com/podcasts/failure-means-build-resilient-software-system",
+    "label": 1
+  },
+  {
+    "url": "https://aws.amazon.com/blogs/aws/20-years-in-the-aws-cloud-how-time-flies",
+    "label": 1
+  },
+  {
+    "url": "https://x.com/nvidia",
+    "label": 0
+  },
+  {
+    "url": "https://www.zdnet.com/home-and-office/amazon-spring-sale-live-blog-03-31-2026",
+    "label": 1
+  },
+  {
+    "url": "https://engineering.fb.com/2026/03/13/android/ai-codemods-secure-by-default-android-apps-meta-tech-podcast",
+    "label": 1
+  },
+  {
+    "url": "https://www.sbnation.com/2024/1/15/12345/team-victory",
+    "label": 1
+  },
+  {
+    "url": "https://www.tensorflow.org/api_docs",
+    "label": 0
+  },
+  {
+    "url": "https://www.cloudflare.com",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/List_of_amphibians_of_Crete",
+    "label": 0
+  },
+  {
+    "url": "https://www.theverge.com/tech/903558/razer-pro-type-ergo-split-wireless-bluetooth-keyboard-productivity-availability-price",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Westlife:_Our_Story",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Elam_J._Anderson",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2005.14165",
+    "label": 1
+  },
+  {
+    "url": "https://www.state.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://github.com/openai",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:1979_Alberta_general_election_results_by_riding",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Quantum_computing",
+    "label": 1
+  },
+  {
+    "url": "https://www.facebook.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.livescience.com/new-research-findings",
+    "label": 1
+  },
+  {
+    "url": "https://www.quantamagazine.org/when-coupled-volcanoes-talk-these-researchers-listen-20260327",
+    "label": 1
+  },
+  {
+    "url": "https://www.amazon.com/dp/B08N5WRWNW",
+    "label": 0
+  },
+  {
+    "url": "https://www.heroku.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.reddit.com/r/technology/",
+    "label": 0
+  },
+  {
+    "url": "https://github.com/topics/machine-learning",
+    "label": 0
+  },
+  {
+    "url": "https://arstechnica.com/health/2026/03/water-utility-announces-its-ditching-fluoride-then-reveals-it-did-so-years-ago",
+    "label": 1
+  },
+  {
+    "url": "https://news.ycombinator.com/show",
+    "label": 0
+  },
+  {
+    "url": "https://news.ycombinator.com/front",
+    "label": 0
+  },
+  {
+    "url": "https://istio.io",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/abs/2201.08239",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/1412.6980",
+    "label": 1
+  },
+  {
+    "url": "https://blog.google/",
+    "label": 0
+  },
+  {
+    "url": "https://www.zdnet.com/article/ddr5-ram-deals-amazon-spring-sale-2026",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Defunct_tennis_tournaments_in_Russia",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Italian_female_squash_players",
+    "label": 0
+  },
+  {
+    "url": "https://www.tensorflow.org/tutorials",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Programming_languages",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Special:Random",
+    "label": 0
+  },
+  {
+    "url": "https://www.apple.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.bbc.com/news/articles/cvg0743ve3do?at_medium=RSS&at_campaign=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.welt.de/politik/deutschland/article123456/Article-Title.html",
+    "label": 1
+  },
+  {
+    "url": "https://www.qualcomm.com",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Austen_Riggs_Center",
+    "label": 1
+  },
+  {
+    "url": "https://www.vox.com/the-logoff-newsletter-trump/484347/trump-tsa-paychecks-airports-dhs-shutdown",
+    "label": 1
+  },
+  {
+    "url": "https://www.notion.so/product",
+    "label": 0
+  },
+  {
+    "url": "https://nodejs.org/en",
+    "label": 0
+  },
+  {
+    "url": "https://www.bbc.co.uk/news/10628994?at_medium=RSS&at_campaign=rss",
+    "label": 1
+  },
+  {
+    "url": "https://twitter.com/i/lists",
+    "label": 0
+  },
+  {
+    "url": "https://www.newscientist.com/article/2521311-food-shock-is-inevitable-due-to-the-iran-war-and-it-could-get-bad",
+    "label": 1
+  },
+  {
+    "url": "https://www.globaltimes.cn/page/202401/1234567.shtml",
+    "label": 1
+  },
+  {
+    "url": "https://www.startup.com/features",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/abs/2305.10403",
+    "label": 1
+  },
+  {
+    "url": "https://www.technologyreview.com/2026/03/31/1134934/the-download-testing-ai-health-tools-pentagon-anthropic-culture-war-backfires",
+    "label": 1
+  },
+  {
+    "url": "https://www.cnbc.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.coursera.org/lecture/machine-learning/example",
+    "label": 0
+  },
+  {
+    "url": "https://techcrunch.com/2026/03/31/rivian-spinoff-also-will-build-autonomous-delivery-vehicles-for-doordash",
+    "label": 1
+  },
+  {
+    "url": "https://www.linkedin.com/jobs/view/12345678/",
+    "label": 0
+  },
+  {
+    "url": "https://www.youtube.com/user/sentdex",
+    "label": 0
+  },
+  {
+    "url": "https://www.quantamagazine.org/in-math-rigor-is-vital-but-are-digitized-proofs-taking-it-too-far-20260325",
+    "label": 1
+  },
+  {
+    "url": "https://www.cam.ac.uk/research/news/cambridge-team-publishes-findings",
+    "label": 1
+  },
+  {
+    "url": "https://www.theatlantic.com/international/2026/03/nuclear-drones-spy-barksdale/686619",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Solomon_Schechter_High_School_of_New_York",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Karlsruher_FV_matches",
+    "label": 0
+  },
+  {
+    "url": "https://www.infoq.com/news/2026/03/kubevirt-18-announcement",
+    "label": 1
+  },
+  {
+    "url": "https://laravel.com",
+    "label": 0
+  },
+  {
+    "url": "https://realpython.com/courses/adding-python-to-path",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/The_Last_Jew_(Kaniuk_novel)",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/MongoDB",
+    "label": 1
+  },
+  {
+    "url": "https://www.ebay.com/deals",
+    "label": 0
+  },
+  {
+    "url": "https://news.mit.edu/2024/new-ai-breakthrough-announced",
+    "label": 1
+  },
+  {
+    "url": "https://martinfowler.com/bliki/ExcessiveBold.html",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/news/articles/ckgwe7k49d7o?at_medium=RSS&at_campaign=rss",
+    "label": 1
+  },
+  {
+    "url": "https://asana.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.lemonde.fr/economie/article/2024/01/15/article-title_123456_1234.html",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:2nd-millennium_establishments_in_the_Comoros",
+    "label": 0
+  },
+  {
+    "url": "https://github.blog/news-insights/company-news/updates-to-github-copilot-interaction-data-usage-policy",
+    "label": 1
+  },
+  {
+    "url": "https://news.harvard.edu/gazette/story/2024/01/study-reveals-insights",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/news/science_and_environment",
+    "label": 0
+  },
+  {
+    "url": "https://www.defense.gov/News/Releases/Release/Article/123456/",
+    "label": 1
+  },
+  {
+    "url": "https://news.ycombinator.com/ask",
+    "label": 0
+  },
+  {
+    "url": "https://jobs.lever.co/company/job-id",
+    "label": 0
+  },
+  {
+    "url": "https://github.com/topics/python",
+    "label": 0
+  },
+  {
+    "url": "https://www.tensorflow.org/",
+    "label": 0
+  },
+  {
+    "url": "https://www.boston.com/news/local-news/2024/01/15/article-title/",
+    "label": 1
+  },
+  {
+    "url": "https://www.npr.org/2026/03/31/nx-s1-5766991/iran-war-lebanon-israel-dubai-trump-oil-europe",
+    "label": 1
+  },
+  {
+    "url": "https://thenewstack.io/ollama-taps-apples-mlx",
+    "label": 1
+  },
+  {
+    "url": "https://css-tricks.com/javascript-for-everyone-destructuring",
+    "label": 1
+  },
+  {
+    "url": "https://www.tiktok.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/research/blog/from-raw-interaction-to-reusable-knowledge-rethinking-memory-for-ai-agents",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Redis",
+    "label": 1
+  },
+  {
+    "url": "https://spring.io",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/TypeScript",
+    "label": 1
+  },
+  {
+    "url": "https://pypi.org",
+    "label": 0
+  },
+  {
+    "url": "https://www.smashingmagazine.com/2026/03/beyond-border-radius-css-corner-shape-property-ui",
+    "label": 1
+  },
+  {
+    "url": "https://www.cnn.com/business",
+    "label": 0
+  },
+  {
+    "url": "https://thenewstack.io/ai-slop-open-source",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Lists_of_organisations_based_in_South_America",
+    "label": 0
+  },
+  {
+    "url": "https://blog.cloudflare.com/dynamic-workers",
+    "label": 1
+  },
+  {
+    "url": "https://twitter.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.githubstatus.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.foodnetwork.com/recipes/alton-brown/good-eats-roast-turkey",
+    "label": 1
+  },
+  {
+    "url": "https://numpy.org",
+    "label": 0
+  },
+  {
+    "url": "https://www.technologyreview.com/2024/01/15/123456/breakthrough-announced/",
+    "label": 1
+  },
+  {
+    "url": "https://docs.python.org/3/library/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Trans-Am_production_cars",
+    "label": 1
+  },
+  {
+    "url": "https://www.quantamagazine.org/are-strings-still-our-best-hope-for-a-theory-of-everything-20260323",
+    "label": 1
+  },
+  {
+    "url": "https://www.justice.gov/opa/pr/department-justice-announces-settlement",
+    "label": 1
+  },
+  {
+    "url": "https://cloud.google.com/blog/",
+    "label": 0
+  },
+  {
+    "url": "https://www.medscape.com/viewarticle/123456",
+    "label": 1
+  },
+  {
+    "url": "https://distill.pub/2021/multimodal-neurons",
+    "label": 1
+  },
+  {
+    "url": "https://blog.pythonlibrary.org/2026/03/24/the-python-show-python-illustrated",
+    "label": 1
+  },
+  {
+    "url": "https://css-tricks.com/whats-important-7",
+    "label": 1
+  },
+  {
+    "url": "https://www.edx.org/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Cybersecurity",
+    "label": 1
+  },
+  {
+    "url": "https://www.aljazeera.com/news/2026/3/31/cuba-crisis-explained-who-holds-power-and-could-diaz-canel-be-replaced?traffic_source=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/sport/football/articles/abc123",
+    "label": 1
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/microsoft-365",
+    "label": 0
+  },
+  {
+    "url": "https://www.newscientist.com/article/2519667-the-profound-effect-the-heart-brain-connection-has-on-your-health",
+    "label": 1
+  },
+  {
+    "url": "https://aiweekly.substack.com/p/gpt-4-analysis",
+    "label": 1
+  },
+  {
+    "url": "https://css-tricks.com/whats-important-8",
+    "label": 1
+  },
+  {
+    "url": "https://www.marketwatch.com/story/market-analysis-2024-01-15",
+    "label": 1
+  },
+  {
+    "url": "https://numpy.org/doc/stable/user/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.bbc.com/news/articles/c4gx2lv8888o?at_medium=RSS&at_campaign=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.brand.com/our-story",
+    "label": 0
+  },
+  {
+    "url": "https://blog.cloudflare.com/",
+    "label": 0
+  },
+  {
+    "url": "https://towardsdatascience.com/how-to-make-claude-code-better-at-one-shotting-implementations",
+    "label": 1
+  },
+  {
+    "url": "https://news.ycombinator.com/user?id=pg",
+    "label": 0
+  },
+  {
+    "url": "https://wise.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.infoq.com/presentations/culture-systems-teams-careers",
+    "label": 1
+  },
+  {
+    "url": "https://www.berkeley.edu/academics/",
+    "label": 0
+  },
+  {
+    "url": "https://levelup.gitconnected.com/react-hooks-explained",
+    "label": 1
+  },
+  {
+    "url": "https://www.reddit.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.hubspot.com/case-study/company-growth",
+    "label": 1
+  },
+  {
+    "url": "https://arxiv.org/abs/2307.09288",
+    "label": 1
+  },
+  {
+    "url": "https://martinfowler.com/bliki/HostLeadership.html",
+    "label": 1
+  },
+  {
+    "url": "https://www.scmp.com/news/china/article/3123456/article-title",
+    "label": 1
+  },
+  {
+    "url": "https://www.youtube.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.estadao.com.br/politica/noticia-123456",
+    "label": 1
+  },
+  {
+    "url": "https://stackoverflow.blog/2026/03/17/keeping-the-lights-on-for-open-source",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/2014_Dufferin_County_municipal_elections",
+    "label": 1
+  },
+  {
+    "url": "https://www.sciencedaily.com/releases/2026/03/260330001145.htm",
+    "label": 1
+  },
+  {
+    "url": "https://dev.to/t/docker",
+    "label": 1
+  },
+  {
+    "url": "https://cooking.nytimes.com/recipes/12345-simple-roast-chicken",
+    "label": 1
+  },
+  {
+    "url": "https://blog.cloudflare.com/client-side-security-open-to-everyone",
+    "label": 1
+  },
+  {
+    "url": "https://numpy.org/doc/stable/",
+    "label": 0
+  },
+  {
+    "url": "https://huggingface.co/blog/liberate-your-openclaw",
+    "label": 1
+  },
+  {
+    "url": "https://boards.greenhouse.io/company/jobs/12345",
+    "label": 0
+  },
+  {
+    "url": "https://www.tech-summit.com/agenda",
+    "label": 0
+  },
+  {
+    "url": "https://dev.to/t/javascript",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.yale.edu/",
+    "label": 0
+  },
+  {
+    "url": "https://shop.example.com/products/wireless-headphones",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Newspapers_published_in_Nunavut",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/2020_24_Hours_of_Daytona",
+    "label": 1
+  },
+  {
+    "url": "https://news.stanford.edu/2024/01/15/researchers-develop-new-method",
+    "label": 1
+  },
+  {
+    "url": "https://www.newscientist.com/article/2521539-astronauts-are-ready-to-return-to-the-moon-on-artemis-ii-mission",
+    "label": 1
+  },
+  {
+    "url": "https://superuser.com",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Angus_MacKay_(racing_driver)",
+    "label": 1
+  },
+  {
+    "url": "https://www.adobe.com/products/photoshop.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.zdnet.com/article/airpods-pro-3-amazon-spring-sale-2026",
+    "label": 1
+  },
+  {
+    "url": "https://www.coursera.org/",
+    "label": 0
+  },
+  {
+    "url": "https://www.nasa.gov/news-release/nasa-announces-new-mission-to-mars",
+    "label": 1
+  },
+  {
+    "url": "https://engineering.fb.com/2026/03/09/security/how-advanced-browsing-protection-works-in-messenger",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/2024_Copa_Libertadores_Femenina",
+    "label": 1
+  },
+  {
+    "url": "https://www.ebay.com/",
+    "label": 0
+  },
+  {
+    "url": "https://realpython.com/podcasts/rpp/289",
+    "label": 1
+  },
+  {
+    "url": "https://www.tldrnewsletter.com/archives/2024-01-15",
+    "label": 1
+  },
+  {
+    "url": "https://docs.python.org/3/faq/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/research/blog/corpgen-advances-ai-agents-for-real-work",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Physics",
+    "label": 0
+  },
+  {
+    "url": "https://blog.jetbrains.com/pycharm/2026/03/what-s-new-in-pycharm-2026-1",
+    "label": 1
+  },
+  {
+    "url": "https://www.theatlantic.com/health/2026/03/diagnositic-excellence/686622",
+    "label": 1
+  },
+  {
+    "url": "https://www.example-conference.com/2024",
+    "label": 0
+  },
+  {
+    "url": "https://fastapi.tiangolo.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.cnn.com/world",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Open-source_software",
+    "label": 0
+  },
+  {
+    "url": "https://www.software.com/solutions",
+    "label": 0
+  },
+  {
+    "url": "https://www.netflix.com/title/12345678",
+    "label": 0
+  },
+  {
+    "url": "https://arstechnica.com/cars/2026/03/polestar-3-production-consolidated-to-the-us-to-keep-volvo-factory-busy",
+    "label": 1
+  },
+  {
+    "url": "https://medium.com/towards-ai/deep-learning-basics",
+    "label": 1
+  },
+  {
+    "url": "https://blog.cloudflare.com/one-line-kubernetes-fix-saved-600-hours-a-year",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Attention_(machine_learning)",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Websites_which_use_Wikipedia",
+    "label": 0
+  },
+  {
+    "url": "https://rubygems.org",
+    "label": 0
+  },
+  {
+    "url": "https://x.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.okta.com",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Computer_program",
+    "label": 1
+  },
+  {
+    "url": "https://towardsdatascience.com/pytorch-vs-tensorflow-2024",
+    "label": 1
+  },
+  {
+    "url": "https://www.webapp.com/demo",
+    "label": 0
+  },
+  {
+    "url": "https://pycon.blogspot.com/2026/03/support-pyladies-donate-to-pyladies.html",
+    "label": 1
+  },
+  {
+    "url": "https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/googles-ai-works-for-britain-aims-to-help-stuck-brits-unlock-progression",
+    "label": 1
+  },
+  {
+    "url": "https://www.cbssports.com/nfl/news/player-performance-analysis/",
+    "label": 1
+  },
+  {
+    "url": "https://www.engadget.com/big-tech/delta-picks-amazon-leo-for-in-flight-wi-fi-starting-in-2028-153024212.html?src=rss",
+    "label": 1
+  },
+  {
+    "url": "https://opensource.microsoft.com/blog/2026/03/24/whats-new-with-microsoft-in-open-source-and-kubernetes-at-kubecon-cloudnativecon-europe-2026",
+    "label": 1
+  },
+  {
+    "url": "https://www.airbnb.com",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:B-Class_Abortion_articles",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Suspected_Wikipedia_sockpuppets_of_Rezaee.original",
+    "label": 0
+  },
+  {
+    "url": "https://docs.python.org/3/tutorial/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://blog.cloudflare.com/workers-ai-large-models",
+    "label": 1
+  },
+  {
+    "url": "https://www.forbes.com/sites/forbes-tech-council/2024/01/15/article/",
+    "label": 1
+  },
+  {
+    "url": "https://www.expo.com/exhibitors",
+    "label": 0
+  },
+  {
+    "url": "https://www.youtube.com/shorts/abc123",
+    "label": 0
+  },
+  {
+    "url": "https://www.bing.com/search?q=deep+learning",
+    "label": 0
+  },
+  {
+    "url": "https://snarky.ca/why-pylock-toml-includes-digital-attestations",
+    "label": 1
+  },
+  {
+    "url": "https://www.smashingmagazine.com/2026/03/anime-marvel-dc-designing-digital-products-emotion-flow",
+    "label": 1
+  },
+  {
+    "url": "https://thenewstack.io/virtual-clusters-kubernetes-cost-isolation",
+    "label": 1
+  },
+  {
+    "url": "https://www.salesforce.com/products/",
+    "label": 0
+  },
+  {
+    "url": "https://github.com/facebook/react",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Wikipedia:Contents",
+    "label": 0
+  },
+  {
+    "url": "https://www.sueddeutsche.de/politik/article-123456",
+    "label": 1
+  },
+  {
+    "url": "https://numpy.org/doc/stable/reference/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.protocol.com/tech-policy-analysis",
+    "label": 1
+  },
+  {
+    "url": "https://www.dell.com/en-us",
+    "label": 0
+  },
+  {
+    "url": "https://arxiv.org/abs/2010.11929",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/news/business",
+    "label": 0
+  },
+  {
+    "url": "https://nautil.us/the-giant-sloths-and-armadillos-of-prehistoric-texas-1279345",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/arabic/articles/xyz123",
+    "label": 1
+  },
+  {
+    "url": "https://www.theverge.com/tech/904020/meta-scriber-blayzer-prescription-smart-glasses",
+    "label": 1
+  },
+  {
+    "url": "https://www.example-saas.com/product",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Charles_Schofield",
+    "label": 1
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/careers/job/12345",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Clyde_Quay_School",
+    "label": 1
+  },
+  {
+    "url": "https://stackoverflow.com/questions",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Re%C5%A1ad_Kunovac",
+    "label": 1
+  },
+  {
+    "url": "https://aws.amazon.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.linkedin.com/in/example/",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/C%2B%2B",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/C%C3%A1ssio_Andrade",
+    "label": 1
+  },
+  {
+    "url": "https://pandas.pydata.org/docs/user_guide/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://elpais.com/economia/2024-01-15/articulo-noticia.html",
+    "label": 1
+  },
+  {
+    "url": "https://stackoverflow.com/questions/tagged/javascript",
+    "label": 0
+  },
+  {
+    "url": "https://www.zdnet.com/article/best-amazon-spring-sale-2026-smart-ring-smartwatch-deals",
+    "label": 1
+  },
+  {
+    "url": "https://www.yahoo.com",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Wurundjeri_Way",
+    "label": 1
+  },
+  {
+    "url": "https://arstechnica.com/space/2026/03/after-more-than-53-years-humans-may-finally-return-to-the-moon-this-week",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Michel_Charrel",
+    "label": 1
+  },
+  {
+    "url": "https://scikit-learn.org/stable/auto_examples/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.cnn.com/us",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Dutch_male_golfers",
+    "label": 0
+  },
+  {
+    "url": "https://blog.jetbrains.com/idea/2026/03/using-spring-data-jpa-with-kotlin",
+    "label": 1
+  },
+  {
+    "url": "https://www.npr.org/2026/03/31/nx-s1-5768105/supreme-court-conversion-therapy-colorado-ban",
+    "label": 1
+  },
+  {
+    "url": "https://www.conference.com/speakers",
+    "label": 0
+  },
+  {
+    "url": "https://engineering.fb.com/2026/03/31/ml-applications/meta-adaptive-ranking-model-bending-the-inference-scaling-curve-to-serve-llm-scale-models-for-ads",
+    "label": 1
+  },
+  {
+    "url": "https://www.technologyreview.com/2026/03/30/1134836/the-download-brainless-human-clones-first-uterus-kept-alive-outside-body",
+    "label": 1
+  },
+  {
+    "url": "https://stackexchange.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.cisco.com",
+    "label": 0
+  },
+  {
+    "url": "https://github.blog/open-source/maintainers/rethinking-open-source-mentorship-in-the-ai-era",
+    "label": 1
+  },
+  {
+    "url": "https://www.nytimes.com/video/technology/100000010801833/why-the-verdict-against-meta-and-youtube-could-change-social-media.html",
+    "label": 1
+  },
+  {
+    "url": "https://www.linkedin.com/groups/",
+    "label": 0
+  },
+  {
+    "url": "https://github.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.reddit.com/r/datascience/",
+    "label": 0
+  },
+  {
+    "url": "https://medium.com/better-programming/clean-code-principles",
+    "label": 1
+  },
+  {
+    "url": "https://brand.com/products/smartphone-case",
+    "label": 0
+  },
+  {
+    "url": "https://www.bleacherreport.com/articles/12345678-game-analysis",
+    "label": 1
+  },
+  {
+    "url": "https://www.newscientist.com/article/2412345-breakthrough-research/",
+    "label": 1
+  },
+  {
+    "url": "https://news.ycombinator.com/newest",
+    "label": 0
+  },
+  {
+    "url": "https://aws.amazon.com/blogs/aws/aws-weekly-roundup-aws-ai-ml-scholars-program-agent-plugin-for-aws-serverless-and-more-march-30-2026",
+    "label": 1
+  },
+  {
+    "url": "https://grafana.com",
+    "label": 0
+  },
+  {
+    "url": "https://www.business.com/about/team",
+    "label": 0
+  },
+  {
+    "url": "https://www.vox.com/the-highlight/482373/ugliness-moshtari-hilal-ugly-stephanie-fairyington",
+    "label": 1
+  },
+  {
+    "url": "https://www.theguardian.com/science",
+    "label": 0
+  },
+  {
+    "url": "https://dev.to/t/go",
+    "label": 1
+  },
+  {
+    "url": "https://www.zdnet.com/home-and-office/best-walmart-deals-last-minute-amazon-big-spring-sale-2026",
+    "label": 1
+  },
+  {
+    "url": "https://www.bloomberg.com/news/articles/2024-01-15/market-analysis",
+    "label": 1
+  },
+  {
+    "url": "https://antocuni.eu/2026/03/25/inside-spy-part-2-language-semantics",
+    "label": 1
+  },
+  {
+    "url": "https://www.paypal.com/ps/home",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:2001_in_rugby_league_by_country",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:United_States_presidential_election%2C_1952",
+    "label": 0
+  },
+  {
+    "url": "https://www.bestbuy.com/",
+    "label": 0
+  },
+  {
+    "url": "https://www.theatlantic.com/health/2026/03/stomach-cancer-total-gastrectomy/686623",
+    "label": 1
+  },
+  {
+    "url": "https://www.etsy.com/shop/ExampleShop",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Sacred_Heart_Catholic_Secondary",
+    "label": 1
+  },
+  {
+    "url": "https://www.state.gov/secretary-announces-new-initiative/",
+    "label": 1
+  },
+  {
+    "url": "https://huggingface.co/blog/async-rl-training-landscape",
+    "label": 1
+  },
+  {
+    "url": "https://medium.com/@author/machine-learning-explained-simply",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Natural_language_processing",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Apache_Kafka",
+    "label": 1
+  },
+  {
+    "url": "https://www.leparisien.fr/economie/article-title-15-01-2024-ABC123.php",
+    "label": 1
+  },
+  {
+    "url": "https://thenewstack.io/microsofts-copilot-llm-team",
+    "label": 1
+  },
+  {
+    "url": "https://www.science.org/doi/10.1126/science.abc1234",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/news/world",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Generative_artificial_intelligence",
+    "label": 1
+  },
+  {
+    "url": "https://www.bbc.com/news/technology",
+    "label": 0
+  },
+  {
+    "url": "https://www.theguardian.com/world/2026/mar/29/graaff-reinet-robert-sobukwe-south-african-town-name-change-stirs-racial-tensions",
+    "label": 1
+  },
+  {
+    "url": "https://www.whitehouse.gov/briefing-room/presidential-actions/2024/01/20/executive-order",
+    "label": 1
+  },
+  {
+    "url": "https://www.supremecourt.gov/",
+    "label": 0
+  },
+  {
+    "url": "https://www.samsung.com/us/smartphones/galaxy-s24/",
+    "label": 0
+  },
+  {
+    "url": "https://www.cnet.com/tech/services-and-software/darksword-iphone-hack-spyware-safety-news",
+    "label": 1
+  },
+  {
+    "url": "https://www.dw.com/ar/article-title/a-12345678",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Category:Canoeing_by_continent",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Operating_system",
+    "label": 1
+  },
+  {
+    "url": "https://towardsdatascience.com/turning-127-million-data-points-into-an-industry-report",
+    "label": 1
+  },
+  {
+    "url": "https://www.wired.com/story/legal-loopholes-leave-shipping-crews-stranded-in-the-strait-of-hormuz",
+    "label": 1
+  },
+  {
+    "url": "https://keras.io",
+    "label": 0
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Standard_of_Ur",
+    "label": 1
+  },
+  {
+    "url": "https://www.bonappetit.com/recipe/homemade-pasta",
+    "label": 1
+  },
+  {
+    "url": "https://www.vox.com/politics/483983/immigration-ice-changed-america-economy-tsa-chicago-charlotte-arizona-enforcement-immigrant-life",
+    "label": 1
+  },
+  {
+    "url": "https://www.aljazeera.net/news/2024/1/15/article-title",
+    "label": 1
+  },
+  {
+    "url": "https://www.youtube.com/@lexfridman",
+    "label": 0
+  },
+  {
+    "url": "https://www.repubblica.it/politica/2024/01/15/news/articolo-123456/",
+    "label": 1
+  },
+  {
+    "url": "https://www.theatlantic.com/newsletters/2026/03/pete-hegseth-vice-signaling/686620",
+    "label": 1
+  },
+  {
+    "url": "https://dev.to/t/career",
+    "label": 1
+  },
+  {
+    "url": "https://www.walmart.com/ip/12345678",
+    "label": 0
+  },
+  {
+    "url": "https://www.ebay.com/itm/123456789012",
+    "label": 0
+  },
+  {
+    "url": "https://www.theguardian.com/global-development/2026/mar/30/urgent-action-needed-to-prevent-surge-in-digital-violence-in-africa-experts-say",
+    "label": 1
+  },
+  {
+    "url": "https://github.blog/security/application-security/github-expands-application-security-coverage-with-ai-powered-detections",
+    "label": 1
+  },
+  {
+    "url": "https://pandas.pydata.org",
+    "label": 0
+  },
+  {
+    "url": "https://nodejs.org/en/docs/",
+    "label": 0
+  },
+  {
+    "url": "https://www.engadget.com/wearables/the-latest-ray-ban-meta-smart-glasses-are-more-customizable-and-expensive-130000553.html?src=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.hollywoodreporter.com/movies/movie-news/article-123456/",
+    "label": 1
+  },
+  {
+    "url": "https://www.vox.com/future-perfect/484276/meat-tofu-masculinity-plant-based-carnivore-diet",
+    "label": 1
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Cryptocurrency",
+    "label": 1
+  },
+  {
+    "url": "https://jobs.netflix.com/jobs/12345",
+    "label": 0
+  },
+  {
+    "url": "https://www.aljazeera.com/news/longform/2026/3/31/venezuelas-chavismo-movement-faces-a-crossroads-after-us-attack?traffic_source=rss",
+    "label": 1
+  },
+  {
+    "url": "https://www.company.com/about",
+    "label": 0
+  },
+  {
+    "url": "https://duckduckgo.com",
+    "label": 0
+  },
+  {
+    "url": "https://pytorch.org/docs/stable/index.html",
+    "label": 0
+  },
+  {
+    "url": "https://www.microsoft.com/en-us/about",
+    "label": 0
+  },
+  {
+    "url": "https://www.theatlantic.com/ideas/2026/03/trump-iran-markets-messaging/686626",
+    "label": 1
+  }
+]

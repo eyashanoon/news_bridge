@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3307/news_crawler?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:news_user}
+    password: ${DB_PASSWORD:news_pass}
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    jwt:
+      secret: ${JWT_SECRET:change-this-jwt-secret-in-production-0123456789-abcdefghijklmnopqrstuvwxyz-ABCDEFGHIJKLMNOPQRSTUVWXYZ}
+      expiration: ${JWT_EXPIRATION:86400000}
+
+app:
+  bootstrap:
+    owner-email: owner@news.local
+    owner-password: change-me
+    crawler-email: ${CRAWLER_EMAIL:crawler-service@news.local}
+    crawler-password: ${CRAWLER_PASSWORD:secure-crawler-password-change-me}
+
+crawler:
+  server:
+    base-url: ${CRAWLER_SERVER_BASE_URL:http://localhost:8000}
+
+telegram-crawler:
+  server:
+    base-url: ${TELEGRAM_CRAWLER_BASE_URL:http://localhost:8001}
+
+server:
+  error:
+    include-stacktrace: always
+    include-message: always
