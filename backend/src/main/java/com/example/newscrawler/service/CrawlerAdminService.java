@@ -19,7 +19,7 @@ public class CrawlerAdminService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String crawlerBaseUrl;
 
-    public CrawlerAdminService(@Value("${crawler.server.base-url:http://localhost:8000}") String crawlerBaseUrl) {
+    public CrawlerAdminService(@Value("${crawler.server.base-url:http://127.0.0.1:8000}") String crawlerBaseUrl) {
         this.crawlerBaseUrl = crawlerBaseUrl.endsWith("/")
                 ? crawlerBaseUrl.substring(0, crawlerBaseUrl.length() - 1)
                 : crawlerBaseUrl;

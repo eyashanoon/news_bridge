@@ -177,12 +177,12 @@ function DashboardOverview({ session }) {
         <p>System overview and quick stats</p>
       </div>
       <div className="admin-stats-grid">
-        <StatCard label="Total Articles" value={stats?.totalArticles ?? "â€”"} color="var(--brand)" />
-        <StatCard label="Registered Users" value={stats?.totalRegisteredUsers ?? "â€”"} color="#0f766e" />
-        <StatCard label="Editors" value={stats?.totalEditors ?? "â€”"} color="#7c3aed" />
-        <StatCard label="Admins" value={stats?.totalAdmins ?? "â€”"} color="#b45309" />
-        <StatCard label="Pending Requests" value={stats?.pendingEditorRequests ?? "â€”"} color="#dc2626" />
-        <StatCard label="Active Session" value={session?.email || "â€”"} color="#475569" small />
+        <StatCard label="Total Articles" value={stats?.totalArticles ?? "-"} color="var(--brand)" />
+        <StatCard label="Registered Users" value={stats?.totalRegisteredUsers ?? "-"} color="#0f766e" />
+        <StatCard label="Editors" value={stats?.totalEditors ?? "-"} color="#7c3aed" />
+        <StatCard label="Admins" value={stats?.totalAdmins ?? "-"} color="#b45309" />
+        <StatCard label="Pending Requests" value={stats?.pendingEditorRequests ?? "-"} color="#dc2626" />
+        <StatCard label="Active Session" value={session?.email || "-"} color="#475569" small />
       </div>
     </div>
   );
@@ -364,7 +364,7 @@ function ManageAdmins({ session }) {
           <div className="profile-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="profile-modal-header">
               <h3>Admin Profile</h3>
-              <button className="modal-close-btn" onClick={() => setViewingAdmin(null)}>âœ•</button>
+              <button className="modal-close-btn" onClick={() => setViewingAdmin(null)}>x</button>
             </div>
             <div className="profile-modal-body">
               <img className="profile-avatar-lg" src={resolveAvatar(viewingAdmin.profilePicture, "admin")} alt="admin profile" />
@@ -589,8 +589,8 @@ function ManageUsers({ session }) {
                       </span>
                     )}
                   </td>
-                  <td>{u.fieldName || "â€”"}</td>
-                  <td>{u.phone || "â€”"}</td>
+                  <td>{u.fieldName || "-"}</td>
+                  <td>{u.phone || "-"}</td>
                   <td>
                     {editingEditorId === u.id ? (
                       <div className="role-picker compact">
@@ -640,7 +640,7 @@ function ManageUsers({ session }) {
           <div className="profile-modal-card profile-animated" onClick={(e) => e.stopPropagation()}>
             <div className="profile-modal-header">
               <h3>{viewingType === "editor" ? "Editor Profile" : "User Profile"}</h3>
-              <button className="modal-close-btn" onClick={() => setViewingUser(null)}>âœ•</button>
+              <button className="modal-close-btn" onClick={() => setViewingUser(null)}>x</button>
             </div>
             <div className="profile-modal-body">
               <img
@@ -652,10 +652,10 @@ function ManageUsers({ session }) {
                 <p><strong>Name:</strong> {viewingUser.username || displayNameFromEmail(viewingUser.email)}</p>
                 <p><strong>Email:</strong> {viewingUser.email}</p>
                 <p><strong>Status:</strong> {viewingUser.status || "ACTIVE"}</p>
-                {viewingType === "editor" && <p><strong>Field:</strong> {viewingUser.fieldName || "â€”"}</p>}
-                {viewingType === "editor" && <p><strong>Phone:</strong> {viewingUser.phone || "â€”"}</p>}
-                {viewingType === "editor" && <p><strong>Experience:</strong> {viewingUser.experience || "â€”"}</p>}
-                {viewingType === "editor" && <p><strong>References:</strong> {viewingUser.references || "â€”"}</p>}
+                {viewingType === "editor" && <p><strong>Field:</strong> {viewingUser.fieldName || "-"}</p>}
+                {viewingType === "editor" && <p><strong>Phone:</strong> {viewingUser.phone || "-"}</p>}
+                {viewingType === "editor" && <p><strong>Experience:</strong> {viewingUser.experience || "-"}</p>}
+                {viewingType === "editor" && <p><strong>References:</strong> {viewingUser.references || "-"}</p>}
                 {viewingType === "editor" && (viewingUser.attachments || []).length > 0 && (
                   <div>
                     <p><strong>Attachments:</strong></p>
@@ -810,10 +810,10 @@ function ManageArticles({ session }) {
             {articles.map((a) => (
               <tr key={a.id}>
                 <td>{a.id}</td>
-                <td className="title-cell">{a.title || "â€”"}</td>
-                <td>{a.rootName || "â€”"}</td>
+                <td className="title-cell">{a.title || "-"}</td>
+                <td>{a.rootName || "-"}</td>
                 <td className="url-cell"><a href={a.endpointUrl} target="_blank" rel="noopener noreferrer">{a.endpointUrl?.substring(0, 45)}{a.endpointUrl?.length > 45 ? "..." : ""}</a></td>
-                <td>{a.createdAt ? new Date(a.createdAt).toLocaleDateString() : "â€”"}</td>
+                <td>{a.createdAt ? new Date(a.createdAt).toLocaleDateString() : "-"}</td>
                 <td className="action-cell">
                   <button className="admin-btn small" onClick={() => loadArticleDetail(a.id)}>View</button>
                   {canDelete && <button className="admin-btn small danger" onClick={() => handleDeleteArticle(a.id)}>Delete</button>}
@@ -1235,7 +1235,7 @@ function ArticleDetailModal({ article, loading, onClose, onDelete, onDeleteBlock
         <div key={block.id} className={blockClass} onClick={() => toggleBlockSelect(block.id)}>
           <div className="block-header">
             <span>{type} #{block.sortOrder}</span>
-            {isSelected && <span className="selected-badge">âœ“ Selected</span>}
+            {isSelected && <span className="selected-badge">Selected</span>}
           </div>
           {type === "IMAGE" && block.mediaUrl && <img src={block.mediaUrl} alt={block.altText || "Article image"} />}
           {type === "VIDEO" && block.mediaUrl && <video controls src={block.mediaUrl} playsInline></video>}
@@ -1254,7 +1254,7 @@ function ArticleDetailModal({ article, loading, onClose, onDelete, onDeleteBlock
             <button className={`modal-tab ${view === "view" ? "active" : ""}`} onClick={() => setView("view")}>View Article</button>
             {canUpdate && <button className={`modal-tab ${view === "edit" ? "active" : ""}`} onClick={() => setView("edit")}>Edit Content</button>}
           </div>
-          <button className="modal-close-btn" onClick={onClose}>âœ•</button>
+          <button className="modal-close-btn" onClick={onClose}>x</button>
         </div>
 
         <div className="article-modal-content">
@@ -1263,7 +1263,7 @@ function ArticleDetailModal({ article, loading, onClose, onDelete, onDeleteBlock
             <>
               {modalError && <div className="admin-error">{modalError}</div>}
               <h2 className="article-modal-title">{article.title || "Untitled Article"}</h2>
-              <p className="article-modal-meta">Root: {article.rootName || "â€”"} | Endpoint: {article.endpointUrl || "â€”"}</p>
+              <p className="article-modal-meta">Root: {article.rootName || "-"} | Endpoint: {article.endpointUrl || "-"}</p>
 
               {view === "view" && (
                 <div className="article-content">
@@ -1356,8 +1356,8 @@ function EditorRequests({ session }) {
                 <td>{r.id}</td>
                 <td><img className="avatar-circle" src={resolveAvatar(r.profilePicture, "editor")} alt="editor request avatar" /></td>
                 <td>{r.userEmail}</td>
-                <td>{r.field?.name || "â€”"}</td>
-                <td className="title-cell">{r.experience?.substring(0, 80) || "â€”"}</td>
+                <td>{r.field?.name || "-"}</td>
+                <td className="title-cell">{r.experience?.substring(0, 80) || "-"}</td>
                 <td><span className={`status-badge ${r.status.toLowerCase()}`}>{r.status}</span></td>
                 {canApprove && (
                   <td className="action-cell">
@@ -1491,7 +1491,7 @@ function ArticleCrawlerPanel({ session }) {
       } else {
         await api.delete(`/api/admin/crawler/${path}`, cfg);
       }
-      setActionMsg(`${label} â€” ${new Date().toLocaleTimeString()}`);
+      setActionMsg(`${label} - ${new Date().toLocaleTimeString()}`);
       await fetchStatus();
       if (path !== "logs") await fetchLogs();
       if (path === "logs") setLogs([]);
@@ -1513,7 +1513,7 @@ function ArticleCrawlerPanel({ session }) {
     setBusy(true);
     try {
       await api.post("/api/admin/crawler/interval", { minutes: mins }, cfg);
-      setActionMsg(`Interval set to ${mins} min â€” ${new Date().toLocaleTimeString()}`);
+      setActionMsg(`Interval set to ${mins} min - ${new Date().toLocaleTimeString()}`);
       setIntervalInput("");
       await fetchStatus();
     } catch (err) {
@@ -1533,7 +1533,7 @@ function ArticleCrawlerPanel({ session }) {
 
   const schedulerState = status
     ? (status.paused ? "PAUSED" : "ACTIVE")
-    : (isOffline ? "OFFLINE" : "â€”");
+    : (isOffline ? "OFFLINE" : "-");
 
   const lastRun = status?.lastRun;
 
@@ -1547,13 +1547,13 @@ function ArticleCrawlerPanel({ session }) {
         <div className={`crawler-status-card ${isOffline ? "card-offline" : health?.ok ? "card-ok" : "card-warn"}`}>
           <span className="card-label">Heartbeat</span>
           <span className="card-value">{isOffline ? "OFFLINE" : health?.ok ? "HEALTHY" : "WARN"}</span>
-          <span className="card-sub">{health?.backendBaseUrl || "â€”"}</span>
+          <span className="card-sub">{health?.backendBaseUrl || "-"}</span>
         </div>
         <div className={`crawler-status-card ${schedulerState === "ACTIVE" ? "card-ok" : schedulerState === "OFFLINE" ? "card-offline" : "card-warn"}`}>
           <span className="card-label">Scheduler</span>
           <span className="card-value">{schedulerState}</span>
           <span className="card-sub">
-            {status?.nextRunAt ? `Next: ${new Date(status.nextRunAt).toLocaleTimeString()}` : "â€”"}
+            {status?.nextRunAt ? `Next: ${new Date(status.nextRunAt).toLocaleTimeString()}` : "-"}
           </span>
         </div>
         <div className={`crawler-status-card ${isRunning ? "card-running" : "card-ok"}`}>
@@ -1569,7 +1569,7 @@ function ArticleCrawlerPanel({ session }) {
         </div>
         <div className="crawler-status-card card-ok">
           <span className="card-label">Interval</span>
-          <span className="card-value">{status?.intervalMinutes ?? "â€”"}<small> min</small></span>
+          <span className="card-value">{status?.intervalMinutes ?? "-"}<small> min</small></span>
           <span className="card-sub">Scheduled crawl frequency</span>
         </div>
       </div>
@@ -1580,11 +1580,11 @@ function ArticleCrawlerPanel({ session }) {
           <h4>Last Run Summary</h4>
           <div className="run-stats-grid">
             {[
-              ["Articles",      lastRun.articleCreated ?? "â€”"],
-              ["Cache Hits",    lastRun.cacheHits ?? "â€”"],
-              ["Links Found",   lastRun.linksDiscovered ?? "â€”"],
-              ["Processed",     lastRun.linksProcessed ?? "â€”"],
-              ["Failed",        lastRun.failed ?? "â€”"],
+              ["Articles",      lastRun.articleCreated ?? "-"],
+              ["Cache Hits",    lastRun.cacheHits ?? "-"],
+              ["Links Found",   lastRun.linksDiscovered ?? "-"],
+              ["Processed",     lastRun.linksProcessed ?? "-"],
+              ["Failed",        lastRun.failed ?? "-"],
               ["Status",        lastRun.status],
             ].map(([k, v]) => (
               <div key={k} className="run-stat-item">
@@ -1602,27 +1602,27 @@ function ArticleCrawlerPanel({ session }) {
           <button className="admin-btn primary"
             onClick={() => control("start", "Start scheduler")}
             disabled={busy || isOffline || (!status?.paused)}>
-            â–¶ Start
+            Start
           </button>
           <button className="admin-btn danger"
             onClick={() => control("stop", "Stop scheduler")}
             disabled={busy || isOffline || status?.paused}>
-            â¹ Stop
+            Stop
           </button>
           <button className="admin-btn accent"
             onClick={() => control("run-now", "Run now")}
             disabled={busy || isOffline || isRunning}>
-            {isRunning ? <><span className="spinner-sm" /> Runningâ€¦</> : "âš¡ Run Now"}
+            {isRunning ? <><span className="spinner-sm" /> Running...</> : "Run Now"}
           </button>
           <button className="admin-btn"
             onClick={() => { fetchStatus(); fetchLogs(); }}
             disabled={busy}>
-            â†» Refresh
+            Refresh
           </button>
           <button className="admin-btn muted"
             onClick={() => control("logs", "Clear logs", false)}
             disabled={busy}>
-            ðŸ—‘ Clear Logs
+            Clear Logs
           </button>
         </div>
       )}
@@ -1759,7 +1759,7 @@ function ManageFields({ session }) {
                 <td>
                   {editingId === f.id
                     ? <input value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} />
-                    : f.description || "â€”"}
+                    : f.description || "-"}
                 </td>
                 <td className="action-cell">
                   {editingId === f.id ? (
@@ -1873,7 +1873,7 @@ function ManageEvents({ session }) {
             required
             style={{ background: "var(--surface-2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 6, padding: "8px 12px" }}
           >
-            <option value="">â€” Select Field â€”</option>
+            <option value="">- Select Field -</option>
             {fieldsData.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
           </select>
           <select
@@ -1901,7 +1901,7 @@ function ManageEvents({ session }) {
             <h3 className="event-card-title">{ev.title}</h3>
             <p className="event-card-desc">{ev.description || "No description provided."}</p>
             <div className="event-card-footer">
-              <span className="event-card-meta">Created: {ev.createdAt ? new Date(ev.createdAt).toLocaleDateString() : "â€”"}</span>
+              <span className="event-card-meta">Created: {ev.createdAt ? new Date(ev.createdAt).toLocaleDateString() : "-"}</span>
               <div className="event-card-actions" onClick={(e) => e.stopPropagation()}>
                 {ev.status !== "EDITOR_VISIBLE" && (
                   <button className="admin-btn small" onClick={() => handleStatusChange(ev, "EDITOR_VISIBLE")}>Open Editors</button>
@@ -1992,7 +1992,7 @@ function TelegramCrawlerPanel({ session }) {
     try {
       if (isPost) await api.post(`${BASE}/${path}`, {}, cfg);
       else await api.delete(`${BASE}/${path}`, cfg);
-      setActionMsg(`${label} â€” ${new Date().toLocaleTimeString()}`);
+      setActionMsg(`${label} - ${new Date().toLocaleTimeString()}`);
       await fetchStatus();
       if (path !== "logs") await fetchLogs();
       if (path === "logs") setLogs([]);
@@ -2008,7 +2008,7 @@ function TelegramCrawlerPanel({ session }) {
     setError(""); setBusy(true);
     try {
       await api.post(`${BASE}/interval`, { minutes: mins }, cfg);
-      setActionMsg(`Interval set to ${mins} min â€” ${new Date().toLocaleTimeString()}`);
+      setActionMsg(`Interval set to ${mins} min - ${new Date().toLocaleTimeString()}`);
       setIntervalInput(""); await fetchStatus();
     } catch (err) { setError(err.response?.data?.message || "Failed to set interval"); }
     finally { setBusy(false); }
@@ -2024,7 +2024,7 @@ function TelegramCrawlerPanel({ session }) {
 
   const schedulerState = status
     ? (status.paused ? "PAUSED" : "ACTIVE")
-    : (isOffline ? "OFFLINE" : "â€”");
+    : (isOffline ? "OFFLINE" : "-");
   const lastRun = status?.lastRun;
 
   return (
@@ -2036,12 +2036,12 @@ function TelegramCrawlerPanel({ session }) {
         <div className={`crawler-status-card ${isOffline ? "card-offline" : health?.ok ? "card-ok" : "card-warn"}`}>
           <span className="card-label">Heartbeat</span>
           <span className="card-value">{isOffline ? "OFFLINE" : health?.ok ? "HEALTHY" : "WARN"}</span>
-          <span className="card-sub">{health?.backendBaseUrl || "â€”"}</span>
+          <span className="card-sub">{health?.backendBaseUrl || "-"}</span>
         </div>
         <div className={`crawler-status-card ${schedulerState === "ACTIVE" ? "card-ok" : schedulerState === "OFFLINE" ? "card-offline" : "card-warn"}`}>
           <span className="card-label">Scheduler</span>
           <span className="card-value">{schedulerState}</span>
-          <span className="card-sub">{status?.nextRunAt ? `Next: ${new Date(status.nextRunAt).toLocaleTimeString()}` : "â€”"}</span>
+          <span className="card-sub">{status?.nextRunAt ? `Next: ${new Date(status.nextRunAt).toLocaleTimeString()}` : "-"}</span>
         </div>
         <div className={`crawler-status-card ${isRunning ? "card-running" : "card-ok"}`}>
           <span className="card-label">Crawl Status</span>
@@ -2054,7 +2054,7 @@ function TelegramCrawlerPanel({ session }) {
         </div>
         <div className="crawler-status-card card-ok">
           <span className="card-label">Interval</span>
-          <span className="card-value">{status?.intervalMinutes ?? "â€”"}<small> min</small></span>
+          <span className="card-value">{status?.intervalMinutes ?? "-"}<small> min</small></span>
           <span className="card-sub">Scheduled crawl frequency</span>
         </div>
       </div>
@@ -2064,11 +2064,11 @@ function TelegramCrawlerPanel({ session }) {
           <h4>Last Run Summary</h4>
           <div className="run-stats-grid">
             {[
-              ["Channels", lastRun.channelsProcessed ?? "â€”"],
-              ["Scraped", lastRun.postsScraped ?? "â€”"],
-              ["Created", lastRun.postsCreated ?? "â€”"],
-              ["Skipped", lastRun.postsSkipped ?? "â€”"],
-              ["Errors", lastRun.errors ?? "â€”"],
+              ["Channels", lastRun.channelsProcessed ?? "-"],
+              ["Scraped", lastRun.postsScraped ?? "-"],
+              ["Created", lastRun.postsCreated ?? "-"],
+              ["Skipped", lastRun.postsSkipped ?? "-"],
+              ["Errors", lastRun.errors ?? "-"],
               ["Status", lastRun.status],
             ].map(([k, v]) => (
               <div key={k} className="run-stat-item">
@@ -2082,13 +2082,13 @@ function TelegramCrawlerPanel({ session }) {
 
       {canControl && (
         <div className="crawler-command-bar">
-          <button className="admin-btn primary" onClick={() => control("start", "Start scheduler")} disabled={busy || isOffline || (!status?.paused)}>â–¶ Start</button>
-          <button className="admin-btn danger" onClick={() => control("stop", "Stop scheduler")} disabled={busy || isOffline || status?.paused}>â¹ Stop</button>
+          <button className="admin-btn primary" onClick={() => control("start", "Start scheduler")} disabled={busy || isOffline || (!status?.paused)}>Start</button>
+          <button className="admin-btn danger" onClick={() => control("stop", "Stop scheduler")} disabled={busy || isOffline || status?.paused}>Stop</button>
           <button className="admin-btn accent" onClick={() => control("run-now", "Run now")} disabled={busy || isOffline || isRunning}>
-            {isRunning ? <><span className="spinner-sm" /> Runningâ€¦</> : "âš¡ Run Now"}
+            {isRunning ? <><span className="spinner-sm" /> Running...</> : "Run Now"}
           </button>
-          <button className="admin-btn" onClick={() => { fetchStatus(); fetchLogs(); }} disabled={busy}>â†» Refresh</button>
-          <button className="admin-btn muted" onClick={() => control("logs", "Clear logs", false)} disabled={busy}>ðŸ—‘ Clear Logs</button>
+          <button className="admin-btn" onClick={() => { fetchStatus(); fetchLogs(); }} disabled={busy}>Refresh</button>
+          <button className="admin-btn muted" onClick={() => control("logs", "Clear logs", false)} disabled={busy}>Clear Logs</button>
         </div>
       )}
 
@@ -2180,7 +2180,7 @@ function ManageTelegram({ session }) {
         );
         setSearchResults(res.data.results || []);
         if ((res.data.results || []).length === 0) {
-          setSearchError(`No channel found for "${searchQuery.trim()}". Make sure the username is exact (e.g. bbcnews, not BBC News).`);
+          setSearchError(`No channels found for "${searchQuery.trim()}". Try a different keyword or the channel's username.`);
         }
       } catch (err) {
         setSearchError(err.response?.status === 502
@@ -2190,7 +2190,7 @@ function ManageTelegram({ session }) {
       } finally {
         setSearching(false);
       }
-    }, 600);
+    }, 900);
     return () => clearTimeout(timer);
   }, [searchQuery, searchOpen, session.token]);
 
@@ -2285,15 +2285,15 @@ function ManageTelegram({ session }) {
           <div className="tg-search-modal">
             <div className="tg-search-modal-header">
               <h3>Add Telegram Channel</h3>
-              <button className="tg-search-modal-close" onClick={closeSearch}>âœ•</button>
+              <button className="tg-search-modal-close" onClick={closeSearch}>x</button>
             </div>
             <p className="tg-search-modal-hint">
-              Enter the channel's exact username (e.g. <code>bbcnews</code>, <code>reuters</code>, <code>@durov</code>).
+              Search by channel name, topic, or username in any language (e.g. <code>bbc</code>, <code>reuters</code>, <code>الجزيرة</code>).
             </p>
             <div className="tg-search-bar">
               <input
                 type="text"
-                placeholder="Channel username..."
+                placeholder="Search channels..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 autoFocus
@@ -2323,7 +2323,10 @@ function ManageTelegram({ session }) {
                           <span className="tg-search-result-desc">{r.description.slice(0, 120)}</span>
                         )}
                         {r.subscribers && (
-                          <span className="tg-search-result-subs">{r.subscribers} subscribers</span>
+                          <span className="tg-search-result-subs">{r.subscribers.toLocaleString()} subscribers</span>
+                        )}
+                        {r.hasPublicPreview === false && (
+                          <span className="tg-search-result-warn">⚠ No public preview — posts cannot be scraped</span>
                         )}
                       </div>
                       {alreadyAdded ? (
@@ -2339,7 +2342,7 @@ function ManageTelegram({ session }) {
 
             {searchQuery.trim().length < 2 && (
               <p className="tg-search-empty" style={{ marginTop: "1rem" }}>
-                Type a username to searchâ€¦
+                Type a name or keyword to search…
               </p>
             )}
           </div>
@@ -2400,7 +2403,7 @@ function ManageTelegram({ session }) {
             <div key={p.id} className="tg-post-card">
               <div className="tg-post-header">
                 <span className="tg-post-channel">@{p.channelUsername}</span>
-                <span className="tg-post-date">{p.messageDate ? new Date(p.messageDate).toLocaleString() : "â€”"}</span>
+                <span className="tg-post-date">{p.messageDate ? new Date(p.messageDate).toLocaleString() : "-"}</span>
                 <span className="tg-post-views">{p.viewCount > 0 ? `${p.viewCount} views` : ""}</span>
               </div>
               {editingPostId === p.id ? (
@@ -2436,9 +2439,9 @@ function ManageTelegram({ session }) {
         </div>
         {posts.totalPages > 1 && (
           <div className="tg-posts-pagination">
-            <button className="admin-btn small" disabled={postsPage === 0} onClick={() => setPostsPage(p => p - 1)}>â† Prev</button>
+            <button className="admin-btn small" disabled={postsPage === 0} onClick={() => setPostsPage(p => p - 1)}>{"<- Prev"}</button>
             <span>Page {postsPage + 1} of {posts.totalPages}</span>
-            <button className="admin-btn small" disabled={postsPage >= posts.totalPages - 1} onClick={() => setPostsPage(p => p + 1)}>Next â†’</button>
+            <button className="admin-btn small" disabled={postsPage >= posts.totalPages - 1} onClick={() => setPostsPage(p => p + 1)}>{"Next ->"}</button>
           </div>
         )}
       </div>

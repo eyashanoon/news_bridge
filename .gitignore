@@ -44,3 +44,4 @@ Thumbs.db
 
 # Models (large binary files)
 backend/extractor/content_model/*.pt
+!backend/extractor/content_model/dl_article_model_url_supervised.pt

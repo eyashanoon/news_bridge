@@ -2262,4 +2262,5 @@ select {
 .tg-search-result-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .tg-search-result-desc { font-size: 0.78rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tg-search-result-subs { font-size: 0.72rem; color: #94a3b8; }
+.tg-search-result-warn { font-size: 0.72rem; color: #f59e0b; font-style: italic; }
 .tg-search-added-badge { font-size: 0.75rem; color: #22c55e; font-weight: 600; padding: 4px 10px; border: 1px solid #22c55e44; border-radius: 6px; background: #22c55e11; white-space: nowrap; }
