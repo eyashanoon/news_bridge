@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+langdetect
+keybert
+sentence-transformers
+transformers
+torch
+regex
+
+
+fastapi uvicorn langdetect keybert sentence-transformers transformers torch regex

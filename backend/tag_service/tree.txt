@@ -1,0 +1,22 @@
+news-feed|
+         |_components|
+         |           |_CategoryBar.jsx
+         |           |_ChatWidget.jsx
+         |           |_Feed.jsx
+         |           |_LeftSidebar.jsx
+         |           |_Post.jsx
+         |           |_PostCard.jsx
+         |           |_TopBar.jsx
+         |           |_TopicCard.jsx
+         |           |_TopicPost.jsx
+         |           |_TrendingTopics.jsx
+         |
+         |_utils_____
+         |           |_categoryColors.js
+         |           |_categoryConfig.js
+         |           |_userId.js
+         |
+         |_App.css
+         |_App.jsx
+         |_index.css
+         |_main.jsx
