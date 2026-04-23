@@ -22,6 +22,7 @@ from crawler_service import CrawlerService
 from settings import settings
 from extractor import extract_article
 from checker import is_article
+from post_processor import process_pending_posts
 
 # ─── Log buffer ──────────────────────────────────────────────────────────────
 _LOG_MAX = 500
@@ -119,10 +120,28 @@ def _run_cycle() -> None:
             _run_status = {"running": False, "liveStats": None}
 
 
+def _run_post_processing_cycle() -> None:
+    """Process pending posts for classification and tag extraction every 10 seconds."""
+    try:
+        _push_log("DEBUG", "Starting post-processing cycle...")
+        result = process_pending_posts()
+        classified = result.get("classified", 0)
+        tagged = result.get("tagged", 0)
+        if classified > 0 or tagged > 0:
+            _push_log("INFO", 
+                f"Post-processing completed: {classified} posts classified, {tagged} posts tagged")
+        else:
+            _push_log("DEBUG", "No pending posts to process")
+    except Exception as ex:
+        _push_log("ERROR", f"Post-processing cycle failed: {ex}")
+
+
 @app.on_event("startup")
 def on_startup() -> None:
     global _interval_minutes
     _push_log("INFO", "Crawler server started")
+    
+    # Add the main crawl cycle job
     scheduler.add_job(
         _run_cycle,
         "interval",
@@ -132,7 +151,21 @@ def on_startup() -> None:
         max_instances=1,
         coalesce=True,
     )
+    
+    # Add the post-processing cycle job (every 10 seconds)
+    scheduler.add_job(
+        _run_post_processing_cycle,
+        "interval",
+        seconds=10,
+        id="post-processing-cycle",
+        replace_existing=True,
+        max_instances=1,
+        coalesce=True,
+    )
+    _push_log("INFO", "Post-processing scheduler added (interval: 10 seconds)")
+    
     scheduler.start()
+    _push_log("INFO", "Scheduler started")
 
 
 @app.on_event("shutdown")

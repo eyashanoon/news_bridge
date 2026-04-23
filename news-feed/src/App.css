@@ -584,6 +584,13 @@ select {
   letter-spacing: 0.06em;
 }
 
+.post-time {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .source-link {
   color: #0f766e;
   text-decoration: none;
