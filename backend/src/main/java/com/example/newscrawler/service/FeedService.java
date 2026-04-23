@@ -167,7 +167,10 @@ public class FeedService {
                     item.dislikes,
                     userReaction,
                     tagStrings,
-                    post.getNumImages(), post.getArticle() != null ? post.getArticle().getId() : null
+                    post.getNumImages(),
+                    post.getArticle() != null ? post.getArticle().getId() : null,
+                    post.getArticle() != null ? post.getArticle().getUrl() : null,
+                    post.getArticle() != null ? post.getArticle().getCreatedAt() : null
             ));
         }
 
