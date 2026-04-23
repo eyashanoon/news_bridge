@@ -171,6 +171,7 @@ public class ArticleService {
                 article.getEndpoint().getId(),
                 article.getEndpoint().getUrl(),
                 article.getArticleTitle() != null ? article.getArticleTitle().getTitleText() : null,
+                article.getCreatedAt(),
                 sortedBlockResponses(article)
         );
     }
