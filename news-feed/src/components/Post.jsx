@@ -3,17 +3,47 @@ import { useEffect, useRef, useState } from "react";
 import { categoryColors } from "../utils/categoryColors";
 import { getUserId } from "../utils/userId";
 import PostModal from "./PostModal";
+import PostCommentsModal from "./PostCommentsModal";
 import { apiFetch } from "../utils/apiFetch";
 import { ensureUserInitialized } from "../utils/auth";
 
 export default function Post({ post }) {
   const colors = categoryColors[post.label] || {};
 
+  const formatPublishedAt = (value) => {
+    if (!value) return "";
+
+    const publishedAt = new Date(value);
+    if (Number.isNaN(publishedAt.getTime())) return "";
+
+    const now = new Date();
+    const diffMs = now.getTime() - publishedAt.getTime();
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays >= 7) {
+      return publishedAt.toLocaleString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      });
+    }
+
+    if (diffDays >= 1) return `${diffDays}d ago`;
+    if (diffHours >= 1) return `${diffHours}h ago`;
+    if (diffMinutes >= 1) return `${diffMinutes}m ago`;
+    return "just now";
+  };
+
   const [likesCount, setLikesCount] = useState(post.likes);
   const [dislikesCount, setDislikesCount] = useState(post.dislikes);
   const [reaction, setReaction] = useState(post.userReaction);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
   const postRef = useRef(null);
   const visibleStart = useRef(null);
@@ -84,6 +114,11 @@ export default function Post({ post }) {
     setIsModalOpen(false);
   };
 
+  const openOriginalArticle = () => {
+    if (!post.articleUrl) return;
+    window.open(post.articleUrl, "_blank", "noopener,noreferrer");
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -130,6 +165,7 @@ export default function Post({ post }) {
   };
 
   const placeholderImages = buildPlaceholderImages();
+  const publishedLabel = formatPublishedAt(post.articleCreatedAt);
 
   const renderImages = () => {
     if (numImages <= 0) return null;
@@ -203,8 +239,13 @@ export default function Post({ post }) {
           colors.border || ""
         }`}
       >
-        <div className={`text-xs font-semibold mb-1 ${colors.text || ""}`}>
-          {post.label}
+        <div className="flex items-start justify-between gap-3 mb-1">
+          <div className={`text-xs font-semibold ${colors.text || ""}`}>
+            {post.label}
+          </div>
+          {publishedLabel ? (
+            <div className="text-xs text-gray-400 text-right">{publishedLabel}</div>
+          ) : null}
         </div>
 
         {post.title && (
@@ -266,14 +307,25 @@ export default function Post({ post }) {
             👎 {dislikesCount}
           </button>
 
-          <button className="hover:text-blue-500 transition">💬 Comment</button>
+          <button
+            onClick={() => setIsCommentsOpen(true)}
+            className="hover:text-blue-500 transition"
+          >
+            💬 Comment
+          </button>
 
           <button
             onClick={(e) => {
               e.stopPropagation();
               sendClick();
+              openOriginalArticle();
             }}
-            className="hover:text-blue-500 transition"
+            className={`transition ${
+              post.articleUrl
+                ? "hover:text-blue-500"
+                : "text-gray-300 cursor-not-allowed"
+            }`}
+            disabled={!post.articleUrl}
           >
             🔗 Visit
           </button>
@@ -281,6 +333,9 @@ export default function Post({ post }) {
       </div>
 
       {isModalOpen && <PostModal post={post} onClose={closeModal} />}
+      {isCommentsOpen && (
+        <PostCommentsModal post={post} onClose={() => setIsCommentsOpen(false)} />
+      )}
     </>
   );
 }

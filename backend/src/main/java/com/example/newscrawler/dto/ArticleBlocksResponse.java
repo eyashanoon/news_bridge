@@ -1,6 +1,7 @@
 package com.example.newscrawler.dto;
 
 import java.util.List;
+import java.time.Instant;
 
 public record ArticleBlocksResponse(
         Long articleId,
@@ -9,6 +10,7 @@ public record ArticleBlocksResponse(
         Long endpointId,
         String endpointUrl,
         String title,
+        Instant createdAt,
         List<ArticleBlockResponse> blocks
 ) {
 }

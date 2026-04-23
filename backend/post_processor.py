@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -13,6 +14,14 @@ from langdetect import detect
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
+
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger("post_processor")
 
 
 DB_USER = os.getenv("DB_USERNAME", "news_user")
@@ -249,63 +258,93 @@ def _ensure_post_tags_table() -> None:
 
 
 def process_pending_posts() -> dict[str, int]:
-    summary = {"classified": 0, "tagged": 0}
+    summary = {"classified": 0, "tagged": 0, "errors": 0}
     _ensure_post_tags_table()
+    
+    logger.info("Starting process_pending_posts...")
 
-    with engine.begin() as conn:
-        posts_to_classify = conn.execute(
-            text("SELECT id, text FROM posts WHERE label IS NULL OR TRIM(label) = ''")
-        ).fetchall()
+    try:
+        with engine.begin() as conn:
+            # Fetch and classify posts
+            logger.debug("Fetching posts without classification (label IS NULL)...")
+            posts_to_classify = conn.execute(
+                text("SELECT id, text FROM posts WHERE label IS NULL OR TRIM(label) = ''")
+            ).fetchall()
+            logger.info(f"Found {len(posts_to_classify)} posts to classify")
 
-        for row in posts_to_classify:
-            post_id = row[0]
-            raw_text = row[1] or ""
-            text_clean = clean_text(raw_text)
-            lang = detect_language(text_clean)
+            for row in posts_to_classify:
+                post_id = row[0]
+                raw_text = row[1] or ""
+                text_clean = clean_text(raw_text)
+                lang = detect_language(text_clean)
 
-            if lang == "ar":
-                text_clean = normalize_arabic(text_clean)
+                if lang == "ar":
+                    text_clean = normalize_arabic(text_clean)
 
-            label = _predict_label(text_clean)
-            conn.execute(
-                text("UPDATE posts SET label = :label, lang = :lang WHERE id = :post_id"),
-                {"label": label, "lang": lang, "post_id": post_id},
-            )
-            summary["classified"] += 1
-
-        posts_to_tag = conn.execute(
-            text("SELECT id, text FROM posts WHERE tags_extracted = 0")
-        ).fetchall()
-
-        for row in posts_to_tag:
-            post_id = row[0]
-            raw_text = row[1] or ""
-            text_clean = clean_text(raw_text)
-            lang = detect_language(text_clean)
-
-            if lang == "ar":
-                text_clean = normalize_arabic(text_clean)
-
-            entities = _extract_entities(text_clean, lang)
-            keywords = _extract_keywords(text_clean, lang)
-            scored_tags = _score_tags(text_clean, entities, keywords, lang)
-
-            for tag_result in scored_tags:
-                tag = tag_result["tag"]
                 try:
+                    label = _predict_label(text_clean)
                     conn.execute(
-                        text("INSERT IGNORE INTO post_tags (post_id, tag) VALUES (:post_id, :tag)"),
-                        {"post_id": post_id, "tag": tag},
+                        text("UPDATE posts SET label = :label, lang = :lang WHERE id = :post_id"),
+                        {"label": label, "lang": lang, "post_id": post_id},
                     )
-                except SQLAlchemyError:
+                    summary["classified"] += 1
+                    logger.debug(f"Classified post {post_id}: {label}")
+                except Exception as e:
+                    summary["errors"] += 1
+                    logger.error(f"Error classifying post {post_id}: {e}")
                     continue
 
-            conn.execute(
-                text("UPDATE posts SET tags_extracted = 1 WHERE id = :post_id"),
-                {"post_id": post_id},
-            )
-            summary["tagged"] += 1
+            # Fetch and tag posts
+            logger.debug("Fetching posts without tags (tags_extracted = 0)...")
+            posts_to_tag = conn.execute(
+                text("SELECT id, text FROM posts WHERE tags_extracted = 0")
+            ).fetchall()
+            logger.info(f"Found {len(posts_to_tag)} posts to tag")
 
+            for row in posts_to_tag:
+                post_id = row[0]
+                raw_text = row[1] or ""
+                text_clean = clean_text(raw_text)
+                lang = detect_language(text_clean)
+
+                if lang == "ar":
+                    text_clean = normalize_arabic(text_clean)
+
+                try:
+                    entities = _extract_entities(text_clean, lang)
+                    keywords = _extract_keywords(text_clean, lang)
+                    scored_tags = _score_tags(text_clean, entities, keywords, lang)
+
+                    tag_count = 0
+                    for tag_result in scored_tags:
+                        tag = tag_result["tag"]
+                        try:
+                            conn.execute(
+                                text("INSERT IGNORE INTO post_tags (post_id, tag) VALUES (:post_id, :tag)"),
+                                {"post_id": post_id, "tag": tag},
+                            )
+                            tag_count += 1
+                        except SQLAlchemyError as e:
+                            logger.warning(f"Error inserting tag {tag} for post {post_id}: {e}")
+                            continue
+
+                    conn.execute(
+                        text("UPDATE posts SET tags_extracted = 1 WHERE id = :post_id"),
+                        {"post_id": post_id},
+                    )
+                    summary["tagged"] += 1
+                    logger.debug(f"Tagged post {post_id} with {tag_count} tags")
+                except Exception as e:
+                    summary["errors"] += 1
+                    logger.error(f"Error tagging post {post_id}: {e}")
+                    continue
+                    
+    except Exception as ex:
+        logger.error(f"Critical error in process_pending_posts: {ex}")
+        summary["errors"] += 1
+        
+    logger.info(f"process_pending_posts completed: classified={summary['classified']}, "
+                f"tagged={summary['tagged']}, errors={summary['errors']}")
     return summary
 
 
