@@ -2,11 +2,15 @@ package com.example.newscrawler.controller;
 
 import com.example.newscrawler.dto.PostDTO;
 import com.example.newscrawler.dto.CreatePostRequest;
+import com.example.newscrawler.dto.MediaItemResponse;
+import com.example.newscrawler.dto.ArticleContentResponse;
+import com.example.newscrawler.dto.PostByTagResponse;
 import com.example.newscrawler.entity.Post;
 import com.example.newscrawler.entity.ReactionType;
 import com.example.newscrawler.entity.AppUser;
 import com.example.newscrawler.service.PostReactionService;
 import com.example.newscrawler.service.PostService;
+import com.example.newscrawler.service.ArticleService;
 import com.example.newscrawler.service.AppUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -22,13 +26,16 @@ public class PostController {
 
     private final PostService postService;
     private final PostReactionService reactionService;
+    private final ArticleService articleService;
     private final AppUserService AppUserService;
 
     public PostController(PostService postService,
                           PostReactionService reactionService,
+                          ArticleService articleService,
                           AppUserService AppUserService) {
         this.postService = postService;
         this.reactionService = reactionService;
+        this.articleService = articleService;
         this.AppUserService = AppUserService;
     }
 
@@ -49,6 +56,34 @@ public class PostController {
     public List<Post> getPostsByArticleId(@PathVariable Long articleId) {
         return postService.findByArticleId(articleId);
     }
+
+    @GetMapping("/{id}/media")
+    public List<MediaItemResponse> getMediaByPostId(@PathVariable Long id) {
+        Post post = postService.findById(id);
+        if (post.getArticle() == null) {
+            return List.of();
+        }
+        return articleService.findMediaById(post.getArticle().getId());
+    }
+
+    @GetMapping("/{id}/content")
+    public ArticleContentResponse getContentByPostId(@PathVariable Long id) {
+        Post post = postService.findById(id);
+        if (post.getArticle() == null) {
+            return new ArticleContentResponse(List.of());
+        }
+        return articleService.findContentById(post.getArticle().getId());
+    }
+
+    @GetMapping("/by-tags")
+    public ResponseEntity<List<PostByTagResponse>> getPostsByTags(@RequestParam List<String> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<PostByTagResponse> posts = postService.findPostsByTags(tags);
+        return ResponseEntity.ok(posts);
+    }
+
 /*
     @PutMapping("/{id}/react")
     public ResponseEntity<?> reactToPost(

@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.example.newscrawler.dto.ArticleBlockResponse;
 import com.example.newscrawler.dto.ArticleBlocksResponse;
+import com.example.newscrawler.dto.ArticleContentResponse;
 import com.example.newscrawler.dto.ArticleListItemResponse;
 import com.example.newscrawler.dto.ArticleResponse;
 import com.example.newscrawler.dto.CreateArticleRequest;
@@ -88,6 +89,16 @@ public class ArticleController {
     @PreAuthorize("hasRole('READ_ARTICLE')")
     public ArticleBlocksResponse getBlocksById(@PathVariable Long id) {
         return articleService.findBlocksById(id);
+    }
+
+    @GetMapping("/{id}/media")
+    public java.util.List<com.example.newscrawler.dto.MediaItemResponse> getMediaById(@PathVariable Long id) {
+        return articleService.findMediaById(id);
+    }
+
+    @GetMapping("/{id}/content")
+    public ArticleContentResponse getContentById(@PathVariable Long id) {
+        return articleService.findContentById(id);
     }
 
     @PutMapping("/{id}")

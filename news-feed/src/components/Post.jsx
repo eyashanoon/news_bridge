@@ -7,7 +7,7 @@ import PostCommentsModal from "./PostCommentsModal";
 import { apiFetch } from "../utils/apiFetch";
 import { ensureUserInitialized } from "../utils/auth";
 
-export default function Post({ post }) {
+export default function Post({ post, onAskAI}) {
   const colors = categoryColors[post.label] || {};
 
   const formatPublishedAt = (value) => {
@@ -41,6 +41,7 @@ export default function Post({ post }) {
   const [likesCount, setLikesCount] = useState(post.likes);
   const [dislikesCount, setDislikesCount] = useState(post.dislikes);
   const [reaction, setReaction] = useState(post.userReaction);
+  const [media, setMedia] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
@@ -154,9 +155,30 @@ export default function Post({ post }) {
 
   const numImages = post.numImages || 0;
 
+  useEffect(() => {
+    // try to load media (images/videos) for the related article from the backend
+    const loadMedia = async () => {
+      if (!post.articleId) return;
+
+      try {
+        const res = await apiFetch(`/api/posts/${post.id}/media`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Expect data to be an array of { type: 'image'|'video', url: string }
+        if (Array.isArray(data)) setMedia(data);
+      } catch (err) {
+        console.error('Failed to load media', err);
+      }
+    };
+
+    loadMedia();
+  }, [post.articleId]);
+
   const buildPlaceholderImages = () => {
     const placeholders = [];
-    for (let i = 1; i <= numImages; i++) {
+    const count = media && Array.isArray(media) ? media.length : numImages;
+    for (let i = 1; i <= count; i++) {
       placeholders.push(
         "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE="
       );
@@ -168,64 +190,68 @@ export default function Post({ post }) {
   const publishedLabel = formatPublishedAt(post.articleCreatedAt);
 
   const renderImages = () => {
-    if (numImages <= 0) return null;
+    const items = media && Array.isArray(media) ? media : placeholderImages.map((u) => ({ type: 'image', url: u }));
+    const count = items.length;
 
-    if (numImages === 1) {
+    if (count <= 0) return null;
+
+    const renderMediaElement = (item, idx, extraCount) => {
+      if (item.type === 'video') {
+        return (
+          <video
+            key={idx}
+            src={item.url}
+            controls
+            className="w-full rounded-lg object-cover h-48 bg-black"
+          />
+        );
+      }
+
+      const common = {
+        key: idx,
+        src: item.url,
+        alt: 'post',
+        className: 'w-full rounded-lg object-cover h-48',
+      };
+
+      if (idx === 2 && extraCount > 0) {
+        return (
+          <div key={idx} className="relative">
+            <img {...common} className="w-full rounded-lg object-cover h-48 brightness-50" />
+            <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-2xl">
+              +{extraCount}
+            </div>
+          </div>
+        );
+      }
+
+      return <img {...common} />;
+    };
+
+    if (count === 1) {
       return (
         <div className="mt-4">
-          <img
-            src={placeholderImages[0]}
-            alt="post"
-            className="w-full rounded-lg object-cover max-h-80"
-          />
+          {items[0].type === 'video' ? (
+            <video src={items[0].url} controls className="w-full rounded-lg object-cover max-h-80" />
+          ) : (
+            <img src={items[0].url} alt="post" className="w-full rounded-lg object-cover max-h-80" />
+          )}
         </div>
       );
     }
 
-    if (numImages === 2) {
+    if (count === 2) {
       return (
         <div className="mt-4 grid grid-cols-2 gap-2">
-          {placeholderImages.slice(0, 2).map((img, idx) => (
-            <img
-              key={idx}
-              src={img}
-              alt="post"
-              className="w-full rounded-lg object-cover h-48"
-            />
-          ))}
+          {items.slice(0, 2).map((it, idx) => renderMediaElement(it, idx, 0))}
         </div>
       );
     }
 
+    const extraCount = Math.max(0, count - 3);
     return (
       <div className="mt-4 grid grid-cols-3 gap-2">
-        {placeholderImages.slice(0, 3).map((img, idx) => {
-          const extraCount = numImages - 3;
-
-          if (idx === 2 && extraCount > 0) {
-            return (
-              <div key={idx} className="relative">
-                <img
-                  src={img}
-                  alt="post"
-                  className="w-full rounded-lg object-cover h-48 brightness-50"
-                />
-                <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-2xl">
-                  +{extraCount}
-                </div>
-              </div>
-            );
-          }
-
-          return (
-            <img
-              key={idx}
-              src={img}
-              alt="post"
-              className="w-full rounded-lg object-cover h-48"
-            />
-          );
-        })}
+        {items.slice(0, 3).map((it, idx) => renderMediaElement(it, idx, extraCount))}
       </div>
     );
   };
@@ -312,6 +338,27 @@ export default function Post({ post }) {
             className="hover:text-blue-500 transition"
           >
             💬 Comment
+          </button>
+
+          <button
+            onClick={async (e) => {
+              e.stopPropagation();
+
+              if (!onAskAI) return;
+
+              onAskAI(post);
+
+              try {
+                await fetch(`http://localhost:9000/ingest/post/${post.id}`, {
+                  method: "POST",
+                });
+              } catch (err) {
+                console.error("Failed to ingest post into AI", err);
+              }
+            }}
+            className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 font-semibold hover:bg-purple-200 transition"
+          >
+            🤖 Ask AI
           </button>
 
           <button
