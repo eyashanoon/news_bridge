@@ -5,10 +5,10 @@ import { getUserId } from "../utils/userId";
 import { apiFetch } from "../utils/apiFetch";
 import { ensureUserInitialized } from "../utils/auth";
 
-export default function Feed({ category }) {
+export default function Feed({ category, onAskAI }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(0);  
   const [hasMore, setHasMore] = useState(true);
 
   const loader = useRef(null);
@@ -77,7 +77,7 @@ export default function Feed({ category }) {
   return (
     <div className="space-y-4 p-2">
       {posts.map((post) => (
-        <Post key={post.id} post={post} />
+        <Post key={post.id} post={post} onAskAI={onAskAI}/>
       ))}
 
       <div ref={loader} className="text-center p-4">

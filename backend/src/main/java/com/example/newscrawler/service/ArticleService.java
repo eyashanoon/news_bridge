@@ -16,6 +16,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.newscrawler.dto.ArticleBlockResponse;
 import com.example.newscrawler.dto.ArticleBlocksResponse;
+import com.example.newscrawler.dto.ArticleContentItemResponse;
+import com.example.newscrawler.dto.ArticleContentResponse;
+import com.example.newscrawler.dto.MediaItemResponse;
 import com.example.newscrawler.dto.ArticleListItemResponse;
 import com.example.newscrawler.dto.ArticleResponse;
 import com.example.newscrawler.dto.CreateArticleBlockRequest;
@@ -324,6 +327,33 @@ public class ArticleService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public java.util.List<MediaItemResponse> findMediaById(Long id) {
+        Article article = findArticle(id);
+        return article.getBlocks().stream()
+            .sorted(Comparator.comparing(ArticleBlock::getSortOrder)
+                .thenComparing(block -> block.getId() == null ? Long.MAX_VALUE : block.getId()))
+            .filter(b -> b.getBlockType() == ArticleBlockType.IMAGE || b.getBlockType() == ArticleBlockType.VIDEO)
+            .map(b -> new MediaItemResponse(
+                b.getBlockType() == ArticleBlockType.VIDEO ? "video" : "image",
+                b.getMediaUrl(),
+                b.getAltText()
+            ))
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ArticleContentResponse findContentById(Long id) {
+        Article article = findArticle(id);
+        List<ArticleContentItemResponse> content = article.getBlocks().stream()
+            .sorted(Comparator.comparing(ArticleBlock::getSortOrder)
+                .thenComparing(block -> block.getId() == null ? Long.MAX_VALUE : block.getId()))
+            .map(this::toContentItem)
+            .filter(item -> item != null)
+            .toList();
+        return new ArticleContentResponse(content);
+    }
+
     private ArticleListItemResponse toListItem(Article article) {
         return new ArticleListItemResponse(
                 article.getId(),
@@ -356,5 +386,37 @@ public class ArticleService {
                 block.getScore(),
                 block.getCreatedAt()
         );
+    }
+
+    private ArticleContentItemResponse toContentItem(ArticleBlock block) {
+        if (block.getBlockType() == ArticleBlockType.TEXT) {
+            String text = block.getTextContent();
+            if (text == null || text.isBlank()) {
+                return null;
+            }
+            return new ArticleContentItemResponse(
+                "paragraph",
+                text,
+                null,
+                null,
+                block.getSortOrder()
+            );
+        }
+
+        if (block.getBlockType() == ArticleBlockType.IMAGE || block.getBlockType() == ArticleBlockType.VIDEO) {
+            String mediaUrl = block.getMediaUrl();
+            if (mediaUrl == null || mediaUrl.isBlank()) {
+                return null;
+            }
+            return new ArticleContentItemResponse(
+                "media",
+                null,
+                mediaUrl,
+                block.getBlockType() == ArticleBlockType.VIDEO ? "video" : "image",
+                block.getSortOrder()
+            );
+        }
+
+        return null;
     }
 }
