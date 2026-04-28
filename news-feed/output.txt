@@ -1,0 +1,381 @@
+// ../backend/ai-assistant-service/config.py
+import os
+
+BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://localhost:8080/api")
+BACKEND_TOKEN = os.getenv("BACKEND_TOKEN", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxMCIsInR5cGUiOiJSRUdJU1RFUkVEIiwicm9sZXMiOltdLCJpYXQiOjE3NzcwMzI4MzQsImV4cCI6MTc3NzExOTIzNCwiZW1haWwiOiJzMTIxMTYyNzRAc3R1Lm5hamFoLmVkdSIsImNyZWF0ZWRBdCI6MTc3NzAzMjIyOTM4Nn0.aEc8LK3fDTOPrY-chbv0LKEmpPzthO3ImQksJV421ivSBbdPCPrFcXAAsCRu71kHfvaYMo_CeKTjT6l1fnbrXw")
+
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
+
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
+LLM_MODEL = os.getenv("LLM_MODEL", "llama3.2:3b")
+
+
+
+// ../backend/ai-assistant-service/main.py
+from fastapi import FastAPI, Header, HTTPException
+from pydantic import BaseModel
+
+from router import route_request
+from logic.post_logic import summarize_post
+from logic.topic_logic import topic_search
+from core.llm import generate
+
+from ingestion.fetcher import fetch_post_content
+
+app = FastAPI()
+
+
+class QueryRequest(BaseModel):
+    question: str
+    postId: int | None = None
+    type: str | None = None
+    tags: list[str] = []
+    top_k: int = 5
+
+
+@app.post("/query")
+def query(req: QueryRequest, authorization: str = Header(None)):
+
+    intent = route_request(req.dict())
+
+    if intent in ["POST_SUMMARY", "POST_QA"] and not req.postId:
+    return {
+        "answer": "I can only answer this question if a specific post is selected. Please try again from the post.",
+        "error": "MISSING_POST_CONTEXT",
+        "sources": []
+    }
+
+    # -------------------------
+    # CASE 1: POST SUMMARY
+    # -------------------------
+    if intent == "POST_SUMMARY":
+        return {
+            "answer": summarize_post(fetch_post_content, req.postId),
+            "sources": [{"postId": req.postId}]
+        }
+
+    # -------------------------
+    # CASE 2: POST Q&A
+    # -------------------------
+    if intent == "POST_QA":
+        content = fetch_post_content(req.postId)
+
+        answer = generate(req.question, [{
+            "postId": req.postId,
+            "text": str(content)
+        }])
+
+        return {"answer": answer, "sources": [{"postId": req.postId}]}
+
+    # -------------------------
+    # CASE 3: TOPIC SEARCH
+    # -------------------------
+    if intent == "TOPIC_SEARCH":
+        results = topic_search(None, req.question, req.tags)
+
+        if not results:
+            return {
+                "answer": "I couldn't find enough information on this topic.",
+                "sources": []
+            }
+
+        answer = generate(req.question, results)
+
+        return {"answer": answer, "sources": results}
+
+    # -------------------------
+    # CASE 4: GENERAL RAG
+    # -------------------------
+    results = topic_search(None, req.question, req.tags)
+
+    if not results:
+        return {
+            "answer": "I don't have enough information.",
+            "sources": []
+        }
+
+    answer = generate(req.question, results)
+
+    return {"answer": answer, "sources": results}
+
+
+
+// ../backend/ai-assistant-service/router.py
+def route_request(req: dict):
+    """
+    Decides what the user actually wants.
+    """
+
+    question = req.get("question", "")
+    post_id = req.get("postId")
+
+    q = question.lower()
+
+    # 1. POST-BASED REQUESTS
+    if post_id:
+        if any(x in q for x in ["summarize", "what does this say", "explain", "tl;dr"]):
+            return "POST_SUMMARY"
+
+        return "POST_QA"
+
+    # 2. TOPIC SEARCH
+    if any(x in q for x in ["what is", "tell me about", "news about", "who is", "why"]):
+        return "TOPIC_SEARCH"
+
+    # 3. GENERAL SEARCH
+    return "GENERAL_RAG"
+
+
+
+// ../backend/ai-assistant-service/core/embedder.py
+import requests
+import numpy as np
+from config import OLLAMA_URL, EMBEDDING_MODEL
+
+def embed(text: str) -> np.ndarray:
+    url = f"{OLLAMA_URL}/api/embeddings"
+
+    res = requests.post(url, json={
+        "model": EMBEDDING_MODEL,
+        "prompt": text
+    })
+
+    res.raise_for_status()
+    data = res.json()
+
+    embedding = data.get("embedding") or data.get("embeddings")[0]
+
+    vec = np.array(embedding, dtype=np.float32)
+
+    # normalize for cosine similarity
+    norm = np.linalg.norm(vec)
+    if norm > 0:
+        vec = vec / norm
+
+    return vec
+
+
+
+// ../backend/ai-assistant-service/core/llm.py
+import requests
+from config import OLLAMA_URL, LLM_MODEL
+
+def generate(question: str, context: list[dict]) -> str:
+    context_text = "\n\n".join(
+        [f"[Post {c['postId']}] {c['text']}" for c in context]
+    )
+
+    prompt = f"""
+You are a news assistant.
+
+Use ONLY the context below.
+
+If not enough information, say: "I don't have enough information."
+
+Context:
+{context_text}
+
+Question:
+{question}
+
+Answer clearly and concisely:
+"""
+
+    res = requests.post(f"{OLLAMA_URL}/api/generate", json={
+        "model": LLM_MODEL,
+        "prompt": prompt,
+        "stream": False
+    })
+
+    res.raise_for_status()
+    return res.json()["response"].strip()
+
+
+
+// ../backend/ai-assistant-service/ingestion/fetcher.py
+import requests
+from config import BACKEND_BASE_URL, BACKEND_TOKEN
+
+headers = {"Authorization": f"Bearer {BACKEND_TOKEN}"}
+
+def fetch_posts_by_tags(tags):
+    res = requests.get(
+        f"{BACKEND_BASE_URL}/posts/by-tags",
+        headers=headers,
+        params=[("tags", t) for t in tags]
+    )
+    res.raise_for_status()
+    return res.json()
+
+def fetch_post_content(post_id):
+    res = requests.get(
+        f"{BACKEND_BASE_URL}/posts/{post_id}/content",
+        headers=headers
+    )
+    res.raise_for_status()
+    return res.json()
+
+
+
+// ../backend/ai-assistant-service/ingestion/processor.py
+import re
+
+def merge_paragraphs(content_json: dict) -> str:
+    parts = content_json.get("content", [])
+    return "\n\n".join(
+        p.get("text", "").strip()
+        for p in parts
+        if p.get("type") == "paragraph"
+    )
+
+def chunk_text(text: str, size=250, overlap=50):
+    words = text.split()
+    chunks = []
+
+    i = 0
+    while i < len(words):
+        chunk = words[i:i+size]
+        chunks.append(" ".join(chunk))
+        i += size - overlap
+
+    return chunks
+
+
+
+// ../backend/ai-assistant-service/logic/post_logic.py
+import requests
+from config import OLLAMA_URL, LLM_MODEL
+from ingestion.processor import merge_paragraphs
+
+def summarize_post(fetch_post_content, post_id):
+    content = fetch_post_content(post_id)
+    text = merge_paragraphs(content)
+
+    prompt = f"""
+You are a news assistant.
+
+Summarize this article clearly and simply:
+
+{text}
+
+Summary:
+"""
+
+    res = requests.post(f"{OLLAMA_URL}/api/generate", json={
+        "model": LLM_MODEL,
+        "prompt": prompt,
+        "stream": False
+    })
+
+    res.raise_for_status()
+    return res.json()["response"].strip()
+
+
+
+// ../backend/ai-assistant-service/logic/topic_logic.py
+from rag.search import search
+from ingestion.fetcher import fetch_posts_by_tags
+
+def topic_search(store, question, tags=None):
+    """
+    Smart retrieval:
+    1. vector search
+    2. tag-based expansion
+    3. recency-aware filtering (IMPORTANT)
+    """
+
+    results = search(store, question, top_k=5)
+
+    # expand using tags if available
+    if tags:
+        extra = fetch_posts_by_tags(tags)
+
+        # recency weighting (IMPORTANT YOU MENTIONED)
+        filtered = []
+        for p in extra:
+            age_score = p.get("timestamp", 0)
+
+            # ignore very old posts
+            if age_score < 30:  # example threshold (days)
+                filtered.append(p)
+
+        results.extend(filtered)
+
+    # deduplicate
+    seen = set()
+    unique = []
+
+    for r in results:
+        key = (r["postId"], r["text"])
+        if key not in seen:
+            seen.add(key)
+            unique.append(r)
+
+    return unique
+
+
+
+// ../backend/ai-assistant-service/rag/search.py
+from core.embedder import embed
+
+def search(store, question, top_k=5):
+    q = embed(question)
+    return store.search(q, top_k)
+
+
+
+// ../backend/ai-assistant-service/rag/store.py
+import faiss
+import numpy as np
+import json
+import os
+
+class VectorStore:
+    def __init__(self, dim: int):
+        self.index = faiss.IndexFlatIP(dim)
+        self.meta = []
+
+    def add(self, embedding, metadata):
+        embedding = np.array([embedding], dtype=np.float32)
+
+        self.index.add(embedding)
+        self.meta.append(metadata)
+
+    def search(self, query_vec, top_k=5):
+        query_vec = np.array([query_vec], dtype=np.float32)
+
+        scores, idxs = self.index.search(query_vec, top_k)
+
+        results = []
+        for i in idxs[0]:
+            if i == -1:
+                continue
+            results.append(self.meta[i])
+
+        return results
+
+
+
+// ../backend/ai-assistant-service/rag/ingest.py
+from core.embedder import embed
+from ingestion.processor import merge_paragraphs, chunk_text
+from ingestion.fetcher import fetch_posts_by_tags, fetch_post_content
+
+def ingest(store, tags):
+    posts = fetch_posts_by_tags(tags)
+
+    for post in posts:
+        content = fetch_post_content(post["postId"])
+        text = merge_paragraphs(content)
+
+        for chunk in chunk_text(text):
+            vec = embed(chunk)
+
+            store.add(vec, {
+                "postId": post["postId"],
+                "tag": post["tag"],
+                "text": chunk
+            })
+
+
+

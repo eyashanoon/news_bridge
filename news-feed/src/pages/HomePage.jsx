@@ -8,7 +8,8 @@ import TrendingTopics from "../components/TrendingTopics";
 
 export default function HomePage() {
   const [category, setCategory] = useState("General");
-  const [activePage, setActivePage] = useState("HOME");
+  const [activePage, setActivePage] = useState("HOME")
+  const [selectedPost, setSelectedPost] = useState(null);;
 
   return (
     <div className="bg-gray-100 h-screen flex flex-col transition-colors duration-300">
@@ -23,7 +24,7 @@ export default function HomePage() {
         </div>
 
         <div className="col-span-12 md:col-span-6 h-full overflow-y-auto">
-          {activePage === "HOME" && <Feed category={category} />}
+          {activePage === "HOME" && <Feed category={category} onAskAI={setSelectedPost} />}
           {activePage === "TRENDING" && <TrendingTopics />}
 
           {activePage === "SAVED" && (
@@ -39,7 +40,7 @@ export default function HomePage() {
         </div>
 
         <div className="col-span-3 hidden md:block">
-          <ChatWidget category={category} />
+          <ChatWidget category={category} selectedPost={selectedPost} />
         </div>
       </div>
     </div>
