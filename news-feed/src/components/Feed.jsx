@@ -21,10 +21,16 @@ export default function Feed({ category, onAskAI }) {
 
       await ensureUserInitialized();
       const userId = getUserId();
+      const savedLocation = localStorage.getItem('user_location');
+      
+      let url = `/api/feed?userId=${userId}&category=${category}&limit=10&page=${page}`;
+      
+      if (savedLocation) {
+        const loc = JSON.parse(savedLocation);
+        url += `&lat=${loc.lat}&lon=${loc.lon}`;
+      }
 
-      const res = await apiFetch(
-        `/api/feed?userId=${userId}&category=${category}&limit=10&page=${page}`
-      );
+      const res = await apiFetch(url);
 
       if (!res.ok) throw new Error("Failed to fetch feed");
 
