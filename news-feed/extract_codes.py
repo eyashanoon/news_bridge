@@ -1,7 +1,7 @@
 import os
 
 def collect_code(root_dir, output_file):
-    extensions = {'.py'}
+    extensions = {'.js', '.jsx', '.css'}
 
     with open(output_file, 'w', encoding='utf-8') as out:
         for dirpath, _, filenames in os.walk(root_dir):
@@ -26,7 +26,7 @@ def collect_code(root_dir, output_file):
                     out.write("\n\n\n")  # spacing between files
 
 if __name__ == "__main__":
-    root_directory = "../backend/ai-assistant-service"
+    root_directory = "src"
     output_file = "output.txt"
 
     collect_code(root_directory, output_file)

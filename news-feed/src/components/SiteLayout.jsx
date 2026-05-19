@@ -1,8 +1,10 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useSession } from "../context/SessionContext";
+import { useTheme } from "../context/ThemeContext";
 
 export default function SiteLayout() {
   const { session, logout } = useSession();
+  const { darkMode, toggleDarkMode } = useTheme();
   const nav = useNavigate();
 
   const isLimited = session?.type === "PRIMITIVE" || !session?.type;
@@ -51,12 +53,21 @@ export default function SiteLayout() {
     <div className="app-layout">
       <header className="app-header">
         <div className="app-logo">
-            <Link to="/news">News Platform</Link>
+            <Link to="/news">NewsBridge</Link>
         </div>
 
         {renderNavLinks()}
 
         <div className="app-auth">
+          {/* Dark mode toggle */}
+          <button
+            onClick={toggleDarkMode}
+            className="theme-toggle-btn"
+            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {darkMode ? "☀️" : "🌙"}
+          </button>
+
           {isLimited ? (
             <div className="auth-buttons">
               <Link to="/auth/login" className="btn-login">Sign In</Link>

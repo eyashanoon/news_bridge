@@ -32,8 +32,8 @@ public class FeedController {
 
     @GetMapping("/feed")
     public ResponseEntity<List<FeedPostDTO>> getFeed(
-            @RequestParam String userId,
-            @RequestParam String category,
+            @RequestParam(defaultValue = "android-app-anonymous") String userId,
+            @RequestParam(defaultValue = "general") String category,
             @RequestParam(defaultValue = "10") int limit,
             @RequestParam(defaultValue = "0") int page
     ) {

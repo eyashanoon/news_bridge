@@ -8,7 +8,7 @@ import { ensureUserInitialized } from "../utils/auth";
 export default function Feed({ category, onAskAI }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);  
+  const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
   const loader = useRef(null);
@@ -22,9 +22,9 @@ export default function Feed({ category, onAskAI }) {
       await ensureUserInitialized();
       const userId = getUserId();
       const savedLocation = localStorage.getItem('user_location');
-      
+
       let url = `/api/feed?userId=${userId}&category=${category}&limit=10&page=${page}`;
-      
+
       if (savedLocation) {
         const loc = JSON.parse(savedLocation);
         url += `&lat=${loc.lat}&lon=${loc.lon}`;
@@ -81,12 +81,12 @@ export default function Feed({ category, onAskAI }) {
   }, [fetchPosts]);
 
   return (
-    <div className="space-y-4 p-2">
+    <div className="flex flex-col gap-4 stagger">
       {posts.map((post) => (
         <Post key={post.id} post={post} onAskAI={onAskAI}/>
       ))}
 
-      <div ref={loader} className="text-center p-4">
+      <div ref={loader} className="text-center py-6 text-sm text-gray-400 font-medium">
         {loading
           ? "Loading..."
           : hasMore
