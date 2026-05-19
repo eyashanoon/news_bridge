@@ -1,29 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CategoryBar from "../components/CategoryBar";
 import LeftSidebar from "../components/LeftSidebar";
 import ChatWidget from "../components/ChatWidget";
 import Feed from "../components/Feed";
 import TrendingTopics from "../components/TrendingTopics";
+import SavedNews from "../components/SavedNews";
+import NewsBrief from "../components/NewsBrief";
+import { useTheme } from "../context/ThemeContext";
 
 export default function HomePage() {
-  const [category, setCategory] = useState("General");
+  const { currentCategory, setCurrentCategory } = useTheme();
   const [activePage, setActivePage] = useState("HOME")
   const [selectedPost, setSelectedPost] = useState(null);
   const [feedKey, setFeedKey] = useState(0);
 
   const handleLocationChange = () => {
-    // Refresh feed when location changes
     setFeedKey(prev => prev + 1);
   };
 
+  // Reset to General theme when navigating away from feed
+  useEffect(() => {
+    if (activePage !== "HOME") {
+      setCurrentCategory("General");
+    }
+  }, [activePage, setCurrentCategory]);
+
   return (
-    <div className="bg-gray-100 h-screen flex flex-col transition-colors duration-300">
+    <div className="home-layout" style={{
+      background: "var(--cat-bg, #f0f4f9)",
+      backgroundImage: "none",
+    }}>
       {activePage === "HOME" && (
-        <CategoryBar category={category} setCategory={setCategory} />
+        <CategoryBar category={currentCategory} setCategory={setCurrentCategory} />
       )}
 
-      <div className="grid grid-cols-12 gap-4 w-full max-w-7xl mx-auto flex-1 overflow-hidden mt-2">
-        <div className="col-span-3 hidden md:block">
+      <div className="home-grid">
+        <div className="home-sidebar">
           <LeftSidebar 
             activePage={activePage} 
             setActivePage={setActivePage} 
@@ -31,24 +43,16 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="col-span-12 md:col-span-6 h-full overflow-y-auto">
-          {activePage === "HOME" && <Feed key={feedKey} category={category} onAskAI={setSelectedPost} />}
+        <div className="home-feed">
+          {activePage === "HOME" && <Feed key={feedKey} category={currentCategory} onAskAI={setSelectedPost} />}
           {activePage === "TRENDING" && <TrendingTopics />}
 
-          {activePage === "SAVED" && (
-            <div className="p-4">
-              <div className="bg-white rounded-xl shadow p-4">
-                <h1 className="text-xl font-bold">💾 Saved News</h1>
-                <p className="text-gray-500 mt-2">
-                  This page will show saved posts later.
-                </p>
-              </div>
-            </div>
-          )}
+          {activePage === "SAVED" && <SavedNews />}
         </div>
 
-        <div className="col-span-3 hidden md:block">
-          <ChatWidget category={category} selectedPost={selectedPost} />
+        <div className="home-right">
+          <NewsBrief />
+          <ChatWidget category={currentCategory} selectedPost={selectedPost} />
         </div>
       </div>
     </div>

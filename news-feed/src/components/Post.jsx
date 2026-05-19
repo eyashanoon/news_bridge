@@ -1,21 +1,23 @@
 // Post.jsx
 import { useEffect, useRef, useState } from "react";
-import { categoryColors } from "../utils/categoryColors";
+import { categoryColors, categoryTheme } from "../utils/categoryColors";
 import { getUserId } from "../utils/userId";
 import PostModal from "./PostModal";
 import PostCommentsModal from "./PostCommentsModal";
 import { apiFetch } from "../utils/apiFetch";
 import { ensureUserInitialized } from "../utils/auth";
+import { savePost, unsavePost, isPostSaved } from "../utils/savedPosts";
+import { useTheme } from "../context/ThemeContext";
 
-export default function Post({ post, onAskAI}) {
+export default function Post({ post, onAskAI }) {
   const colors = categoryColors[post.label] || {};
+  const { darkMode } = useTheme();
+  const postTheme = categoryTheme[post.label]?.[darkMode ? "dark" : "light"] || categoryTheme.General[darkMode ? "dark" : "light"];
 
   const formatPublishedAt = (value) => {
     if (!value) return "";
-
     const publishedAt = new Date(value);
     if (Number.isNaN(publishedAt.getTime())) return "";
-
     const now = new Date();
     const diffMs = now.getTime() - publishedAt.getTime();
     const diffMinutes = Math.floor(diffMs / (1000 * 60));
@@ -31,7 +33,6 @@ export default function Post({ post, onAskAI}) {
         minute: "2-digit",
       });
     }
-
     if (diffDays >= 1) return `${diffDays}d ago`;
     if (diffHours >= 1) return `${diffHours}h ago`;
     if (diffMinutes >= 1) return `${diffMinutes}m ago`;
@@ -45,6 +46,7 @@ export default function Post({ post, onAskAI}) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(() => isPostSaved(post.id));
 
   const postRef = useRef(null);
   const visibleStart = useRef(null);
@@ -53,22 +55,17 @@ export default function Post({ post, onAskAI}) {
   const react = async (type) => {
     await ensureUserInitialized();
     const userId = getUserId();
-
     const res = await apiFetch(
       `/api/posts/${post.id}/react?userId=${userId}&type=${type}`,
       { method: "PUT" }
     );
-
     if (!res.ok) {
       console.error("React failed");
       return;
     }
-
     const data = await res.json();
-
     setLikesCount(data.likes);
     setDislikesCount(data.dislikes);
-
     if (data.status === "REMOVED") {
       setReaction(null);
     } else {
@@ -79,10 +76,8 @@ export default function Post({ post, onAskAI}) {
   const sendView = async () => {
     if (viewSent.current) return;
     viewSent.current = true;
-
     await ensureUserInitialized();
     const userId = getUserId();
-
     await apiFetch(`/api/posts/${post.id}/view?userId=${userId}`, {
       method: "POST",
     });
@@ -91,7 +86,6 @@ export default function Post({ post, onAskAI}) {
   const sendTimeSpent = async (seconds) => {
     await ensureUserInitialized();
     const userId = getUserId();
-
     await apiFetch(
       `/api/posts/${post.id}/time?userId=${userId}&seconds=${seconds}`,
       { method: "POST" }
@@ -101,7 +95,6 @@ export default function Post({ post, onAskAI}) {
   const sendClick = async () => {
     await ensureUserInitialized();
     const userId = getUserId();
-
     await apiFetch(`/api/posts/${post.id}/click?userId=${userId}`, {
       method: "POST",
     });
@@ -120,11 +113,21 @@ export default function Post({ post, onAskAI}) {
     window.open(post.articleUrl, "_blank", "noopener,noreferrer");
   };
 
+  const handleToggleSave = async (e) => {
+    e.stopPropagation();
+    if (isSaved) {
+      await unsavePost(post.id);
+      setIsSaved(false);
+    } else {
+      await savePost(post);
+      setIsSaved(true);
+    }
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-
         if (entry.isIntersecting) {
           visibleStart.current = Date.now();
           sendView();
@@ -132,7 +135,6 @@ export default function Post({ post, onAskAI}) {
           if (visibleStart.current) {
             const seconds = (Date.now() - visibleStart.current) / 1000.0;
             visibleStart.current = null;
-
             if (seconds > 1) {
               sendTimeSpent(seconds);
             }
@@ -143,7 +145,6 @@ export default function Post({ post, onAskAI}) {
     );
 
     if (postRef.current) observer.observe(postRef.current);
-
     return () => observer.disconnect();
   }, []);
 
@@ -156,22 +157,17 @@ export default function Post({ post, onAskAI}) {
   const numImages = post.numImages || 0;
 
   useEffect(() => {
-    // try to load media (images/videos) for the related article from the backend
     const loadMedia = async () => {
       if (!post.articleId) return;
-
       try {
         const res = await apiFetch(`/api/posts/${post.id}/media`);
         if (!res.ok) return;
         const data = await res.json();
-
-        // Expect data to be an array of { type: 'image'|'video', url: string }
         if (Array.isArray(data)) setMedia(data);
       } catch (err) {
         console.error('Failed to load media', err);
       }
     };
-
     loadMedia();
   }, [post.articleId]);
 
@@ -192,7 +188,6 @@ export default function Post({ post, onAskAI}) {
   const renderImages = () => {
     const items = media && Array.isArray(media) ? media : placeholderImages.map((u) => ({ type: 'image', url: u }));
     const count = items.length;
-
     if (count <= 0) return null;
 
     const renderMediaElement = (item, idx, extraCount) => {
@@ -202,39 +197,37 @@ export default function Post({ post, onAskAI}) {
             key={idx}
             src={item.url}
             controls
-            className="w-full rounded-lg object-cover h-48 bg-black"
+            className="post-media-item video"
           />
         );
       }
 
-      const common = {
-        key: idx,
-        src: item.url,
-        alt: 'post',
-        className: 'w-full rounded-lg object-cover h-48',
-      };
-
       if (idx === 2 && extraCount > 0) {
         return (
-          <div key={idx} className="relative">
-            <img {...common} className="w-full rounded-lg object-cover h-48 brightness-50" />
-            <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-2xl">
-              +{extraCount}
-            </div>
+          <div key={idx} className="post-media-overlay">
+            <img src={item.url} alt="post" />
+            <div className="overlay-count">+{extraCount}</div>
           </div>
         );
       }
 
-      return <img {...common} />;
+      return (
+        <img
+          key={idx}
+          src={item.url}
+          alt="post"
+          className="post-media-item"
+        />
+      );
     };
 
     if (count === 1) {
       return (
-        <div className="mt-4">
+        <div className="post-media-grid grid-1">
           {items[0].type === 'video' ? (
-            <video src={items[0].url} controls className="w-full rounded-lg object-cover max-h-80" />
+            <video src={items[0].url} controls className="post-media-item" />
           ) : (
-            <img src={items[0].url} alt="post" className="w-full rounded-lg object-cover max-h-80" />
+            <img src={items[0].url} alt="post" className="post-media-item" />
           )}
         </div>
       );
@@ -242,7 +235,7 @@ export default function Post({ post, onAskAI}) {
 
     if (count === 2) {
       return (
-        <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="post-media-grid grid-2">
           {items.slice(0, 2).map((it, idx) => renderMediaElement(it, idx, 0))}
         </div>
       );
@@ -250,7 +243,7 @@ export default function Post({ post, onAskAI}) {
 
     const extraCount = Math.max(0, count - 3);
     return (
-      <div className="mt-4 grid grid-cols-3 gap-2">
+      <div className="post-media-grid grid-3">
         {items.slice(0, 3).map((it, idx) => renderMediaElement(it, idx, extraCount))}
       </div>
     );
@@ -261,24 +254,28 @@ export default function Post({ post, onAskAI}) {
       <div
         ref={postRef}
         onClick={openModal}
-        className={`cursor-pointer bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition border-l-4 ${
-          colors.border || ""
-        }`}
+        className="post"
+        style={{
+          background: postTheme.surface,
+          borderColor: postTheme.border,
+        }}
       >
-        <div className="flex items-start justify-between gap-3 mb-1">
-          <div className={`text-xs font-semibold ${colors.text || ""}`}>
+        {/* Category color line */}
+        <div
+          className="post-category-line"
+          style={{ background: postTheme.accent }}
+        />
+
+        <div className="post-header">
+          <span className="post-category" style={{ background: postTheme.pillBg, color: postTheme.pillText }}>
             {post.label}
-          </div>
-          {publishedLabel ? (
-            <div className="text-xs text-gray-400 text-right">{publishedLabel}</div>
-          ) : null}
+          </span>
+          {publishedLabel && <span className="post-time">{publishedLabel}</span>}
         </div>
 
-        {post.title && (
-          <h2 className="text-lg font-bold text-gray-800 mb-2">{post.title}</h2>
-        )}
+        {post.title && <h3 className="post-title">{post.title}</h3>}
 
-        <p className="text-gray-700 whitespace-pre-line">{previewText}</p>
+        <div className="post-text">{previewText}</div>
 
         {isLongText && (
           <button
@@ -286,7 +283,7 @@ export default function Post({ post, onAskAI}) {
               e.stopPropagation();
               openModal();
             }}
-            className="text-blue-600 font-medium text-sm mt-2 hover:underline"
+            className="post-show-more"
           >
             Show more...
           </button>
@@ -294,48 +291,35 @@ export default function Post({ post, onAskAI}) {
 
         {renderImages()}
 
-        <div className="text-xs text-gray-400 mt-3">{post.lang}</div>
+        {post.lang && <span className="post-lang">{post.lang}</span>}
 
-        <div className="flex flex-wrap gap-2 mt-3">
-          {post.tags?.map((t, idx) => (
-            <span
-              key={idx}
-              className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
-            >
-              #{t}
-            </span>
-          ))}
-        </div>
+        {post.tags?.length > 0 && (
+          <div className="post-tags">
+            {post.tags.map((t, idx) => (
+              <span key={idx} className="post-tag">#{t}</span>
+            ))}
+          </div>
+        )}
 
-        <div
-          className="flex justify-around items-center mt-4 pt-2 border-t text-sm text-gray-500"
-          onClick={(e) => e.stopPropagation()}
-        >
+        {/* Actions */}
+        <div className="post-actions" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => react("LIKE")}
-            className={`flex items-center gap-1 transition ${
-              reaction === "LIKE"
-                ? "text-blue-500 font-bold"
-                : "hover:text-blue-500"
-            }`}
+            className={`post-action-btn ${reaction === "LIKE" ? "liked" : ""}`}
           >
             👍 {likesCount}
           </button>
 
           <button
             onClick={() => react("DISLIKE")}
-            className={`flex items-center gap-1 transition ${
-              reaction === "DISLIKE"
-                ? "text-red-500 font-bold"
-                : "hover:text-red-500"
-            }`}
+            className={`post-action-btn ${reaction === "DISLIKE" ? "disliked" : ""}`}
           >
             👎 {dislikesCount}
           </button>
 
           <button
             onClick={() => setIsCommentsOpen(true)}
-            className="hover:text-blue-500 transition"
+            className="post-action-btn"
           >
             💬 Comment
           </button>
@@ -343,11 +327,8 @@ export default function Post({ post, onAskAI}) {
           <button
             onClick={async (e) => {
               e.stopPropagation();
-
               if (!onAskAI) return;
-
               onAskAI(post);
-
               try {
                 await fetch(`http://localhost:9000/ingest/post/${post.id}`, {
                   method: "POST",
@@ -356,9 +337,16 @@ export default function Post({ post, onAskAI}) {
                 console.error("Failed to ingest post into AI", err);
               }
             }}
-            className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 font-semibold hover:bg-purple-200 transition"
+            className="post-action-btn ai-btn"
           >
             🤖 Ask AI
+          </button>
+
+          <button
+            onClick={handleToggleSave}
+            className={`post-action-btn ${isSaved ? "saved" : ""}`}
+          >
+            {isSaved ? "📂" : "💾"} {isSaved ? "Saved" : "Save"}
           </button>
 
           <button
@@ -367,12 +355,9 @@ export default function Post({ post, onAskAI}) {
               sendClick();
               openOriginalArticle();
             }}
-            className={`transition ${
-              post.articleUrl
-                ? "hover:text-blue-500"
-                : "text-gray-300 cursor-not-allowed"
-            }`}
+            className="post-action-btn"
             disabled={!post.articleUrl}
+            style={{ opacity: post.articleUrl ? 1 : 0.4 }}
           >
             🔗 Visit
           </button>

@@ -18,21 +18,37 @@ def parse_timestamp(ts):
         except:
             return None
 
-def ingest_post(store, post_id: int):
+def _extract_first_line(text: str, max_chars: int = 80) -> str:
+    """Extract first meaningful line from text as a pseudo-title."""
+    for line in text.split("\n"):
+        stripped = line.strip()
+        if len(stripped) > 10:
+            return stripped[:max_chars]
+    return text[:max_chars]
+
+def ingest_post(store, post_id: int, title: str = ""):
     content = fetch_post_content(post_id)
     text = merge_paragraphs(content)
 
     if not text.strip():
         return 0
 
-    chunks = chunk_text(text, size=250, overlap=50)
+    # Use provided title, or derive one from first line of content
+    if not title:
+        title = _extract_first_line(text)
+
+    prefix = f"[Title: {title}]\n\n" if title else ""
+    full_text = prefix + text
+
+    chunks = chunk_text(full_text, size=250, overlap=50)
     added = 0
 
     for chunk in chunks:
         vec = embed(chunk)
         store.add(vec, {
             "postId": post_id,
-            "text": chunk
+            "text": chunk,
+            "title": title
         })
         added += 1
 
@@ -42,6 +58,7 @@ def ingest_posts(store, posts: list[dict], ingested_set: set, max_posts=10, rece
     """
     Ingest up to max_posts most recent posts.
     Optionally filter by recent_days (days old).
+    Each post dict should have: postId, and optionally: title, timestamp.
     """
     now = datetime.utcnow()
     candidates = []
@@ -53,26 +70,24 @@ def ingest_posts(store, posts: list[dict], ingested_set: set, max_posts=10, rece
 
         ts = parse_timestamp(p.get("timestamp"))
         if ts is None:
-            # fallback if no timestamp
             ts = now
 
-        # optional recency window
         if recent_days is not None:
             age_days = (now - ts).days
             if age_days > recent_days:
                 continue
 
-        candidates.append((ts, pid))
+        candidates.append((ts, pid, p.get("title", "")))
 
     # Sort by timestamp descending (newest first)
     candidates.sort(key=lambda x: x[0], reverse=True)
 
     # Limit number of posts to ingest
-    to_ingest = [pid for _, pid in candidates[:max_posts]]
+    to_ingest = candidates[:max_posts]
 
     total_chunks = 0
-    for pid in to_ingest:
-        chunks_added = ingest_post(store, pid)
+    for ts, pid, title in to_ingest:
+        chunks_added = ingest_post(store, pid, title=title)
         if chunks_added > 0:
             ingested_set.add(pid)
             total_chunks += chunks_added

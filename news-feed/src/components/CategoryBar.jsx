@@ -1,34 +1,50 @@
 // CategoryBar.jsx
 import { categories } from "../utils/categoryConfig";
-
-const colorMap = {
-  gray: "bg-gray-600",
-  purple: "bg-purple-600",
-  green: "bg-green-600",
-  red: "bg-red-600",
-  blue: "bg-blue-600",
-  amber: "bg-amber-500",
-  orange: "bg-orange-500",
-  cyan: "bg-cyan-500",
-};
+import { categoryTheme } from "../utils/categoryColors";
+import { useTheme } from "../context/ThemeContext";
 
 export default function CategoryBar({ category, setCategory }) {
+  const { darkMode } = useTheme();
+  const mode = darkMode ? "dark" : "light";
+
   return (
-    <div className="w-full sticky top-14 z-10 backdrop-blur bg-white/70 border-b px-4 py-2 flex gap-3 overflow-x-auto">
-      {categories.map((cat) => (
-        <button
+    <div className="category-bar">
+      {categories.map((cat) => {
+        const theme = categoryTheme[cat.name]?.[mode] || categoryTheme.General[mode];
+        const isActive = category === cat.name;
+
+        return (
+          <button
             key={cat.name}
             onClick={() => setCategory(cat.name)}
-            className={`px-4 py-1 rounded-full whitespace-nowrap transition font-medium
-                ${
-                category === cat.name
-                    ? `${colorMap[cat.color]} text-white shadow-md ring-2 ring-black/10 scale-105`
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-            >
+            className="category-pill"
+            style={
+              isActive
+                ? {
+                    background: theme.pillBg,
+                    color: theme.pillText,
+                    boxShadow: `0 2px 8px ${theme.glow}`,
+                    fontWeight: 700,
+                  }
+                : {}
+            }
+            onMouseEnter={(e) => {
+              if (!isActive) {
+                e.currentTarget.style.background = theme.accentLight;
+                e.currentTarget.style.color = theme.accent;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive) {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "";
+              }
+            }}
+          >
             {cat.name}
-        </button>
-      ))}
+          </button>
+        );
+      })}
     </div>
   );
 }

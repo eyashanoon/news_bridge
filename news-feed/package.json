@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -11,7 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@giphy/js-fetch-api": "^5.8.0",
+    "@giphy/react-components": "^10.1.2",
     "axios": "^1.15.0",
+    "emoji-picker-react": "^4.19.1",
     "framer-motion": "^12.38.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
