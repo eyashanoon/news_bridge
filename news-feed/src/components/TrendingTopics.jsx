@@ -11,7 +11,6 @@ export default function TrendingTopics() {
   };
 
   useEffect(() => {
-    // Placeholder trending topics (later replace with API call)
     const fakeTopics = [
       {
         id: 1,
@@ -70,20 +69,18 @@ export default function TrendingTopics() {
 
   return (
     <div className="space-y-4 p-2">
-      <div className="bg-white rounded-xl shadow-sm p-4 border-l-4 border-orange-500">
-        <h1 className="text-xl font-bold text-gray-800">🔥 Trending Topics</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Explore what people are talking about right now.
-        </p>
+      <div className="trending-header-card">
+        <h1>🔥 Trending Topics</h1>
+        <p>Explore what people are talking about right now.</p>
       </div>
-    
+
     {selectedTopic ? (
         <TopicDetails
             topicId={selectedTopic}
             goBack={() => setSelectedTopic(null)}
         />
         ) : (
-        <>
+        <div className="stagger space-y-3">
             {topics.map((topic) => (
             <TopicCard
                 key={topic.id}
@@ -91,7 +88,7 @@ export default function TrendingTopics() {
                 onViewTopic={openTopicDetails}
             />
             ))}
-        </>
+        </div>
     )}
 
     </div>

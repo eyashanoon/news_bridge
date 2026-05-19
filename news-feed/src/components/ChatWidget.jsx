@@ -57,7 +57,7 @@ export default function ChatWidget({ category, selectedPost }) {
         method: "POST",
         body: JSON.stringify({
           question: userMessage,
-          postId: postId,   // ✅ IMPORTANT FIX
+          postId: postId,
           tags: tags,
           top_k: 5,
         }),
@@ -117,22 +117,16 @@ export default function ChatWidget({ category, selectedPost }) {
   };
 
   return (
-    <div className="p-3">
-      <div className="bg-white rounded-2xl shadow border flex flex-col h-[520px] overflow-hidden">
+    <div className="chat-widget">
+      <div className="chat-container">
         {/* Header */}
-        <button
-          onClick={() => window.location.reload()}
-          className="text-xs text-gray-500 hover:text-gray-800"
-        >
-          Clear
-        </button>
-
-        <div className="p-4 border-b flex items-center justify-between">
-          <div>
-            <div className="font-bold text-gray-800 flex items-center gap-2">
-              🤖 AI Assistant
+        <div className="chat-header">
+          <div className="chat-header-info">
+            <div className="chat-header-title">
+              <span>🤖</span>
+              <span>AI Assistant</span>
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="chat-header-subtitle">
               {selectedPost
                 ? `Context: ${selectedPost.label} post (Post #${selectedPost.id})`
                 : `Category: ${category}`}
@@ -140,38 +134,21 @@ export default function ChatWidget({ category, selectedPost }) {
           </div>
 
           {selectedPost && (
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
-              Post Mode
-            </span>
+            <span className="chat-header-badge">Post Mode</span>
           )}
         </div>
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+        <div className="chat-messages">
           {messages.map((m, idx) => (
-            <div
-              key={idx}
-              className={`flex ${
-                m.role === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-[85%] px-4 py-2 rounded-2xl text-sm whitespace-pre-line shadow-sm ${
-                  m.role === "user"
-                    ? "bg-blue-600 text-white rounded-br-md"
-                    : "bg-white text-gray-800 rounded-bl-md border"
-                }`}
-              >
-                {m.content}
-              </div>
+            <div key={idx} className={`chat-msg ${m.role}`}>
+              <div className="chat-bubble">{m.content}</div>
             </div>
           ))}
 
           {loading && (
-            <div className="flex justify-start">
-              <div className="bg-white border px-4 py-2 rounded-2xl text-sm shadow-sm text-gray-500 animate-pulse">
-                Thinking...
-              </div>
+            <div className="chat-msg assistant thinking">
+              <div className="chat-bubble">Thinking...</div>
             </div>
           )}
 
@@ -179,8 +156,8 @@ export default function ChatWidget({ category, selectedPost }) {
         </div>
 
         {/* Input */}
-        <div className="p-3 border-t bg-white">
-          <div className="flex items-center gap-2">
+        <div className="chat-input-area">
+          <div className="chat-input-row">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -190,24 +167,19 @@ export default function ChatWidget({ category, selectedPost }) {
                   ? "Ask something about this post..."
                   : `Ask about ${category} news...`
               }
-              className="flex-1 resize-none border rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400"
               rows={2}
             />
 
             <button
               onClick={sendMessage}
               disabled={loading || !input.trim()}
-              className={`px-4 py-2 rounded-xl font-semibold text-sm transition ${
-                loading || !input.trim()
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
-              }`}
+              className="chat-send-btn"
             >
               Send
             </button>
           </div>
 
-          <div className="text-[11px] text-gray-400 mt-2">
+          <div className="chat-tip">
             Tip: Press Enter to send, Shift+Enter for new line.
           </div>
         </div>

@@ -7,7 +7,6 @@ export default function TopicDetails({ topicId, goBack }) {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    // placeholder data load
     setTopic({
       id: topicId,
       title: "Israel – Gaza Conflict & Iran War Ceasefire",
@@ -19,7 +18,6 @@ export default function TopicDetails({ topicId, goBack }) {
       tags: ["world", "conflict", "ceasefire"],
     });
 
-    // placeholder timeline posts
     setPosts([
       {
         id: 1,
@@ -57,17 +55,17 @@ export default function TopicDetails({ topicId, goBack }) {
   if (!topic) return null;
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-4 p-2">
       {/* Back */}
       <button
         onClick={goBack}
-        className="text-blue-600 hover:underline text-sm"
+        className="text-blue-600 hover:underline text-sm font-medium"
       >
         ← Back to Trending Topics
       </button>
 
       {/* Hero Section */}
-      <div className="bg-white p-4 rounded-xl shadow">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         {topic.image && (
           <img
             src={topic.image}
@@ -76,7 +74,7 @@ export default function TopicDetails({ topicId, goBack }) {
           />
         )}
 
-        <h1 className="text-3xl font-bold text-gray-800">
+        <h1 className="text-2xl font-bold text-gray-900">
           {topic.title}
         </h1>
 
@@ -84,14 +82,14 @@ export default function TopicDetails({ topicId, goBack }) {
           {topic.author} · {topic.date}
         </div>
 
-        <p className="text-gray-700 mt-3">{topic.description}</p>
+        <p className="text-gray-600 mt-3 leading-relaxed">{topic.description}</p>
 
         {/* tags */}
-        <div className="flex gap-2 mt-2">
+        <div className="flex gap-2 mt-3">
           {topic.tags.map((t, idx) => (
             <span
               key={idx}
-              className="text-xs bg-gray-200 px-2 py-1 rounded-full text-gray-700"
+              className="post-tag"
             >
               #{t}
             </span>
@@ -100,33 +98,35 @@ export default function TopicDetails({ topicId, goBack }) {
 
         {/* Action buttons */}
         <div className="flex gap-3 items-center mt-4">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+          <button className="btn btn-primary">
             Follow Topic
           </button>
-          <button className="text-gray-600 hover:underline text-sm">
+          <button className="btn btn-ghost text-sm">
             Share
           </button>
         </div>
       </div>
 
       {/* Write new update box */}
-      <div className="bg-white p-4 rounded-xl shadow">
-        <h2 className="font-semibold">Write an update</h2>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <h2 className="font-semibold text-gray-800">Write an update</h2>
         <textarea
           rows={4}
           placeholder="Only verified users can share updates..."
-          className="w-full border-gray-300 rounded-md mt-2 p-2"
+          className="form-control mt-2"
           disabled
         />
-        <button className="mt-2 bg-gray-400 text-white px-3 py-1 rounded-md cursor-not-allowed">
+        <button className="mt-2 btn btn-sm text-gray-400 cursor-not-allowed">
           Submit
         </button>
       </div>
 
       {/* Posts feed */}
-      {posts.map((post) => (
-        <TopicPost key={post.id} post={post} />
-      ))}
+      <div className="stagger space-y-3">
+        {posts.map((post) => (
+          <TopicPost key={post.id} post={post} />
+        ))}
+      </div>
     </div>
   );
 }

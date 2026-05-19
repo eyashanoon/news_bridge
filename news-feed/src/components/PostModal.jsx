@@ -37,8 +37,6 @@ export default function PostModal({ post, onClose }) {
   const [content, setContent] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
-
-  // NEW: popup state
   const [selectedMedia, setSelectedMedia] = useState(null);
 
   const textPaneRef = useRef(null);
@@ -151,54 +149,31 @@ export default function PostModal({ post, onClose }) {
   const activeMedia = mediaItems[activeMediaIndex] || null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Background */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      />
+    <>
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          {/* Header */}
+          <div className="modal-header">
+            <h2>{post.title || "Untitled Post"}</h2>
+            <button onClick={onClose} className="modal-close" aria-label="Close">✕</button>
+          </div>
 
-      {/* Main Modal */}
-      <div className="relative z-50 bg-white w-[95%] max-w-screen-2xl h-[90%] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="p-5 border-b flex justify-between items-center gap-4">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-800">
-            {post.title || "Untitled Post"}
-          </h1>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-red-600 text-xl font-bold"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Body */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Left content */}
-          <div
-            ref={textPaneRef}
-            className="w-full md:w-2/3 p-5 overflow-y-auto border-r"
-          >
-            <div className="text-sm text-gray-500 mb-4">
-              {post.label} {post.lang ? `· ${post.lang}` : ""}
-            </div>
-
-            {isLoading ? (
-              <div className="text-sm text-gray-500">
-                Loading article details...
+          {/* Body */}
+          <div className="modal-body">
+            <div ref={textPaneRef} className="modal-text-pane">
+              <div className="meta-row">
+                {post.label} {post.lang ? `· ${post.lang}` : ""}
               </div>
-            ) : (
-              <div className="space-y-6">
-                {content.map((item, contentIndex) => {
+
+              {isLoading ? (
+                <div className="text-sm text-gray-500">Loading article details...</div>
+              ) : (
+                content.map((item, contentIndex) => {
                   if (item.type === "paragraph") {
                     return (
-                      <p
-                        key={`paragraph-${contentIndex}`}
-                        className="text-gray-700 leading-relaxed whitespace-pre-line"
-                      >
-                        {item.text}
-                      </p>
+                      <div key={`p-${contentIndex}`} className="content-block">
+                        <p>{item.text}</p>
+                      </div>
                     );
                   }
 
@@ -209,7 +184,7 @@ export default function PostModal({ post, onClose }) {
 
                     return (
                       <div
-                        key={`media-${contentIndex}`}
+                        key={`m-${contentIndex}`}
                         data-media-index={mediaIndex}
                         ref={(node) => {
                           if (node) {
@@ -218,7 +193,7 @@ export default function PostModal({ post, onClose }) {
                             mediaRefs.current.delete(mediaIndex);
                           }
                         }}
-                        className="rounded-xl border border-gray-200 p-2 bg-gray-50 cursor-zoom-in"
+                        className="content-block media-block"
                         onClick={() => setSelectedMedia(item)}
                       >
                         {renderMedia(item, "max-h-[1000px]")}
@@ -227,109 +202,84 @@ export default function PostModal({ post, onClose }) {
                   }
 
                   return null;
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Right panel */}
-          <div className="hidden md:flex md:w-1/3 flex-col p-5 bg-gray-50 border-l gap-4">
-            <h2 className="font-semibold text-gray-700">
-              Media ({mediaItems.length})
-            </h2>
-
-            <div
-              className="rounded-xl border bg-white p-2 min-h-[250px] flex items-center justify-center cursor-zoom-in"
-              onClick={() =>
-                activeMedia && setSelectedMedia(activeMedia)
-              }
-            >
-              {activeMedia ? (
-                renderMedia(activeMedia, "max-h-[320px]")
-              ) : (
-                <div className="text-sm text-gray-500">
-                  No media available.
-                </div>
+                })
               )}
             </div>
 
-            <div className="overflow-x-auto">
-              <div className="flex gap-2 pb-1">
-                {mediaItems.map((item, index) => (
-                  <button
-                    key={`thumb-${item.contentIndex}`}
-                    onClick={() => scrollToMedia(index)}
-                    className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition ${
-                      activeMediaIndex === index
-                        ? "border-blue-500"
-                        : "border-transparent hover:border-blue-300"
-                    }`}
-                  >
-                    {item.mediaType === "video" ? (
-                      <div className="w-full h-full bg-slate-900 text-white text-xs flex items-center justify-center">
-                        Video
-                      </div>
-                    ) : (
-                      <img
-                        src={item.url}
-                        alt="media-thumb"
-                        className="w-full h-full object-contain"
-                      />
-                    )}
-                  </button>
-                ))}
+            {/* Right media panel */}
+            <div className="modal-media-pane">
+              <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+                Media ({mediaItems.length})
+              </h3>
+
+              <div
+                className="modal-media-stage"
+                onClick={() => activeMedia && setSelectedMedia(activeMedia)}
+              >
+                {activeMedia ? (
+                  renderMedia(activeMedia, "max-h-[360px]")
+                ) : (
+                  <div className="no-media">No media available.</div>
+                )}
               </div>
+
+              {mediaItems.length > 0 && (
+                <div>
+                  <div className="text-xs text-gray-400 mb-2 font-medium">
+                    {activeMediaIndex + 1} / {mediaItems.length}
+                  </div>
+                  <div className="modal-media-thumbs">
+                    {mediaItems.map((item, index) => (
+                      <button
+                        key={`thumb-${item.contentIndex}`}
+                        onClick={() => scrollToMedia(index)}
+                        className={`modal-thumb ${activeMediaIndex === index ? "active" : ""}`}
+                      >
+                        {item.mediaType === "video" ? (
+                          <div className="thumb-video-label">Video</div>
+                        ) : (
+                          <img src={item.url} alt="media-thumb" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t flex justify-between items-center bg-white">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition text-gray-700 font-medium"
-          >
-            Collapse
-          </button>
+          {/* Footer */}
+          <div className="modal-footer">
+            <button onClick={onClose} className="btn btn-ghost">
+              Collapse
+            </button>
 
-          <button
-            onClick={openOriginalArticle}
-            className={`px-4 py-2 rounded-lg transition text-white font-medium ${
-              post.articleUrl
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-300 cursor-not-allowed"
-            }`}
-            disabled={!post.articleUrl}
-          >
-            Visit Original Article
-          </button>
+            <button
+              onClick={openOriginalArticle}
+              className="btn btn-primary"
+              disabled={!post.articleUrl}
+              style={{ opacity: post.articleUrl ? 1 : 0.4 }}
+            >
+              Visit Original Article
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* LIGHTBOX POPUP */}
+      {/* Lightbox */}
       {selectedMedia && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center"
-          onClick={() => setSelectedMedia(null)}
-        >
-          <div
-            className="relative max-w-5xl w-[90%] max-h-[90%]"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="lightbox" onClick={() => setSelectedMedia(null)}>
+          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
             <button
+              className="lightbox-close"
               onClick={() => setSelectedMedia(null)}
-              className="absolute -top-10 right-0 text-white text-2xl font-bold"
             >
               ✕
             </button>
-
-            {renderMedia(
-              selectedMedia,
-              "max-h-[85vh] w-full object-contain rounded-lg"
-            )}
+            {renderMedia(selectedMedia, "max-h-[85vh] w-full object-contain rounded-lg")}
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
