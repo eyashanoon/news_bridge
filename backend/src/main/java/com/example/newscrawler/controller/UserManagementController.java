@@ -171,7 +171,9 @@ public class UserManagementController {
         r.status = u.getStatus() != null ? u.getStatus().name() : null;
         r.active = u.getStatus() == UserStatus.ACTIVE;
         r.roles = u.getRoles().stream().map(Enum::name).collect(Collectors.toSet());
-        r.fieldName = u.getField() != null ? u.getField().getName() : null;
+        r.fieldName = (u.getFields() != null && !u.getFields().isEmpty()) 
+            ? u.getFields().stream().map(f -> f.getName()).collect(Collectors.joining(", ")) 
+            : null;
         r.phone = u.getPhone();
         r.profilePicture = u.getProfilePicture();
         r.experience = u.getExperience();

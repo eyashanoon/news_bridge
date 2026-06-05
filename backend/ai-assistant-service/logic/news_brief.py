@@ -36,9 +36,12 @@ def _recency_score(created_at_str: str) -> float:
     Calculate recency score using exponential decay.
     Returns 1.0 for brand new, decays toward 0 for older posts.
     Does NOT hard-reject old posts — they just get a low score.
+    Falls back to current time (score=1.0) when timestamp is missing,
+    so posts without timestamps still appear in the brief.
     """
     if not created_at_str:
-        return 0.0
+        # No timestamp available — treat as brand new so the post isn't excluded
+        return 1.0
 
     try:
         # Parse ISO format timestamp
@@ -46,14 +49,14 @@ def _recency_score(created_at_str: str) -> float:
         now = datetime.now(timezone.utc)
         age_hours = (now - created).total_seconds() / 3600.0
     except (ValueError, TypeError):
-        return 0.0
+        # Unparseable timestamp — treat as brand new
+        return 1.0
 
     if age_hours < 0:
         age_hours = 0
 
-    # Exponential decay: score = e^(-ln(2) * age / half_life)
+    # Exponential decay: score = 2^(-age / half_life)
     # At age=half_life, score = 0.5; at age=12h, ~0.125; at age=4 days, ~0.008
-    # Posts older than MAX_AGE_HOURS get a minimal score instead of 0
     score = 2.0 ** (-age_hours / RECENCY_HALF_LIFE_HOURS)
     
     if age_hours > MAX_AGE_HOURS:
@@ -256,25 +259,46 @@ def build_news_brief(user_id: str = "android-app-anonymous") -> dict:
 
 def fetch_recent_posts_pool() -> list[dict]:
     """
-    Fetch recent posts from multiple category feeds to build a diverse pool.
+    Fetch recent posts from multiple sources to build a diverse pool.
     Only includes posts ≤ MAX_AGE_HOURS old.
+    
+    Strategy:
+    1. Primary: Use the dedicated /api/feed/brief endpoint (no tagsExtracted filter)
+    2. Fallback: Fetch per-category from the regular feed endpoint
+    3. Supplement: Fetch by broad tags to catch any stragglers
     """
     all_posts = []
     seen_ids = set()
 
-    categories = ["general", "technology", "sports", "politics", "health", "business", "entertainment"]
-    for cat in categories:
-        try:
-            feed = fetch_feed_posts(category=cat, limit=15, page=0)
-            for p in feed:
+    # 1. Try the dedicated brief feed endpoint first (no tagsExtracted filter)
+    from ingestion.fetcher import fetch_brief_feed
+    try:
+        brief_posts = fetch_brief_feed(limit=50)
+        if brief_posts:
+            for p in brief_posts:
                 pid = p.get("id")
                 if pid and pid not in seen_ids:
                     seen_ids.add(pid)
                     all_posts.append(p)
-        except Exception as e:
-            logger.warning(f"Feed fetch failed for category '{cat}': {e}")
+            logger.info(f"Fetched {len(brief_posts)} posts from brief feed endpoint")
+    except Exception as e:
+        logger.warning(f"Brief feed fetch failed: {e}")
 
-    # Also try fetching by broad tags
+    # 2. Fallback: fetch per-category from regular feed
+    if not all_posts:
+        categories = ["general", "technology", "sports", "politics", "health", "business", "entertainment"]
+        for cat in categories:
+            try:
+                feed = fetch_feed_posts(category=cat, limit=15, page=0)
+                for p in feed:
+                    pid = p.get("id")
+                    if pid and pid not in seen_ids:
+                        seen_ids.add(pid)
+                        all_posts.append(p)
+            except Exception as e:
+                logger.warning(f"Feed fetch failed for category '{cat}': {e}")
+
+    # 3. Supplement with broad tags to catch any stragglers
     broad_tags = ["breaking", "latest", "news", "top", "urgent"]
     try:
         tag_posts = fetch_posts_by_tags(broad_tags)
@@ -282,16 +306,15 @@ def fetch_recent_posts_pool() -> list[dict]:
             pid = p.get("postId")
             if pid and pid not in seen_ids:
                 seen_ids.add(pid)
-                if "title" not in p:
-                    p["title"] = ""
+                # PostByTagResponse only has postId, tag, timestamp — fill defaults
                 all_posts.append({
                     "id": pid,
                     "title": p.get("title", ""),
                     "text": p.get("text", ""),
                     "label": p.get("tag", "general"),
                     "tags": [p.get("tag", "general")],
-                    "likes": p.get("likes", 0),
-                    "dislikes": p.get("dislikes", 0),
+                    "likes": 0,
+                    "dislikes": 0,
                     "articleCreatedAt": p.get("timestamp", ""),
                 })
     except Exception as e:

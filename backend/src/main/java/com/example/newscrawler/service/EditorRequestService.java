@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,10 +30,10 @@ public class EditorRequestService {
     private EditorRequestAttachmentRepository editorRequestAttachmentRepository;
 
     @Autowired
-    private CategoryFieldRepository CategoryFieldRepository;
+    private CategoryFieldRepository categoryFieldRepository;
 
     @Autowired
-    private CategoryFieldService CategoryFieldService;
+    private CategoryFieldService categoryFieldService;
 
     @Autowired
     private EditorUserRepository editorUserRepository;
@@ -38,23 +41,67 @@ public class EditorRequestService {
     @Autowired
     private EditorAttachmentRepository editorAttachmentRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     public EditorRequestResponse applyForEditor(String principalEmail, EditorApplicationRequest requestDto) {
         RegisteredUser user = registeredUserRepository.findByEmail(principalEmail)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Registered user not found"));
+
+        // Check for 3-day cooldown if user was previously rejected
+        List<EditorRequest> userRequests = editorRequestRepository.findByUserEmail(principalEmail);
+        EditorRequest latestRejected = null;
+        for (EditorRequest req : userRequests) {
+            if ("REJECTED".equals(req.getStatus())) {
+                if (latestRejected == null || (req.getUpdatedAt() != null && 
+                    (latestRejected.getUpdatedAt() == null || req.getUpdatedAt().isAfter(latestRejected.getUpdatedAt())))) {
+                    latestRejected = req;
+                }
+            }
+        }
+        if (latestRejected != null && latestRejected.getUpdatedAt() != null) {
+            Duration sinceRejection = Duration.between(latestRejected.getUpdatedAt(), LocalDateTime.now());
+            long hoursRemaining = 72 - sinceRejection.toHours();
+            if (hoursRemaining > 0) {
+                long daysRemaining = hoursRemaining / 24;
+                long hoursLeft = hoursRemaining % 24;
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Your previous application was rejected. You can apply again in " 
+                    + daysRemaining + " day(s) and " + hoursLeft + " hour(s).");
+            }
+        }
 
         if (requestDto.profilePicture == null || requestDto.profilePicture.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile picture is required");
         }
 
-        CategoryField field = null;
-        if (requestDto.fieldId != null) {
-            field = CategoryFieldRepository.findById(requestDto.fieldId).orElse(null);
+        // Validate and fetch fields
+        List<CategoryField> fields = new ArrayList<>();
+        if (requestDto.fieldIds != null && !requestDto.fieldIds.isEmpty()) {
+            if (requestDto.fieldIds.size() > 2) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You can select at most 2 fields of interest");
+            }
+            // Check all fields have the same parent (must be under one general category)
+            Long commonParentId = null;
+            for (Long fid : requestDto.fieldIds) {
+                CategoryField f = categoryFieldRepository.findById(fid)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Field not found: " + fid));
+                if (f.getParent() == null) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot select a general category as a field of interest");
+                }
+                if (commonParentId == null) {
+                    commonParentId = f.getParent().getId();
+                } else if (!commonParentId.equals(f.getParent().getId())) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "All selected fields must be under the same general category");
+                }
+                fields.add(f);
+            }
         }
 
         EditorRequest request = new EditorRequest();
         request.setUser(user);
         request.setExperience(requestDto.experience);
-        request.setField(field);
+        request.setFields(fields);
         request.setReferences(requestDto.references);
         request.setPhone(requestDto.phone);
         request.setProfilePicture(requestDto.profilePicture);
@@ -91,67 +138,106 @@ public class EditorRequestService {
         return mapToDto(req);
     }
 
-@Autowired
-    private EntityManager entityManager;
-
     @Transactional
     public void approveEditorRequest(Long id) {
         EditorRequest editorRequest = editorRequestRepository.findById(id)      
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found"));
 
-        if (!"PENDING".equals(editorRequest.getStatus())) {
+        // Allow re-approval for recovery: if the request was already approved but still points
+        // to a suspended user, we can fix the reference.
+        if (!"PENDING".equals(editorRequest.getStatus()) && !"APPROVED".equals(editorRequest.getStatus())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request is not PENDING");
         }
 
-        editorRequest.setStatus("APPROVED");
-        editorRequestRepository.save(editorRequest);
-
-        RegisteredUser user = editorRequest.getUser();
-        String originalEmail = user.getEmail();
-
-        if (editorUserRepository.findByEmail(originalEmail).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Editor account already exists for this email");
+        // Only set status if not already APPROVED
+        if (!"APPROVED".equals(editorRequest.getStatus())) {
+            editorRequest.setStatus("APPROVED");
+            editorRequestRepository.save(editorRequest);
         }
 
-        // Suspend and archive the registered account so the editor account can keep the original email.
-        user.setStatus(UserStatus.SUSPENDED);
-        user.setEmail(archiveEmail(originalEmail, user.getId()));
-        registeredUserRepository.saveAndFlush(user);
+        RegisteredUser user = editorRequest.getUser();
 
-        // Create a new EditorUser record using the same original email and request details.
-        EditorUser newEditorUser = new EditorUser();
-        newEditorUser.setType(UserType.EDITOR);
-        newEditorUser.setStatus(UserStatus.ACTIVE);
+        // If the editor already exists (re-approval after suspension), just update the request reference
+        EditorUser existingEditor = editorUserRepository.findByEmail(user.getEmail()).orElse(null);
+        if (existingEditor != null) {
+            editorRequest.setUser(existingEditor);
+            editorRequestRepository.save(editorRequest);
 
-        newEditorUser.setUsername(user.getUsername());
-        newEditorUser.setEmail(originalEmail);
-        // Keep existing encrypted password so the user can sign in immediately as an editor.
-        newEditorUser.setPassword(user.getPassword());
+            for (EditorRequestAttachment reqAttachment : editorRequestAttachmentRepository.findByEditorRequestId(id)) {
+                EditorAttachment attachment = new EditorAttachment();
+                attachment.setEditorUser(existingEditor);
+                attachment.setFileName(reqAttachment.getFileName());
+                attachment.setFileUrl(reqAttachment.getFileUrl());
+                editorAttachmentRepository.save(attachment);
+            }
+            return;
+        }
 
-        newEditorUser.getRoles().add(UserRole.READ_ARTICLE);
-        newEditorUser.getRoles().add(UserRole.MANAGE_OWN_PROFILE);
-        newEditorUser.getRoles().add(UserRole.REACT_POST);
-        newEditorUser.getRoles().add(UserRole.LEAVE_COMMENT);
-        newEditorUser.getRoles().add(UserRole.REPORT_POST);
-        newEditorUser.getRoles().add(UserRole.PUBLISH_LIVE_NEWS);
-        newEditorUser.getRoles().add(UserRole.EDIT_LIVE_NEWS);
-        newEditorUser.getRoles().add(UserRole.DELETE_LIVE_NEWS);
+        // Convert the existing RegisteredUser to an EditorUser in-place (same ID)
+        // by inserting editor-specific data into the editor_users table with the same id.
+        Long userId = user.getId();
 
-        newEditorUser.setExperience(editorRequest.getExperience());
-        newEditorUser.setField(editorRequest.getField());
-        newEditorUser.setReferences(editorRequest.getReferences());
-        newEditorUser.setPhone(editorRequest.getPhone());
-        newEditorUser.setProfilePicture(editorRequest.getProfilePicture());
+        // Update the user type in the users table to EDITOR
+        // Using native SQL to avoid JPA inheritance issues with changing the discriminator
+        entityManager.createNativeQuery("UPDATE users SET type = 'EDITOR' WHERE id = ?")
+            .setParameter(1, userId)
+            .executeUpdate();
 
-        editorUserRepository.save(newEditorUser);
+        // Insert editor-specific data into editor_users table with the SAME id
+        entityManager.createNativeQuery(
+            "INSERT INTO editor_users (id, experience, phone, reference_docs, profile_picture) VALUES (?, ?, ?, ?, ?)")
+            .setParameter(1, userId)
+            .setParameter(2, editorRequest.getExperience())
+            .setParameter(3, editorRequest.getPhone())
+            .setParameter(4, editorRequest.getReferences())
+            .setParameter(5, editorRequest.getProfilePicture())
+            .executeUpdate();
 
+        // Add roles via native SQL to avoid collection issues
+        entityManager.createNativeQuery(
+            "DELETE FROM registered_user_roles WHERE registered_user_id = ?")
+            .setParameter(1, userId)
+            .executeUpdate();
+
+        String[] editorRoles = {"READ_ARTICLE", "MANAGE_OWN_PROFILE", "REACT_POST", "LEAVE_COMMENT",
+                                "REPORT_POST", "PUBLISH_LIVE_NEWS", "EDIT_LIVE_NEWS", "DELETE_LIVE_NEWS"};
+        for (String role : editorRoles) {
+            entityManager.createNativeQuery(
+                "INSERT INTO registered_user_roles (registered_user_id, role) VALUES (?, ?)")
+                .setParameter(1, userId)
+                .setParameter(2, role)
+                .executeUpdate();
+        }
+
+        // Handle editor fields association
+        entityManager.createNativeQuery(
+            "DELETE FROM editor_user_fields WHERE editor_user_id = ?")
+            .setParameter(1, userId)
+            .executeUpdate();
+
+        for (CategoryField field : editorRequest.getFields()) {
+            entityManager.createNativeQuery(
+                "INSERT INTO editor_user_fields (editor_user_id, field_id) VALUES (?, ?)")
+                .setParameter(1, userId)
+                .setParameter(2, field.getId())
+                .executeUpdate();
+        }
+
+        // Attachments
         for (EditorRequestAttachment reqAttachment : editorRequestAttachmentRepository.findByEditorRequestId(id)) {
             EditorAttachment attachment = new EditorAttachment();
-            attachment.setEditorUser(newEditorUser);
+            // Need to create an EditorUser reference for the attachment - use the same ID
+            EditorUser editorRef = entityManager.getReference(EditorUser.class, userId);
+            attachment.setEditorUser(editorRef);
             attachment.setFileName(reqAttachment.getFileName());
             attachment.setFileUrl(reqAttachment.getFileUrl());
             editorAttachmentRepository.save(attachment);
         }
+
+        // Update the request to point to the editor (still same id)
+        // Clean up the entity manager cache so JPA sees the updated user type
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Transactional
@@ -177,16 +263,6 @@ public class EditorRequestService {
         editorUserRepository.save(editorAccount);
     }
 
-    private String archiveEmail(String email, Long userId) {
-        String safeId = userId == null ? "unknown" : userId.toString();
-        String marker = ".suspended." + safeId;
-        int at = email.indexOf('@');
-        if (at < 0) {
-            return email + marker;
-        }
-        return email.substring(0, at) + marker + email.substring(at);
-    }
-
     private EditorRequestResponse mapToDto(EditorRequest request) {
         if (request == null) return null;
         EditorRequestResponse dto = new EditorRequestResponse();
@@ -195,12 +271,16 @@ public class EditorRequestService {
             dto.userId = request.getUser().getId();
             dto.userEmail = request.getUser().getEmail();
         }
-        dto.field = CategoryFieldService.mapToDto(request.getField());
+        dto.fields = request.getFields().stream()
+            .map(categoryFieldService::mapToDto)
+            .collect(Collectors.toList());
         dto.experience = request.getExperience();
         dto.phone = request.getPhone();
         dto.profilePicture = request.getProfilePicture();
         dto.status = request.getStatus();
         dto.references = request.getReferences();
+        dto.createdAt = request.getCreatedAt();
+        dto.updatedAt = request.getUpdatedAt();
         List<EditorRequestAttachment> attachments = editorRequestAttachmentRepository.findByEditorRequestId(request.getId());
         dto.attachments = attachments.stream().map(EditorRequestAttachment::getFileUrl).collect(Collectors.toList());
         return dto;

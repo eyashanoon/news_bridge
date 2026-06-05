@@ -1,5 +1,6 @@
 // Post.jsx
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { categoryColors, categoryTheme } from "../utils/categoryColors";
 import { getUserId } from "../utils/userId";
 import PostModal from "./PostModal";
@@ -8,36 +9,77 @@ import { apiFetch } from "../utils/apiFetch";
 import { ensureUserInitialized } from "../utils/auth";
 import { savePost, unsavePost, isPostSaved } from "../utils/savedPosts";
 import { useTheme } from "../context/ThemeContext";
+import { useSession } from "../context/SessionContext";
+import GuestSignupPrompt from "./GuestSignupPrompt";
+import { useTranslation } from "react-i18next";
+import { detectItemLanguage } from "../utils/languageUtils";
+
+const AI_BASE_URL = "http://localhost:9000";
+
+// Shared translate helper — detects LLM refusal messages and falls back to original text
+async function translateText(text, sourceLang, targetLang) {
+  if (!text || !text.trim()) return "";
+  try {
+    const res = await fetch(`${AI_BASE_URL}/translate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, source_lang: sourceLang, target_lang: targetLang }),
+    });
+    if (!res.ok) throw new Error(`Translation failed: ${res.status}`);
+    const data = await res.json();
+    const translated = (data.translatedText || "").trim();
+    if (!translated || /^(i can'?t|cannot|sorry|i'm sorry|i will not|cannot fulfill)/i.test(translated)) {
+      console.warn("Translation refused by LLM, showing original text");
+      return text;
+    }
+    return translated;
+  } catch (err) {
+    console.error("Translation error:", err.message);
+    return text;
+  }
+}
+
+function formatPublishedAt(value, lang) {
+  if (!value) return "";
+  const publishedAt = new Date(value);
+  if (Number.isNaN(publishedAt.getTime())) return "";
+  const now = new Date();
+  const diffMs = now.getTime() - publishedAt.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays >= 7) {
+    if (lang === "ar") {
+      const arabicMonths = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+      return `${publishedAt.getDate()} ${arabicMonths[publishedAt.getMonth()]} ${publishedAt.getFullYear()}`;
+    }
+    return publishedAt.toLocaleString(undefined, {
+      month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit",
+    });
+  }
+  if (lang === "ar") {
+    if (diffDays >= 1) return `منذ ${diffDays} أيام`;
+    if (diffHours >= 1) return `منذ ${diffHours} ساعات`;
+    if (diffMinutes >= 1) return `منذ ${diffMinutes} دقائق`;
+    return "الآن";
+  }
+  if (diffDays >= 1) return `${diffDays}d ago`;
+  if (diffHours >= 1) return `${diffHours}h ago`;
+  if (diffMinutes >= 1) return `${diffMinutes}m ago`;
+  return "just now";
+}
 
 export default function Post({ post, onAskAI }) {
   const colors = categoryColors[post.label] || {};
   const { darkMode } = useTheme();
+  const { session } = useSession();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
   const postTheme = categoryTheme[post.label]?.[darkMode ? "dark" : "light"] || categoryTheme.General[darkMode ? "dark" : "light"];
 
-  const formatPublishedAt = (value) => {
-    if (!value) return "";
-    const publishedAt = new Date(value);
-    if (Number.isNaN(publishedAt.getTime())) return "";
-    const now = new Date();
-    const diffMs = now.getTime() - publishedAt.getTime();
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (diffDays >= 7) {
-      return publishedAt.toLocaleString(undefined, {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-      });
-    }
-    if (diffDays >= 1) return `${diffDays}d ago`;
-    if (diffHours >= 1) return `${diffHours}h ago`;
-    if (diffMinutes >= 1) return `${diffMinutes}m ago`;
-    return "just now";
-  };
+  const postLang = detectItemLanguage(post);
+  const needsTranslation = (lang === "ar" && postLang !== "ar") || (lang !== "ar" && postLang === "ar");
 
   const [likesCount, setLikesCount] = useState(post.likes);
   const [dislikesCount, setDislikesCount] = useState(post.dislikes);
@@ -47,12 +89,22 @@ export default function Post({ post, onAskAI }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(() => isPostSaved(post.id));
+  const [guestPrompt, setGuestPrompt] = useState(null); // null | "like" | "save"
+
+  const isGuest = !session?.type || session?.type === "PRIMITIVE";
+
+  // Translation state — store full-text translations (not truncated)
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translatedTitle, setTranslatedTitle] = useState(null);
+  const [translatedFullText, setTranslatedFullText] = useState(null); // full body
+  const [showTranslated, setShowTranslated] = useState(false);
 
   const postRef = useRef(null);
   const visibleStart = useRef(null);
   const viewSent = useRef(false);
 
   const react = async (type) => {
+    if (isGuest) { setGuestPrompt("like"); return; }
     await ensureUserInitialized();
     const userId = getUserId();
     const res = await apiFetch(
@@ -115,12 +167,60 @@ export default function Post({ post, onAskAI }) {
 
   const handleToggleSave = async (e) => {
     e.stopPropagation();
+    if (isGuest) { setGuestPrompt("save"); return; }
+    if (post.isTopicPost) {
+      // Topic posts are saved/unsaved locally only (no backend endpoint)
+      const { getLocalSavedPosts } = await import("../utils/savedPosts");
+      if (isSaved) {
+        const saved = getLocalSavedPosts().filter((p) => p.id !== post.id);
+        localStorage.setItem("newsbridge_saved_posts", JSON.stringify(saved));
+        setIsSaved(false);
+      } else {
+        const saved = getLocalSavedPosts();
+        const exists = saved.some((p) => p.id === post.id);
+        if (!exists) {
+          saved.unshift({ ...post, savedAt: Date.now(), collections: [], note: "" });
+          localStorage.setItem("newsbridge_saved_posts", JSON.stringify(saved));
+        }
+        setIsSaved(true);
+      }
+      return;
+    }
     if (isSaved) {
-      await unsavePost(post.id);
+      try { await unsavePost(post.id); } catch (err) { console.warn("Unsave failed:", err); }
       setIsSaved(false);
     } else {
-      await savePost(post);
+      try { await savePost(post); } catch (err) { console.warn("Save failed:", err); }
       setIsSaved(true);
+    }
+  };
+
+  // Translate full title + full body text (not the truncated preview)
+  const handleTranslate = async () => {
+    if (showTranslated) {
+      setShowTranslated(false);
+      return;
+    }
+    if (!needsTranslation) return;
+    setIsTranslating(true);
+    try {
+      const targetLang = lang === "ar" ? "ar" : "en";
+      const sourceLang = lang === "ar" ? "en" : "ar";
+
+      if (post.title) {
+        const t = await translateText(post.title, sourceLang, targetLang);
+        setTranslatedTitle(t || post.title);
+      }
+      const fullText = post.text || "";
+      if (fullText) {
+        const t = await translateText(fullText, sourceLang, targetLang);
+        setTranslatedFullText(t || fullText);
+      }
+      setShowTranslated(true);
+    } catch (err) {
+      console.error("Translation error:", err.message);
+    } finally {
+      setIsTranslating(false);
     }
   };
 
@@ -148,15 +248,25 @@ export default function Post({ post, onAskAI }) {
     return () => observer.disconnect();
   }, []);
 
+  // Determine which text to display for the card (truncated or full)
+  const displayText = showTranslated && translatedFullText ? translatedFullText : (post.text || "");
   const MAX_CHARS = 220;
-  const isLongText = post.text && post.text.length > MAX_CHARS;
-  const previewText = isLongText
-    ? post.text.slice(0, MAX_CHARS) + "..."
-    : post.text;
+  const isLongText = displayText.length > MAX_CHARS;
+  const previewText = isLongText ? displayText.slice(0, MAX_CHARS) + "..." : displayText;
 
   const numImages = post.numImages || 0;
 
   useEffect(() => {
+    // If this is a topic post with mediaItems array, use that directly
+    if (post.isTopicPost && post.mediaItems && Array.isArray(post.mediaItems) && post.mediaItems.length > 0) {
+      setMedia(post.mediaItems);
+      return;
+    }
+    // If this is a topic post with direct mediaUrl, use that directly
+    if (!post.articleId && post.mediaUrl) {
+      setMedia([{ type: post.mediaType || 'image', url: post.mediaUrl }]);
+      return;
+    }
     const loadMedia = async () => {
       if (!post.articleId) return;
       try {
@@ -169,7 +279,7 @@ export default function Post({ post, onAskAI }) {
       }
     };
     loadMedia();
-  }, [post.articleId]);
+  }, [post.articleId, post.mediaUrl, post.mediaType, post.isTopicPost, post.mediaItems]);
 
   const buildPlaceholderImages = () => {
     const placeholders = [];
@@ -183,7 +293,7 @@ export default function Post({ post, onAskAI }) {
   };
 
   const placeholderImages = buildPlaceholderImages();
-  const publishedLabel = formatPublishedAt(post.articleCreatedAt);
+  const publishedLabel = formatPublishedAt(post.articleCreatedAt, lang);
 
   const renderImages = () => {
     const items = media && Array.isArray(media) ? media : placeholderImages.map((u) => ({ type: 'image', url: u }));
@@ -249,6 +359,13 @@ export default function Post({ post, onAskAI }) {
     );
   };
 
+  // Build props to pass to PostModal so it uses the same translated text
+  const modalPost = {
+    ...post,
+    _translatedTitle: showTranslated ? translatedTitle : null,
+    _translatedText: showTranslated ? translatedFullText : null,
+  };
+
   return (
     <>
       <div
@@ -268,14 +385,50 @@ export default function Post({ post, onAskAI }) {
 
         <div className="post-header">
           <span className="post-category" style={{ background: postTheme.pillBg, color: postTheme.pillText }}>
-            {post.label}
+            {t(`category_${post.label}`, post.label)}
           </span>
           {publishedLabel && <span className="post-time">{publishedLabel}</span>}
         </div>
 
-        {post.title && <h3 className="post-title">{post.title}</h3>}
+        {/* Author info for topic posts — bigger avatar, clickable to profile */}
+        {post.isTopicPost && (
+          <div
+            className="flex items-center gap-3 mt-2 mb-1 cursor-pointer hover:opacity-80"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (post.authorId) {
+                window.location.href = `/profile/${post.authorId}`;
+              }
+            }}
+          >
+            {post.authorAvatar ? (
+              <img
+                src={post.authorAvatar}
+                alt={post.authorName || "Editor"}
+                className="w-10 h-10 rounded-full object-cover border-2 border-blue-200"
+                onError={(e) => { e.currentTarget.style.display = "none"; }}
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold text-blue-600 border-2 border-blue-200">
+                {(post.authorName || "E")[0].toUpperCase()}
+              </div>
+            )}
+            <div>
+              <span className="text-sm font-semibold text-gray-800">{post.authorName || "Editor"}</span>
+              <span className="text-xs text-blue-500 block">View Profile →</span>
+            </div>
+          </div>
+        )}
 
-        <div className="post-text">{previewText}</div>
+        {post.title && (
+          <h3 className="post-title">
+            {showTranslated && translatedTitle ? translatedTitle : post.title}
+          </h3>
+        )}
+
+        <div className="post-text">
+          {previewText}
+        </div>
 
         {isLongText && (
           <button
@@ -285,7 +438,23 @@ export default function Post({ post, onAskAI }) {
             }}
             className="post-show-more"
           >
-            Show more...
+            {t("showMore")}
+          </button>
+        )}
+
+        {/* Translate link — translates full text, truncation applies on top */}
+        {needsTranslation && (
+          <button
+            onClick={(e) => { e.stopPropagation(); handleTranslate(); }}
+            disabled={isTranslating}
+            style={{
+              display: "inline-block", marginTop: "8px", fontSize: "0.85rem",
+              fontWeight: 600, color: "var(--text-muted)", background: "none",
+              border: "none", cursor: "pointer", fontFamily: "var(--font-sans)",
+              transition: "color var(--transition-fast)", padding: 0,
+            }}
+          >
+            {isTranslating ? t("translating") : showTranslated ? t("viewOriginal") : (lang === "ar" ? t("translateToAr") : t("translateToEn"))}
           </button>
         )}
 
@@ -321,7 +490,7 @@ export default function Post({ post, onAskAI }) {
             onClick={() => setIsCommentsOpen(true)}
             className="post-action-btn"
           >
-            💬 Comment
+            💬 {t("comment")}
           </button>
 
           <button
@@ -329,24 +498,27 @@ export default function Post({ post, onAskAI }) {
               e.stopPropagation();
               if (!onAskAI) return;
               onAskAI(post);
-              try {
-                await fetch(`http://localhost:9000/ingest/post/${post.id}`, {
-                  method: "POST",
-                });
-              } catch (err) {
-                console.error("Failed to ingest post into AI", err);
+              // Only try to ingest into AI backend for regular posts (not topic posts)
+              if (!post.isTopicPost) {
+                try {
+                  await fetch(`http://localhost:9000/ingest/post/${post.id}`, {
+                    method: "POST",
+                  });
+                } catch (err) {
+                  console.error("Failed to ingest post into AI", err);
+                }
               }
             }}
             className="post-action-btn ai-btn"
           >
-            🤖 Ask AI
+            🤖 {t("askAI")}
           </button>
 
           <button
             onClick={handleToggleSave}
             className={`post-action-btn ${isSaved ? "saved" : ""}`}
           >
-            {isSaved ? "📂" : "💾"} {isSaved ? "Saved" : "Save"}
+            {isSaved ? "📂" : "💾"} {isSaved ? t("saved") : t("save")}
           </button>
 
           <button
@@ -359,14 +531,26 @@ export default function Post({ post, onAskAI }) {
             disabled={!post.articleUrl}
             style={{ opacity: post.articleUrl ? 1 : 0.4 }}
           >
-            🔗 Visit
+            🔗 {t("visit")}
           </button>
         </div>
       </div>
 
-      {isModalOpen && <PostModal post={post} onClose={closeModal} />}
+      {isModalOpen && (
+        <PostModal
+          post={modalPost}
+          onClose={closeModal}
+        />
+      )}
       {isCommentsOpen && (
         <PostCommentsModal post={post} onClose={() => setIsCommentsOpen(false)} />
+      )}
+      {guestPrompt && (
+        <GuestSignupPrompt
+          action={guestPrompt === "like" ? "like or dislike posts" : "save articles"}
+          onClose={() => setGuestPrompt(null)}
+          onGoToLogin={(mode) => { window.location.href = `/auth?mode=${mode}`; }}
+        />
       )}
     </>
   );

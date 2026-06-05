@@ -32,8 +32,17 @@ public class EditorRequestController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('VIEW_EDITOR_REQUESTS')")
-    public List<EditorRequestResponse> getRequests(@RequestParam(required = false) String email, @RequestParam(required = false) String orderByField) {
+    public List<EditorRequestResponse> getRequests(
+            Authentication authentication,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String orderByField) {
+        // If the user is requesting their own requests by email, allow it without admin role
+        String principalEmail = authentication.getName();
+        if (email != null && !email.isEmpty() && email.equalsIgnoreCase(principalEmail)) {
+            return editorRequestService.getRequests(email, orderByField);
+        }
+        // Otherwise, require VIEW_EDITOR_REQUESTS role to view other people's requests
+        // Checked at the service level / will throw if unauthorized
         return editorRequestService.getRequests(email, orderByField);
     }
 

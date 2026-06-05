@@ -17,7 +17,7 @@ import java.util.Set;
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class RegisteredUser extends AppUser {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false, unique = true)
@@ -25,6 +25,15 @@ public class RegisteredUser extends AppUser {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String profilePicture;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "registered_user_roles", joinColumns = @JoinColumn(name = "registered_user_id"))
@@ -36,36 +45,24 @@ public class RegisteredUser extends AppUser {
         setType(UserType.REGISTERED);
     }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getProfilePicture() { return profilePicture; }
+    public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture; }
 
-    public Set<UserRole> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<UserRole> roles) {
-        this.roles = roles;
-    }
+    public Set<UserRole> getRoles() { return roles; }
+    public void setRoles(Set<UserRole> roles) { this.roles = roles; }
 }
-

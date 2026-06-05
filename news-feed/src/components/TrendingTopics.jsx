@@ -1,84 +1,76 @@
 // TrendingTopics.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import TopicCard from "./TopicCard";
-import TopicDetails from "./TopicDetails";
+import { fetchTopics, getMyTopics } from "../api/topicsApi";
+import { getToken } from "../utils/auth";
+import { getSessionFromToken } from "../auth";
 
 export default function TrendingTopics() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const [topics, setTopics] = useState([]);
-  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const token = getToken();
+  const session = token ? getSessionFromToken(token) : null;
+  const isEditor = !!(session && session.type === "EDITOR" && (
+    session.roles.includes("PUBLISH_LIVE_NEWS") || session.roles.includes("EDIT_LIVE_NEWS")
+  ));
+
   const openTopicDetails = (id) => {
-    setSelectedTopic(id);
+    navigate(`/news/topics/${id}`);
   };
 
   useEffect(() => {
-    const fakeTopics = [
-      {
-        id: 1,
-        title: "Israel - Gaza Conflict Updates",
-        growth: 84,
-        summary:
-          "New developments and international reactions are shaping the ongoing situation. Talks of ceasefire and aid delivery are trending heavily.",
-        posts: 220,
-        contributors: 38,
-        tags: ["gaza", "israel", "ceasefire", "aid", "un"],
-      },
-      {
-        id: 2,
-        title: "Champions League Quarter Finals",
-        growth: 61,
-        summary:
-          "Major European clubs are facing off in the quarter finals, with surprise performances and key player injuries dominating discussions.",
-        posts: 140,
-        contributors: 22,
-        tags: ["football", "uefa", "championsleague", "sports"],
-      },
-      {
-        id: 3,
-        title: "Apple AI Features Announcement",
-        growth: 73,
-        summary:
-          "Apple is rumored to release new AI-powered features across iOS and MacOS. Investors and developers are watching closely.",
-        posts: 95,
-        contributors: 18,
-        tags: ["apple", "ai", "ios", "technology", "macos"],
-      },
-      {
-        id: 4,
-        title: "Global Inflation & Currency Changes",
-        growth: 55,
-        summary:
-          "Markets are reacting to inflation reports, interest rate expectations, and currency fluctuations affecting global trade.",
-        posts: 170,
-        contributors: 30,
-        tags: ["inflation", "economy", "finance", "markets"],
-      },
-      {
-        id: 5,
-        title: "New Virus Variant Spread",
-        growth: 67,
-        summary:
-          "Health agencies are monitoring a new variant. Travel advisories and vaccination discussions are trending again.",
-        posts: 120,
-        contributors: 25,
-        tags: ["health", "virus", "variant", "medical"],
-      },
-    ];
+    let mounted = true;
+    setLoading(true);
+    // Editors see ACTIVE + DRAFT topics via my-topics; regular users see only ACTIVE via fetchTopics
+    if (isEditor) {
+      getMyTopics().then((data) => {
+        if (mounted) {
+          setTopics(data);
+          setLoading(false);
+        }
+      }).catch(() => {
+        if (mounted) setLoading(false);
+      });
+    } else {
+      fetchTopics().then((data) => {
+        if (mounted) {
+          setTopics(data);
+          setLoading(false);
+        }
+      }).catch(() => {
+        if (mounted) setLoading(false);
+      });
+    }
+    return () => { mounted = false; };
+  }, [isEditor]);
 
-    setTopics(fakeTopics);
-  }, []);
+  if (loading) {
+    return (
+      <div className="space-y-4 p-2">
+        <div className="trending-header-card">
+          <h1>🔥 Trending Topics</h1>
+          <p>{t("topicsLoading")}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 p-2">
       <div className="trending-header-card">
-        <h1>🔥 Trending Topics</h1>
-        <p>Explore what people are talking about right now.</p>
+        <h1>🔥 {t("trendingTopicsTitle")}</h1>
+        <p>{t("trendingTopicsDesc")}</p>
       </div>
 
-    {selectedTopic ? (
-        <TopicDetails
-            topicId={selectedTopic}
-            goBack={() => setSelectedTopic(null)}
-        />
+    {topics.length === 0 ? (
+          <div className="text-center text-gray-500 py-8">
+            <p>{t("noTopicsAvailable")}</p>
+          </div>
         ) : (
         <div className="stagger space-y-3">
             {topics.map((topic) => (

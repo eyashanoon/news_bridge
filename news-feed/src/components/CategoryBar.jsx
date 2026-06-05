@@ -2,9 +2,11 @@
 import { categories } from "../utils/categoryConfig";
 import { categoryTheme } from "../utils/categoryColors";
 import { useTheme } from "../context/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 export default function CategoryBar({ category, setCategory }) {
   const { darkMode } = useTheme();
+  const { t } = useTranslation();
   const mode = darkMode ? "dark" : "light";
 
   return (
@@ -41,7 +43,7 @@ export default function CategoryBar({ category, setCategory }) {
               }
             }}
           >
-            {cat.name}
+            {t(`category_${cat.name}`, cat.name)}
           </button>
         );
       })}

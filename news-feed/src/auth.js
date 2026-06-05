@@ -1,4 +1,4 @@
-const TOKEN_COOKIE = "gp_token";
+const TOKEN_COOKIE = "nf_token";
 
 function parseCookieString(cookieString) {
   return cookieString

@@ -1,0 +1,224 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #0a0f1e;
+  overflow: hidden;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #fff;
+}
+
+/* ── Canvas ───────────────────────────────────────────────────── */
+#canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ── Loading ──────────────────────────────────────────────────── */
+#loading {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: #0a0f1e;
+  z-index: 200;
+  transition: opacity 0.7s ease;
+}
+
+#loading.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-ring {
+  width: 56px;
+  height: 56px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #7c6af7;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#loading p {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── Start overlay ────────────────────────────────────────────── */
+#start-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  background: rgba(10, 15, 30, 0.55);
+  backdrop-filter: blur(3px);
+  transition: opacity 0.4s ease;
+}
+
+#start-overlay.hidden {
+  display: none;
+}
+
+#start-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.start-content {
+  text-align: center;
+  user-select: none;
+}
+
+.start-content h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+
+.start-content p {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 1.05rem;
+}
+
+.pulse-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid rgba(124, 106, 247, 0.6);
+  margin: 0 auto 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1);   opacity: 1;   }
+  50%       { transform: scale(1.12); opacity: 0.5; }
+}
+
+/* ── Main UI ──────────────────────────────────────────────────── */
+#ui {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#ui.hidden {
+  display: none;
+}
+
+/* ── Subtitle ─────────────────────────────────────────────────── */
+#subtitle-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 0 32px 14px;
+}
+
+#subtitle {
+  max-width: 700px;
+  text-align: center;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
+  min-height: 1.6em;
+  transition: opacity 0.3s;
+}
+
+#subtitle mark {
+  background: transparent;
+  color: #b8adff;
+  font-weight: 700;
+}
+
+/* ── Chat bar ─────────────────────────────────────────────────── */
+#chat-bar {
+  pointer-events: all;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 24px 36px;
+  background: linear-gradient(to top, rgba(10, 15, 30, 0.92) 60%, transparent);
+}
+
+#user-input {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  backdrop-filter: blur(10px);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+#user-input::placeholder {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+#user-input:focus {
+  border-color: #7c6af7;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+#user-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Speak button ─────────────────────────────────────────────── */
+#speak-btn {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: #7c6af7;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.1s;
+}
+
+#speak-btn:hover  { background: #6a58e0; }
+#speak-btn:active { transform: scale(0.93); }
+
+#speak-btn.speaking {
+  background: #e05c5c;
+  animation: speaking-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes speaking-pulse {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(224, 92, 92, 0.6); }
+  50%       { box-shadow: 0 0 0 10px rgba(224, 92, 92, 0);   }
+}
+
+#speak-btn svg {
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}

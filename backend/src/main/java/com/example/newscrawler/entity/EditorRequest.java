@@ -1,14 +1,9 @@
 package com.example.newscrawler.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "editor_requests")
@@ -23,9 +18,13 @@ public class EditorRequest {
     @JoinColumn(name = "user_id", nullable = false)
     private RegisteredUser user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "field_id")
-    private CategoryField field;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "editor_request_fields",
+        joinColumns = @JoinColumn(name = "editor_request_id"),
+        inverseJoinColumns = @JoinColumn(name = "field_id")
+    )
+    private List<CategoryField> fields = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
     private String experience;
@@ -42,14 +41,31 @@ public class EditorRequest {
     @Column(columnDefinition = "LONGTEXT")
     private String profilePicture;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     
     public RegisteredUser getUser() { return user; }
     public void setUser(RegisteredUser user) { this.user = user; }
     
-    public CategoryField getField() { return field; }
-    public void setField(CategoryField field) { this.field = field; }
+    public List<CategoryField> getFields() { return fields; }
+    public void setFields(List<CategoryField> fields) { this.fields = fields; }
     
     public String getExperience() { return experience; }
     public void setExperience(String experience) { this.experience = experience; }
@@ -65,5 +81,10 @@ public class EditorRequest {
 
     public String getProfilePicture() { return profilePicture; }
     public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture; }
-}
 
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+}

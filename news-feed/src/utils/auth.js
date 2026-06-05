@@ -4,6 +4,7 @@ const TOKEN_KEY = "token";
 const USER_ID_KEY = "userId";
 const USER_TYPE_KEY = "userType";
 const ROLES_KEY = "roles";
+const TOKEN_COOKIE = "nf_token";
 
 // decode JWT payload
 function decodeJwt(token) {
@@ -15,6 +16,23 @@ function decodeJwt(token) {
     console.error("Failed to decode JWT:", err);
     return null;
   }
+}
+
+function parseCookieString(cookieString) {
+  return cookieString
+    .split(";")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .reduce((acc, item) => {
+      const [key, ...rest] = item.split("=");
+      acc[key] = rest.join("=");
+      return acc;
+    }, {});
+}
+
+function getCookieToken() {
+  const cookies = parseCookieString(document.cookie || "");
+  return cookies[TOKEN_COOKIE] || null;
 }
 
 export function getToken() {
@@ -40,8 +58,42 @@ export function logout() {
   localStorage.removeItem(ROLES_KEY);
 }
 
+// Sync cookie token to localStorage if available (prefer registered/editor tokens over primitive)
+function trySyncFromCookie() {
+  const cookieToken = getCookieToken();
+  if (!cookieToken) return false;
+
+  const decoded = decodeJwt(cookieToken);
+  if (!decoded?.sub) return false;
+
+  const cookieType = decoded.type || "PRIMITIVE";
+  const localToken = getToken();
+  const localType = localStorage.getItem(USER_TYPE_KEY);
+
+  // If the cookie has a registered/editor session and local has primitive, override
+  const isCookieAuth = cookieType === "REGISTERED" || cookieType === "EDITOR";
+  const isLocalPrimitive = !localToken || localType === "PRIMITIVE";
+
+  if (!isCookieAuth && localToken) {
+    return false; // keep existing primitive token
+  }
+
+  if (isLocalPrimitive || isCookieAuth) {
+    localStorage.setItem(TOKEN_KEY, cookieToken);
+    localStorage.setItem(USER_ID_KEY, decoded.sub);
+    localStorage.setItem(USER_TYPE_KEY, cookieType);
+    localStorage.setItem(ROLES_KEY, JSON.stringify(decoded.roles || []));
+    return true;
+  }
+
+  return false;
+}
+
 // This ensures a guest/primitive user exists (or uses stored token)
 export async function ensureUserInitialized() {
+  // First, try to sync from cookie (registered user session)
+  trySyncFromCookie();
+
   let token = getToken();
   let userId = getUserId();
 

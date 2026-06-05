@@ -13,6 +13,6 @@ public interface EditorRequestRepository extends JpaRepository<EditorRequest, Lo
 
     long countByStatus(String status);
 
-    @Query("SELECT r FROM EditorRequest r LEFT JOIN FETCH r.field ORDER BY r.field.name ASC")
+    @Query("SELECT DISTINCT r FROM EditorRequest r LEFT JOIN FETCH r.fields ORDER BY r.status ASC")
     List<EditorRequest> findAllOrderByFieldNameAsc();
 }

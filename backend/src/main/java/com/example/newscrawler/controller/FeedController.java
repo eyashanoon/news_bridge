@@ -41,6 +41,17 @@ public class FeedController {
         return ResponseEntity.ok(feedService.getFeed(AppUser, category, limit, page));
     }
 
+    @GetMapping("/feed/brief")
+    public ResponseEntity<List<FeedPostDTO>> getBriefFeed(
+            @RequestParam(defaultValue = "30") int limit
+    ) {
+        /*
+         * Endpoint for the news brief feature — returns the most recent posts
+         * regardless of tagsExtracted status, with no scoring or dedup.
+         */
+        return ResponseEntity.ok(feedService.getRecentPostsForBrief(limit));
+    }
+
     @PutMapping("/posts/{id}/react")
     public ResponseEntity<?> reactToPost(
             @PathVariable Long id,

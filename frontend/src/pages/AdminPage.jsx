@@ -154,7 +154,7 @@ export default function AdminPage({ target }) {
       {target === "editor-requests" && hasRole(session, "VIEW_EDITOR_REQUESTS") && <EditorRequests session={session} />}
       {target === "crawler" && hasRole(session, "VIEW_CRAWLER_LOGS", "CONTROL_CRAWLER") && <ManageCrawler session={session} />}
       {target === "fields" && hasRole(session, "MANAGE_USERS", "APPROVE_EDITOR_REQUESTS") && <ManageFields session={session} />}
-      {target === "events" && hasRole(session, "MANAGE_EVENTS", "MANAGE_USERS") && <ManageEvents session={session} />}
+      {target === "topics" && hasRole(session, "MANAGE_EVENTS", "MANAGE_USERS") && <ManageTopics session={session} />}
       {target === "telegram" && hasRole(session, "MANAGE_TELEGRAM_CHANNELS", "VIEW_TELEGRAM_POSTS", "MANAGE_USERS") && <ManageTelegram session={session} />}
     </div>
   );
@@ -841,6 +841,412 @@ function ManageArticles({ session }) {
   );
 }
 
+/* ===================== MANAGE TOPICS (Trending Topics) ===================== */
+function ManageTopics({ session }) {
+  const [topics, setTopics] = useState([]);
+  const [editors, setEditors] = useState([]);
+  const [fields, setFields] = useState([]);
+  const [showCreate, setShowCreate] = useState(false);
+  const [form, setForm] = useState({ title: "", description: "", fieldIds: [] });
+  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [selectedTopicData, setSelectedTopicData] = useState(null);
+  const [topicEditors, setTopicEditors] = useState([]);
+  const [topicPosts, setTopicPosts] = useState([]);
+  const [topicPostsLoading, setTopicPostsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { askConfirm, Dialog } = useAdminDialog();
+  const cfg = authConfig(session.token);
+
+  const loadTopics = useCallback(() => {
+    api.get("/api/topics", cfg).then((r) => setTopics(r.data)).catch(console.error);
+  }, [session.token]);
+
+  const loadFields = useCallback(() => {
+    api.get("/api/fields", cfg).then((r) => setFields(r.data)).catch(console.error);
+  }, [session.token]);
+
+  const loadEditors = useCallback(() => {
+    api.get("/api/admin/manage/editor-users", cfg).then((r) => setEditors(r.data)).catch(console.error);
+  }, [session.token]);
+
+  useEffect(() => { loadTopics(); loadFields(); loadEditors(); }, [loadTopics, loadFields, loadEditors]);
+
+  const loadTopicEditors = async (topicId) => {
+    try {
+      const res = await api.get(`/api/topics/${topicId}/editors`, cfg);
+      setTopicEditors(res.data || []);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to load topic editors");
+    }
+  };
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      await api.post("/api/topics", {
+        title: form.title,
+        description: form.description,
+        author: "Admin",
+        tags: [],
+        fieldIds: form.fieldIds.length > 0 ? form.fieldIds : null,
+      }, cfg);
+      setForm({ title: "", description: "", fieldIds: [] });
+      setShowCreate(false);
+      loadTopics();
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to create topic");
+    }
+  };
+
+  const handleChangeStatus = async (id, newStatus) => {
+    setError("");
+    try {
+      await api.patch(`/api/topics/${id}/status`, { status: newStatus }, cfg);
+      loadTopics();
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to change topic status");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const ok = await askConfirm("Delete this topic and all its posts? This cannot be undone.");
+    if (!ok) return;
+    try {
+      await api.delete(`/api/topics/${id}`, cfg);
+      if (selectedTopic === id) {
+        setSelectedTopic(null);
+        setTopicEditors([]);
+      }
+      loadTopics();
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to delete topic");
+    }
+  };
+
+  const handleApprove = async (editorId) => {
+    try {
+      await api.post(`/api/topics/${selectedTopic}/approve/${editorId}`, {}, cfg);
+      loadTopicEditors(selectedTopic);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to approve editor");
+    }
+  };
+
+  const handleReject = async (editorId) => {
+    try {
+      await api.post(`/api/topics/${selectedTopic}/reject/${editorId}`, {}, cfg);
+      loadTopicEditors(selectedTopic);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to reject editor");
+    }
+  };
+
+  const handleAssign = async (editorId) => {
+    try {
+      await api.post(`/api/topics/${selectedTopic}/assign/${editorId}`, {}, cfg);
+      loadTopicEditors(selectedTopic);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to assign editor");
+    }
+  };
+
+  const toggleField = (fieldId) => {
+    setForm(prev => ({
+      ...prev,
+      fieldIds: prev.fieldIds.includes(fieldId)
+        ? prev.fieldIds.filter(id => id !== fieldId)
+        : [...prev.fieldIds, fieldId]
+    }));
+  };
+
+  return (
+    <div>
+      <div className="admin-page-header">
+        <h2>Trending Topics Management</h2>
+        <p>Create, manage, and approve editors for trending topics. Published events automatically become topics.</p>
+      </div>
+
+      {error && <div className="admin-error">{error}</div>}
+
+      <button className="admin-btn primary" onClick={() => setShowCreate(!showCreate)}>
+        {showCreate ? "Cancel" : "+ New Topic"}
+      </button>
+
+      {showCreate && (
+        <form className="admin-form" onSubmit={handleCreate}>
+          <input
+            placeholder="Topic title"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+            required
+          />
+          <textarea
+            placeholder="Brief description of the topic..."
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            rows={3}
+            style={{ background: "var(--surface-2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: 6, padding: "8px 12px", resize: "vertical" }}
+          />
+          <div className="role-picker">
+            <label style={{ fontSize: "0.85rem", marginBottom: 6, display: "block" }}>Select fields (optional):</label>
+            {fields.map((f) => (
+              <label key={f.id} className={`role-chip ${form.fieldIds.includes(f.id) ? "selected" : ""}`}>
+                <input
+                  type="checkbox"
+                  checked={form.fieldIds.includes(f.id)}
+                  onChange={() => toggleField(f.id)}
+                />
+                {f.name}
+              </label>
+            ))}
+          </div>
+          <button className="admin-btn primary" type="submit">Create Topic</button>
+        </form>
+      )}
+
+      <div className="event-grid">
+        {topics.map((t) => (
+          <div
+            key={t.id}
+            className={`event-card ${selectedTopic === t.id ? "selected" : ""}`}
+            onClick={() => {
+              const newId = selectedTopic === t.id ? null : t.id;
+              setSelectedTopic(newId);
+              if (newId) loadTopicEditors(newId);
+              setTopicEditors([]);
+            }}
+          >
+            <div className="event-card-header">
+              <span className="event-status-badge" style={{ background: "#3b82f622", color: "#3b82f6", border: "1px solid #3b82f666" }}>
+                {t.status}
+              </span>
+              <span className="event-field-badge">🔥 {t.growth}%</span>
+            </div>
+            <h3 className="event-card-title">{t.title}</h3>
+            <p className="event-card-desc">{t.description || "No description."}</p>
+            <div className="event-card-footer">
+              <span className="event-card-meta">📝 {t.posts} posts · 👥 {t.contributors} contributors · {t.createdAt ? new Date(t.createdAt).toLocaleDateString() : "-"}</span>
+              <div className="event-card-actions" onClick={(e) => e.stopPropagation()}>
+                {t.status === "DRAFT" && (
+                  <button className="admin-btn small primary" onClick={() => handleChangeStatus(t.id, "ACTIVE")}>Publish</button>
+                )}
+                {t.status === "ACTIVE" && (
+                  <button className="admin-btn small" onClick={() => handleChangeStatus(t.id, "INACTIVE")}>Deactivate</button>
+                )}
+                {t.status === "INACTIVE" && (
+                  <button className="admin-btn small primary" onClick={() => handleChangeStatus(t.id, "ACTIVE")}>Reactivate</button>
+                )}
+                <button className="admin-btn small danger" onClick={() => handleDelete(t.id)}>Delete</button>
+              </div>
+            </div>
+            {t.fieldNames && t.fieldNames.length > 0 && (
+              <div className="flex gap-2 mt-2 flex-wrap">
+                {t.fieldNames.map((fn, idx) => (
+                  <span key={idx} className="post-tag" style={{ backgroundColor: "#e8f5e9", color: "#2e7d32", fontSize: "0.75rem" }}>📌 {fn}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+        {topics.length === 0 && (
+          <div className="event-empty-state">
+            <p>No topics yet. Topics are created automatically when events go public, or you can create one manually.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Detailed Topic View for Selected Topic */}
+      {selectedTopic && (
+        <div className="admin-table-wrap" style={{ marginTop: "1.5rem" }}>
+          {/* Topic Info Header */}
+          {(() => {
+            const topicData = topics.find(t => t.id === selectedTopic);
+            return topicData ? (
+              <div className="admin-page-header" style={{ borderBottom: "1px solid var(--border)", paddingBottom: "1rem", marginBottom: "1.5rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: "1.3rem" }}>{topicData.title}</h3>
+                    <p style={{ margin: "4px 0 0", color: "var(--text-secondary)", fontSize: "0.85rem" }}>
+                      ID #{topicData.id} · {topicData.status} · 🔥 {topicData.growth}% growth · 📝 {topicData.posts} posts · 👥 {topicData.contributors} contributors
+                    </p>
+                    {topicData.fieldNames && topicData.fieldNames.length > 0 && (
+                      <div className="flex gap-2 mt-2 flex-wrap">
+                        {topicData.fieldNames.map((fn, idx) => (
+                          <span key={idx} className="post-tag" style={{ backgroundColor: "#e8f5e9", color: "#2e7d32", fontSize: "0.75rem" }}>📌 {fn}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    {topicData.status === "DRAFT" && (
+                      <button className="admin-btn small primary" onClick={() => handleChangeStatus(topicData.id, "ACTIVE")}>Publish Topic</button>
+                    )}
+                    {topicData.status === "ACTIVE" && (
+                      <button className="admin-btn small" onClick={() => handleChangeStatus(topicData.id, "INACTIVE")}>Deactivate</button>
+                    )}
+                    {topicData.status === "INACTIVE" && (
+                      <button className="admin-btn small primary" onClick={() => handleChangeStatus(topicData.id, "ACTIVE")}>Reactivate</button>
+                    )}
+                    <button className="admin-btn small danger" onClick={() => { setSelectedTopic(null); handleDelete(topicData.id); }}>Delete Topic</button>
+                  </div>
+                </div>
+              </div>
+            ) : null;
+          })()}
+
+          {/* Editor Approvals Section */}
+          <h4 style={{ marginBottom: "0.75rem", fontSize: "1rem" }}>
+            Editor Approvals {topicEditors.length > 0 && <span style={{ fontWeight: 400, color: "var(--text-muted)" }}>({topicEditors.length})</span>}
+          </h4>
+          
+          {topicEditors.length > 0 && (
+            <table className="admin-table" style={{ marginBottom: "1.5rem" }}>
+              <thead><tr><th>Editor ID</th><th>Email</th><th>Name</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                {topicEditors.map((a) => (
+                  <tr key={a.editorId}>
+                    <td>{a.editorId}</td>
+                    <td>{a.editorEmail}</td>
+                    <td>{a.editorName}</td>
+                    <td>
+                      <span className={`status-badge ${a.status === "APPROVED" || a.status === "ASSIGNED" ? "approved" : a.status === "REJECTED" ? "rejected" : ""}`}>
+                        {a.status}
+                      </span>
+                    </td>
+                    <td className="action-cell">
+                      {a.status === "REQUESTED" && (
+                        <>
+                          <button className="admin-btn small primary" onClick={() => handleApprove(a.editorId)}>Approve</button>
+                          <button className="admin-btn small danger" onClick={() => handleReject(a.editorId)}>Reject</button>
+                        </>
+                      )}
+                      {a.status === "APPROVED" && <span className="text-green-600 text-sm">✓ Approved</span>}
+                      {a.status === "ASSIGNED" && <span className="text-blue-600 text-sm">📋 Assigned</span>}
+                      {a.status === "REJECTED" && <span className="text-red-500 text-sm">✗ Rejected</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {topicEditors.length === 0 && <p className="text-gray-500 text-sm mb-4">No editor requests or assignments yet.</p>}
+
+          {/* Manual Assignment */}
+          <div className="admin-filters-row" style={{ marginBottom: "1.5rem" }}>
+            <select
+              id="assign-editor-select"
+              className="admin-select"
+              style={{ minWidth: 250 }}
+              defaultValue=""
+              onChange={(e) => {
+                if (e.target.value) {
+                  handleAssign(Number(e.target.value));
+                  e.target.value = "";
+                }
+              }}
+            >
+              <option value="">Select an editor to assign...</option>
+              {editors
+                .filter(ed => ed.status !== "SUSPENDED" && !topicEditors.some(te => te.editorId === ed.id))
+                .map((ed) => (
+                  <option key={ed.id} value={ed.id}>{ed.email} ({ed.fieldName || "No field"})</option>
+                ))}
+            </select>
+          </div>
+
+          {/* Topic Posts Section */}
+          <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1.5rem", marginTop: "1.5rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+              <h4 style={{ margin: 0, fontSize: "1rem" }}>
+                Posts <span style={{ fontWeight: 400, color: "var(--text-muted)" }}>({topicPosts.length})</span>
+              </h4>
+              <button
+                className="admin-btn small"
+                onClick={async () => {
+                  setTopicPostsLoading(true);
+                  try {
+                    const res = await api.get(`/api/topics/${selectedTopic}/posts`, cfg);
+                    setTopicPosts(res.data || []);
+                  } catch (err) {
+                    setError(err.response?.data?.message || "Failed to load posts");
+                  }
+                  setTopicPostsLoading(false);
+                }}
+                disabled={topicPostsLoading}
+              >
+                {topicPostsLoading ? "Loading..." : "🔄 Refresh Posts"}
+              </button>
+            </div>
+
+            {topicPosts.length === 0 && !topicPostsLoading && (
+              <div className="event-empty-state" style={{ padding: "2rem" }}>
+                <p>No posts yet in this topic. Click "Refresh Posts" to load them.</p>
+              </div>
+            )}
+
+            {topicPostsLoading && <p className="text-gray-500 text-sm">Loading posts...</p>}
+
+            {topicPosts.length > 0 && (
+              <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Author</th>
+                      <th>Text</th>
+                      <th>Date</th>
+                      <th>Likes/Dislikes</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topicPosts.map((post) => (
+                      <tr key={post.id}>
+                        <td>{post.id}</td>
+                        <td>{post.author || post.authorEmail || "-"}</td>
+                        <td className="title-cell" style={{ maxWidth: "300px", whiteSpace: "pre-wrap" }}>
+                          {post.text?.substring(0, 120)}{post.text?.length > 120 ? "..." : ""}
+                        </td>
+                        <td style={{ fontSize: "0.8rem" }}>
+                          {post.createdAt ? new Date(post.createdAt).toLocaleString() : "-"}
+                        </td>
+                        <td style={{ fontSize: "0.85rem" }}>
+                          ❤️ {post.likes ?? 0} · 👎 {post.dislikes ?? 0}
+                        </td>
+                        <td className="action-cell">
+                          <button
+                            className="admin-btn small danger"
+                            onClick={async () => {
+                              const ok = await askConfirm(`Delete post by "${post.author}" (ID: ${post.id})? The editor who created this post will be notified.`);
+                              if (!ok) return;
+                              try {
+                                await api.delete(`/api/topics/${selectedTopic}/posts/${post.id}`, cfg);
+                                setTopicPosts(prev => prev.filter(p => p.id !== post.id));
+                                loadTopics();
+                              } catch (err) {
+                                setError(err.response?.data?.message || "Failed to delete post");
+                              }
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {Dialog}
+    </div>
+  );
+}
+
 /* ===================== MANAGE ROOTS ===================== */
 function ManageRoots({ session }) {
   const [roots, setRoots] = useState([]);
@@ -1310,7 +1716,13 @@ function EditorRequests({ session }) {
     api.get("/api/editor-requests", cfg).then((r) => setRequests(r.data)).catch(console.error);
   }, [session.token]);
 
-  useEffect(load, [load]);
+  useEffect(() => { load(); }, [load]);
+
+  // Poll for new editor requests every 15 seconds so admin sees them without manual refresh
+  useEffect(() => {
+    const interval = setInterval(load, 15000);
+    return () => clearInterval(interval);
+  }, [load]);
 
   const handleApprove = async (id) => {
     try {
@@ -1356,7 +1768,7 @@ function EditorRequests({ session }) {
                 <td>{r.id}</td>
                 <td><img className="avatar-circle" src={resolveAvatar(r.profilePicture, "editor")} alt="editor request avatar" /></td>
                 <td>{r.userEmail}</td>
-                <td>{r.field?.name || "-"}</td>
+                <td>{(r.fields || []).map(f => f.name).join(", ") || "-"}</td>
                 <td className="title-cell">{r.experience?.substring(0, 80) || "-"}</td>
                 <td><span className={`status-badge ${r.status.toLowerCase()}`}>{r.status}</span></td>
                 {canApprove && (
@@ -1676,25 +2088,31 @@ function ArticleCrawlerPanel({ session }) {
 function ManageFields({ session }) {
   const [fields, setFields] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ name: "", description: "" });
+  const [form, setForm] = useState({ name: "", description: "", parentId: "" });
   const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({ name: "", description: "" });
+  const [editForm, setEditForm] = useState({ name: "", description: "", parentId: "" });
   const [error, setError] = useState("");
   const { askConfirm, Dialog } = useAdminDialog();
   const cfg = authConfig(session.token);
 
+  // Load flat fields for parent dropdown; also load hierarchical for display
   const load = useCallback(() => {
     api.get("/api/fields", cfg).then((r) => setFields(r.data)).catch(console.error);
   }, [session.token]);
 
   useEffect(load, [load]);
 
+  // Get only general fields (no parent) for the parent dropdown
+  const generalFields = fields.filter((f) => !f.parentId);
+
   const handleCreate = async (e) => {
     e.preventDefault();
     setError("");
     try {
-      await api.post("/api/fields", form, cfg);
-      setForm({ name: "", description: "" });
+      const body = { name: form.name, description: form.description };
+      if (form.parentId) body.parentId = Number(form.parentId);
+      await api.post("/api/fields", body, cfg);
+      setForm({ name: "", description: "", parentId: "" });
       setShowCreate(false);
       load();
     } catch (err) {
@@ -1704,7 +2122,10 @@ function ManageFields({ session }) {
 
   const handleUpdate = async (id) => {
     try {
-      await api.put(`/api/fields/${id}`, editForm, cfg);
+      const body = { name: editForm.name, description: editForm.description };
+      if (editForm.parentId) body.parentId = Number(editForm.parentId);
+      else body.parentId = null;
+      await api.put(`/api/fields/${id}`, body, cfg);
       setEditingId(null);
       load();
     } catch (err) {
@@ -1713,7 +2134,7 @@ function ManageFields({ session }) {
   };
 
   const handleDelete = async (id) => {
-    const ok = await askConfirm("Delete this category field?");
+    const ok = await askConfirm("Delete this category field? This will also remove all sub-fields under it.");
     if (!ok) return;
     try {
       await api.delete(`/api/fields/${id}`, cfg);
@@ -1723,11 +2144,17 @@ function ManageFields({ session }) {
     }
   };
 
+  const getParentName = (parentId) => {
+    if (!parentId) return "";
+    const p = fields.find((f) => f.id === parentId);
+    return p ? p.name : "";
+  };
+
   return (
     <div>
       <div className="admin-page-header">
         <h2>Manage Category Fields</h2>
-        <p>Create, edit, and remove news categories</p>
+        <p>Create general categories and specific sub-fields. Editors can pick up to 2 specific sub-fields under one general category.</p>
       </div>
 
       {error && <div className="admin-error">{error}</div>}
@@ -1738,23 +2165,42 @@ function ManageFields({ session }) {
 
       {showCreate && (
         <form className="admin-form" onSubmit={handleCreate}>
-          <input placeholder="Field name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+          <input placeholder="Field name (e.g. Football, Artificial Intelligence)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
           <input placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+          <select value={form.parentId} onChange={(e) => setForm({ ...form, parentId: e.target.value })} style={{ padding: "8px", borderRadius: 6, border: "1px solid #ccc" }}>
+            <option value="">— General Category (no parent) —</option>
+            {generalFields.map((gf) => (
+              <option key={gf.id} value={gf.id}>{gf.name}</option>
+            ))}
+          </select>
+          <p style={{ fontSize: "0.8rem", color: "#666", margin: 0 }}>Select a parent to create a sub-field, or leave empty for a general category.</p>
           <button className="admin-btn primary" type="submit">Create Field</button>
         </form>
       )}
 
       <div className="admin-table-wrap">
         <table className="admin-table">
-          <thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Actions</th></tr></thead>
+          <thead><tr><th>ID</th><th>Name</th><th>Parent</th><th>Description</th><th>Actions</th></tr></thead>
           <tbody>
             {fields.map((f) => (
-              <tr key={f.id}>
+              <tr key={f.id} style={{ background: !f.parentId ? "#f8fafc" : "white" }}>
                 <td>{f.id}</td>
-                <td>
+                <td style={{ fontWeight: !f.parentId ? 600 : 400, paddingLeft: !f.parentId ? "12px" : "24px" }}>
                   {editingId === f.id
                     ? <input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
-                    : f.name}
+                    : <>{!f.parentId ? "📁 " : "• "}{f.name}</>}
+                </td>
+                <td style={{ color: "#888", fontSize: "0.85rem" }}>
+                  {editingId === f.id ? (
+                    <select value={editForm.parentId} onChange={(e) => setEditForm({ ...editForm, parentId: e.target.value })}>
+                      <option value="">— General —</option>
+                      {generalFields.filter((gf) => gf.id !== f.id).map((gf) => (
+                        <option key={gf.id} value={gf.id}>{gf.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    getParentName(f.parentId) || <span style={{ color: "#aaa" }}>General</span>
+                  )}
                 </td>
                 <td>
                   {editingId === f.id
@@ -1769,14 +2215,14 @@ function ManageFields({ session }) {
                     </>
                   ) : (
                     <>
-                      <button className="admin-btn small" onClick={() => { setEditingId(f.id); setEditForm({ name: f.name, description: f.description || "" }); }}>Edit</button>
+                      <button className="admin-btn small" onClick={() => { setEditingId(f.id); setEditForm({ name: f.name, description: f.description || "", parentId: f.parentId || "" }); }}>Edit</button>
                       <button className="admin-btn small danger" onClick={() => handleDelete(f.id)}>Delete</button>
                     </>
                   )}
                 </td>
               </tr>
             ))}
-            {fields.length === 0 && <tr><td colSpan="4" className="empty-row">No fields configured</td></tr>}
+            {fields.length === 0 && <tr><td colSpan="5" className="empty-row">No fields configured</td></tr>}
           </tbody>
         </table>
       </div>

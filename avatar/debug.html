@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bone Picker – Lip Sync Debug</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0f1e; color: #e0e6ff;
+      font-family: system-ui, sans-serif;
+      display: flex; height: 100vh; overflow: hidden;
+    }
+    canvas { flex: 1; display: block; min-width: 0; }
+
+    #panel {
+      width: 320px; flex-shrink: 0;
+      background: #111827; padding: 18px;
+      display: flex; flex-direction: column; gap: 14px;
+      overflow-y: auto;
+    }
+    h2 { color: #7eb8f7; font-size: 0.9rem; text-transform: uppercase;
+         letter-spacing: 0.08em; margin-bottom: 2px; }
+
+    #bone-name {
+      font-size: 1.25rem; font-weight: bold; color: #fff;
+      background: #1e293b; padding: 10px 12px; border-radius: 8px;
+      word-break: break-all; min-height: 2.6rem;
+    }
+    #progress { color: #64748b; font-size: 0.82rem; margin-top: 4px; }
+
+    /* Axis toggle */
+    #axis-row { display: flex; gap: 6px; }
+    .axis-btn {
+      flex: 1; padding: 7px 0; border: 2px solid #1e293b;
+      border-radius: 6px; background: #1e293b; color: #64748b;
+      cursor: pointer; font-size: 0.78rem; font-weight: 700;
+      transition: all 0.15s;
+    }
+    .axis-btn:hover { border-color: #374151; color: #d1d5db; }
+    .axis-btn.active[data-axis="x"]  { border-color: #ef4444; color: #ef4444; }
+    .axis-btn.active[data-axis="-x"] { border-color: #f87171; color: #f87171; }
+    .axis-btn.active[data-axis="y"]  { border-color: #22c55e; color: #22c55e; }
+    .axis-btn.active[data-axis="z"]  { border-color: #3b82f6; color: #3b82f6; }
+
+    /* Amplitude slider */
+    #amp-row { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; color: #94a3b8; }
+    #amp-slider { flex: 1; accent-color: #7eb8f7; }
+    #amp-val { min-width: 42px; text-align: right; color: #fff; font-weight: 600; }
+
+    /* Label buttons */
+    #label-btns { display: flex; flex-direction: column; gap: 8px; }
+    .lbtn {
+      width: 100%; padding: 11px; border: none; border-radius: 8px;
+      font-size: 0.92rem; cursor: pointer; font-weight: 600;
+      transition: opacity 0.15s; text-align: left;
+    }
+    .lbtn:hover { opacity: 0.85; }
+    #btn-jaw   { background: #dc2626; color: #fff; }
+    #btn-lipl  { background: #d97706; color: #fff; }
+    #btn-lipu  { background: #2563eb; color: #fff; }
+    #btn-chin  { background: #7c3aed; color: #fff; }
+    #btn-skip  { background: #374151; color: #9ca3af; }
+    #btn-prev  { background: #1e293b; color: #64748b; font-size: 0.82rem; }
+
+    /* Results */
+    #results-box {
+      background: #0f172a; border-radius: 8px; padding: 10px;
+      font-size: 0.72rem; font-family: monospace;
+      white-space: pre-wrap; color: #a3e635;
+      max-height: 180px; overflow-y: auto; border: 1px solid #1e293b;
+    }
+    #copy-btn {
+      width: 100%; padding: 8px; border: none; border-radius: 8px;
+      background: #4ade80; color: #000; font-weight: 700;
+      cursor: pointer; font-size: 0.82rem;
+    }
+    #copy-btn:hover { background: #86efac; }
+
+    #loading {
+      position: absolute; inset: 0; background: #0a0f1e;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; color: #7eb8f7; gap: 12px;
+    }
+    .spinner {
+      width: 40px; height: 40px; border: 4px solid #1e293b;
+      border-top-color: #7eb8f7; border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #done-msg {
+      background: #14532d; color: #4ade80; padding: 10px 12px;
+      border-radius: 8px; font-size: 0.85rem; display: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div id="panel">
+    <div>
+      <h2>Lip Sync Bone Picker</h2>
+      <p style="color:#475569;font-size:0.78rem;margin-top:4px;line-height:1.5">
+        Each jaw/lip bone will move. Tell me what you see.
+        Use axis buttons + slider to control the motion.
+      </p>
+    </div>
+
+    <div>
+      <div id="progress">Loading…</div>
+      <div id="bone-name">—</div>
+    </div>
+
+    <div>
+      <h2 style="margin-bottom:6px">Rotation Axis</h2>
+      <div id="axis-row">
+        <button class="axis-btn active" data-axis="x">+X</button>
+        <button class="axis-btn" data-axis="-x">−X</button>
+        <button class="axis-btn" data-axis="y">+Y</button>
+        <button class="axis-btn" data-axis="z">+Z</button>
+      </div>
+    </div>
+
+    <div>
+      <h2 style="margin-bottom:6px">Amplitude</h2>
+      <div id="amp-row">
+        <input id="amp-slider" type="range" min="0.1" max="1.2" step="0.05" value="0.45">
+        <span id="amp-val">0.45 rad</span>
+      </div>
+    </div>
+
+    <div id="label-btns">
+      <h2 style="margin-bottom:4px">What does this bone move?</h2>
+      <button class="lbtn" id="btn-jaw">🔴 JAW — whole mouth opens</button>
+      <button class="lbtn" id="btn-lipl">🟠 LOWER LIP only</button>
+      <button class="lbtn" id="btn-lipu">🔵 UPPER LIP only</button>
+      <button class="lbtn" id="btn-chin">🟣 CHIN / jaw side only</button>
+      <button class="lbtn" id="btn-skip">⬛ Nothing visible / Skip</button>
+      <button class="lbtn" id="btn-prev">← Previous</button>
+    </div>
+
+    <div id="done-msg">✅ All bones tested! Copy the results below.</div>
+
+    <div>
+      <h2 style="margin-bottom:6px">Results</h2>
+      <pre id="results-box">{}</pre>
+      <button id="copy-btn" style="margin-top:6px">Copy JSON</button>
+    </div>
+  </div>
+
+  <div id="loading"><div class="spinner"></div><span>Loading avatar…</span></div>
+
+  <script type="module" src="/src/bonePicker.js"></script>
+</body>
+</html>

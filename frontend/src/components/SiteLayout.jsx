@@ -9,6 +9,8 @@ export default function SiteLayout() {
   const isRegistered = session?.type === "REGISTERED";
   const isEditor = session?.type === "EDITOR";
 
+  const userTypeLabel = isLimited ? "Guest" : (isRegistered ? "Registered User" : (isEditor ? "Editor" : "Admin"));
+
   const handleLogout = () => {
     logout();
     nav("/");
@@ -52,6 +54,10 @@ export default function SiteLayout() {
       <header className="app-header">
         <div className="app-logo">
             <Link to="/">News Platform</Link>
+        </div>
+        
+        <div className="app-user-type-bar">
+          <span className="user-type-indicator">{userTypeLabel}</span>
         </div>
         
         {renderNavLinks()}

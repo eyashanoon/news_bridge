@@ -86,7 +86,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponse voteOnComment(Long commentId, Long userId, int voteType) {
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository.findByIdWithUser(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
         AppUser user = userRepository.findById(userId)
@@ -122,7 +122,7 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId, Long userId) {
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository.findByIdWithUser(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
         // Check if user is the owner
@@ -140,6 +140,10 @@ public class CommentService {
     private CommentResponse toResponse(Comment comment, Long currentUserId) {
         // Get user identifier
         String userIdentifier = getUserIdentifier(comment.getUser());
+        
+        // Get profile info
+        String profilePicture = getProfilePicture(comment.getUser());
+        String profileUsername = getProfileUsername(comment.getUser());
 
         // Get user's vote on this comment
         Integer userVote = null;
@@ -165,13 +169,35 @@ public class CommentService {
             comment.getVoteScore(),
             userVote,
             comment.getCreatedAt(),
-            replies
+            replies,
+            profilePicture,
+            profileUsername
         );
+    }
+    
+    private String getProfilePicture(AppUser user) {
+        if (user instanceof RegisteredUser r) {
+            return r.getProfilePicture();
+        }
+        if (user instanceof EditorUser e) {
+            return e.getProfilePicture();
+        }
+        return null;
+    }
+    
+    private String getProfileUsername(AppUser user) {
+        if (user instanceof RegisteredUser r) {
+            return r.getUsername();
+        }
+        return "user_" + user.getId();
     }
 
     private String getUserIdentifier(AppUser user) {
-        if (user instanceof RegisteredUser) {
-            return ((RegisteredUser) user).getUsername();
+        if (user instanceof RegisteredUser r) {
+            return r.getUsername();
+        }
+        if (user instanceof EditorUser e) {
+            return e.getUsername();
         }
         return "User " + user.getId();
     }

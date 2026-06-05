@@ -38,14 +38,15 @@ public class AdminAuthController {
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
-        logger.info("Admin Login attempt for email: {}", request.email());
+        String loginId = request.email() != null ? request.email() : request.getUsername();
+        logger.info("Admin Login attempt for email: {}", loginId);
 
         try {
             authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+                new UsernamePasswordAuthenticationToken(loginId, request.getPassword())
             );
 
-            Admin admin = adminRepository.findByEmail(request.email())
+            Admin admin = adminRepository.findByEmail(loginId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
 
             if (admin.getStatus() == UserStatus.SUSPENDED) {

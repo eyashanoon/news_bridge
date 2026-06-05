@@ -1,0 +1,21 @@
+{
+  "name": "talking-avatar",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently --names \"server,vite\" --prefix-colors \"cyan,green\" \"node server.js\" \"vite --port 5174\"",
+    "server": "node server.js",
+    "dev:vite": "vite --port 5174",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "three": "^0.166.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "vite": "^5.4.0"
+  }
+}
