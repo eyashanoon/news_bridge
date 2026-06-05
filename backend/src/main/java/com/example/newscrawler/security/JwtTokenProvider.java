@@ -34,6 +34,10 @@ public class JwtTokenProvider {
         return buildToken(user.getId().toString(), "PRIMITIVE", null, List.of("READ_ARTICLE"), user.getCreatedAt().toEpochMilli());
     }
 
+    public String generateTokenForPrimitiveUser(long syntheticId) {
+        return buildToken(String.valueOf(syntheticId), "PRIMITIVE", null, List.of("READ_ARTICLE"), System.currentTimeMillis());
+    }
+
     public String generateTokenForRegisteredUser(RegisteredUser user) {
         return buildToken(
                 user.getId().toString(),
@@ -47,7 +51,7 @@ public class JwtTokenProvider {
     public String generateTokenForEditorUser(EditorUser user) {
         return buildToken(
                 user.getId().toString(),
-                "REGISTERED",
+                "EDITOR",
                 user.getEmail(),
                 user.getRoles() == null ? List.of() : user.getRoles().stream().map(Enum::name).toList(),
                 user.getCreatedAt().toEpochMilli()

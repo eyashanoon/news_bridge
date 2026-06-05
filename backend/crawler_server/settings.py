@@ -25,6 +25,9 @@ class Settings:
     crawler_request_timeout_seconds: int
     crawler_restrict_same_domain: bool
     vv_py_path: str | None
+    crawler_num_channels: int
+    crawler_score_alpha: float
+    crawler_staleness_weight: float
 
 
 settings = Settings(
@@ -36,4 +39,7 @@ settings = Settings(
     crawler_request_timeout_seconds=int(os.getenv("CRAWLER_REQUEST_TIMEOUT_SECONDS", "30")),
     crawler_restrict_same_domain=_get_bool("CRAWLER_RESTRICT_SAME_DOMAIN", True),
     vv_py_path=os.getenv("VV_PY_PATH") or None,
+    crawler_num_channels=int(os.getenv("CRAWLER_NUM_CHANNELS", "3")),
+    crawler_score_alpha=float(os.getenv("CRAWLER_SCORE_ALPHA", "0.3")),
+    crawler_staleness_weight=float(os.getenv("CRAWLER_STALENESS_WEIGHT", "5.0")),
 )

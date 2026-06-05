@@ -9,7 +9,7 @@ public class EditorUserDto {
     public String email;
     public UserStatus status;
     public String experience;
-    public CategoryFieldDto field;
+    public List<CategoryFieldDto> fields;
     public String references;
     public String phone;
     public List<EditorAttachmentDto> attachments;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -28,6 +28,39 @@ export default function FeedScreen() {
   const rtl = isArabic ? "rtl" : "ltr";
 
   const [posts, setPosts] = useState([]);
+  const [viewableItems, setViewableItems] = useState(new Set());
+  
+  // Enrich posts with __visible flag for PostCard interaction tracking
+  // This mirrors the IntersectionObserver in news-feed's Post.jsx
+  const enrichedPosts = useMemo(() => 
+    posts.map(post => ({
+      ...post,
+      __visible: viewableItems.has(post.id || post.postId),
+    })),
+    [posts, viewableItems]
+  );
+  
+  // Handle viewability changes for interaction tracking (views, time spent)
+  // Matches Post.jsx IntersectionObserver with threshold: 0.6
+  const onViewableItemsChanged = useRef(({ viewableItems: items }) => {
+    const newViewable = new Set();
+    items.forEach(item => {
+      const id = item.item?.id || item.item?.postId;
+      if (id) newViewable.add(id);
+    });
+    setViewableItems(newViewable);
+  }).current;
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 60, // matches Post.jsx threshold: 0.6
+  }).current;
+
+  const viewabilityConfigCallbackPairs = useRef([
+    {
+      viewabilityConfig: { itemVisiblePercentThreshold: 60 },
+      onViewableItemsChanged: onViewableItemsChanged,
+    },
+  ]).current;
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [err, setErr] = useState("");
@@ -213,9 +246,9 @@ export default function FeedScreen() {
         <FlatList
           style={styles.listContainer}
           contentContainerStyle={styles.list}
-          data={posts}
+          data={enrichedPosts}
           keyExtractor={(item, index) =>
-            item.id?.toString() || item.postId?.toString() || index.toString()
+            (item.id || item.postId)?.toString() || index.toString()
           }
           renderItem={({ item }) => (
             <PostCard post={item} lang={i18n.language} />
@@ -227,6 +260,7 @@ export default function FeedScreen() {
           onEndReached={() => loadFeed(false)}
           onEndReachedThreshold={0.3}
           showsVerticalScrollIndicator={false}
+          viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs}
         />
         <SideMenu
           visible={sideMenuVisible}

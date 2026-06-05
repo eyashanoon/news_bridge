@@ -1,7 +1,20 @@
 // LeftSidebar.jsx
 import { useState, useEffect } from 'react';
+import { useTranslation } from "react-i18next";
 
-export default function LeftSidebar({ setActivePage, activePage, onLocationChange }) {
+export default function LeftSidebar({ setActivePage, activePage, onLocationChange, onOpenAvatar, isAvatarOpen }) {
+  const { t } = useTranslation();
+  const sessionStr = localStorage.getItem("nf_token");
+  const isEditor = (() => {
+    try {
+      const parts = sessionStr?.split(".");
+      if (parts?.length >= 2) {
+        const payload = JSON.parse(atob(parts[1]));
+        return payload?.type === "EDITOR";
+      }
+    } catch {}
+    return false;
+  })();
   const [location, setLocation] = useState(null);
   const [locationMenuOpen, setLocationMenuOpen] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
@@ -100,7 +113,7 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
       {/* Location Selector */}
       <div className="sidebar-section">
         <div className="location-selector">
-          <div className="label">News Location</div>
+          <div className="label">{t("newsLocation")}</div>
           <div className="relative">
             <button
               onClick={() => setLocationMenuOpen(!locationMenuOpen)}
@@ -108,9 +121,9 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
             >
               <div className="flex items-center gap-2">
                 <span>📍</span>
-                <span className="font-medium">{location ? location.name : 'Select Location'}</span>
+                <span className="font-medium">{location ? location.name : t("selectLocation")}</span>
               </div>
-              <span className="text-gray-400">▼</span>
+              <span style={{ color: "var(--text-muted)" }}>▼</span>
             </button>
 
             {locationMenuOpen && (
@@ -121,12 +134,12 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
                   className="location-option flex items-center gap-2 disabled:opacity-50"
                 >
                   <span>{detectingLocation ? '🔄' : '📍'}</span>
-                  {detectingLocation ? 'Detecting...' : 'Auto Detect Location'}
+                  {detectingLocation ? t("detecting") : t("autoDetectLocation")}
                 </button>
 
                 <input
                   type="text"
-                  placeholder="🔍 Search any city, town, country..."
+                  placeholder={t("searchCity")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="location-search-input"
@@ -135,7 +148,7 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
 
                 <div className="overflow-y-auto flex-1">
                   {searching && (
-                    <div className="px-4 py-2 text-gray-500 text-sm">Searching...</div>
+                    <div className="px-4 py-2 text-sm" style={{ color: "var(--text-muted)" }}>{t("loading")}</div>
                   )}
 
                   {!searchQuery && !searching && commonCities.map(city => (
@@ -155,7 +168,7 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
                       className="location-option"
                     >
                       <div className="font-medium">{result.name}</div>
-                      <div className="text-gray-500 text-xs">{result.fullName}</div>
+                      <div className="text-xs" style={{ color: "var(--text-muted)" }}>{result.fullName}</div>
                     </button>
                   ))}
                 </div>
@@ -165,7 +178,7 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
 
           {location && (
             <div className="location-active-indicator">
-              <span>✓ Showing news for</span>
+              <span>✓ {t("showingNewsFor")}</span>
               <strong>{location.name}</strong>
             </div>
           )}
@@ -178,7 +191,7 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
           onClick={() => setActivePage("HOME")}
         >
           <span>📰</span>
-          <span>Categories / Feed</span>
+          <span>{t("categoriesFeed")}</span>
         </div>
 
         <div
@@ -186,7 +199,7 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
           onClick={() => setActivePage("TRENDING")}
         >
           <span>🔥</span>
-          <span>Trending Topics</span>
+          <span>{t("trendingTopics")}</span>
         </div>
 
         <div
@@ -194,9 +207,30 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
           onClick={() => setActivePage("SAVED")}
         >
           <span>💾</span>
-          <span>Saved News</span>
+          <span>{t("savedNewsNav")}</span>
+        </div>
+
+        <div
+          className={`sidebar-nav-item ${activePage === "AVATAR" || isAvatarOpen ? "active" : ""}`}
+          onClick={() => onOpenAvatar?.()}
+        >
+          <span>🤖</span>
+          <span>{t("aiPresenter")}</span>
         </div>
       </div>
+
+      {/* Become an Editor link - hidden for editor accounts */}
+      {!isEditor && (
+        <div className="sidebar-section">
+          <div
+            className={`sidebar-nav-item ${activePage === "APPLY_EDITOR" ? "active" : ""}`}
+            onClick={() => setActivePage("APPLY_EDITOR")}
+          >
+            <span>✍️</span>
+            <span>{t("becomeEditor")}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

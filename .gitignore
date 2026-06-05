@@ -29,7 +29,26 @@ frontend/.env.*.local
 # Environment / secrets
 .env
 *.env
+*.session
 backend/src/main/resources/application-local.yml
+
+# Runtime / generated data
+backend/ai-assistant-service/data/faiss.index
+backend/ai-assistant-service/data/ingested_posts.json
+backend/ai-assistant-service/data/meta.json
+backend/ai-service/faiss.index
+backend/ai-service/faiss_meta.json
+backend/classifier_service/final_mode_V2/training_args.bin
+avatar/temp/
+news-feed/test*.wav
+news-feed/test*.mp3
+news-feed/test-dialog.txt
+
+# Large local tools / 3D assets (install separately)
+news-feed/tools/
+avatar/tools/
+**/rhubarb.exe
+*.glb
 
 # IDE
 .idea/
@@ -43,6 +62,7 @@ backend/src/main/resources/application-local.yml
 Thumbs.db
 
 # Models (large binary files)
+backend/endpoint_discovery/page_classifier/checkpoints/best_model.pt
 backend/extractor/content_model/*.pt
 !backend/extractor/content_model/dl_article_model_url_supervised.pt
 backend/classifier_service/final_mode_V2/model.safetensors

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>News Bridge — Service Manager</title>
+  <link rel="stylesheet" href="vendor/xterm.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-icon">⬡</span>
+      <div>
+        <h1>News Bridge</h1>
+        <p class="brand-sub" id="project-root">Loading...</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-start-core" class="btn btn-primary">Start Core Stack</button>
+      <button id="btn-stop-all" class="btn btn-danger">Stop All</button>
+      <button id="btn-refresh" class="btn btn-ghost">Refresh Status</button>
+    </div>
+  </header>
+
+  <div id="error-banner" class="error-banner hidden"></div>
+
+  <main class="app-main">
+    <aside class="sidebar">
+      <div class="sidebar-title">Services</div>
+      <ul id="service-list" class="service-list"></ul>
+    </aside>
+
+    <section class="terminal-panel">
+      <div id="tab-bar" class="tab-bar">
+        <div class="tab-placeholder" id="tab-placeholder">
+          Select a service and click <strong>Start</strong>, or use <strong>Start Core Stack</strong>.
+        </div>
+      </div>
+      <div id="terminal-container" class="terminal-container"></div>
+    </section>
+  </main>
+
+  <script src="vendor/xterm.js"></script>
+  <script src="vendor/xterm-addon-fit.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

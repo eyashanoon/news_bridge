@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3307/news_crawler?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    url: ${DB_URL:jdbc:mysql://localhost:3307/news_crawler_new?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
     username: ${DB_USERNAME:news_user}
     password: ${DB_PASSWORD:news_pass}
   jpa:
@@ -11,6 +11,18 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
 
   security:
     jwt:
@@ -30,7 +42,16 @@ crawler:
 
 telegram-crawler:
   server:
-    base-url: ${TELEGRAM_CRAWLER_BASE_URL:http://localhost:8001}
+    base-url: ${TELEGRAM_CRAWLER_BASE_URL:http://localhost:8200}
+
+wayback:
+  api:
+    cdx-url: ${WAYBACK_CDX_URL:https://web.archive.org/cdx/search/cdx}
+
+endpoint-discovery:
+  server:
+    base-url: ${ENDPOINT_DISCOVERY_BASE_URL:http://localhost:8004}
+  max-depth: ${ENDPOINT_DISCOVERY_MAX_DEPTH:2}
 
 server:
   error:

@@ -72,6 +72,22 @@ class BackendClient:
         response.raise_for_status()
         return response.json()
 
+    def get_all_cached_urls_for_endpoint(self, source_endpoint_id: int) -> set[str]:
+        """
+        Return the set of all URLs already cached for this listing endpoint.
+        Uses a lightweight endpoint that returns only URL strings, not full objects.
+        Falls back to empty set on any error so the caller can still proceed.
+        """
+        response = self._retry_on_unauthorized(
+            "GET",
+            "/cache-endpoints/urls-by-source",
+            params={"sourceEndpointId": source_endpoint_id},
+        )
+        if response.status_code == 404:
+            return set()
+        response.raise_for_status()
+        return set(response.json())
+
     def create_article_record(self, payload: dict[str, Any]) -> dict[str, Any]:
         response = self._retry_on_unauthorized("POST", "/articles", json=payload)
         if response.status_code == 409:
@@ -101,5 +117,14 @@ class BackendClient:
         response = self._retry_on_unauthorized("POST", "/cache-endpoints", json=payload)
         if response.status_code == 409:
             return None
+        response.raise_for_status()
+        return response.json()
+
+    def update_crawl_stats(self, endpoint_id: int, articles_found: int) -> dict[str, Any]:
+        response = self._retry_on_unauthorized(
+            "PATCH",
+            f"/endpoints/{endpoint_id}/crawl-stats",
+            json={"articlesFound": articles_found},
+        )
         response.raise_for_status()
         return response.json()

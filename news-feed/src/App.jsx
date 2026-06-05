@@ -10,6 +10,7 @@ import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ApplyEditorPage from "./pages/ApplyEditorPage";
 import FeedPage from "./pages/FeedPage";
+import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
   const { booting, session } = useSession();
@@ -39,7 +40,9 @@ export default function App() {
         <Route path="apply-editor" element={isRegistered ? <ApplyEditorPage /> : <Navigate to="/auth/login" replace />} />
 
         <Route path="editor/workspace" element={isEditor ? <EditorPage /> : <Navigate to="/auth/login" replace />} />
-        <Route path="editor/profile" element={isEditor ? <div className="sci-fi-panel" style={{padding: '2rem'}}><h3>Editor Profile</h3><p>Identity confirmed.</p></div> : <Navigate to="/auth/login" replace />} />
+        <Route path="editor/profile" element={isEditor ? <ProfilePage /> : <Navigate to="/auth/login" replace />} />
+        <Route path="profile" element={<ProfilePage />} />
+        <Route path="profile/:username" element={<ProfilePage />} />
 
         <Route path="news" element={<FeedPage />} />
 

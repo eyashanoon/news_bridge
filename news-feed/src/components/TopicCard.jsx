@@ -17,7 +17,7 @@ export default function TopicCard({ topic, onViewTopic }) {
       </div>
 
       {/* Summary */}
-      <p className="topic-summary">{topic.summary}</p>
+      <p className="topic-summary">{topic.description}</p>
 
       {/* Stats */}
       <div className="topic-stats">

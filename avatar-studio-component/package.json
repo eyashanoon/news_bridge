@@ -1,0 +1,33 @@
+{
+  "name": "avatar-studio-component",
+  "version": "1.0.0",
+  "description": "Reusable React component for embedding Avatar Studio (Three.js + Speech Animation) into any React project",
+  "type": "module",
+  "main": "src/index.js",
+  "files": [
+    "src/",
+    "public/",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/avatar-studio-component"
+  },
+  "keywords": [
+    "react",
+    "avatar",
+    "three.js",
+    "speech-synthesis",
+    "lip-sync",
+    "component",
+    "iframe"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  },
+  "devDependencies": {
+    "react": "^18.3.1"
+  }
+}

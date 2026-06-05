@@ -93,6 +93,14 @@ public class CrawlerAdminService {
         return postWithBody("/control/interval", Map.of("minutes", minutes));
     }
 
+    public Map<String, Object> restartScheduler() {
+        return post("/control/restart");
+    }
+
+    public Map<String, Object> runEndpointNow(long endpointId) {
+        return postWithBody("/control/run-endpoint", Map.of("endpointId", endpointId));
+    }
+
     private Map<String, Object> post(String path) {
         try {
             ResponseEntity<Map> response = restTemplate.exchange(

@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lip-Sync Lab — AI Avatar</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/loaders/GLTFLoader.js": "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js",
+      "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js"
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    /* ── Tab navigation ──────────────────────────────────────── */
+    #tab-nav {
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: flex;
+      gap: 0.4rem;
+      background: rgba(10, 10, 26, 0.88);
+      border: 1px solid #2a2a5a;
+      border-radius: 2rem;
+      padding: 0.3rem;
+      backdrop-filter: blur(12px);
+    }
+    .tab-link {
+      padding: 0.4rem 1.3rem;
+      border-radius: 1.5rem;
+      border: none;
+      background: transparent;
+      color: #888;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      font-family: inherit;
+    }
+    .tab-link.active { background: #4a4aff; color: #fff; }
+    .tab-link:hover:not(.active) { background: rgba(74,74,255,0.2); color: #ccc; }
+
+    /* ── Right panel ─────────────────────────────────────────── */
+    #lab-panel {
+      position: fixed;
+      right: 1.2rem;
+      top: 4.5rem;
+      bottom: 1.2rem;
+      width: 370px;
+      background: rgba(8, 8, 24, 0.93);
+      border: 1px solid #2a2a5a;
+      border-radius: 1.2rem;
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 100;
+      transition: transform 0.25s ease;
+    }
+    #lab-panel.hidden { transform: translateX(calc(100% + 1.2rem + 2px)); }
+    #lab-toggle {
+      position: fixed;
+      right: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 101;
+      width: 1.5rem;
+      height: 3rem;
+      background: rgba(8,8,24,0.94);
+      border: 1px solid #2a2a5a;
+      border-radius: 0.55rem 0 0 0.55rem;
+      color: #5a5aff;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(14px);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    #lab-toggle:hover { background: rgba(74,74,255,0.22); border-color: #5a5aff; }
+    #lab-toggle.visible { display: flex; }
+
+    /* ── Panel header ────────────────────────────────────────── */
+    #lab-header {
+      padding: 1rem 1rem 0.75rem;
+      border-bottom: 1px solid #1e1e3a;
+      flex-shrink: 0;
+    }
+    #lab-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #5a5aff;
+      margin-bottom: 0.65rem;
+    }
+    #lab-input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    #lab-input {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border-radius: 1.5rem;
+      border: 2px solid #3a3aaa;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    #lab-input:focus { border-color: #8080ff; }
+    #generate-btn {
+      padding: 0.6rem 1rem;
+      border-radius: 1.5rem;
+      border: none;
+      background: #4a4aff;
+      color: #fff;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    #generate-btn:hover:not(:disabled) { background: #6666ff; }
+    #generate-btn:disabled { background: #333; cursor: not-allowed; }
+
+    /* ── Bottom control bar ─────────────────────────────────── */
+    #bottom-bar {
+      position: fixed;
+      bottom: 1.4rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 150;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      align-items: stretch;
+      width: min(520px, calc(100vw - 32rem - 4rem));
+      background: rgba(8, 8, 24, 0.94);
+      border: 1px solid #2a2a5a;
+      border-radius: 1.2rem;
+      backdrop-filter: blur(16px);
+      padding: 0.75rem 1rem;
+    }
+    #bottom-input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    #bottom-play-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    #bottom-play-row .ctrl-btn { flex: 1; }
+    #bottom-status {
+      font-size: 0.72rem;
+      color: #666;
+      min-height: 1em;
+      line-height: 1.3;
+      text-align: center;
+    }
+    .feature-toggle-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 0.15rem;
+    }
+    .feature-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      color: #9aa;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #2a2a5a;
+      border-radius: 999px;
+      padding: 0.28rem 0.58rem;
+      user-select: none;
+    }
+    .feature-toggle input { accent-color: #5a5aff; cursor: pointer; }
+
+    /* ── Mobile ───────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      #bottom-bar {
+        left: 0.8rem;
+        right: 0.8rem;
+        bottom: 0.8rem;
+        width: auto;
+        transform: none;
+      }
+      #lab-panel {
+        width: calc(100vw - 2.4rem);
+        top: 4.5rem;
+        bottom: calc(var(--bottom-bar-h, 9rem) + 1.4rem);
+        right: 1.2rem;
+      }
+      #anim-panel {
+        top: 4.5rem;
+        transform: none;
+        max-height: calc(100vh - var(--bottom-bar-h, 9rem) - 7rem);
+        width: calc(100vw - 2.4rem);
+      }
+      #anim-panel.hidden {
+        transform: translateX(calc(-100% - 1.2rem - 2px));
+      }
+      #ps-toggle {
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+
+    #lab-status {
+      font-size: 0.75rem;
+      color: #666;
+      min-height: 1.1em;
+      margin-top: 0.4rem;
+      line-height: 1.3;
+    }
+
+    /* ── Speed control ───────────────────────────────────────── */
+    #speed-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 1rem 0.4rem;
+      border-bottom: 1px solid #1e1e3a;
+      flex-shrink: 0;
+    }
+    #speed-row label { font-size: 0.78rem; color: #888; white-space: nowrap; }
+    #speed-slider { flex: 1; accent-color: #4a4aff; cursor: pointer; height: 4px; }
+    #speed-label { font-size: 0.85rem; font-weight: 700; color: #8080ff; min-width: 3.2em; text-align: right; }
+
+    /* ── Delay control ───────────────────────────────────────── */
+    #delay-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.4rem 1rem 0.65rem;
+      border-bottom: 1px solid #1e1e3a;
+      flex-shrink: 0;
+    }
+    #delay-row label { font-size: 0.78rem; color: #888; white-space: nowrap; }
+    #delay-slider { flex: 1; accent-color: #ff6b6b; cursor: pointer; height: 4px; }
+    #delay-label { font-size: 0.85rem; font-weight: 700; color: #ff9a9a; min-width: 3.2em; text-align: right; }
+
+    /* ── Play controls ───────────────────────────────────────── */
+
+    .ctrl-btn {
+      flex: 1;
+      padding: 0.5rem 0.6rem;
+      border-radius: 0.6rem;
+      border: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+      font-family: inherit;
+    }
+    #play-btn  { background: #2ecc71; color: #000; }
+    #play-btn:hover:not(:disabled)  { background: #27ae60; }
+    #replay-btn { background: #f39c12; color: #000; }
+    #replay-btn:hover:not(:disabled) { background: #e67e22; }
+    #stop-btn  { background: #e74c3c; color: #fff; }
+    #stop-btn:hover:not(:disabled)  { background: #c0392b; }
+    .ctrl-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ── Timeline bar ────────────────────────────────────────── */
+    #timeline-section {
+      padding: 0.65rem 1rem 0.4rem;
+      flex-shrink: 0;
+      border-bottom: 1px solid #1e1e3a;
+    }
+    .section-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #444;
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+    #timeline-bar {
+      display: flex;
+      height: 26px;
+      border-radius: 5px;
+      overflow: hidden;
+      background: #0d0d1f;
+      cursor: pointer;
+      border: 1px solid #1e1e3a;
+    }
+    .tl-seg {
+      height: 100%;
+      min-width: 2px;
+      transition: filter 0.1s;
+      flex-shrink: 0;
+    }
+    .tl-seg:hover { filter: brightness(1.5); }
+    .tl-seg.active {
+      filter: brightness(1.7) drop-shadow(0 0 3px rgba(255,255,255,0.5));
+      outline: 2px solid rgba(255,255,255,0.7);
+      outline-offset: -1px;
+      z-index: 1;
+    }
+
+    /* ── Playhead position display ───────────────────────────── */
+    #timeline-time {
+      font-size: 0.68rem;
+      color: #444;
+      margin-top: 0.25rem;
+      text-align: right;
+    }
+
+    /* ── Cue grid ────────────────────────────────────────────── */
+    #cue-section {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 0.5rem 0 0;
+      min-height: 0;
+    }
+    #cue-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 1rem;
+      margin-bottom: 0.35rem;
+    }
+    #cue-count { font-size: 0.68rem; color: #444; }
+    #cue-grid {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      padding: 0 0.7rem 1rem;
+      align-content: flex-start;
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a5a transparent;
+    }
+    .cue-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.28rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #242448;
+      border-radius: 0.45rem;
+      padding: 0.22rem 0.45rem 0.22rem 0.3rem;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s, transform 0.1s;
+      font-size: 0.73rem;
+      user-select: none;
+    }
+    .cue-chip:hover { background: rgba(255,255,255,0.1); border-color: #4a4aff; transform: translateY(-1px); }
+    .cue-chip.active { background: rgba(74,74,255,0.2); border-color: #6a6aff; }
+    .cue-chip.seg-active { background: rgba(64,224,154,0.15); border-color: #40e09a; }
+    .cue-seg-btn {
+      margin-left: auto;
+      padding: 0 0.3rem;
+      border: none;
+      background: transparent;
+      color: #444;
+      font-size: 0.7rem;
+      cursor: pointer;
+      border-radius: 0.2rem;
+      line-height: 1.5;
+      transition: color 0.12s, background 0.12s;
+      flex-shrink: 0;
+    }
+    .cue-seg-btn:hover { color: #40e09a; background: rgba(64,224,154,0.12); }
+    .cue-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5em;
+      height: 1.5em;
+      border-radius: 0.25rem;
+      font-weight: 900;
+      font-size: 0.82rem;
+      color: #000;
+      flex-shrink: 0;
+    }
+    .cue-time   { color: #555; font-size: 0.68rem; font-variant-numeric: tabular-nums; }
+    .cue-phonemes { color: #999; }
+
+    /* ── Phoneme overlay (bottom-left of canvas) ─────────────── */
+    #phoneme-overlay {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      background: rgba(8, 8, 24, 0.88);
+      border: 1px solid #2a2a5a;
+      border-radius: 0.9rem;
+      padding: 0.6rem 1.2rem 0.5rem;
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+      z-index: 150;
+      min-width: 9rem;
+      text-align: center;
+      transition: opacity 0.2s;
+    }
+    #phoneme-overlay:empty { opacity: 0; }
+    .po-shape    { font-size: 2.2rem; font-weight: 900; display: block; line-height: 1; }
+    .po-phonemes { font-size: 0.72rem; color: #aaa; display: block; margin-top: 0.15rem; }
+    .po-desc     { font-size: 0.68rem; color: #666; display: block; }
+    .po-time     { font-size: 0.65rem; color: #555; display: block; margin-top: 0.1rem; font-variant-numeric: tabular-nums; }
+
+    /* ── Animation panel (left side of canvas) ──────────────── */
+    #anim-panel {
+      position: fixed;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 200;
+      background: rgba(8, 8, 24, 0.94);
+      border: 1px solid #2a2a5a;
+      border-radius: 1rem;
+      padding: 0.75rem 0.8rem;
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      width: 230px;
+      max-height: 88vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a5a transparent;
+      transition: transform 0.25s ease;
+    }
+    #anim-panel::-webkit-scrollbar { width: 4px; }
+    #anim-panel::-webkit-scrollbar-thumb { background: #2a2a5a; border-radius: 2px; }
+    #anim-panel.hidden { transform: translateX(calc(-100% - 1.2rem - 2px)) translateY(-50%); }
+    #ps-toggle {
+      position: fixed;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 201;
+      width: 1.5rem;
+      height: 3rem;
+      background: rgba(8,8,24,0.94);
+      border: 1px solid #2a2a5a;
+      border-radius: 0 0.55rem 0.55rem 0;
+      color: #5a5aff;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(14px);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    #ps-toggle:hover { background: rgba(74,74,255,0.22); border-color: #5a5aff; }
+    #ps-toggle.visible { display: flex; }
+    .anim-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #5a5aff;
+      text-align: center;
+      margin-bottom: 0.1rem;
+    }
+    .anim-section { display: flex; flex-direction: column; gap: 0.28rem; }
+    .anim-label { font-size: 0.6rem; color: #555; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
+    .anim-row { display: flex; gap: 0.28rem; }
+    .anim-btn {
+      flex: 1;
+      padding: 0.35rem 0.2rem;
+      border-radius: 0.45rem;
+      border: 1px solid #2a2a5a;
+      background: rgba(255,255,255,0.04);
+      color: #999;
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      font-family: inherit;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .anim-btn:hover  { background: rgba(74,74,255,0.22); border-color: #4a4aff; color: #fff; }
+    .anim-btn.active { background: rgba(74,74,255,0.32); border-color: #7a7aff; color: #fff; }
+    .anim-divider { height: 1px; background: #1e1e3a; margin: 0.05rem 0; }
+    /* ── Part tabs (L Hand | Head | R Hand) ─────────────────── */
+    .ps-tabs { display: flex; gap: 0.18rem; margin-bottom: 0.08rem; }
+    .ps-tab {
+      flex: 1;
+      padding: 0.28rem 0.1rem;
+      border-radius: 0.38rem;
+      border: 1px solid #1a1a36;
+      background: transparent;
+      color: #444;
+      font-size: 0.62rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+      white-space: nowrap;
+    }
+    .ps-tab:hover:not(.active) { background: rgba(74,74,255,0.1); color: #888; border-color: #2a2a5a; }
+    .ps-tab.active { background: rgba(74,74,255,0.28); border-color: #5a5aff; color: #ddf; }
+    .arm-tabs { display: flex; gap: 0.25rem; }
+    .arm-tab {
+      flex: 1;
+      padding: 0.32rem 0.2rem;
+      border-radius: 0.4rem;
+      border: 1px solid #2a2a5a;
+      background: transparent;
+      color: #555;
+      font-size: 0.67rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .arm-tab.active { background: rgba(74,74,255,0.3); border-color: #5a5aff; color: #ccc; }
+    .arm-tab:hover:not(.active) { background: rgba(74,74,255,0.12); color: #888; }
+    .ctrl-row { display: flex; align-items: center; gap: 0.35rem; }
+    .ctrl-name { font-size: 0.6rem; color: #666; width: 54px; flex-shrink: 0; white-space: nowrap; }
+    .ctrl-slider { flex: 1; height: 3px; accent-color: #5a5aff; cursor: pointer; }
+    .ctrl-val { font-size: 0.62rem; color: #5a5aff; font-weight: 700; width: 30px; text-align: right; flex-shrink: 0; }
+    /* ── Pose quick-selects ─────────────────────────────────── */
+    #pose-selects { display: flex; gap: 0.4rem; margin-bottom: 0.5rem; }
+    .pose-quick-sel {
+      flex: 1;
+      padding: 0.38rem 0.4rem;
+      border-radius: 0.5rem;
+      border: 1px solid #3a3aaa;
+      background: rgba(255,255,255,0.05);
+      color: #ccc;
+      font-size: 0.72rem;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+    }
+    .pose-quick-sel:focus { border-color: #8080ff; }
+    .pose-quick-sel option { background: #0a0a1a; color: #ccc; }
+    /* ── Joint control grid ─────────────────────────────── */
+    .ps-ctrl-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.22rem;
+      margin-bottom: 0.1rem;
+    }
+    .ctrl-joint-btn {
+      padding: 0.3rem 0.15rem;
+      border-radius: 0.4rem;
+      border: 1px solid #2a2a5a;
+      background: rgba(255,255,255,0.04);
+      color: #aaa;
+      font-size: 0.6rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+      text-align: center;
+    }
+    .ctrl-joint-btn:hover:not([disabled]) { background: rgba(74,74,255,0.22); border-color: #4a4aff; color: #fff; }
+    .ctrl-joint-btn[disabled] { opacity: 0.2; cursor: not-allowed; }
+    .ctrl-joint-btn.ghost { border-color: #1a1a36; background: transparent; color: #444; }
+    .ctrl-joint-btn.ghost:hover { background: rgba(74,74,255,0.1); color: #888; border-color: #2a2a5a; }
+    .ctrl-joint-btn.span-2 { grid-column: span 2; }
+
+    /* ── Manual Animation section ────────────────────────────── */
+    #manual-anim-section {
+      border-top: 1px solid #1e1e3a;
+      flex-shrink: 0;
+    }
+    #manual-anim-section.hidden-section { display: none; }
+    .ma-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.55rem 1rem 0.45rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .ma-header-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #5a5aff;
+    }
+    .ma-header-hint {
+      font-size: 0.62rem;
+      color: #444;
+    }
+    .ma-chevron {
+      font-size: 0.65rem;
+      color: #444;
+      transition: transform 0.2s;
+    }
+    .ma-chevron.open { transform: rotate(180deg); }
+    .ma-body {
+      padding: 0 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .ma-body.collapsed { display: none; }
+    .ma-group-label {
+      font-size: 0.62rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+    .ma-start-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto 1fr;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .ma-start-row label {
+      font-size: 0.68rem;
+      color: #888;
+      white-space: nowrap;
+    }
+    .ma-select {
+      padding: 0.32rem 0.5rem;
+      border-radius: 0.45rem;
+      border: 1px solid #3a3aaa;
+      background: rgba(255,255,255,0.05);
+      color: #ccc;
+      font-size: 0.68rem;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
+    .ma-select:focus { border-color: #8080ff; }
+    .ma-select option { background: #0a0a1a; }
+    .ma-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ma-slider-row label {
+      font-size: 0.68rem;
+      color: #888;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    #ma-kf-pos { flex: 1; accent-color: #5a5aff; cursor: pointer; height: 4px; }
+    #ma-kf-pos-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #8080ff;
+      min-width: 2.8em;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .ma-add-row {
+      display: flex;
+      gap: 0.35rem;
+      align-items: center;
+    }
+    .ma-add-row .ma-select { flex: 1; }
+    #ma-kf-add {
+      padding: 0.35rem 0.65rem;
+      border-radius: 0.45rem;
+      border: none;
+      background: #4a4aff;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    #ma-kf-add:hover { background: #6666ff; }
+    #ma-kf-add:disabled { background: #333; cursor: not-allowed; }
+    #ma-kf-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+      max-height: 140px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a5a transparent;
+    }
+    .ma-kf-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #242448;
+      border-radius: 0.45rem;
+      padding: 0.28rem 0.5rem;
+      font-size: 0.7rem;
+    }
+    .ma-kf-pos-badge {
+      background: rgba(74,74,255,0.25);
+      border: 1px solid #4a4aff;
+      border-radius: 0.3rem;
+      padding: 0.1rem 0.35rem;
+      color: #aaf;
+      font-weight: 700;
+      font-size: 0.65rem;
+      flex-shrink: 0;
+    }
+    .ma-kf-hand-badge {
+      padding: 0.1rem 0.35rem;
+      border-radius: 0.3rem;
+      font-weight: 700;
+      font-size: 0.65rem;
+      flex-shrink: 0;
+    }
+    .ma-kf-hand-R { background: rgba(46,204,113,0.2); border: 1px solid #2ecc71; color: #2ecc71; }
+    .ma-kf-hand-L { background: rgba(255,107,107,0.2); border: 1px solid #ff6b6b; color: #ff9a9a; }
+    .ma-kf-pose { color: #ccc; flex: 1; }
+    .ma-kf-del {
+      background: none;
+      border: none;
+      color: #444;
+      font-size: 0.75rem;
+      cursor: pointer;
+      padding: 0 0.2rem;
+      line-height: 1;
+      transition: color 0.12s;
+      flex-shrink: 0;
+    }
+    .ma-kf-del:hover { color: #e74c3c; }
+    .ma-footer-row {
+      display: flex;
+      justify-content: flex-end;
+    }
+    #ma-kf-clear {
+      background: none;
+      border: 1px solid #2a2a5a;
+      color: #555;
+      font-size: 0.68rem;
+      border-radius: 0.4rem;
+      padding: 0.25rem 0.6rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    #ma-kf-clear:hover { color: #e74c3c; border-color: #e74c3c; }
+    .ma-io-row {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.1rem;
+    }
+    .ma-io-row button {
+      flex: 1;
+      padding: 0.3rem 0.5rem;
+      border-radius: 0.4rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    #ma-save {
+      background: rgba(46,204,113,0.15);
+      border: 1px solid #2ecc71;
+      color: #2ecc71;
+    }
+    #ma-save:hover { background: rgba(46,204,113,0.3); }
+    #ma-load {
+      background: rgba(74,74,255,0.12);
+      border: 1px solid #4a4aff;
+      color: #8080ff;
+    }
+    #ma-load:hover { background: rgba(74,74,255,0.25); }
+    #ma-load:disabled { opacity: 0.3; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <!-- Full-screen Three.js canvas (background) -->
+  <div id="canvas-container"></div>
+
+  <!-- Pose Studio toggle button -->
+  <button id="ps-toggle" title="Show Pose Studio">&#9654;</button>
+
+  <!-- Pose Studio panel (left side) -->
+  <div id="anim-panel">
+    <div class="anim-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span>Pose Studio</span>
+      <button id="ps-hide-btn" title="Hide Pose Studio" style="background:none;border:none;color:#5a5aff;font-size:0.85rem;cursor:pointer;padding:0;line-height:1">&#9664;</button>
+    </div>
+    <div class="ps-tabs">
+      <button class="ps-tab active" data-part="R">R. Hand</button>
+      <button class="ps-tab"        data-part="L">L. Hand</button>
+      <button class="ps-tab"        data-part="H">Head</button>
+    </div>
+
+    <!-- ═══════════════ LEFT HAND PANEL ═══════════════ -->
+    <div class="ps-panel" id="ps-panel-L" style="display:none">
+      <div class="ps-section">
+        <div class="ps-label">Select Joint</div>
+        <div class="joint-list">
+          <div class="jl-row">
+            <button class="joint-btn" data-bone="DEF-upper_armL" data-part="L">Shoulder</button>
+            <button class="joint-btn" data-bone="DEF-forearmL"   data-part="L">Elbow</button>
+            <button class="joint-btn" data-bone="DEF-handL"      data-part="L">Wrist</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Thumb</span>
+            <button class="joint-btn seg" data-bone="DEF-thumb01L"   data-part="L">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-thumb02L"   data-part="L">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-thumb03L"   data-part="L">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Index</span>
+            <button class="joint-btn seg" data-bone="DEF-f_index01L"  data-part="L">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_index02L"  data-part="L">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_index03L"  data-part="L">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Middle</span>
+            <button class="joint-btn seg" data-bone="DEF-f_middle01L" data-part="L">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_middle02L" data-part="L">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_middle03L" data-part="L">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Ring</span>
+            <button class="joint-btn seg" data-bone="DEF-f_ring01L"   data-part="L">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_ring02L"   data-part="L">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_ring03L"   data-part="L">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Pinky</span>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky01L"  data-part="L">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky02L"  data-part="L">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky03L"  data-part="L">Tip</button>
+          </div>
+        </div>
+      </div>
+      <div class="anim-divider"></div>
+      <div class="ps-section">
+        <div class="ps-label">Rotate: <span id="ps-selected-name-L">— select —</span></div>
+        <div class="ps-ctrl-grid">
+          <button class="ctrl-joint-btn" id="ps-up-L">▲</button>
+          <button class="ctrl-joint-btn" id="ps-down-L">▼</button>
+          <button class="ctrl-joint-btn" id="ps-left-L">◄</button>
+          <button class="ctrl-joint-btn" id="ps-right-L">►</button>
+          <button class="ctrl-joint-btn" id="ps-rollin-L">↺</button>
+          <button class="ctrl-joint-btn" id="ps-rollout-L">↻</button>
+          <button class="ctrl-joint-btn ghost span-2" id="ps-reset-joint-L">● Reset</button>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-name">Step</span>
+          <input type="range" class="ctrl-slider" id="ps-step-L" min="1" max="30" value="5">
+          <span class="ctrl-val" id="ps-step-val-L">5°</span>
+        </div>
+      </div>
+      <div class="anim-divider"></div>
+      <div class="ps-section">
+        <div class="ps-label">Saved Poses</div>
+        <div class="ps-save-row">
+          <input class="ps-name-input" type="text" id="ps-pose-name-L" placeholder="Pose name…" maxlength="30">
+          <button class="ps-btn" id="ps-save-pose-L">Save</button>
+        </div>
+        <div id="ps-pose-list-L"></div>
+      </div>
+    </div><!-- /ps-panel-L -->
+
+    <!-- ═══════════════ HEAD PANEL ═══════════════ -->
+    <div class="ps-panel" id="ps-panel-H" style="display:none">
+      <div class="ps-section">
+        <div class="ps-label">Head Rotation</div>
+        <div class="ps-ctrl-grid">
+          <button class="ctrl-joint-btn" id="ps-up-H">▲ Look Up</button>
+          <button class="ctrl-joint-btn" id="ps-down-H">▼ Look Dn</button>
+          <button class="ctrl-joint-btn" id="ps-left-H">◄ Turn L</button>
+          <button class="ctrl-joint-btn" id="ps-right-H">Turn R ►</button>
+          <button class="ctrl-joint-btn" id="ps-rollin-H" style="display:none">↺</button>
+          <button class="ctrl-joint-btn" id="ps-rollout-H" style="display:none">↻</button>
+          <button class="ctrl-joint-btn ghost span-2" id="ps-reset-joint-H">● Reset</button>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-name">Step</span>
+          <input type="range" class="ctrl-slider" id="ps-step-H" min="1" max="30" value="5">
+          <span class="ctrl-val" id="ps-step-val-H">5°</span>
+        </div>
+      </div>
+      <div class="anim-divider"></div>
+      <div class="ps-section">
+        <div class="ps-label">Saved Poses</div>
+        <div class="ps-save-row">
+          <input class="ps-name-input" type="text" id="ps-pose-name-H" placeholder="Pose name…" maxlength="30">
+          <button class="ps-btn" id="ps-save-pose-H">Save</button>
+        </div>
+        <div id="ps-pose-list-H"></div>
+      </div>
+    </div><!-- /ps-panel-H -->
+
+    <!-- ═══════════════ RIGHT HAND PANEL ═══════════════ -->
+    <div class="ps-panel" id="ps-panel-R">
+      <div class="ps-section">
+        <div class="ps-label">Select Joint</div>
+        <div class="joint-list">
+          <div class="jl-row">
+            <button class="joint-btn" data-bone="DEF-upper_armR" data-part="R">Shoulder</button>
+            <button class="joint-btn" data-bone="DEF-forearmR"   data-part="R">Elbow</button>
+            <button class="joint-btn" data-bone="DEF-handR"      data-part="R">Wrist</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Thumb</span>
+            <button class="joint-btn seg" data-bone="DEF-thumb01R"   data-part="R">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-thumb02R"   data-part="R">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-thumb03R"   data-part="R">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Index</span>
+            <button class="joint-btn seg" data-bone="DEF-f_index01R"  data-part="R">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_index02R"  data-part="R">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_index03R"  data-part="R">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Middle</span>
+            <button class="joint-btn seg" data-bone="DEF-f_middle01R" data-part="R">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_middle02R" data-part="R">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_middle03R" data-part="R">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Ring</span>
+            <button class="joint-btn seg" data-bone="DEF-f_ring01R"   data-part="R">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_ring02R"   data-part="R">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_ring03R"   data-part="R">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Pinky</span>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky01R"  data-part="R">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky02R"  data-part="R">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky03R"  data-part="R">Tip</button>
+          </div>
+        </div>
+      </div>
+      <div class="anim-divider"></div>
+      <div class="ps-section">
+        <div class="ps-label">Rotate: <span id="ps-selected-name-R">— select —</span></div>
+        <div class="ps-ctrl-grid">
+          <button class="ctrl-joint-btn" id="ps-up-R">▲</button>
+          <button class="ctrl-joint-btn" id="ps-down-R">▼</button>
+          <button class="ctrl-joint-btn" id="ps-left-R">◄</button>
+          <button class="ctrl-joint-btn" id="ps-right-R">►</button>
+          <button class="ctrl-joint-btn" id="ps-rollin-R">↺</button>
+          <button class="ctrl-joint-btn" id="ps-rollout-R">↻</button>
+          <button class="ctrl-joint-btn ghost span-2" id="ps-reset-joint-R">● Reset</button>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-name">Step</span>
+          <input type="range" class="ctrl-slider" id="ps-step-R" min="1" max="30" value="5">
+          <span class="ctrl-val" id="ps-step-val-R">5°</span>
+        </div>
+      </div>
+      <div class="anim-divider"></div>
+      <div class="ps-section">
+        <div class="ps-label">Saved Poses</div>
+        <div class="ps-save-row">
+          <input class="ps-name-input" type="text" id="ps-pose-name-R" placeholder="Pose name…" maxlength="30">
+          <button class="ps-btn" id="ps-save-pose-R">Save</button>
+        </div>
+        <div id="ps-pose-list-R"></div>
+      </div>
+    </div><!-- /ps-panel-R -->
+  </div>
+  <nav id="tab-nav">
+    <a href="./legacy.html" class="tab-link">Avatar</a>
+    <a href="./test.html" class="tab-link active">Lip-Sync Lab</a>
+  </nav>
+
+  <!-- Bottom control bar -->
+  <div id="bottom-bar">
+    <div id="bottom-input-row">
+      <input id="lab-input" type="text"
+             placeholder="Type text to analyse…"
+             autocomplete="off" />
+      <button id="generate-btn" disabled>Generate</button>
+    </div>
+    <div id="bottom-play-row">
+      <button id="play-btn"   class="ctrl-btn" disabled>&#9654; Play All</button>
+      <button id="replay-btn" class="ctrl-btn" disabled>&#8634; Replay</button>
+      <button id="stop-btn"   class="ctrl-btn" disabled>&#9632; Stop</button>
+    </div>
+    <div class="feature-toggle-row">
+      <label class="feature-toggle" for="emotion-toggle-test">
+        <input id="emotion-toggle-test" type="checkbox" />
+        Emotion Hands + News Tone
+      </label>
+    </div>
+    <p id="bottom-status">Loading character…</p>
+  </div>
+
+  <!-- Lip-Sync Lab toggle button -->
+  <button id="lab-toggle" title="Show Lip-Sync Lab">&#9664;</button>
+
+  <!-- Right-side control panel -->
+  <aside id="lab-panel">
+
+    <div id="lab-header">
+      <div id="lab-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>Lip-Sync Lab</span>
+        <button id="lab-hide-btn" title="Hide Lip-Sync Lab" style="background:none;border:none;color:#5a5aff;font-size:0.85rem;cursor:pointer;padding:0;line-height:1">&#9654;</button>
+      </div>
+      <div id="pose-selects">
+        <select id="pose-quick-R" class="pose-quick-sel"><option value="">— R. Hand pose —</option></select>
+        <select id="pose-quick-L" class="pose-quick-sel"><option value="">— L. Hand pose —</option></select>
+        <select id="pose-quick-H" class="pose-quick-sel"><option value="">— Head pose —</option></select>
+      </div>
+      <p id="lab-status" style="display:none"></p>
+    </div>
+
+    <div id="speed-row">
+      <label for="speed-slider">Speed</label>
+      <input id="speed-slider" type="range" min="0.25" max="2" step="0.05" value="1" />
+      <span id="speed-label">1.00×</span>
+    </div>
+
+    <div id="delay-row">
+      <label for="delay-slider">Sync&nbsp;Delay</label>
+      <input id="delay-slider" type="range" min="0" max="2" step="0.05" value="0.1" />
+      <span id="delay-label">0.10s</span>
+    </div>
+
+    <!-- ── Manual Animation Keyframes ──────────────────────── -->
+    <div id="manual-anim-section">
+      <div class="ma-header" id="ma-header">
+        <span class="ma-header-label">Manual Animation</span>
+        <span class="ma-header-hint" id="ma-header-hint">Emotions OFF</span>
+        <span class="ma-chevron" id="ma-chevron">▼</span>
+      </div>
+      <div class="ma-body" id="ma-body">
+
+        <!-- Starting positions -->
+        <div>
+          <div class="ma-group-label">Starting position</div>
+          <div class="ma-start-row">
+            <label for="ma-start-r">R Hand</label>
+            <select id="ma-start-r" class="ma-select">
+              <option value="">— none —</option>
+            </select>
+            <label for="ma-start-l">L Hand</label>
+            <select id="ma-start-l" class="ma-select">
+              <option value="">— none —</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Keyframe adder -->
+        <div>
+          <div class="ma-group-label">Add keyframe at position</div>
+          <div class="ma-slider-row">
+            <label for="ma-kf-pos">Clip&nbsp;%</label>
+            <input type="range" id="ma-kf-pos" min="0" max="100" step="1" value="25" />
+            <span id="ma-kf-pos-label">25%</span>
+          </div>
+          <div class="ma-add-row" style="margin-top:0.35rem">
+            <select id="ma-kf-hand" class="ma-select" style="flex:0 0 auto;min-width:5rem">
+              <option value="R">R Hand</option>
+              <option value="L">L Hand</option>
+            </select>
+            <select id="ma-kf-pose" class="ma-select">
+              <option value="">— pose —</option>
+            </select>
+            <button id="ma-kf-add">+ Add</button>
+          </div>
+        </div>
+
+        <!-- Keyframe list -->
+        <div id="ma-kf-list"></div>
+
+        <div class="ma-footer-row">
+          <button id="ma-kf-clear">Clear all</button>
+        </div>
+        <div class="ma-io-row">
+          <button id="ma-save" title="Save as default animation for AI Presenter">&#128190; Save Default</button>
+          <button id="ma-load" disabled>&#128194; Reload</button>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div id="timeline-section">
+      <div class="section-label">Phoneme Timeline — click to seek</div>
+      <div id="timeline-bar"></div>
+      <div id="timeline-time"></div>
+    </div>
+
+    <div id="cue-section">
+      <div id="cue-label-row">
+        <span class="section-label">Sections — click ▶ to preview, or click anywhere on the chip to seek</span>
+        <span id="cue-count"></span>
+      </div>
+      <div id="cue-grid"></div>
+    </div>
+
+  </aside>
+
+  <!-- Live phoneme overlay (canvas bottom-left) -->
+  <div id="phoneme-overlay"></div>
+
+  <script type="module" src="./test.js"></script>
+  <script>
+    (function () {
+      const panel  = document.getElementById('anim-panel');
+      const toggle = document.getElementById('ps-toggle');
+      const hideBtn = document.getElementById('ps-hide-btn');
+      function hide() { panel.classList.add('hidden'); toggle.classList.add('visible'); }
+      function show() { panel.classList.remove('hidden'); toggle.classList.remove('visible'); }
+      hideBtn.addEventListener('click', hide);
+      toggle.addEventListener('click', show);
+    })();
+    (function () {
+      const panel   = document.getElementById('lab-panel');
+      const toggle  = document.getElementById('lab-toggle');
+      const hideBtn = document.getElementById('lab-hide-btn');
+      function hide() { panel.classList.add('hidden'); toggle.classList.add('visible'); }
+      function show() { panel.classList.remove('hidden'); toggle.classList.remove('visible'); }
+      hideBtn.addEventListener('click', hide);
+      toggle.addEventListener('click', show);
+    })();
+    // Auto-hide both panels on mobile so the bottom bar is visible
+    if (window.matchMedia('(max-width: 700px)').matches) {
+      ['anim-panel','lab-panel'].forEach(id => document.getElementById(id).classList.add('hidden'));
+      ['ps-toggle','lab-toggle'].forEach(id => document.getElementById(id).classList.add('visible'));
+    }
+    // Keep bottom bar height in a CSS var so panels can avoid it
+    function updateBottomBarH() {
+      const h = document.getElementById('bottom-bar').offsetHeight;
+      document.documentElement.style.setProperty('--bottom-bar-h', h + 'px');
+    }
+    new ResizeObserver(updateBottomBarH).observe(document.getElementById('bottom-bar'));
+    updateBottomBarH();
+  </script>
+</body>
+</html>

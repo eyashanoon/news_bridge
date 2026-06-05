@@ -11,6 +11,7 @@ import {
   Modal,
   Alert,
   StatusBar,
+  Linking,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
@@ -632,19 +633,11 @@ function SavedPostDetailModal({ post, onClose, themeColors, darkMode }) {
 
   const openOriginalArticle = () => {
     if (!post?.articleUrl) return;
-    // On mobile, we open in browser
-    try {
-      // For Expo: Linking.openURL would be needed, but as fallback let the user see the URL
-      Alert.alert("Open Article", `Open in browser?\n\n${post.articleUrl}`, [
-        { text: "Cancel", style: "cancel" },
-        { text: "Open", onPress: () => {
-          // Use window.open as fallback for web builds
-          if (typeof window !== "undefined") {
-            window.open(post.articleUrl, "_blank");
-          }
-        }},
-      ]);
-    } catch {}
+    // On mobile, use Linking.openURL (works on both Android and iOS)
+    Linking.openURL(post.articleUrl).catch(() => {
+      // Fallback: show alert with URL
+      Alert.alert("Open Article", post.articleUrl);
+    });
   };
 
   return (

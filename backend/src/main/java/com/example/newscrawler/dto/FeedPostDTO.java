@@ -18,13 +18,14 @@ public class FeedPostDTO {
     public Long articleId;
     public String articleUrl;
     public Instant articleCreatedAt;
+    public Long telegramPostId;
     public List<String> tags;
 
     public FeedPostDTO(Long id, String text, String label, String lang, String title,
                        long likes, long dislikes,
                        ReactionType userReaction,
                        List<String> tags, int numImages, Long articleId,
-                       String articleUrl, Instant articleCreatedAt) {
+                       String articleUrl, Instant articleCreatedAt, Long telegramPostId) {
 
         this.id = id;
         this.text = text;
@@ -39,5 +40,6 @@ public class FeedPostDTO {
         this.articleId = articleId;
         this.articleUrl = articleUrl;
         this.articleCreatedAt = articleCreatedAt;
+        this.telegramPostId = telegramPostId;
     }
 }

@@ -68,6 +68,13 @@ public class CacheEndpointService {
     }
 
     @Transactional(readOnly = true)
+    public List<String> getUrlsBySourceEndpointId(Long sourceEndpointId) {
+        endpointRepository.findById(sourceEndpointId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endpoint not found"));
+        return cacheEndpointRepository.findUrlsBySourceEndpointId(sourceEndpointId);
+    }
+
+    @Transactional(readOnly = true)
     public List<CacheEndpointResponse> findAll() {
         return cacheEndpointRepository.findAll().stream().map(this::toResponse).toList();
     }

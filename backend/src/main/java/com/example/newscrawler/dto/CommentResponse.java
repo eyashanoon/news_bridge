@@ -7,13 +7,15 @@ public record CommentResponse(
     Long id,
     Long postId,
     Long userId,
-    String userIdentifier, // Can be username or ID depending on user type
+    String userIdentifier,
     String content,
     Long parentCommentId,
     String attachmentUrl,
     String attachmentType,
     Integer voteScore,
-    Integer userVote, // -1 for downvote, 0 for no vote, 1 for upvote
+    Integer userVote,
     Instant createdAt,
-    List<CommentResponse> replies
+    List<CommentResponse> replies,
+    String profilePicture,
+    String profileUsername
 ) {}
