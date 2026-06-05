@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import re
 import unicodedata
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone, timedelta
 from typing import Any, Optional
 
@@ -18,9 +19,13 @@ _SKIP_USERNAMES = frozenset({
     "dl", "confirmphone", "passport", "bg",
 })
 
+_UA_BROWSER = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+)
+
 _HEADERS_BROWSER = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "User-Agent": _UA_BROWSER,
     "Accept-Language": "en-US,en;q=0.9",
 }
 
@@ -28,6 +33,18 @@ _HEADERS_BOT = {
     "User-Agent": "TelegramBot (like TwitterBot)",
     "Accept-Language": "en-US,en;q=0.9",
 }
+
+
+def _is_arabic(text: str) -> bool:
+    """Return True when the query contains a meaningful amount of Arabic script."""
+    arabic = sum(1 for ch in text if "\u0600" <= ch <= "\u06FF")
+    return arabic >= 2
+
+
+def _make_search_headers(arabic: bool = False) -> dict[str, str]:
+    """Browser-like headers with language preference tuned to the query script."""
+    lang = "ar,en-US;q=0.8,en;q=0.6" if arabic else "en-US,en;q=0.9,ar;q=0.5"
+    return {"User-Agent": _UA_BROWSER, "Accept-Language": lang}
 
 
 # ── Public API ──────────────────────────────────────────────────────────────
@@ -70,14 +87,19 @@ def search_channels(query: str, timeout: int = 15) -> list[dict[str, Any]]:
     query_tokens = [t for t in query_norm.split() if t]
 
     results: list[dict[str, Any]] = []
-    for username in candidates[:25]:  # allow more candidates, rank later
-        info = _validate_channel(username, timeout)
-        if info:
-            score = _score_result(info, query_norm, query_tokens, exact_candidate)
-            # Keep only reasonably relevant results for non-exact searches.
-            if exact_candidate or score >= 8:
-                info["_score"] = score
-                results.append(info)
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {
+            pool.submit(_validate_channel, u, timeout): u
+            for u in candidates[:30]
+        }
+        for future in as_completed(futures):
+            info = future.result()
+            if info:
+                score = _score_result(info, query_norm, query_tokens, exact_candidate)
+                # Keep only reasonably relevant results for non-exact searches.
+                if exact_candidate or score >= 8:
+                    info["_score"] = score
+                    results.append(info)
 
     results.sort(
         key=lambda r: (
@@ -175,19 +197,36 @@ def _score_result(
 
 
 def _web_search_candidates(query: str, timeout: int) -> list[str]:
-    """Search the web for Telegram channel usernames matching *query*.
+    """Search multiple web sources for Telegram channel usernames matching *query*.
 
-    Tries Startpage (Google proxy) first, falls back to Bing.
-    Returns a de-duplicated list of candidate usernames.
+    All strategies run unconditionally so that no source is skipped because
+    another happened to return a few low-quality results.  Arabic queries get
+    an Arabic Accept-Language header so search engines return Arabic-language
+    t.me results instead of filtering them out.
     """
+    arabic = _is_arabic(query)
+    hdrs = _make_search_headers(arabic)
     usernames: list[str] = []
 
-    # Strategy 1: Startpage — proxies Google results, no JS required
+    # Strategy 1: DuckDuckGo HTML — no JS, reliable, Arabic-friendly
+    try:
+        resp = requests.get(
+            "https://html.duckduckgo.com/html/",
+            params={"q": f"site:t.me {query}"},
+            headers=hdrs,
+            timeout=timeout,
+        )
+        if resp.status_code == 200:
+            usernames.extend(_extract_usernames(resp.text))
+    except Exception as ex:
+        logger.debug(f"DuckDuckGo search failed: {ex}")
+
+    # Strategy 2: Startpage — proxies Google results, no JS required
     try:
         resp = requests.post(
             "https://www.startpage.com/do/search",
             data={"query": f"site:t.me {query}", "cat": "web"},
-            headers=_HEADERS_BROWSER,
+            headers=hdrs,
             timeout=timeout,
         )
         if resp.status_code == 200:
@@ -195,40 +234,55 @@ def _web_search_candidates(query: str, timeout: int) -> list[str]:
     except Exception as ex:
         logger.debug(f"Startpage search failed: {ex}")
 
-    # Strategy 2: Bing — extract from <cite> elements
-    if len(usernames) < 3:
+    # Strategy 3: Bing — extract from <cite> elements and raw HTML
+    try:
+        bing_params: dict[str, Any] = {"q": f"site:t.me {query}", "count": 20}
+        if arabic:
+            bing_params["setlang"] = "ar"
+            bing_params["cc"] = "AE"
+        resp = requests.get(
+            "https://www.bing.com/search",
+            params=bing_params,
+            headers=hdrs,
+            timeout=timeout,
+        )
+        if resp.status_code == 200:
+            soup = BeautifulSoup(resp.text, "html.parser")
+            for cite in soup.find_all("cite"):
+                cite_text = cite.get_text(strip=True)
+                for m in re.finditer(r't\.me/([a-zA-Z_]\w{3,31})', cite_text):
+                    usernames.append(m.group(1))
+            usernames.extend(_extract_usernames(resp.text))
+    except Exception as ex:
+        logger.debug(f"Bing search failed: {ex}")
+
+    # Strategy 4: Broad search without site: restriction — vital for Arabic/non-Latin
+    # where site:t.me may yield nothing even though the channel exists
+    try:
+        resp = requests.post(
+            "https://www.startpage.com/do/search",
+            data={"query": f'telegram channel "{query}"', "cat": "web"},
+            headers=hdrs,
+            timeout=timeout,
+        )
+        if resp.status_code == 200:
+            usernames.extend(_extract_usernames(resp.text))
+    except Exception as ex:
+        logger.debug(f"Startpage broad search failed: {ex}")
+
+    # Strategy 5: DuckDuckGo broad — extra pass for Arabic / non-Latin queries
+    if arabic:
         try:
             resp = requests.get(
-                "https://www.bing.com/search",
-                params={"q": f"site:t.me {query}", "count": 20},
-                headers=_HEADERS_BROWSER,
-                timeout=timeout,
-            )
-            if resp.status_code == 200:
-                soup = BeautifulSoup(resp.text, "html.parser")
-                for cite in soup.find_all("cite"):
-                    text = cite.get_text(strip=True)
-                    for m in re.finditer(r't\.me/([a-zA-Z_]\w{3,31})', text):
-                        usernames.append(m.group(1))
-                # Also look in all anchor hrefs
-                usernames.extend(_extract_usernames(resp.text))
-        except Exception as ex:
-            logger.debug(f"Bing search failed: {ex}")
-
-    # Strategy 3: Broader search without site: restriction
-    # Helps with non-Latin queries (Arabic, etc.) where site:t.me yields nothing
-    if len(usernames) < 3:
-        try:
-            resp = requests.post(
-                "https://www.startpage.com/do/search",
-                data={"query": f"telegram {query}", "cat": "web"},
-                headers=_HEADERS_BROWSER,
+                "https://html.duckduckgo.com/html/",
+                params={"q": f"telegram {query}"},
+                headers=hdrs,
                 timeout=timeout,
             )
             if resp.status_code == 200:
                 usernames.extend(_extract_usernames(resp.text))
         except Exception as ex:
-            logger.debug(f"Startpage broad search failed: {ex}")
+            logger.debug(f"DuckDuckGo broad search failed: {ex}")
 
     # De-duplicate preserving order
     seen: set[str] = set()

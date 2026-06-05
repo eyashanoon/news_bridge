@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,27 +10,50 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import { colors } from "../theme/colors";
-import { apiClient } from "../api/apiClient";
+import { colors, darkColors } from "../theme/colors";
+import { useTheme } from "../context/ThemeContext";
 
-const AI_BASE_URL = "http://10.0.2.2:8000"; // AI assistant service
+const AI_BASE_URL = "http://10.0.2.2:9000"; // AI assistant service (matches PostCard.jsx and web version)
 
 export default function AIQueryModal({ post, visible, onClose }) {
   const { t } = useTranslation();
+  const { darkMode } = useTheme();
+  const themeColors = darkMode ? darkColors : colors;
+
+  const [messages, setMessages] = useState([]);
   const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const scrollRef = useRef(null);
+
+  // Reset messages when post changes or modal opens
+  useEffect(() => {
+    if (visible && post) {
+      setMessages([
+        {
+          role: "ai",
+          text: `Ask me anything about this article: "${post.title || "Untitled"}"`,
+          id: "welcome",
+        },
+      ]);
+    }
+  }, [visible, post?.id]);
 
   const handleAsk = useCallback(async () => {
     const q = question.trim();
-    if (!q) return;
+    if (!q || loading) return;
 
+    // Add user message
+    const userMsg = { role: "user", text: q, id: `user_${Date.now()}` };
+    setMessages((prev) => [...prev, userMsg]);
+    setQuestion("");
     setLoading(true);
-    setError("");
-    setAnswer(null);
+
+    // Add placeholder AI message
+    const aiMsgId = `ai_${Date.now()}`;
+    setMessages((prev) => [...prev, { role: "ai", text: "", id: aiMsgId, loading: true }]);
 
     try {
       // First ensure the post is ingested
@@ -57,86 +80,157 @@ export default function AIQueryModal({ post, visible, onClose }) {
       }
 
       const data = await res.json();
-      setAnswer(data.answer || "No answer generated.");
+      const answer = data.answer || "No answer generated.";
+
+      // Update the AI message with the actual answer
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === aiMsgId ? { ...msg, text: answer, loading: false } : msg
+        )
+      );
     } catch (err) {
       console.error("AI query error:", err.message);
-      setError(err.message || "Failed to contact AI service.");
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === aiMsgId
+            ? { ...msg, text: `Error: ${err.message}`, loading: false, isError: true }
+            : msg
+        )
+      );
     } finally {
       setLoading(false);
     }
-  }, [question, post.id, post.tags]);
+  }, [question, post.id, post.tags, loading]);
 
   const resetAndClose = () => {
+    setMessages([]);
     setQuestion("");
-    setAnswer(null);
-    setError("");
+    setLoading(false);
     onClose();
   };
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={resetAndClose}>
       <KeyboardAvoidingView
-        style={styles.modalContainer}
+        style={[styles.modalContainer, { backgroundColor: themeColors.bg }]}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={styles.modalHeader}>
-          <TouchableOpacity onPress={resetAndClose}>
-            <Text style={styles.modalClose}>✕</Text>
+        {/* Header */}
+        <View style={[styles.modalHeader, { backgroundColor: themeColors.surface, borderBottomColor: themeColors.borderLight }]}>
+          <TouchableOpacity onPress={resetAndClose} style={[styles.closeBtn, { borderColor: themeColors.borderLight }]}>
+            <Text style={[styles.closeBtnText, { color: themeColors.text }]}>✕</Text>
           </TouchableOpacity>
-          <Text style={styles.modalTitle}>🤖 {t("askAI")}</Text>
-          <View style={{ width: 30 }} />
+          <View style={styles.headerCenter}>
+            <Text style={[styles.modalTitle, { color: themeColors.text }]}>🤖 {t("askAI")}</Text>
+            {post?.title && (
+              <Text style={[styles.headerSubtitle, { color: themeColors.muted }]} numberOfLines={1}>
+                {post.title.length > 40 ? post.title.slice(0, 40) + "..." : post.title}
+              </Text>
+            )}
+          </View>
+          <View style={{ width: 36 }} />
         </View>
 
-        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
-          {/* Post context */}
-          {post?.title && (
-            <View style={styles.postContext}>
-              <Text style={styles.postContextLabel}>{t("selectedPost")}</Text>
-              <Text style={styles.postContextTitle}>{post.title}</Text>
+        {/* Messages */}
+        <ScrollView
+          ref={scrollRef}
+          style={styles.messagesContainer}
+          contentContainerStyle={styles.messagesContent}
+          onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
+          keyboardShouldPersistTaps="handled"
+        >
+          {messages.map((msg) => (
+            <View
+              key={msg.id}
+              style={[
+                styles.messageRow,
+                msg.role === "user" ? styles.userRow : styles.aiRow,
+              ]}
+            >
+              {/* Avatar */}
+              {msg.role === "ai" && (
+                <View style={[styles.avatar, { backgroundColor: themeColors.brand + "20" }]}>
+                  <Text style={[styles.avatarText]}>🤖</Text>
+                </View>
+              )}
+
+              {/* Bubble */}
+              <View
+                style={[
+                  styles.bubble,
+                  msg.role === "user"
+                    ? [styles.userBubble, { backgroundColor: themeColors.brand }]
+                    : [styles.aiBubble, { backgroundColor: darkMode ? "#1e293b" : "#f1f5f9", borderColor: themeColors.borderLight }],
+                  msg.isError && styles.errorBubble,
+                ]}
+              >
+                {msg.loading ? (
+                  <View style={styles.thinkingRow}>
+                    <ActivityIndicator size="small" color={themeColors.brand} />
+                    <Text style={[styles.thinkingText, { color: themeColors.muted }]}>Thinking...</Text>
+                  </View>
+                ) : (
+                  <Text
+                    style={[
+                      styles.bubbleText,
+                      msg.role === "user"
+                        ? { color: "#fff" }
+                        : { color: themeColors.text },
+                      msg.isError && { color: themeColors.error },
+                    ]}
+                  >
+                    {msg.text}
+                  </Text>
+                )}
+              </View>
+
+              {/* User avatar */}
+              {msg.role === "user" && (
+                <View style={[styles.avatar, { backgroundColor: themeColors.brand }]}>
+                  <Text style={styles.avatarText}>👤</Text>
+                </View>
+              )}
+            </View>
+          ))}
+
+          {/* Post context card as first interaction hint */}
+          {messages.length <= 1 && post?.text && (
+            <View style={[styles.contextCard, { backgroundColor: darkMode ? "#1e293b" : "#f8faff", borderColor: themeColors.borderLight }]}>
+              <Text style={[styles.contextLabel, { color: themeColors.muted }]}>Article preview</Text>
+              <Text style={[styles.contextText, { color: themeColors.textSecondary }]} numberOfLines={4}>
+                {post.text.slice(0, 200)}...
+              </Text>
             </View>
           )}
+        </ScrollView>
 
-          {/* Answer area */}
-          {loading && (
-            <View style={styles.center}>
-              <ActivityIndicator size="large" color={colors.brand} />
-              <Text style={styles.loadingText}>{t("aiThinking")}</Text>
-            </View>
-          )}
-
-          {error ? (
-            <View style={styles.errorBanner}>
-              <Text style={styles.errorText}>{error}</Text>
-            </View>
-          ) : null}
-
-          {answer && !loading ? (
-            <View style={styles.answerBox}>
-              <Text style={styles.answerLabel}>{t("answer")}</Text>
-              <Text style={styles.answerText}>{answer}</Text>
-            </View>
-          ) : null}
-
-          {/* Question input area */}
-          <View style={styles.inputArea}>
+        {/* Input area */}
+        <View style={[styles.inputArea, { backgroundColor: themeColors.surface, borderTopColor: themeColors.borderLight }]}>
+          <View style={[styles.inputRow, { backgroundColor: themeColors.bg, borderColor: themeColors.borderLight }]}>
             <TextInput
               value={question}
               onChangeText={setQuestion}
-              placeholder={t("askPlaceholder")}
-              placeholderTextColor={colors.muted}
-              style={styles.questionInput}
+              placeholder={t("askPlaceholder") || "Ask about this article..."}
+              placeholderTextColor={themeColors.muted}
+              style={[styles.questionInput, { color: themeColors.text }]}
               multiline
               editable={!loading}
+              returnKeyType="send"
+              blurOnSubmit
+              onSubmitEditing={handleAsk}
             />
             <TouchableOpacity
               onPress={handleAsk}
-              style={[styles.askBtn, (!question.trim() || loading) && styles.askBtnDisabled]}
+              style={[
+                styles.sendBtn,
+                { backgroundColor: question.trim() && !loading ? themeColors.brand : themeColors.muted + "40" },
+              ]}
               disabled={!question.trim() || loading}
             >
-              <Text style={styles.askBtnText}>{t("ask")}</Text>
+              <Text style={styles.sendBtnText}>➤</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </Modal>
   );
@@ -145,130 +239,150 @@ export default function AIQueryModal({ post, visible, onClose }) {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    backgroundColor: colors.bg,
   },
   modalHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 50,
     paddingBottom: 12,
-    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.line,
   },
-  modalClose: {
-    fontSize: 22,
-    color: colors.text,
-    fontWeight: "700",
+  closeBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeBtnText: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 16,
     fontWeight: "800",
-    color: colors.text,
   },
-  content: {
+  headerSubtitle: {
+    fontSize: 11,
+    fontWeight: "500",
+    marginTop: 2,
+    maxWidth: "80%",
+  },
+  messagesContainer: {
     flex: 1,
+  },
+  messagesContent: {
     padding: 16,
+    paddingBottom: 8,
   },
-  postContext: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+  messageRow: {
+    flexDirection: "row",
+    marginBottom: 14,
+    alignItems: "flex-end",
+    gap: 8,
+  },
+  userRow: {
+    justifyContent: "flex-end",
+  },
+  aiRow: {
+    justifyContent: "flex-start",
+  },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarText: {
+    fontSize: 16,
+  },
+  bubble: {
+    maxWidth: "75%",
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  userBubble: {
+    borderBottomRightRadius: 4,
+  },
+  aiBubble: {
+    borderBottomLeftRadius: 4,
     borderWidth: 1,
-    borderColor: colors.line,
   },
-  postContextLabel: {
+  errorBubble: {
+    borderColor: "#fca5a5",
+    backgroundColor: "#fef2f2",
+  },
+  bubbleText: {
+    fontSize: 15,
+    lineHeight: 21,
+  },
+  thinkingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  thinkingText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  contextCard: {
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 12,
+    marginBottom: 8,
+  },
+  contextLabel: {
     fontSize: 10,
     fontWeight: "700",
-    color: colors.muted,
     textTransform: "uppercase",
     letterSpacing: 1,
     marginBottom: 4,
   },
-  postContextTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.text,
-  },
-  center: {
-    alignItems: "center",
-    paddingVertical: 40,
-    gap: 12,
-  },
-  loadingText: {
-    color: colors.muted,
-    fontWeight: "700",
-  },
-  errorBanner: {
-    backgroundColor: "#fff0f0",
-    borderWidth: 1,
-    borderColor: "#f2b8b8",
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 16,
-  },
-  errorText: {
-    color: "#9d3f3f",
-    fontWeight: "600",
+  contextText: {
     fontSize: 13,
-  },
-  answerBox: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "#bfdbfe",
-    borderLeftWidth: 4,
-    borderLeftColor: colors.brand,
-  },
-  answerLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: colors.brand,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    marginBottom: 6,
-  },
-  answerText: {
-    fontSize: 14,
-    color: colors.text,
-    lineHeight: 20,
+    lineHeight: 18,
   },
   inputArea: {
+    borderTopWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingBottom: 24,
+  },
+  inputRow: {
     flexDirection: "row",
     alignItems: "flex-end",
-    gap: 8,
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingLeft: 14,
+    paddingRight: 4,
+    paddingVertical: 4,
   },
   questionInput: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: colors.text,
-    backgroundColor: colors.surface,
-    maxHeight: 100,
-    minHeight: 44,
+    fontSize: 15,
+    maxHeight: 80,
+    minHeight: 36,
+    paddingVertical: 6,
   },
-  askBtn: {
-    backgroundColor: colors.brand,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+  sendBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 6,
   },
-  askBtnDisabled: {
-    opacity: 0.5,
-  },
-  askBtnText: {
+  sendBtnText: {
     color: "#fff",
-    fontWeight: "800",
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: "700",
   },
 });

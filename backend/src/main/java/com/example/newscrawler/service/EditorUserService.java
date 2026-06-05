@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,7 +95,9 @@ public class EditorUserService {
         dto.experience = user.getExperience();
         dto.references = user.getReferences();
         dto.phone = user.getPhone();
-        dto.field = categoryFieldService.mapToDto(user.getField());
+        dto.fields = user.getFields().stream()
+            .map(categoryFieldService::mapToDto)
+            .collect(Collectors.toList());
         
         List<EditorAttachment> attachments = editorAttachmentRepository.findByEditorUserId(user.getId());
         dto.attachments = attachments.stream().map(a -> {

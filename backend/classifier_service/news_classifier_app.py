@@ -27,7 +27,7 @@ print("Loading model from:", model_path)
 device = "cpu"
 
 tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
-model = AutoModelForSequenceClassification.from_pretrained(model_path, local_files_only=True)
+model = AutoModelForSequenceClassification.from_pretrained(model_path, local_files_only=True, low_cpu_mem_usage=False)
 
 model.to(device)
 model.eval()

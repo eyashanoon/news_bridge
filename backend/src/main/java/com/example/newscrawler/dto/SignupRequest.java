@@ -13,4 +13,6 @@ public class SignupRequest {
     @NotBlank
     @Size(min = 6)
     public String password;
+    public String fullName;
+    public String bio;
 }

@@ -41,6 +41,60 @@ public class FeedService {
         return (likes + 1.0) / (likes + dislikes + 2.0);
     }
 
+    public List<FeedPostDTO> getRecentPostsForBrief(int limit) {
+        /*
+         * Fetch the most recent posts regardless of tagsExtracted status,
+         * specifically for the news brief feature. No scoring or user preference
+         * filtering — just return the latest posts.
+         */
+        Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+
+        List<Long> postIds = posts.stream().map(Post::getId).toList();
+        List<PostTag> allTags = postTagRepository.findByPostIdIn(postIds);
+        Map<Long, List<String>> tagsMap = allTags.stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.getPost().getId(),
+                        Collectors.mapping(PostTag::getTag, Collectors.toList())
+                ));
+
+        List<Object[]> reactionCounts = reactionRepository.countReactionsForPosts(postIds);
+        Map<Long, Long> likesMap = new HashMap<>();
+        Map<Long, Long> dislikesMap = new HashMap<>();
+        for (Object[] row : reactionCounts) {
+            Long postId = (Long) row[0];
+            ReactionType type = (ReactionType) row[1];
+            Long count = (Long) row[2];
+            if (type == ReactionType.LIKE) likesMap.put(postId, count);
+            if (type == ReactionType.DISLIKE) dislikesMap.put(postId, count);
+        }
+
+        List<FeedPostDTO> result = new ArrayList<>();
+        for (Post post : posts) {
+            List<String> tagStrings = tagsMap.getOrDefault(post.getId(), List.of());
+            long likes = likesMap.getOrDefault(post.getId(), 0L);
+            long dislikes = dislikesMap.getOrDefault(post.getId(), 0L);
+            result.add(new FeedPostDTO(
+                    post.getId(),
+                    post.getText(),
+                    post.getLabel(),
+                    post.getLang(),
+                    post.getTitle(),
+                    likes,
+                    dislikes,
+                    null,
+                    tagStrings,
+                    post.getNumImages(),
+                    post.getArticle() != null ? post.getArticle().getId() : null,
+                    post.getArticle() != null ? post.getArticle().getUrl() : null,
+                    post.getArticle() != null ? post.getArticle().getCreatedAt() : null,
+                    post.getTelegramPost() != null ? post.getTelegramPost().getId() : null
+            ));
+        }
+
+        return result;
+    }
+
     public List<FeedPostDTO> getFeed(AppUser AppUser, String category, int limit, int page) {
 
         // AppUser preferences
@@ -170,7 +224,8 @@ public class FeedService {
                     post.getNumImages(),
                     post.getArticle() != null ? post.getArticle().getId() : null,
                     post.getArticle() != null ? post.getArticle().getUrl() : null,
-                    post.getArticle() != null ? post.getArticle().getCreatedAt() : null
+                    post.getArticle() != null ? post.getArticle().getCreatedAt() : null,
+                    post.getTelegramPost() != null ? post.getTelegramPost().getId() : null
             ));
         }
 

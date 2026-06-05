@@ -26,11 +26,30 @@ public class InteractionService {
     }
 
     private void updateUserPreference(AppUser AppUser, String tag, double delta) {
+        // Use upsert logic to avoid race conditions on the (user_id, tag) unique constraint.
+        // If the preference exists, update it; otherwise insert.
         UserPreference pref = preferenceRepository.findByAppUserIdAndTag(AppUser.getId(), tag)
-                .orElse(new UserPreference(AppUser, tag, 0));
+                .orElse(null);
 
-        pref.setWeight(pref.getWeight() + delta);
-        preferenceRepository.save(pref);
+        if (pref == null) {
+            // No existing preference — try to create one atomically.
+            // A concurrent request may have inserted it between the check and now,
+            // so we handle the duplicate key gracefully.
+            try {
+                pref = new UserPreference(AppUser, tag, delta);
+                preferenceRepository.save(pref);
+            } catch (org.springframework.dao.DataIntegrityViolationException e) {
+                // Duplicate key — another request already inserted this preference.
+                // Fetch it again and update.
+                pref = preferenceRepository.findByAppUserIdAndTag(AppUser.getId(), tag)
+                        .orElseThrow(() -> new RuntimeException("Failed to fetch UserPreference after upsert"));
+                pref.setWeight(pref.getWeight() + delta);
+                preferenceRepository.save(pref);
+            }
+        } else {
+            pref.setWeight(pref.getWeight() + delta);
+            preferenceRepository.save(pref);
+        }
     }
 
     public void recordView(AppUser AppUser, Long postId) {

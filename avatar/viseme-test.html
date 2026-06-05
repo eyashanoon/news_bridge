@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Viseme Test — Lip Sync Debug</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d0d12; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; }
+    #canvas { position: fixed; inset: 0; }
+
+    #panel {
+      position: fixed;
+      top: 0; right: 0;
+      width: 340px; height: 100%;
+      background: rgba(8, 8, 15, 0.88);
+      backdrop-filter: blur(14px);
+      border-left: 1px solid rgba(255,255,255,0.08);
+      display: flex; flex-direction: column;
+      padding: 18px 16px;
+      gap: 10px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    #vis-letter {
+      font-size: 90px;
+      font-weight: 900;
+      text-align: center;
+      color: #4af;
+      text-shadow: 0 0 40px rgba(68,170,255,0.55);
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    #vis-name {
+      text-align: center;
+      font-size: 15px;
+      color: #7bd;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    #vis-sample {
+      text-align: center;
+      font-size: 26px;
+      color: #ffe97a;
+      font-style: italic;
+      min-height: 32px;
+    }
+    #vis-phonemes {
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
+
+    hr { border: none; border-top: 1px solid rgba(255,255,255,0.07); }
+
+    /* Bars */
+    .bars { display: flex; flex-direction: column; gap: 5px; }
+    .bar-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; border-radius: 6px; transition: background 0.1s; }
+    .bar-row.active { background: rgba(68,170,255,0.08); }
+    .bar-key { width: 18px; font-weight: 800; font-size: 14px; color: #555; transition: color 0.15s; }
+    .bar-row.active .bar-key { color: #4af; }
+    .bar-track { flex: 1; height: 11px; background: #1a1a22; border-radius: 6px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 6px; background: #4af; transition: width 0.08s linear; }
+    .bar-row.active .bar-fill { background: #4af; box-shadow: 0 0 8px rgba(68,170,255,0.5); }
+    .bar-val { width: 38px; font-size: 11px; color: #666; text-align: right; font-variant-numeric: tabular-nums; }
+    .bar-row.active .bar-val { color: #4af; }
+
+    /* Progress bar */
+    #progress-track {
+      height: 4px; background: #1a1a22; border-radius: 2px; overflow: hidden;
+    }
+    #progress-fill {
+      height: 100%; background: #4af; border-radius: 2px; width: 0%; transition: none;
+    }
+
+    /* Controls */
+    .controls { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    button {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #ccc;
+      padding: 8px 13px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.15s, color 0.15s;
+    }
+    button:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    button.active { background: #4af; color: #000; border-color: #4af; font-weight: 700; }
+
+    label { font-size: 12px; color: #666; }
+    input[type=range] { width: 100%; accent-color: #4af; cursor: pointer; }
+
+    /* Index indicator */
+    #vis-index { text-align: center; font-size: 12px; color: #444; }
+
+    #status { font-size: 11px; color: #555; text-align: center; margin-top: auto; padding-top: 6px; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div id="panel">
+    <!-- Big letter + name -->
+    <div id="vis-letter">?</div>
+    <div id="vis-name">Loading…</div>
+    <div id="vis-sample"></div>
+    <div id="vis-phonemes"></div>
+    <div id="vis-index"></div>
+
+    <hr>
+
+    <!-- Progress bar -->
+    <div id="progress-track"><div id="progress-fill"></div></div>
+
+    <!-- Value bars -->
+    <div class="bars" id="bars"></div>
+
+    <hr>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button id="btn-prev">◀ Prev</button>
+      <button id="btn-next">Next ▶</button>
+      <button id="btn-auto" class="active">⏵ Auto</button>
+      <button id="btn-speak">🔊 Say it</button>
+    </div>
+
+    <div>
+      <label>Hold time: <span id="speed-val">2.5s</span></label>
+      <input type="range" id="speed" min="0.5" max="6" step="0.5" value="2.5">
+    </div>
+
+    <div>
+      <label>Blend speed: <span id="blend-val">4</span></label>
+      <input type="range" id="blend" min="1" max="20" step="1" value="4">
+    </div>
+
+    <div id="status">Loading avatar…</div>
+  </div>
+
+  <script type="module" src="/src/visemeTest.js"></script>
+</body>
+</html>

@@ -23,18 +23,7 @@ export function SessionProvider({ children }) {
             return;
           }
         }
-        
-        try {
-          const response = await api.post("/auth/limited");
-          const token = response.data?.token;
-          if (token) {
-            setToken(token);
-            setSession(getSessionFromToken(token));
-            setNotice("Guest mode enabled.");
-          }
-        } catch {
-          setNotice("Guest mode enabled with limited access.");
-        }
+        setNotice("Please sign in to access the admin panel.");
       } finally {
         setBooting(false);
       }

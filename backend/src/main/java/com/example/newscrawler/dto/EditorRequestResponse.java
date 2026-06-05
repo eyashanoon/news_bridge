@@ -4,7 +4,7 @@ public class EditorRequestResponse {
     public Long id;
     public Long userId;
     public String userEmail;
-    public CategoryFieldDto field;
+    public List<CategoryFieldDto> fields;
     public String experience;
     public String phone;
     public String profilePicture;

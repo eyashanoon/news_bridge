@@ -40,6 +40,7 @@ export default function App() {
             <Route path="crawler" element={<AdminPage target="crawler" />} />
             <Route path="fields" element={<AdminPage target="fields" />} />
             <Route path="events" element={<AdminPage target="events" />} />
+            <Route path="topics" element={<AdminPage target="topics" />} />
         <Route path="telegram" element={<AdminPage target="telegram" />} />
             <Route path="events/:id" element={<EventDetailPage />} />
         </Route>

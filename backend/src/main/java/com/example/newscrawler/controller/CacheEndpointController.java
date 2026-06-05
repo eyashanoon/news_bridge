@@ -46,6 +46,11 @@ public class CacheEndpointController {
         return cacheEndpointService.findBySourceEndpointId(sourceEndpointId);
     }
 
+    @GetMapping("/urls-by-source")
+    public List<String> listUrlsBySourceEndpoint(@RequestParam Long sourceEndpointId) {
+        return cacheEndpointService.getUrlsBySourceEndpointId(sourceEndpointId);
+    }
+
     @PutMapping("/{id}")
     public CacheEndpointResponse update(
             @PathVariable Long id,

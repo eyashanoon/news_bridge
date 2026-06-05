@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virtual Assistant</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- Three.js canvas -->
+    <canvas id="canvas"></canvas>
+
+    <!-- Loading screen -->
+    <div id="loading">
+      <div class="loader-ring"></div>
+      <p>Loading assistant&hellip;</p>
+    </div>
+
+    <!-- Click-to-start overlay (satisfies browser autoplay policy) -->
+    <div id="start-overlay" class="hidden">
+      <div class="start-content">
+        <div class="pulse-ring"></div>
+        <h2>Virtual Assistant</h2>
+        <p>Click anywhere to begin</p>
+      </div>
+    </div>
+
+    <!-- Main UI -->
+    <div id="ui" class="hidden">
+      <div id="subtitle-wrap">
+        <p id="subtitle"></p>
+      </div>
+      <div id="chat-bar">
+        <input
+          id="user-input"
+          type="text"
+          placeholder="Type something for the avatar to say&hellip;"
+          autocomplete="off"
+        />
+        <button id="speak-btn" aria-label="Speak"></button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

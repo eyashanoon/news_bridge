@@ -8,6 +8,9 @@ public record EndpointResponse(
         Long rootId,
         String status,
         Boolean active,
-        Instant createdAt
+        Instant createdAt,
+        Double crawlScore,
+        Instant lastCrawledAt,
+        Integer totalCrawls
 ) {
 }

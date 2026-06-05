@@ -509,6 +509,10 @@ export default function PostCard({ post, lang }) {
   const [showTranslated, setShowTranslated] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
+  // ── Interaction tracking refs (matching Post.jsx) ────────
+  const visibleStart = useRef(null);
+  const viewSent = useRef(false);
+
   const postLang = post.lang || "en";
   const needsTranslation = (lang === "ar" && postLang !== "ar") || (lang !== "ar" && postLang === "ar");
 
@@ -517,6 +521,84 @@ export default function PostCard({ post, lang }) {
   const previewText = isLongText ? post.text.slice(0, MAX_CHARS) + "..." : post.text;
   const publishedLabel = formatPublishedAt(post.articleCreatedAt || post.timestamp, i18n.language);
   const numImages = post.numImages || 0;
+
+  // ── Interaction tracking API calls (matching Post.jsx exactly) ──
+  const sendView = useCallback(async () => {
+    if (viewSent.current) return;
+    viewSent.current = true;
+    try {
+      await ensureUserInitialized();
+      const userId = getUserId();
+      if (!userId) {
+        console.warn("Cannot send view: no userId available");
+        return;
+      }
+      await apiClient.post(`/api/posts/${post.id}/view?userId=${userId}`);
+    } catch (err) {
+      // Log full error details for debugging 500 errors
+      const responseData = err.response?.data;
+      const status = err.response?.status;
+      console.error("Send view error:", status, JSON.stringify(responseData || err.message));
+    }
+  }, [post.id]);
+
+  const sendTimeSpent = useCallback(async (seconds) => {
+    try {
+      await ensureUserInitialized();
+      const userId = getUserId();
+      if (!userId) {
+        console.warn("Cannot send time: no userId available");
+        return;
+      }
+      await apiClient.post(`/api/posts/${post.id}/time?userId=${userId}&seconds=${seconds}`);
+    } catch (err) {
+      const responseData = err.response?.data;
+      const status = err.response?.status;
+      console.error("Send time error:", status, JSON.stringify(responseData || err.message));
+    }
+  }, [post.id]);
+
+  const sendClick = useCallback(async () => {
+    try {
+      await ensureUserInitialized();
+      const userId = getUserId();
+      if (!userId) {
+        console.warn("Cannot send click: no userId available");
+        return;
+      }
+      await apiClient.post(`/api/posts/${post.id}/click?userId=${userId}`);
+    } catch (err) {
+      const responseData = err.response?.data;
+      const status = err.response?.status;
+      console.error("Send click error:", status, JSON.stringify(responseData || err.message));
+    }
+  }, [post.id]);
+
+  // ── View + time tracking using onLayout + onVisibilityChange callback ──
+  // The parent FeedScreen calls onVisibilityChange(true) when the post becomes visible
+  // and onVisibilityChange(false) when it scrolls out of view.
+  // This matches the IntersectionObserver behavior in Post.jsx.
+
+  // Expose the onVisibilityChange via a forwarded callback pattern
+  // The parent will call these through the FlatList's onViewableItemsChanged
+  useEffect(() => {
+    if (post.__visible !== undefined) {
+      if (post.__visible) {
+        // Post became visible
+        visibleStart.current = Date.now();
+        sendView();
+      } else {
+        // Post left viewport
+        if (visibleStart.current) {
+          const seconds = (Date.now() - visibleStart.current) / 1000.0;
+          visibleStart.current = null;
+          if (seconds > 1) {
+            sendTimeSpent(seconds);
+          }
+        }
+      }
+    }
+  }, [post.__visible, sendView, sendTimeSpent]);
 
   // Load media
   useEffect(() => {
@@ -560,7 +642,11 @@ export default function PostCard({ post, lang }) {
   };
 
   const visitOriginal = () => {
-    if (post.articleUrl) Linking.openURL(post.articleUrl);
+    if (post.articleUrl) {
+      // Record click before opening — matching Post.jsx sendClick()
+      sendClick();
+      Linking.openURL(post.articleUrl);
+    }
   };
 
   const openAIModal = () => {
@@ -759,6 +845,110 @@ export default function PostCard({ post, lang }) {
       {renderCommentsModal()}
       <AIQueryModal post={post} visible={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} />
     </>
+  );
+}
+
+// ─── Post Modal Component (moved inside same file to avoid import issues) ──
+function PostModal({ post, visible, onClose, catColor, isArabic, mediaItems, t, visitOriginal, lang }) {
+  const { darkMode } = useTheme();
+  const themeColors = darkMode ? darkColors : colors;
+
+  const [translatedTitle, setTranslatedTitle] = useState(null);
+  const [translatedText, setTranslatedText] = useState(null);
+  const [showTranslated, setShowTranslated] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  const postLang = post.lang || 'en';
+  const needsTranslation = (lang === 'ar' && postLang !== 'ar') || (lang !== 'ar' && postLang === 'ar');
+
+  const handleTranslate = async () => {
+    if (showTranslated) {
+      setShowTranslated(false);
+      return;
+    }
+    if (!needsTranslation) return;
+    setIsTranslating(true);
+    try {
+      const targetLang = lang === 'ar' ? 'ar' : 'en';
+      const sourceLang = lang === 'ar' ? 'en' : 'ar';
+
+      if (post.title) {
+        const t = await translateText(post.title, sourceLang, targetLang);
+        setTranslatedTitle(t || post.title);
+      }
+      if (post.text) {
+        const t = await translateText(post.text, sourceLang, targetLang);
+        setTranslatedText(t || post.text);
+      }
+      setShowTranslated(true);
+    } catch (err) {
+      console.error('Modal translation error:', err.message);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  return (
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+      <View style={{ flex: 1, backgroundColor: themeColors.bg }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingTop: 50, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: themeColors.borderLight, backgroundColor: themeColors.surface }}>
+          <Text style={{ fontSize: 16, fontWeight: '800', color: themeColors.text, flex: 1 }} numberOfLines={1}>
+            {post.title || t('articleDetails')}
+          </Text>
+          <TouchableOpacity onPress={onClose} style={{ width: 30, height: 30, borderRadius: 999, borderWidth: 1, borderColor: themeColors.borderLight, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, color: themeColors.text }}>✕</Text>
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
+          <View style={[styles.categoryBadge, { backgroundColor: catColor.pillBg, alignSelf: 'flex-start' }]}>
+            <Text style={[styles.categoryText, { color: catColor.pillText }]}>{post.label || t('category_General')}</Text>
+          </View>
+
+          {post.title && (
+            <Text style={{ fontSize: 20, fontWeight: '800', color: themeColors.text, marginTop: 12, lineHeight: 28 }}>
+              {showTranslated && translatedTitle ? translatedTitle : post.title}
+            </Text>
+          )}
+
+          {post.text && (
+            <Text style={{ fontSize: 15, color: themeColors.textSecondary, marginTop: 10, lineHeight: 22 }}>
+              {showTranslated && translatedText ? translatedText : post.text}
+            </Text>
+          )}
+
+          {needsTranslation && (
+            <TouchableOpacity onPress={handleTranslate} disabled={isTranslating} style={{ marginTop: 12 }}>
+              <Text style={{ fontSize: 13, fontWeight: '600', color: darkMode ? '#64748b' : '#94a3b8' }}>
+                {isTranslating ? t('translating') : showTranslated ? t('viewOriginal') : (lang === 'ar' ? t('translateToAr') : t('translateToEn'))}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {mediaItems.length > 0 && (
+            <View style={{ marginTop: 16 }}>
+              <PostMedia items={mediaItems} type="modal" />
+            </View>
+          )}
+
+          {post.tags?.length > 0 && (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 16 }}>
+              {post.tags.map((tag, idx) => (
+                <Text key={idx} style={{ fontSize: 12, fontWeight: '600', backgroundColor: darkMode ? '#334155' : '#f5f8fd', color: darkMode ? '#94a3b8' : '#6e869a', paddingVertical: 4, paddingHorizontal: 10, borderRadius: 999 }}>
+                  #{tag}
+                </Text>
+              ))}
+            </View>
+          )}
+
+          {post.articleUrl && (
+            <TouchableOpacity onPress={visitOriginal} style={{ marginTop: 20, backgroundColor: catColor.accent, paddingVertical: 12, paddingHorizontal: 20, borderRadius: 999, alignSelf: 'center' }}>
+              <Text style={{ color: '#fff', fontWeight: '800', fontSize: 14 }}>{t('visitOriginal')} 🔗</Text>
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+      </View>
+    </Modal>
   );
 }
 
@@ -998,514 +1188,216 @@ function CommentsModal({ post, visible, onClose, lang }) {
               {replyingTo && (
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: darkMode ? "#1e1b4b" : colors.brand50, marginHorizontal: 8, marginTop: 8, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: darkMode ? "#312e81" : colors.brandLight }}>
                   <Text style={{ fontSize: 12, color: darkMode ? "#a78bfa" : colors.brand, flex: 1 }} numberOfLines={1}>
-                    Replying to {replyingTo.userIdentifier || `User ${replyingTo.userId?.slice?.(0, 8) || ""}`}
+
                   </Text>
-                  <TouchableOpacity onPress={() => setReplyingTo(null)}><Text style={{ color: darkMode ? "#a78bfa" : colors.brand, fontWeight: "700", fontSize: 12 }}>Cancel</Text></TouchableOpacity>
                 </View>
               )}
-
-              {attachment && (
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", backgroundColor: themeColors.surfaceSoft, marginHorizontal: 8, marginTop: 6, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: themeColors.borderLight }}>
-                  <Text style={{ fontSize: 12, color: themeColors.text, flex: 1 }} numberOfLines={1}>
-                    Attachment: {attachment.title || attachment.file?.name || "selected"}
-                  </Text>
-                  <TouchableOpacity onPress={() => setAttachment(null)}><Text style={{ color: "#dc2626", fontWeight: "600", fontSize: 12 }}>Remove</Text></TouchableOpacity>
-                </View>
-              )}
-
-              {/* Toolbar + Input */}
-              <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 8, paddingTop: 8 }}>
-                <TouchableOpacity onPress={handleFilePick} style={[styles.commentToolBtn, { backgroundColor: darkMode ? "#334155" : "#f1f5f9", borderColor: darkMode ? "#475569" : colors.borderLight }]}><Text style={{ fontSize: 14 }}>📎</Text></TouchableOpacity>
-                <TouchableOpacity onPress={() => { setShowGifPicker((prev) => !prev); setShowEmojiPicker(false); }} style={[styles.commentToolBtn, { backgroundColor: darkMode ? "#334155" : "#f1f5f9", borderColor: darkMode ? "#475569" : colors.borderLight }]}><Text style={{ fontSize: 14, fontWeight: "700", color: themeColors.text }}>GIF</Text></TouchableOpacity>
-                <TouchableOpacity onPress={() => { setShowEmojiPicker((prev) => !prev); setShowGifPicker(false); }} style={[styles.commentToolBtn, { backgroundColor: darkMode ? "#334155" : "#f1f5f9", borderColor: darkMode ? "#475569" : colors.borderLight }]}><Text style={{ fontSize: 14 }}>😊</Text></TouchableOpacity>
-              </View>
-              <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 8, paddingTop: 4, paddingBottom: 4 }}>
-                <TextInput
-                  value={draft}
-                  onChangeText={setDraft}
-                  placeholder={replyingTo ? t("writeReply") : t("writeCommentPlaceholder")}
-                  placeholderTextColor={themeColors.muted}
-                  style={[styles.commentInput, { flex: 1, marginRight: 8, backgroundColor: themeColors.surfaceSoft, borderColor: themeColors.borderLight, color: themeColors.text }]}
-                  multiline
-                />
-                <TouchableOpacity
-                  onPress={() => submitComment({ content: draft, parentCommentId: replyingTo?.id || null })}
-                  style={[styles.commentSubmit, { paddingVertical: 8, paddingHorizontal: 14 }]}
-                >
-                  <Text style={styles.commentSubmitText}>{replyingTo ? t("postReply") : t("postComment")}</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Emoji / GIF pickers */}
-              {showEmojiPicker && <EmojiPicker onSelect={(emoji) => { setDraft((prev) => `${prev || ""}${emoji}`); }} onClose={() => setShowEmojiPicker(false)} />}
-              {showGifPicker && <GifPicker onSelect={(gif) => { setAttachment({ kind: "gif", url: gif.url, title: gif.title }); setShowGifPicker(false); }} onClose={() => setShowGifPicker(false)} />}
             </View>
           </View>
-
-          {/* Attachment Preview Modal */}
-          <Modal visible={!!previewAttachment} transparent onRequestClose={() => setPreviewAttachment(null)}>
-            <TouchableOpacity activeOpacity={1} onPress={() => setPreviewAttachment(null)} style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "center", alignItems: "center", padding: 20 }}>
-              <View style={{ backgroundColor: colors.surface, borderRadius: 12, padding: 8, maxWidth: "90%", maxHeight: "80%" }}>
-                <TouchableOpacity onPress={() => setPreviewAttachment(null)} style={{ alignSelf: "flex-end", padding: 6 }}><Text style={{ fontSize: 20 }}>✕</Text></TouchableOpacity>
-                {previewAttachment?.type === "video" ? (
-                  <View style={{ width: 250, height: 200, backgroundColor: "#111", borderRadius: 8, justifyContent: "center", alignItems: "center" }}>
-                    <Text style={{ color: "#fff", fontWeight: "700" }}>▶ Video Attachment</Text>
-                  </View>
-                ) : (
-                  <Image source={{ uri: previewAttachment?.url }} style={{ width: 250, height: 250, borderRadius: 8 }} resizeMode="contain" />
-                )}
-              </View>
-            </TouchableOpacity>
-          </Modal>
         </TouchableOpacity>
       </TouchableOpacity>
     </Modal>
   );
 }
 
-// ─── PostModal — Full Article Viewer (matching PostModal.jsx) ─
-function PostModal({ post, visible, onClose, catColor, isArabic, mediaItems, t, visitOriginal, lang }) {
-  const { darkMode } = useTheme();
-  const themeColors = darkMode ? darkColors : colors;
-  const rtl = isArabic ? "rtl" : "ltr";
-
-  const [content, setContent] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
-  const [selectedMedia, setSelectedMedia] = useState(null);
-  const textPaneRef = useRef(null);
-  const mediaRefs = useRef(new Map());
-
-  // Translation state for PostModal
-  const [isTranslatingPost, setIsTranslatingPost] = useState(false);
-  const [translatedTitle, setTranslatedTitle] = useState(null);
-  const [translatedContent, setTranslatedContent] = useState(null);
-  const [showTranslatedPost, setShowTranslatedPost] = useState(false);
-
-  const postLang = post.lang || "en";
-  const needsPostTranslation = (lang === "ar" && postLang !== "ar") || (lang !== "ar" && postLang === "ar");
-
-  const handleTranslatePost = async () => {
-    if (showTranslatedPost) {
-      setShowTranslatedPost(false);
-      return;
-    }
-    if (!needsPostTranslation) return;
-    setIsTranslatingPost(true);
-    try {
-      const targetLang = lang === "ar" ? "ar" : "en";
-      const sourceLang = lang === "ar" ? "en" : "ar";
-      // Translate title
-      if (post.title) {
-        const tt = await translateText(post.title, sourceLang, targetLang);
-        setTranslatedTitle(tt || post.title);
-      }
-      // Translate body text
-      if (post.text) {
-        const tb = await translateText(post.text, sourceLang, targetLang);
-        setTranslatedContent(tb || post.text);
-      }
-      setShowTranslatedPost(true);
-    } catch (err) {
-      console.error("PostModal translation error:", err.message);
-    } finally {
-      setIsTranslatingPost(false);
-    }
-  };
-
-  // Load ordered content from API, with fallback
-  useEffect(() => {
-    if (!post?.id) return;
-    const loadContent = async () => {
-      setIsLoading(true);
-      try {
-        const res = await apiClient.get(`/api/posts/${post.id}/content`);
-        const data = res.data;
-        const orderedContent = Array.isArray(data?.content) ? data.content : [];
-
-        if (orderedContent.length > 0) {
-          setContent(orderedContent);
-        } else {
-          setContent(fallbackContentFromText(post.text));
-        }
-      } catch (error) {
-        console.error("Failed to load ordered post content", error);
-        setContent(fallbackContentFromText(post.text));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadContent();
-  }, [post?.id, post?.text]);
-
-  const allMediaItems = useMemo(
-    () =>
-      content
-        .map((item, index) => ({ ...item, contentIndex: index }))
-        .filter((item) => item.type === "media" && item.url),
-    [content]
-  );
-
-  useEffect(() => {
-    if (activeMediaIndex >= allMediaItems.length) {
-      setActiveMediaIndex(0);
-    }
-  }, [activeMediaIndex, allMediaItems.length]);
-
-  useEffect(() => {
-    if (!textPaneRef.current || allMediaItems.length === 0) return;
-  }, [allMediaItems]);
-
-  const scrollToMedia = (mediaIndex) => {
-    setActiveMediaIndex(mediaIndex);
-  };
-
-  const activeMedia = allMediaItems[activeMediaIndex] || null;
-
-  const renderSingleMedia = (item, maxHeight = "100%") => {
-    if (!item) return null;
-    if (item.mediaType === "video" || item.url?.includes(".mp4")) {
-      return (
-        <View style={{ width: "100%", borderRadius: 8, overflow: "hidden", backgroundColor: "#000" }}>
-          <TouchableOpacity onPress={() => item.url && Linking.openURL(item.url)} style={{ height: 300, justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ color: "#fff", fontWeight: "700", fontSize: 18 }}>▶ Play Video</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
-    return (
-      <TouchableOpacity onPress={() => setSelectedMedia(item)} style={{ width: "100%" }}>
-        <Image source={{ uri: item.url }} style={{ width: "100%", height: 280, borderRadius: 8 }} resizeMode="contain" />
-      </TouchableOpacity>
-    );
-  };
-
-  if (!post) return null;
-
-  return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-      <TouchableOpacity activeOpacity={1} onPress={onClose} style={{ flex: 1, backgroundColor: "rgba(11,26,43,0.55)" }}>
-        <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()} style={{ flex: 1, backgroundColor: themeColors.surface, marginTop: 40, borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: "hidden" }}>
-          {/* Header */}
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 20, paddingTop: 20, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: themeColors.borderLight, direction: rtl, writingDirection: rtl }}>
-            <View style={{ flex: 1, direction: rtl, writingDirection: rtl }}>
-              <Text style={{ fontSize: 18, fontWeight: "800", color: themeColors.text, lineHeight: 24 }} numberOfLines={1}>
-                {showTranslatedPost && translatedTitle ? translatedTitle : post.title || t("untitledPost")}
-              </Text>
-              {/* Translate button in header */}
-              {needsPostTranslation && (
-                <TouchableOpacity onPress={handleTranslatePost} disabled={isTranslatingPost} style={{ marginTop: 6 }}>
-                  <Text style={{ fontSize: 13, fontWeight: "600", color: "#94a3b8" }}>
-                    {isTranslatingPost ? t("translating") : showTranslatedPost ? t("viewOriginal") : (lang === "ar" ? t("translateToAr") : t("translateToEn"))}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-                <TouchableOpacity onPress={onClose} style={{ width: 36, height: 36, borderRadius: 999, borderWidth: 1, borderColor: themeColors.borderLight, justifyContent: "center", alignItems: "center" }}>
-                  <Text style={{ fontSize: 18, color: themeColors.muted }}>✕</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Body — full article content */}
-          <ScrollView ref={textPaneRef} style={{ flex: 1 }} contentContainerStyle={{ padding: 24 }}>
-            {/* Meta row */}
-            <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
-              <View style={[styles.categoryBadge, { backgroundColor: catColor.pillBg }]}>
-                <Text style={[styles.categoryText, { color: catColor.pillText }]}>{post.label ? t(`category_${post.label}`, post.label) : t("category_General")}</Text>
-              </View>
-              {post.lang ? <Text style={{ fontSize: 13, color: themeColors.muted, marginLeft: 8 }}>· {post.lang}</Text> : null}
-            </View>
-
-            {isLoading ? (
-              <View style={{ padding: 20, alignItems: "center" }}>
-                <ActivityIndicator size="small" color={colors.brand} />
-                <Text style={{ fontSize: 14, color: themeColors.muted, marginTop: 8 }}>{t("loadingArticleDetails")}</Text>
-              </View>
-            ) : (
-              content.map((item, contentIndex) => {
-                if (item.type === "paragraph") {
-                  return (
-                    <View key={`p-${contentIndex}`} style={{ marginBottom: 20 }}>
-                      <Text style={styles.modalArticleBody}>
-                        {showTranslatedPost && translatedContent ? translatedContent : item.text}
-                      </Text>
-                    </View>
-                  );
-                }
-
-                if (item.type === "media" && item.url) {
-                  const mediaIdx = allMediaItems.findIndex((media) => media.contentIndex === contentIndex);
-                  const isVideo = item.mediaType === "video" || item.url?.includes(".mp4");
-
-                  return (
-                    <TouchableOpacity
-                      key={`m-${contentIndex}`}
-                      activeOpacity={0.9}
-                      onPress={() => { if (!isVideo) setSelectedMedia(item); else if (item.url) Linking.openURL(item.url); }}
-                      style={{ marginBottom: 16, borderRadius: 12, overflow: "hidden", borderWidth: 1, borderColor: themeColors.borderLight }}
-                    >
-                      {isVideo ? (
-                        <View style={{ height: 280, backgroundColor: "#111", justifyContent: "center", alignItems: "center" }}>
-                          <Text style={{ color: "#fff", fontWeight: "700", fontSize: 18 }}>▶ Play Video</Text>
-                        </View>
-                      ) : (
-                        <Image source={{ uri: item.url }} style={{ width: "100%", height: 300 }} resizeMode="cover" />
-                      )}
-                    </TouchableOpacity>
-                  );
-                }
-
-                return null;
-              })
-            )}
-
-            {/* Tags */}
-            {post.tags?.length > 0 && (
-              <View style={styles.postTags}>
-                {post.tags.map((tag, idx) => (
-                  <Text key={idx} style={[styles.postTag, { backgroundColor: darkMode ? "#334155" : "#f5f8fd", color: darkMode ? "#94a3b8" : "#6e869a" }]}>#{tag}</Text>
-                ))}
-              </View>
-            )}
-          </ScrollView>
-
-          {/* Footer */}
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 20, paddingVertical: 14, borderTopWidth: 1, borderTopColor: themeColors.borderLight, backgroundColor: themeColors.surface }}>
-            <TouchableOpacity onPress={onClose}>
-              <Text style={{ fontSize: 14, fontWeight: "600", color: themeColors.muted }}>{t("collapse")}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={visitOriginal}
-              disabled={!post.articleUrl}
-              style={{ paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12, backgroundColor: post.articleUrl ? colors.brand : themeColors.borderLight }}
-            >
-              <Text style={{ fontSize: 14, fontWeight: "800", color: post.articleUrl ? "#fff" : themeColors.muted }}>
-                {t("visitOriginalArticle")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Lightbox */}
-          <Modal visible={!!selectedMedia} transparent onRequestClose={() => setSelectedMedia(null)}>
-            <TouchableOpacity activeOpacity={1} onPress={() => setSelectedMedia(null)} style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "center", alignItems: "center", padding: 20 }}>
-              <View style={{ maxWidth: "90%", maxHeight: "90vh" }}>
-                <TouchableOpacity onPress={() => setSelectedMedia(null)} style={{ alignSelf: "flex-end", padding: 8, marginBottom: 8 }}>
-                  <Text style={{ color: "#fff", fontSize: 22, opacity: 0.7 }}>✕</Text>
-                </TouchableOpacity>
-                {selectedMedia?.mediaType === "video" || selectedMedia?.url?.includes(".mp4") ? (
-                  <View style={{ width: screenWidth - 80, height: 300, backgroundColor: "#111", borderRadius: 12, justifyContent: "center", alignItems: "center" }}>
-                    <Text style={{ color: "#fff", fontWeight: "700" }}>▶ Video</Text>
-                  </View>
-                ) : (
-                  <Image source={{ uri: selectedMedia?.url }} style={{ width: screenWidth - 80, height: 500, borderRadius: 12 }} resizeMode="contain" />
-                )}
-              </View>
-            </TouchableOpacity>
-          </Modal>
-        </TouchableOpacity>
-      </TouchableOpacity>
-    </Modal>
-  );
-}
-
-function fallbackContentFromText(text) {
-  if (!text) return [];
-  const paragraphs = text
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean);
-  return paragraphs.map((paragraph, index) => ({
-    type: "paragraph",
-    text: paragraph,
-    sortOrder: index + 1,
-  }));
-}
-
-// ─── Styles — matching Post.css classes exactly ──────────────
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
     borderRadius: 16,
-    marginBottom: 14,
-    shadowColor: "#0b1a2b",
-    shadowOpacity: 0.06,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 10,
-    elevation: 3,
-    position: "relative",
+    borderWidth: 1,
     overflow: "hidden",
+    marginBottom: 14,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
   },
-  cardContent: {
-    padding: 20,
-  },
-  // .post-category-line
   categoryLine: {
     position: "absolute",
-    top: 0,
     left: 0,
+    top: 0,
     bottom: 0,
     width: 4,
     borderTopLeftRadius: 16,
     borderBottomLeftRadius: 16,
   },
-  // .post-header
+  cardContent: {
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+  },
   postHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    gap: 12,
+    justifyContent: "space-between",
     marginBottom: 8,
   },
-  // .post-category
   categoryBadge: {
-    paddingVertical: 3,
+    paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 999,
   },
   categoryText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 0.72,
+    letterSpacing: 0.3,
   },
-  // .post-time
   timeText: {
-    fontSize: 13,
-    color: "#6e869a",
-    fontWeight: "500",
-  },
-  // .post-title
-  title: {
-    fontFamily: "Plus Jakarta Sans",
-    fontSize: 18,
-    fontWeight: "700",
-    lineHeight: 24,
-    marginBottom: 8,
-    color: colors.text,
-  },
-  // .post-text
-  bodyText: {
-    fontSize: 15,
-    color: colors.textSecondary,
-    lineHeight: 25,
-  },
-  // .post-show-more
-  showMore: {
-    color: colors.brand600,
+    fontSize: 12,
     fontWeight: "600",
-    fontSize: 14,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "800",
+    lineHeight: 22,
+    marginTop: 4,
+  },
+  bodyText: {
+    fontSize: 13,
+    lineHeight: 19,
+    marginTop: 6,
+  },
+  showMore: {
+    fontSize: 13,
+    fontWeight: "700",
+    marginTop: 6,
+  },
+  mediaContainer: {
     marginTop: 8,
   },
-  mediaContainer: { marginTop: 14 },
-  mediaSingle: { width: "100%", borderRadius: 12 },
-  mediaGrid2: { flexDirection: "row", gap: 6 },
-  mediaGrid3: { flexDirection: "row", gap: 6 },
-  mediaGridItem: { flex: 1, borderRadius: 8 },
-  mediaOverlay: { opacity: 0.6 },
-  mediaExtraOverlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center" },
-  mediaExtraText: { color: "#fff", fontSize: 24, fontWeight: "900" },
-  videoPlaceholder: { width: "100%", borderRadius: 12, backgroundColor: "#111", justifyContent: "center", alignItems: "center" },
-  videoPlayText: { color: "#fff", fontSize: 18, fontWeight: "700" },
-  // .post-lang
-  langText: {
-    fontSize: 12,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.48,
-    color: "#6e869a",
-    paddingVertical: 2,
-    paddingHorizontal: 8,
+  mediaGridItem: {
+    flex: 1,
     borderRadius: 8,
-    backgroundColor: "#f5f8fd",
-    alignSelf: "flex-start",
-    marginTop: 10,
-    overflow: "hidden",
   },
-  // .post-tags
+  langText: {
+    fontSize: 10,
+    fontWeight: "700",
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 999,
+    alignSelf: "flex-start",
+    marginTop: 8,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
   postTags: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 6,
-    marginTop: 10,
+    marginTop: 6,
   },
-  // .post-tag
   postTag: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#6e869a",
-    backgroundColor: "#f5f8fd",
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    fontSize: 11,
+    fontWeight: "600",
+    paddingVertical: 2,
+    paddingHorizontal: 8,
     borderRadius: 999,
-    overflow: "hidden",
   },
-  // .post-actions
   postActions: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    marginTop: 16,
-    paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
+    marginTop: 12,
+    paddingTop: 10,
   },
-  // .post-action-btn
   postActionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
+    gap: 4,
     paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     borderRadius: 999,
-    backgroundColor: "transparent",
   },
   postActionIcon: {
     fontSize: 14,
   },
   postActionLabel: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "600",
-    color: "#6e869a",
+    color: colors.muted,
   },
-
-  // Modals
-  modalContainer: { flex: 1, backgroundColor: colors.bg },
-  modalHeader: {
-    flexDirection: "row", justifyContent: "space-between", alignItems: "center",
-    paddingHorizontal: 16, paddingTop: 50, paddingBottom: 12,
-    backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.borderLight,
+  commentCard: {
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
   },
-  modalClose: { fontSize: 22, color: colors.text, fontWeight: "700" },
-  modalTitle: { fontSize: 16, fontWeight: "800", color: colors.text },
-  modalContent: { padding: 16 },
-  modalCategoryBadge: { alignSelf: "flex-start", paddingVertical: 4, paddingHorizontal: 12, borderRadius: 999, marginBottom: 12 },
-  modalCategoryText: { fontSize: 12, fontWeight: "800" },
-  modalArticleTitle: { fontSize: 20, fontWeight: "900", color: colors.text, marginBottom: 12, lineHeight: 26 },
-  modalArticleBody: { fontSize: 15, color: colors.textSecondary, lineHeight: 22 },
-  viewOriginalBtn: { marginTop: 20, backgroundColor: colors.brand, paddingVertical: 12, borderRadius: 12, alignItems: "center" },
-  viewOriginalText: { color: "#fff", fontWeight: "800", fontSize: 15 },
-
-  // Comments
-  commentCard: { backgroundColor: colors.surface, padding: 12, borderRadius: 12, borderWidth: 1, borderColor: colors.borderLight },
-  commentAvatar: { width: 32, height: 32, borderRadius: 16, borderWidth: 1, borderColor: colors.borderLight },
-  commentAuthorName: { fontSize: 13, fontWeight: "700", color: colors.text },
-  commentTime: { fontSize: 11, color: colors.muted },
-  commentContent: { fontSize: 13, color: colors.textSecondary, marginTop: 4, lineHeight: 18 },
-  voteBtn: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: "#f1f5f9" },
-  voteBtnActiveUp: { backgroundColor: "#d1fae5" },
-  voteBtnActiveDown: { backgroundColor: "#fee2e2" },
-  voteScore: { fontSize: 13, fontWeight: "700", color: colors.text },
-
-  // Comment input / tools
-  commentToolBtn: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, backgroundColor: "#f1f5f9", borderWidth: 1, borderColor: colors.borderLight },
-  commentInput: { borderWidth: 1, borderColor: colors.borderLight, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, fontSize: 14, color: colors.text, backgroundColor: colors.surfaceSoft, maxHeight: 80 },
-  commentSubmit: { backgroundColor: colors.brand, borderRadius: 10, justifyContent: "center" },
-  commentSubmitText: { color: "#fff", fontWeight: "800", fontSize: 13 },
-
-  // Emoji / GIF picker
-  emojiPicker: { borderTopWidth: 1, borderTopColor: colors.borderLight, backgroundColor: colors.surfaceSoft, padding: 12, maxHeight: 280 },
-  emojiSearchInput: { borderWidth: 1, borderColor: colors.borderLight, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, fontSize: 13, color: colors.text, backgroundColor: colors.surface, marginBottom: 8 },
+  commentAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  commentAuthorName: {
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  commentTime: {
+    fontSize: 11,
+    fontWeight: "500",
+  },
+  commentContent: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 4,
+  },
+  voteBtn: {
+    padding: 4,
+    borderRadius: 4,
+  },
+  voteBtnActiveUp: {
+    backgroundColor: "rgba(37,99,235,0.1)",
+  },
+  voteBtnActiveDown: {
+    backgroundColor: "rgba(220,38,38,0.1)",
+  },
+  voteScore: {
+    fontSize: 13,
+    fontWeight: "700",
+    minWidth: 20,
+    textAlign: "center",
+  },
+  emojiPicker: {
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    backgroundColor: colors.surface,
+  },
+  emojiSearchInput: {
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  footerLoader: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 16,
+  },
+  footerText: {
+    color: colors.muted,
+    fontWeight: "700",
+    fontSize: 13,
+  },
+  footerEnd: {
+    paddingVertical: 24,
+    alignItems: "center",
+  },
+  footerEndText: {
+    color: colors.muted,
+    fontWeight: "600",
+    fontSize: 13,
+  },
+  emptyState: {
+    paddingVertical: 60,
+    alignItems: "center",
+  },
+  emptyText: {
+    color: colors.muted,
+    fontSize: 15,
+    fontWeight: "600",
+  },
 });

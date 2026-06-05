@@ -45,6 +45,15 @@ public class Endpoint {
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
+    @Column(name = "crawl_score", nullable = false)
+    private double crawlScore = 1.0;
+
+    @Column(name = "last_crawled_at")
+    private Instant lastCrawledAt;
+
+    @Column(name = "total_crawls", nullable = false)
+    private int totalCrawls = 0;
+
     public Long getId() {
         return id;
     }
@@ -79,5 +88,29 @@ public class Endpoint {
 
     public void setStatus(RecordStatus status) {
         this.status = status;
+    }
+
+    public double getCrawlScore() {
+        return crawlScore;
+    }
+
+    public void setCrawlScore(double crawlScore) {
+        this.crawlScore = crawlScore;
+    }
+
+    public Instant getLastCrawledAt() {
+        return lastCrawledAt;
+    }
+
+    public void setLastCrawledAt(Instant lastCrawledAt) {
+        this.lastCrawledAt = lastCrawledAt;
+    }
+
+    public int getTotalCrawls() {
+        return totalCrawls;
+    }
+
+    public void setTotalCrawls(int totalCrawls) {
+        this.totalCrawls = totalCrawls;
     }
 }

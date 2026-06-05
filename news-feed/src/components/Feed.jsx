@@ -4,8 +4,10 @@ import Post from "./Post";
 import { getUserId } from "../utils/userId";
 import { apiFetch } from "../utils/apiFetch";
 import { ensureUserInitialized } from "../utils/auth";
+import { useTranslation } from "react-i18next";
 
 export default function Feed({ category, onAskAI }) {
+  const { t } = useTranslation();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -86,12 +88,12 @@ export default function Feed({ category, onAskAI }) {
         <Post key={post.id} post={post} onAskAI={onAskAI}/>
       ))}
 
-      <div ref={loader} className="text-center py-6 text-sm text-gray-400 font-medium">
+      <div ref={loader} className="text-center py-6 text-sm font-medium" style={{ color: "var(--text-muted)" }}>
         {loading
-          ? "Loading..."
+          ? t("loading")
           : hasMore
-          ? "Scroll to load more"
-          : "No more posts"}
+          ? t("scrollToLoad")
+          : t("noMorePosts")}
       </div>
     </div>
   );

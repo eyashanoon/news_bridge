@@ -185,6 +185,17 @@ public class EndpointService {
         return parsed;
     }
 
+    @Transactional
+    public EndpointResponse updateCrawlStats(Long id, int articlesFound) {
+        Endpoint endpoint = findEndpoint(id);
+        double alpha = 0.3;
+        double newScore = alpha * articlesFound + (1.0 - alpha) * endpoint.getCrawlScore();
+        endpoint.setCrawlScore(newScore);
+        endpoint.setLastCrawledAt(java.time.Instant.now());
+        endpoint.setTotalCrawls(endpoint.getTotalCrawls() + 1);
+        return toResponse(endpointRepository.save(endpoint));
+    }
+
     private EndpointResponse toResponse(Endpoint endpoint) {
         return new EndpointResponse(
                 endpoint.getId(),
@@ -192,7 +203,10 @@ public class EndpointService {
                 endpoint.getRoot().getId(),
                 endpoint.getStatus().name(),
                 endpoint.getStatus() == RecordStatus.ACTIVE,
-                endpoint.getCreatedAt()
+                endpoint.getCreatedAt(),
+                endpoint.getCrawlScore(),
+                endpoint.getLastCrawledAt(),
+                endpoint.getTotalCrawls()
         );
     }
 }

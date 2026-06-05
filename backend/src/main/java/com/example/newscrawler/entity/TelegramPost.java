@@ -26,10 +26,10 @@ public class TelegramPost {
     @Column(columnDefinition = "LONGTEXT")
     private String content;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String mediaUrl;
 
-    @Column
+    @Column(length = 64)
     private String mediaType;
 
     @Column

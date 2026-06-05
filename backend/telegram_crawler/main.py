@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import collections
 import logging
 import threading
@@ -11,6 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
+import telegram_client
 from backend_client import BackendClient
 from scraper import scrape_channel, search_channels
 from settings import settings
@@ -98,7 +100,7 @@ def _run_cycle() -> None:
                 username = ch.get("channelUsername", "")
                 channel_id = ch.get("id")
                 last_crawled = ch.get("lastCrawledAt")
-                _push_log("INFO", f"Scraping @{username} (id={channel_id})...")
+                _push_log("INFO", f"Scraping @{username} (id={channel_id}) — MTProto ready: {telegram_client.is_ready()}")
 
                 # Determine the time cutoff for this channel:
                 # - If previously crawled, use lastCrawledAt
@@ -116,12 +118,26 @@ def _run_cycle() -> None:
                     since_dt = datetime.now(timezone.utc) - timedelta(minutes=3)
                     _push_log("INFO", f"  First crawl — fetching posts from last 3 minutes")
 
-                posts = scrape_channel(
+                # ── Try MTProto API first; fall back to web scraping ──────────
+                # Always fetch the last 100 posts — the backend deduplicates
+                # by telegramMessageId so only truly new posts are inserted.
+                posts = telegram_client.fetch_posts(
                     username,
-                    max_posts=settings.max_posts_per_channel,
-                    timeout=settings.request_timeout_seconds,
-                    since=since_dt,
+                    since=None,
+                    limit=settings.max_posts_per_channel,
                 )
+                if posts is None:
+                    # MTProto not available — use web scraper (time-filtered)
+                    _push_log("INFO", f"  Using web scraper for @{username}")
+                    posts = scrape_channel(
+                        username,
+                        max_posts=settings.max_posts_per_channel,
+                        timeout=settings.request_timeout_seconds,
+                        since=since_dt,
+                    )
+                else:
+                    _push_log("INFO", f"  Using MTProto API for @{username} — fetched {len(posts)} posts (dedup by backend)")
+
                 total_scraped += len(posts)
 
                 if not posts:
@@ -177,8 +193,13 @@ def _run_cycle() -> None:
 
 # ─── Lifecycle ────────────────────────────────────────────────────────────────
 @app.on_event("startup")
-def on_startup() -> None:
+async def on_startup() -> None:
     _push_log("INFO", "Telegram crawler server started")
+    telegram_client.init(
+        settings.telegram_api_id,
+        settings.telegram_api_hash,
+        settings.telegram_session_path,
+    )
     scheduler.add_job(
         _run_cycle,
         "interval",
@@ -192,7 +213,8 @@ def on_startup() -> None:
 
 
 @app.on_event("shutdown")
-def on_shutdown() -> None:
+async def on_shutdown() -> None:
+    telegram_client.close()
     if scheduler.running:
         scheduler.shutdown(wait=False)
 
@@ -205,6 +227,7 @@ def health() -> dict:
         **_get_scheduler_status(),
         "crawlRunning": _run_status["running"],
         "backendBaseUrl": settings.backend_base_url,
+        "telegramApiReady": telegram_client.is_ready(),
     }
 
 
@@ -223,13 +246,30 @@ def last_run() -> dict:
 
 
 @app.get("/search")
-def search(q: str = "") -> dict:
-    """Search for Telegram channels by name/username."""
+async def search(q: str = "") -> dict:
+    """Search for Telegram channels and groups by name, topic, or username.
+
+    Uses the Telegram MTProto API when configured (any language, any type).
+    Falls back to web scraping when API credentials are not set.
+    """
+    _push_log("INFO", f"[search] received q={repr(q)} (len={len(q)})")
     if not q or len(q.strip()) < 2:
         return {"results": []}
+    q = q.strip()
+
+    # ── Telegram API — fast, complete, works in every language ───────────────
+    if telegram_client.is_ready():
+        results = await telegram_client.search(q)
+        if results:
+            return {"results": results}
+        # API returned nothing (edge case) — fall through to web scraping
+
+    # ── Web-scraping fallback ─────────────────────────────────────────────────
     try:
-        channels_found = search_channels(q.strip(), timeout=settings.request_timeout_seconds)
-        return {"results": channels_found}
+        results = await asyncio.to_thread(
+            search_channels, q, settings.request_timeout_seconds
+        )
+        return {"results": results}
     except Exception as ex:
         logger.error(f"Channel search failed: {ex}")
         return {"results": [], "error": str(ex)}

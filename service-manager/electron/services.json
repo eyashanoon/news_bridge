@@ -1,0 +1,83 @@
+[
+  {
+    "id": "mysql",
+    "name": "MySQL",
+    "description": "Database via Docker (port 3307)",
+    "cwd": "backend",
+    "command": "docker compose up mysql",
+    "dependsOn": [],
+    "health": { "type": "tcp", "host": "127.0.0.1", "port": 3307 }
+  },
+  {
+    "id": "backend",
+    "name": "Spring Boot API",
+    "description": "Java backend (port 8080)",
+    "cwd": "backend",
+    "command": "mvn spring-boot:run",
+    "dependsOn": ["mysql"],
+    "health": { "type": "http", "url": "http://localhost:8080" }
+  },
+  {
+    "id": "crawler",
+    "name": "Site Crawler",
+    "description": "Article crawler + post-processing (port 8000)",
+    "cwd": "backend/crawler_server",
+    "command": "python -m uvicorn main:app --port 8000 --host 0.0.0.0 --reload",
+    "dependsOn": ["backend"],
+    "health": { "type": "http", "url": "http://localhost:8000/health" }
+  },
+  {
+    "id": "discovery",
+    "name": "Endpoint Discovery",
+    "description": "BFS endpoint discovery for roots (port 8004)",
+    "cwd": "backend",
+    "command": "python -m uvicorn endpoint_discovery.service:app --port 8004 --host 0.0.0.0 --reload",
+    "dependsOn": [],
+    "health": { "type": "http", "url": "http://localhost:8004/health" }
+  },
+  {
+    "id": "telegram",
+    "name": "Telegram Crawler",
+    "description": "Telegram channel crawler (port 8200)",
+    "cwd": "backend/telegram_crawler",
+    "command": "python -m uvicorn main:app --port 8200 --host 0.0.0.0 --reload",
+    "dependsOn": ["backend"],
+    "health": { "type": "http", "url": "http://localhost:8200/health" }
+  },
+  {
+    "id": "admin",
+    "name": "Admin Frontend",
+    "description": "Admin panel (port 5173)",
+    "cwd": "frontend",
+    "command": "npm run dev",
+    "dependsOn": ["backend"],
+    "health": { "type": "tcp", "host": "127.0.0.1", "port": 5173 }
+  },
+  {
+    "id": "feed",
+    "name": "News Feed",
+    "description": "Public feed app (port 5174)",
+    "cwd": "news-feed",
+    "command": "npm run dev -- --port 5174",
+    "dependsOn": ["backend"],
+    "health": { "type": "tcp", "host": "127.0.0.1", "port": 5174 }
+  },
+  {
+    "id": "ai",
+    "name": "AI Assistant",
+    "description": "RAG / news brief service (port 9000)",
+    "cwd": "backend/ai-assistant-service",
+    "command": "python -m uvicorn main:app --port 9000 --host 0.0.0.0 --reload",
+    "dependsOn": ["backend", "ollama"],
+    "health": { "type": "tcp", "host": "127.0.0.1", "port": 9000 }
+  },
+  {
+    "id": "ollama",
+    "name": "Ollama",
+    "description": "Local LLM server (port 11434)",
+    "cwd": ".",
+    "command": "ollama serve",
+    "dependsOn": [],
+    "health": { "type": "tcp", "host": "127.0.0.1", "port": 11434 }
+  }
+]

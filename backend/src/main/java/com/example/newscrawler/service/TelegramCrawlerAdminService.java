@@ -11,6 +11,9 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.BAD_GATEWAY;
@@ -22,7 +25,7 @@ public class TelegramCrawlerAdminService {
     private final String baseUrl;
 
     public TelegramCrawlerAdminService(
-            @Value("${telegram-crawler.server.base-url:http://localhost:8001}") String baseUrl) {
+            @Value("${telegram-crawler.server.base-url:http://localhost:8200}") String baseUrl) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
     }
 
@@ -62,9 +65,14 @@ public class TelegramCrawlerAdminService {
     }
 
     public Map<String, Object> searchChannels(String query) {
-        String url = baseUrl + "/search?q=" + java.net.URLEncoder.encode(query, java.nio.charset.StandardCharsets.UTF_8);
+        URI uri = UriComponentsBuilder
+                .fromHttpUrl(baseUrl + "/search")
+                .queryParam("q", query)
+                .build()
+                .encode()
+                .toUri();
         try {
-            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, Map.class);
+            ResponseEntity<Map> response = restTemplate.exchange(uri, HttpMethod.GET, HttpEntity.EMPTY, Map.class);
             return response.getBody();
         } catch (HttpStatusCodeException ex) {
             throw new ResponseStatusException(BAD_GATEWAY, "Telegram crawler error: " + ex.getResponseBodyAsString());

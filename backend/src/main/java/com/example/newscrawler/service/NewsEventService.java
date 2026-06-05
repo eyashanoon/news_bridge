@@ -6,6 +6,7 @@ import com.example.newscrawler.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
@@ -19,9 +20,11 @@ public class NewsEventService {
     @Autowired private CategoryFieldRepository fieldRepository;
     @Autowired private PublishPermissionRequestRepository permissionRepository;
     @Autowired private EditorUserRepository editorUserRepository;
+    @Autowired private TopicService topicService;
 
     // ─── Admin: create ────────────────────────────────────────────────────────
 
+    @Transactional
     public NewsEventResponse createEvent(CreateNewsEventRequest req, String adminEmail) {
         if (req.title == null || req.title.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Event title is required");
@@ -39,7 +42,14 @@ public class NewsEventService {
         event.setStatus(req.status != null ? req.status : "DRAFT");
         event.setCreatedByEmail(adminEmail);
 
-        return mapToDto(eventRepository.save(event));
+        NewsEventResponse response = mapToDto(eventRepository.save(event));
+
+        // If the event is PUBLIC from the start, create a corresponding topic
+        if ("PUBLIC".equals(event.getStatus())) {
+            createTopicFromEvent(event);
+        }
+
+        return response;
     }
 
     // ─── Admin: list all ─────────────────────────────────────────────────────
@@ -59,9 +69,11 @@ public class NewsEventService {
     public List<NewsEventResponse> getEventsForEditor(String editorEmail) {
         EditorUser editor = editorUserRepository.findByEmail(editorEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editor not found"));
-        if (editor.getField() == null) return List.of();
+        if (editor.getFields() == null || editor.getFields().isEmpty()) return List.of();
+        // Get events matching any of the editor's fields
+        CategoryField firstField = editor.getFields().get(0);
         return eventRepository.findByFieldAndStatusIn(
-                editor.getField(), List.of("EDITOR_VISIBLE", "PUBLIC"))
+                firstField, List.of("EDITOR_VISIBLE", "PUBLIC"))
                 .stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
@@ -73,6 +85,7 @@ public class NewsEventService {
 
     // ─── Admin: update ────────────────────────────────────────────────────────
 
+    @Transactional
     public NewsEventResponse updateEvent(Long id, CreateNewsEventRequest req) {
         NewsEvent event = findEvent(id);
         if (req.title != null && !req.title.isBlank()) event.setTitle(req.title);
@@ -83,19 +96,35 @@ public class NewsEventService {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Field not found"));
             event.setField(field);
         }
-        return mapToDto(eventRepository.save(event));
+        NewsEventResponse response = mapToDto(eventRepository.save(event));
+
+        // If the event is PUBLIC after update, create a corresponding topic
+        if ("PUBLIC".equals(event.getStatus())) {
+            createTopicFromEvent(event);
+        }
+
+        return response;
     }
 
     // ─── Admin: change status ─────────────────────────────────────────────────
 
+    @Transactional
     public NewsEventResponse changeStatus(Long id, String status) {
         NewsEvent event = findEvent(id);
         event.setStatus(status);
-        return mapToDto(eventRepository.save(event));
+        NewsEventResponse response = mapToDto(eventRepository.save(event));
+
+        // If the event transitions to PUBLIC, create a corresponding topic
+        if ("PUBLIC".equals(event.getStatus())) {
+            createTopicFromEvent(event);
+        }
+
+        return response;
     }
 
     // ─── Admin: delete ────────────────────────────────────────────────────────
 
+    @Transactional
     public void deleteEvent(Long id) {
         NewsEvent event = findEvent(id);
         eventRepository.delete(event);
@@ -111,8 +140,9 @@ public class NewsEventService {
         EditorUser editor = editorUserRepository.findByEmail(editorEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editor profile not found"));
 
-        // Check field match
-        if (editor.getField() == null || !editor.getField().getId().equals(event.getField().getId())) {
+        // Check field match (at least one editor field must match event field)
+        if (editor.getFields() == null || editor.getFields().isEmpty() ||
+            editor.getFields().stream().noneMatch(f -> f.getId().equals(event.getField().getId()))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not in the field for this event");
         }
 
@@ -171,6 +201,40 @@ public class NewsEventService {
     private NewsEvent findEvent(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+    }
+
+    /**
+     * Create a Topic from a NewsEvent so it appears in the Trending Topics page.
+     * This is called automatically when an event's status is set to PUBLIC.
+     * If a Topic with a matching title already exists, it is skipped to avoid duplicates.
+     */
+    private void createTopicFromEvent(NewsEvent event) {
+        try {
+            // Check if a topic with this title already exists (avoid duplicates)
+            boolean exists = topicService.getAllActiveTopics().stream()
+                .anyMatch(t -> t.title != null && t.title.equals(event.getTitle()));
+            if (exists) {
+                return;
+            }
+
+            // Build field IDs list from the event's field
+            List<Long> fieldIds = event.getField() != null
+                ? List.of(event.getField().getId())
+                : List.of();
+
+            CreateTopicRequest request = new CreateTopicRequest();
+            request.title = event.getTitle();
+            request.description = event.getDescription();
+            request.author = "News Bridge";
+            request.imageUrl = null;
+            request.tags = List.of("live", "event");
+            request.fieldIds = fieldIds;
+
+            topicService.createTopic(request, event.getCreatedByEmail() != null ? event.getCreatedByEmail() : "system@newsbridge.app");
+        } catch (Exception e) {
+            // Log but don't fail the event status change
+            System.err.println("Failed to create topic from event " + event.getId() + ": " + e.getMessage());
+        }
     }
 
     public NewsEventResponse mapToDto(NewsEvent event) {

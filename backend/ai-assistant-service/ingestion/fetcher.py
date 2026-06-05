@@ -99,8 +99,8 @@ def fetch_feed_posts(category="general", limit=30, page=0):
     Tries multiple URL patterns for flexibility.
     """
     urls = [
-        f"{BACKEND_BASE_URL.replace('/api', '')}/api/feed",
         f"{BACKEND_BASE_URL}/feed",
+        f"{BACKEND_BASE_URL.replace('/api', '')}/api/feed",
     ]
 
     params = {
@@ -116,3 +116,19 @@ def fetch_feed_posts(category="general", limit=30, page=0):
 
     logger.warning(f"All feed URL patterns failed for category={category}")
     return []
+
+
+def fetch_brief_feed(limit=30):
+    """
+    Fetch recent posts for the news brief — uses a dedicated endpoint
+    that does NOT filter by tagsExtracted, ensuring new unprocessed posts appear.
+    GET /api/feed/brief?limit=...
+    """
+    url = f"{BACKEND_BASE_URL}/feed/brief"
+    result = _safe_get(url, params={"limit": limit})
+    if result is not None:
+        return result
+
+    # Fallback: try the regular feed
+    logger.warning("Brief feed endpoint failed, falling back to regular feed")
+    return fetch_feed_posts(category="general", limit=limit, page=0)
