@@ -5,7 +5,7 @@ New-Item -ItemType Directory -Force -Path $Tmp | Out-Null
 
 Set-Content "$Tmp\springboot.ps1" "Set-Location '$Root\backend'`nmvn spring-boot:run"
 Set-Content "$Tmp\crawler.ps1"   "Set-Location '$Root\backend\crawler_server'`npython -m uvicorn main:app --port 8000 --host 0.0.0.0 --reload"
-Set-Content "$Tmp\discovery.ps1" "Set-Location '$Root\backend'`npython -m uvicorn endpoint_discovery.service:app --port 8004 --host 0.0.0.0 --reload"
+Set-Content "$Tmp\discovery.ps1" "Set-Location '$Root\backend'`npython -m uvicorn endpoint_discovery.service:app --port 8004 --host 0.0.0.0"
 Set-Content "$Tmp\telegram.ps1"  "Set-Location '$Root\backend\telegram_crawler'`npython -m uvicorn main:app --port 8200 --host 0.0.0.0 --reload"
 Set-Content "$Tmp\frontend.ps1"  "Set-Location '$Root\frontend'`nnpm run dev"
 Set-Content "$Tmp\newsfeed.ps1"  "Set-Location '$Root\news-feed'`nnpm run dev -- --port 5174"

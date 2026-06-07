@@ -68,6 +68,15 @@ def predict(text: str):
     return label, confidence
 
 # -------------------------
+# Health endpoints
+# -------------------------
+@app.get("/")
+@app.get("/health")
+def health():
+    return {"status": "Classifier Service Running"}
+
+
+# -------------------------
 # API endpoint
 # -------------------------
 @app.post("/predict")

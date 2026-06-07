@@ -1,5 +1,6 @@
 // Post.jsx
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { categoryColors, categoryTheme } from "../utils/categoryColors";
 import { getUserId } from "../utils/userId";
 import PostModal from "./PostModal";
@@ -8,10 +9,11 @@ import { apiFetch } from "../utils/apiFetch";
 import { ensureUserInitialized } from "../utils/auth";
 import { savePost, unsavePost, isPostSaved } from "../utils/savedPosts";
 import { useTheme } from "../context/ThemeContext";
+import { useSession } from "../context/SessionContext";
+import GuestSignupPrompt from "./GuestSignupPrompt";
 import { useTranslation } from "react-i18next";
 import { detectItemLanguage } from "../utils/languageUtils";
-
-const AI_BASE_URL = "http://localhost:9000";
+import { AI_BASE_URL } from "../utils/aiFetch";
 
 // Shared translate helper — detects LLM refusal messages and falls back to original text
 async function translateText(text, sourceLang, targetLang) {
@@ -70,6 +72,7 @@ function formatPublishedAt(value, lang) {
 export default function Post({ post, onAskAI }) {
   const colors = categoryColors[post.label] || {};
   const { darkMode } = useTheme();
+  const { session } = useSession();
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
   const postTheme = categoryTheme[post.label]?.[darkMode ? "dark" : "light"] || categoryTheme.General[darkMode ? "dark" : "light"];
@@ -85,6 +88,9 @@ export default function Post({ post, onAskAI }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(() => isPostSaved(post.id));
+  const [guestPrompt, setGuestPrompt] = useState(null); // null | "like" | "save"
+
+  const isGuest = !session?.type || session?.type === "PRIMITIVE";
 
   // Translation state — store full-text translations (not truncated)
   const [isTranslating, setIsTranslating] = useState(false);
@@ -97,6 +103,7 @@ export default function Post({ post, onAskAI }) {
   const viewSent = useRef(false);
 
   const react = async (type) => {
+    if (isGuest) { setGuestPrompt("like"); return; }
     await ensureUserInitialized();
     const userId = getUserId();
     const res = await apiFetch(
@@ -159,11 +166,30 @@ export default function Post({ post, onAskAI }) {
 
   const handleToggleSave = async (e) => {
     e.stopPropagation();
+    if (isGuest) { setGuestPrompt("save"); return; }
+    if (post.isTopicPost) {
+      // Topic posts are saved/unsaved locally only (no backend endpoint)
+      const { getLocalSavedPosts } = await import("../utils/savedPosts");
+      if (isSaved) {
+        const saved = getLocalSavedPosts().filter((p) => p.id !== post.id);
+        localStorage.setItem("newsbridge_saved_posts", JSON.stringify(saved));
+        setIsSaved(false);
+      } else {
+        const saved = getLocalSavedPosts();
+        const exists = saved.some((p) => p.id === post.id);
+        if (!exists) {
+          saved.unshift({ ...post, savedAt: Date.now(), collections: [], note: "" });
+          localStorage.setItem("newsbridge_saved_posts", JSON.stringify(saved));
+        }
+        setIsSaved(true);
+      }
+      return;
+    }
     if (isSaved) {
-      await unsavePost(post.id);
+      try { await unsavePost(post.id); } catch (err) { console.warn("Unsave failed:", err); }
       setIsSaved(false);
     } else {
-      await savePost(post);
+      try { await savePost(post); } catch (err) { console.warn("Save failed:", err); }
       setIsSaved(true);
     }
   };
@@ -230,6 +256,16 @@ export default function Post({ post, onAskAI }) {
   const numImages = post.numImages || 0;
 
   useEffect(() => {
+    // If this is a topic post with mediaItems array, use that directly
+    if (post.isTopicPost && post.mediaItems && Array.isArray(post.mediaItems) && post.mediaItems.length > 0) {
+      setMedia(post.mediaItems);
+      return;
+    }
+    // If this is a topic post with direct mediaUrl, use that directly
+    if (!post.articleId && post.mediaUrl) {
+      setMedia([{ type: post.mediaType || 'image', url: post.mediaUrl }]);
+      return;
+    }
     const loadMedia = async () => {
       if (!post.articleId) return;
       try {
@@ -242,7 +278,7 @@ export default function Post({ post, onAskAI }) {
       }
     };
     loadMedia();
-  }, [post.articleId]);
+  }, [post.articleId, post.mediaUrl, post.mediaType, post.isTopicPost, post.mediaItems]);
 
   const buildPlaceholderImages = () => {
     const placeholders = [];
@@ -353,6 +389,36 @@ export default function Post({ post, onAskAI }) {
           {publishedLabel && <span className="post-time">{publishedLabel}</span>}
         </div>
 
+        {/* Author info for topic posts — bigger avatar, clickable to profile */}
+        {post.isTopicPost && (
+          <div
+            className="flex items-center gap-3 mt-2 mb-1 cursor-pointer hover:opacity-80"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (post.authorId) {
+                window.location.href = `/profile/${post.authorId}`;
+              }
+            }}
+          >
+            {post.authorAvatar ? (
+              <img
+                src={post.authorAvatar}
+                alt={post.authorName || "Editor"}
+                className="w-10 h-10 rounded-full object-cover border-2 border-blue-200"
+                onError={(e) => { e.currentTarget.style.display = "none"; }}
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold text-blue-600 border-2 border-blue-200">
+                {(post.authorName || "E")[0].toUpperCase()}
+              </div>
+            )}
+            <div>
+              <span className="text-sm font-semibold text-gray-800">{post.authorName || "Editor"}</span>
+              <span className="text-xs text-blue-500 block">View Profile →</span>
+            </div>
+          </div>
+        )}
+
         {post.title && (
           <h3 className="post-title">
             {showTranslated && translatedTitle ? translatedTitle : post.title}
@@ -431,12 +497,15 @@ export default function Post({ post, onAskAI }) {
               e.stopPropagation();
               if (!onAskAI) return;
               onAskAI(post);
-              try {
-                await fetch(`http://localhost:9000/ingest/post/${post.id}`, {
-                  method: "POST",
-                });
-              } catch (err) {
-                console.error("Failed to ingest post into AI", err);
+              // Only try to ingest into AI backend for regular posts (not topic posts)
+              if (!post.isTopicPost) {
+                try {
+                  await fetch(`${AI_BASE_URL}/ingest/post/${post.id}`, {
+                    method: "POST",
+                  });
+                } catch (err) {
+                  console.error("Failed to ingest post into AI", err);
+                }
               }
             }}
             className="post-action-btn ai-btn"
@@ -474,6 +543,13 @@ export default function Post({ post, onAskAI }) {
       )}
       {isCommentsOpen && (
         <PostCommentsModal post={post} onClose={() => setIsCommentsOpen(false)} />
+      )}
+      {guestPrompt && (
+        <GuestSignupPrompt
+          action={guestPrompt === "like" ? "like or dislike posts" : "save articles"}
+          onClose={() => setGuestPrompt(null)}
+          onGoToLogin={(mode) => { window.location.href = `/auth?mode=${mode}`; }}
+        />
       )}
     </>
   );

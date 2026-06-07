@@ -1,7 +1,9 @@
+import requests
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel
 from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi.middleware.cors import CORSMiddleware
+from config import OLLAMA_URL, LLM_MODEL
 from ingestion.embedder import embed_text
 from retrieval.vector_store import VectorStore
 from retrieval.search import retrieve_relevant_chunks

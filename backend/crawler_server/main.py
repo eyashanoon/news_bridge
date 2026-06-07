@@ -24,7 +24,7 @@ from backend_client import BackendClient
 from crawler_service import CrawlerService
 from settings import settings
 from extractor import extract_article
-from checker import is_article
+from page_classifier_adapter import is_article
 from post_processor import process_pending_posts
 
 # ─── Log buffer ──────────────────────────────────────────────────────────────

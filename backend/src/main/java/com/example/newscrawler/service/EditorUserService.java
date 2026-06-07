@@ -92,6 +92,9 @@ public class EditorUserService {
         dto.username = user.getUsername();
         dto.email = user.getEmail();
         dto.status = user.getStatus();
+        dto.fullName = user.getFullName();
+        dto.bio = user.getBio();
+        dto.profilePicture = user.getProfilePicture();
         dto.experience = user.getExperience();
         dto.references = user.getReferences();
         dto.phone = user.getPhone();

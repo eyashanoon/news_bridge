@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.newscrawler.dto.AssessEndpointRequest;
 import com.example.newscrawler.dto.BulkSaveEndpointsRequest;
 import com.example.newscrawler.dto.CreateRootRequest;
 import com.example.newscrawler.dto.EndpointResponse;
@@ -94,6 +95,15 @@ public class RootController {
             @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int logOffset
     ) {
         return rootDiscoveryService.pollDiscoveryJob(jobId, logOffset);
+    }
+
+    /** Assess whether a URL is a crawlable article-listing endpoint. */
+    @PostMapping("/{id}/discover/assess")
+    public Map<String, Object> assessEndpoint(
+            @PathVariable Long id,
+            @Valid @RequestBody AssessEndpointRequest request
+    ) {
+        return rootDiscoveryService.assessEndpoint(id, request.url());
     }
 
     /** Bulk-save a list of discovered URLs as endpoints under this root. */

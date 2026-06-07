@@ -5,25 +5,12 @@ import traceback
 from datetime import datetime
 from typing import Iterable
 from urllib.parse import urljoin, urlparse
-import requests
 from bs4 import BeautifulSoup
 
 from backend_client import BackendClient
 from models import RunStats
 from settings import settings
 from vv_adapter import same_host
-
-# Browser-like headers so listing pages don't block the crawler
-_REQUEST_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
-    "Accept-Encoding": "gzip, deflate",
-}
 
 
 class CrawlerService:
@@ -111,7 +98,35 @@ class CrawlerService:
         Saves the URL to the cache regardless of the outcome (with timestamp).
         Returns 1 if a new article was created, else 0.
         """
-        is_article = self.is_article_fn(candidate_url)
+        from web_fetch import fetch_html, looks_like_paywall
+
+        page = fetch_html(candidate_url, profile="news", timeout=settings.crawler_request_timeout_seconds)
+        if not page.ok:
+            detail = page.error or f"HTTP {page.status_code} via {page.method}"
+            self._log(f"[SKIP] fetch failed: {candidate_url} ({detail})")
+            try:
+                self.backend.create_cache_endpoint(
+                    url=candidate_url,
+                    result="UNKNOWN",
+                    source_endpoint_id=source_endpoint_id,
+                )
+            except Exception:
+                pass
+            return 0
+
+        if page.paywall or looks_like_paywall(page.html):
+            self._log(f"[SKIP] paywall: {candidate_url}")
+            try:
+                self.backend.create_cache_endpoint(
+                    url=candidate_url,
+                    result="UNKNOWN",
+                    source_endpoint_id=source_endpoint_id,
+                )
+            except Exception:
+                pass
+            return 0
+
+        is_article = self.is_article_fn(candidate_url, html=page.html)
         if not is_article:
             self._log(f"[SKIP] not an article: {candidate_url}")
             try:
@@ -125,7 +140,7 @@ class CrawlerService:
             return 0
 
         self._log(f"[ARTICLE] extracting: {candidate_url}")
-        article = self.extract_article_fn(candidate_url)
+        article = self.extract_article_fn(candidate_url, html=page.html)
         content_items = article.get("content", []) or []
         title = (article.get("title") or "").strip() or candidate_url
         self._log(f"[ARTICLE] extracted: \"{title[:80]}\" ({len(content_items)} blocks)")
@@ -178,18 +193,23 @@ class CrawlerService:
     def _extract_links(self, page_url: str) -> list[str]:
         """Fetch a listing page and return all normalised absolute hrefs."""
         try:
-            response = requests.get(
+            from web_fetch import fetch_soup
+
+            soup, result = fetch_soup(
                 page_url,
-                headers=_REQUEST_HEADERS,
+                profile="listing",
                 timeout=settings.crawler_request_timeout_seconds,
-                allow_redirects=True,
+                allow_browser=True,
             )
-            response.raise_for_status()
+            if soup is None:
+                detail = result.error or f"HTTP {result.status_code} via {result.method}"
+                self._log(f"[ERROR] Failed to fetch listing page {page_url}: {detail}")
+                return []
         except Exception as ex:
             self._log(f"[ERROR] Failed to fetch listing page {page_url}: {ex}")
             return []
 
-        soup = BeautifulSoup(response.text, "html.parser")
+        soup = BeautifulSoup(str(soup), "html.parser")
         hrefs = self._normalize_links(page_url, [a.get("href") for a in soup.select("a[href]")])
         return list(hrefs)
 

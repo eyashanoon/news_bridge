@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +47,29 @@ public class EditorRequestService {
     public EditorRequestResponse applyForEditor(String principalEmail, EditorApplicationRequest requestDto) {
         RegisteredUser user = registeredUserRepository.findByEmail(principalEmail)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Registered user not found"));
+
+        // Check for 3-day cooldown if user was previously rejected
+        List<EditorRequest> userRequests = editorRequestRepository.findByUserEmail(principalEmail);
+        EditorRequest latestRejected = null;
+        for (EditorRequest req : userRequests) {
+            if ("REJECTED".equals(req.getStatus())) {
+                if (latestRejected == null || (req.getUpdatedAt() != null && 
+                    (latestRejected.getUpdatedAt() == null || req.getUpdatedAt().isAfter(latestRejected.getUpdatedAt())))) {
+                    latestRejected = req;
+                }
+            }
+        }
+        if (latestRejected != null && latestRejected.getUpdatedAt() != null) {
+            Duration sinceRejection = Duration.between(latestRejected.getUpdatedAt(), LocalDateTime.now());
+            long hoursRemaining = 72 - sinceRejection.toHours();
+            if (hoursRemaining > 0) {
+                long daysRemaining = hoursRemaining / 24;
+                long hoursLeft = hoursRemaining % 24;
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Your previous application was rejected. You can apply again in " 
+                    + daysRemaining + " day(s) and " + hoursLeft + " hour(s).");
+            }
+        }
 
         if (requestDto.profilePicture == null || requestDto.profilePicture.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile picture is required");
@@ -254,6 +279,8 @@ public class EditorRequestService {
         dto.profilePicture = request.getProfilePicture();
         dto.status = request.getStatus();
         dto.references = request.getReferences();
+        dto.createdAt = request.getCreatedAt();
+        dto.updatedAt = request.getUpdatedAt();
         List<EditorRequestAttachment> attachments = editorRequestAttachmentRepository.findByEditorRequestId(request.getId());
         dto.attachments = attachments.stream().map(EditorRequestAttachment::getFileUrl).collect(Collectors.toList());
         return dto;

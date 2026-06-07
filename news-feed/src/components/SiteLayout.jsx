@@ -35,9 +35,9 @@ export default function SiteLayout() {
     if (isRegistered) {
       return (
         <nav className="app-nav">
-          <Link to="/">{t("dashboardHome")}</Link>
-          <Link to="/dashboard/notifications" className="nav-badge-link">{t("notifications")}</Link>
-          <Link to="/apply-editor" className="nav-action-link">{t("applyEditor")}</Link>
+          <Link to="/">Dashboard Home</Link>
+          <Link to="/dashboard/notifications" className="nav-badge-link">Notifications</Link>
+          <Link to="/apply-editor" className="nav-action-link">Apply to be an Editor</Link>
         </nav>
       );
     }

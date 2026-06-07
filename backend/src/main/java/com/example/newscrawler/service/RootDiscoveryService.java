@@ -277,6 +277,42 @@ public class RootDiscoveryService {
     }
 
     /**
+     * Assesses whether a single URL is a crawlable article-listing endpoint.
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> assessEndpoint(Long rootId, String url) {
+        Root root = findRoot(rootId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("url", url);
+        requestBody.put("root_url", root.getBaseUrl());
+
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    discoveryBaseUrl + "/assess/endpoint",
+                    HttpMethod.POST,
+                    new HttpEntity<>(requestBody, headers),
+                    Map.class
+            );
+
+            Map<String, Object> result = (Map<String, Object>) response.getBody();
+            if (result == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                        "Discovery service returned empty response.");
+            }
+            return result;
+
+        } catch (RestClientException ex) {
+            log.error("Endpoint assessment failed for root {} url {}: {}", rootId, url, ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
+                    "Endpoint discovery service is unavailable: " + ex.getMessage());
+        }
+    }
+
+    /**
      * Polls a running or completed discovery job for new logs and the final result.
      */
     @SuppressWarnings("unchecked")

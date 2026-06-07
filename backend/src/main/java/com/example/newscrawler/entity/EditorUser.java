@@ -25,9 +25,6 @@ public class EditorUser extends RegisteredUser {
     @Column
     private String phone;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String profilePicture;
-
     public String getExperience() { return experience; }
     public void setExperience(String experience) { this.experience = experience; }
 
@@ -39,7 +36,4 @@ public class EditorUser extends RegisteredUser {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
-
-    public String getProfilePicture() { return profilePicture; }
-    public void setProfilePicture(String profilePicture) { this.profilePicture = profilePicture; }
 }

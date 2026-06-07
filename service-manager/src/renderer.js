@@ -51,8 +51,9 @@ function statusLabel(id) {
 }
 
 function statusText(id) {
+  const s = statuses[id] || {};
   const label = statusLabel(id);
-  if (label === "healthy") return "Healthy";
+  if (label === "healthy") return s.managed ? "Healthy" : "Healthy (external)";
   if (label === "running") return "Running";
   if (label === "starting") return "Starting";
   return "Stopped";
@@ -77,6 +78,8 @@ function renderServiceList() {
     const label = statusLabel(svc.id);
     const managed = statuses[svc.id]?.managed;
 
+    const canStop = label !== "stopped";
+
     li.innerHTML = `
       <div class="service-card-header">
         <div>
@@ -91,7 +94,7 @@ function renderServiceList() {
       ${svc.dependsOn?.length ? `<div class="service-deps">Needs: ${svc.dependsOn.join(", ")}</div>` : ""}
       <div class="service-actions">
         <button class="btn btn-primary btn-sm" data-action="start" ${managed ? "disabled" : ""}>Start</button>
-        <button class="btn btn-danger btn-sm" data-action="stop" ${managed ? "" : "disabled"}>Stop</button>
+        <button class="btn btn-danger btn-sm" data-action="stop" ${canStop ? "" : "disabled"}>Stop</button>
         <button class="btn btn-ghost btn-sm" data-action="restart">Restart</button>
         <button class="btn btn-ghost btn-sm" data-action="tab">Terminal</button>
       </div>
@@ -118,13 +121,16 @@ function ensureTerminal(id, name) {
       background: "#020617",
       foreground: "#e2e8f0",
       cursor: "#38bdf8",
-      selectionBackground: "rgba(56, 189, 248, 0.3)",
+      selectionBackground: "rgba(56, 189, 248, 0.4)",
+      selectionForeground: "#ffffff",
     },
     fontFamily: "Cascadia Code, Consolas, monospace",
     fontSize: 13,
     cursorBlink: true,
     scrollback: 5000,
     convertEol: true,
+    rightClickSelectsWord: true,
+    allowProposedApi: true,
   });
 
   let fitAddon = null;
@@ -139,6 +145,38 @@ function ensureTerminal(id, name) {
 
   const api = getApi();
   terminal.onData((data) => api.writeInput(id, data));
+
+  terminal.attachCustomKeyEventHandler((ev) => {
+    const mod = ev.ctrlKey || ev.metaKey;
+    if (!mod) return true;
+
+    const key = ev.key.toLowerCase();
+    if (key === "c" && terminal.hasSelection()) {
+      const sel = terminal.getSelection();
+      if (sel) {
+        navigator.clipboard.writeText(sel).catch(() => {});
+        return false;
+      }
+    }
+    if (key === "c" && ev.shiftKey) {
+      const sel = terminal.getSelection();
+      if (sel) {
+        navigator.clipboard.writeText(sel).catch(() => {});
+        return false;
+      }
+    }
+    if (key === "v" && ev.shiftKey) {
+      navigator.clipboard.readText().then((text) => api.writeInput(id, text)).catch(() => {});
+      return false;
+    }
+    return true;
+  });
+
+  wrap.addEventListener("contextmenu", (ev) => {
+    if (!terminal.hasSelection()) return;
+    ev.preventDefault();
+    navigator.clipboard.writeText(terminal.getSelection()).catch(() => {});
+  });
 
   const entry = { terminal, fitAddon, wrap };
   terminals.set(id, entry);
@@ -235,9 +273,17 @@ async function startService(id) {
 async function stopService(id) {
   clearError();
   try {
-    await getApi().stopService(id);
+    const svc = services.find((s) => s.id === id);
     const entry = terminals.get(id);
-    if (entry) entry.terminal.writeln("\x1b[33m>>> Stopped\x1b[0m");
+    if (entry) entry.terminal.writeln(`\x1b[33m>>> Stopping ${svc?.name || id}...\x1b[0m`);
+
+    const res = await getApi().stopService(id);
+    if (!res.ok) {
+      if (entry) entry.terminal.writeln(`\x1b[31mFailed to stop: ${res.error}\x1b[0m`);
+      showError(`${svc?.name || id}: ${res.error}`);
+    } else if (entry) {
+      entry.terminal.writeln("\x1b[33m>>> Stopped — port released\x1b[0m");
+    }
     renderServiceList();
   } catch (err) {
     showError(`Stop failed: ${err.message}`);
@@ -262,7 +308,6 @@ function handleOutput(id, data) {
     const svc = services.find((s) => s.id === id);
     const entry = terminals.get(id) || ensureTerminal(id, svc?.name || id);
     entry.terminal.write(data);
-    if (activeTabId !== id) showTab(id);
   } catch (err) {
     console.error("output error", err);
   }
@@ -317,7 +362,7 @@ function bindEvents() {
   document.getElementById("btn-start-core").addEventListener("click", async () => {
     clearError();
     try {
-      for (const id of ["mysql", "backend", "crawler", "telegram", "admin"]) {
+      for (const id of ["mysql", "backend", "discovery", "crawler", "telegram", "admin"]) {
         const svc = services.find((s) => s.id === id);
         if (svc) ensureTerminal(id, svc.name);
       }

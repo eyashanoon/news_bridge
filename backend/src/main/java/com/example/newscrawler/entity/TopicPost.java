@@ -18,6 +18,8 @@ public class TopicPost {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String text;
 
+    private String title;
+
     private String label;
 
     private String lang;
@@ -34,6 +36,14 @@ public class TopicPost {
 
     private String authorEmail;
 
+    @Column(columnDefinition = "TEXT")
+    private String authorProfilePicture;
+
+    @Column(columnDefinition = "TEXT")
+    private String mediaUrl;
+
+    private String mediaType; // "image", "video", or null for text-only
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -42,7 +52,6 @@ public class TopicPost {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -51,6 +60,9 @@ public class TopicPost {
 
     public String getText() { return text; }
     public void setText(String text) { this.text = text; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
     public String getLabel() { return label; }
     public void setLabel(String label) { this.label = label; }
@@ -72,6 +84,15 @@ public class TopicPost {
 
     public String getAuthorEmail() { return authorEmail; }
     public void setAuthorEmail(String authorEmail) { this.authorEmail = authorEmail; }
+
+    public String getAuthorProfilePicture() { return authorProfilePicture; }
+    public void setAuthorProfilePicture(String authorProfilePicture) { this.authorProfilePicture = authorProfilePicture; }
+
+    public String getMediaUrl() { return mediaUrl; }
+    public void setMediaUrl(String mediaUrl) { this.mediaUrl = mediaUrl; }
+
+    public String getMediaType() { return mediaType; }
+    public void setMediaType(String mediaType) { this.mediaType = mediaType; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

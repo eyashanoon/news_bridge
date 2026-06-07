@@ -5,9 +5,13 @@ import { apiFetch } from "./apiFetch";
 import { ensureUserInitialized } from "./auth";
 import { getUserId } from "./userId";
 
-const SAVED_POSTS_CACHE_KEY = "newsbridge_saved_posts";
-const COLLECTIONS_CACHE_KEY = "newsbridge_collections";
-const NOTES_CACHE_KEY = "newsbridge_notes";
+const SAVED_POSTS_BASE_KEY = "newsbridge_saved_posts";
+const COLLECTIONS_BASE_KEY = "newsbridge_collections";
+const NOTES_BASE_KEY = "newsbridge_notes";
+
+function getSavedPostsKey() { return `${SAVED_POSTS_BASE_KEY}_${getUserId()}`; }
+function getCollectionsKey() { return `${COLLECTIONS_BASE_KEY}_${getUserId()}`; }
+function getNotesKey() { return `${NOTES_BASE_KEY}_${getUserId()}`; }
 
 // ─── Saved Posts ────────────────────────────────────────────
 
@@ -34,7 +38,7 @@ export async function savePost(post) {
       collections: [],
       note: "",
     });
-    localStorage.setItem(SAVED_POSTS_CACHE_KEY, JSON.stringify(saved));
+    localStorage.setItem(getSavedPostsKey(), JSON.stringify(saved));
   }
 }
 
@@ -51,7 +55,7 @@ export async function unsavePost(postId) {
   }
 
   const saved = getLocalSavedPosts().filter((p) => p.id !== postId);
-  localStorage.setItem(SAVED_POSTS_CACHE_KEY, JSON.stringify(saved));
+  localStorage.setItem(getSavedPostsKey(), JSON.stringify(saved));
 }
 
 export function isPostSaved(postId) {
@@ -60,7 +64,9 @@ export function isPostSaved(postId) {
 
 export function getLocalSavedPosts() {
   try {
-    return JSON.parse(localStorage.getItem(SAVED_POSTS_CACHE_KEY)) || [];
+    const userId = getUserId();
+    if (!userId) return [];
+    return JSON.parse(localStorage.getItem(getSavedPostsKey())) || [];
   } catch {
     return [];
   }
@@ -80,7 +86,7 @@ export async function fetchSavedPostsFromBackend() {
           collections: p.collections || [],
           note: p.note || "",
         }));
-        localStorage.setItem(SAVED_POSTS_CACHE_KEY, JSON.stringify(enriched));
+        localStorage.setItem(getSavedPostsKey(), JSON.stringify(enriched));
         return enriched;
       }
     }
@@ -94,7 +100,9 @@ export async function fetchSavedPostsFromBackend() {
 
 export function getCollections() {
   try {
-    return JSON.parse(localStorage.getItem(COLLECTIONS_CACHE_KEY)) || [];
+    const userId = getUserId();
+    if (!userId) return [];
+    return JSON.parse(localStorage.getItem(getCollectionsKey())) || [];
   } catch {
     return [];
   }
@@ -110,27 +118,27 @@ export function createCollection(name, icon = "📁") {
     postCount: 0,
   };
   collections.push(newCol);
-  localStorage.setItem(COLLECTIONS_CACHE_KEY, JSON.stringify(collections));
+  localStorage.setItem(getCollectionsKey(), JSON.stringify(collections));
   return newCol;
 }
 
 export function deleteCollection(collectionId) {
   const collections = getCollections().filter((c) => c.id !== collectionId);
-  localStorage.setItem(COLLECTIONS_CACHE_KEY, JSON.stringify(collections));
+  localStorage.setItem(getCollectionsKey(), JSON.stringify(collections));
 
   // Remove this collection from all saved posts
   const saved = getLocalSavedPosts().map((p) => ({
     ...p,
     collections: (p.collections || []).filter((cId) => cId !== collectionId),
   }));
-  localStorage.setItem(SAVED_POSTS_CACHE_KEY, JSON.stringify(saved));
+  localStorage.setItem(getSavedPostsKey(), JSON.stringify(saved));
 }
 
 export function renameCollection(collectionId, newName) {
   const collections = getCollections().map((c) =>
     c.id === collectionId ? { ...c, name: newName } : c
   );
-  localStorage.setItem(COLLECTIONS_CACHE_KEY, JSON.stringify(collections));
+  localStorage.setItem(getCollectionsKey(), JSON.stringify(collections));
 }
 
 export function addPostToCollection(postId, collectionId) {
@@ -140,7 +148,7 @@ export function addPostToCollection(postId, collectionId) {
     if (cols.includes(collectionId)) return p;
     return { ...p, collections: [...cols, collectionId] };
   });
-  localStorage.setItem(SAVED_POSTS_CACHE_KEY, JSON.stringify(saved));
+  localStorage.setItem(getSavedPostsKey(), JSON.stringify(saved));
 
   // Update collection count
   updateCollectionCounts();
@@ -154,7 +162,7 @@ export function removePostFromCollection(postId, collectionId) {
       collections: (p.collections || []).filter((c) => c !== collectionId),
     };
   });
-  localStorage.setItem(SAVED_POSTS_CACHE_KEY, JSON.stringify(saved));
+  localStorage.setItem(getSavedPostsKey(), JSON.stringify(saved));
   updateCollectionCounts();
 }
 
@@ -164,7 +172,7 @@ function updateCollectionCounts() {
     ...c,
     postCount: saved.filter((p) => (p.collections || []).includes(c.id)).length,
   }));
-  localStorage.setItem(COLLECTIONS_CACHE_KEY, JSON.stringify(collections));
+  localStorage.setItem(getCollectionsKey(), JSON.stringify(collections));
 }
 
 // ─── Notes ──────────────────────────────────────────────────
@@ -179,7 +187,7 @@ export function setNote(postId, note) {
   const saved = getLocalSavedPosts().map((p) =>
     p.id === postId ? { ...p, note } : p
   );
-  localStorage.setItem(SAVED_POSTS_CACHE_KEY, JSON.stringify(saved));
+  localStorage.setItem(getSavedPostsKey(), JSON.stringify(saved));
 }
 
 // ─── Sync collections count ────────────────────────────────

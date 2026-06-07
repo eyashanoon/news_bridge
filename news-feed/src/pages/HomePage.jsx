@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import CategoryBar from "../components/CategoryBar";
 import LeftSidebar from "../components/LeftSidebar";
 import ChatWidget from "../components/ChatWidget";
 import Feed from "../components/Feed";
 import TrendingTopics from "../components/TrendingTopics";
+import TopicDetails from "../components/TopicDetails";
 import ApplyEditorPage from "../pages/ApplyEditorPage";
 import SavedNews from "../components/SavedNews";
 import AvatarPage from "../components/AvatarPage";
@@ -14,12 +16,62 @@ import { useTheme } from "../context/ThemeContext";
 
 export default function HomePage() {
   const { currentCategory, setCurrentCategory } = useTheme();
-  const [activePage, setActivePage] = useState("HOME")
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { topicId, categoryName } = useParams();
   const [selectedPost, setSelectedPost] = useState(null);
   const [feedKey, setFeedKey] = useState(0);
   const [searchPostModal, setSearchPostModal] = useState(null);
-  // AI Presenter popup — wired to LeftSidebar onOpenAvatar (was missing before)
   const [avatarOpen, setAvatarOpen] = useState(false);
+
+  // Map lowercase URL category slugs to proper category names
+  const categorySlugToName = useMemo(() => ({
+    general: "General",
+    politics: "Politics",
+    sports: "Sports",
+    finance: "Finance",
+    medical: "Medical",
+    tech: "Tech",
+    culture: "Culture",
+    religion: "Religion",
+  }), []);
+
+  // Derive activePage from the URL path
+  const activePage = useMemo(() => {
+    const path = location.pathname;
+    if (path === "/news") return "HOME";
+    if (path === "/news/trending") return "TRENDING";
+    if (path === "/news/saved") return "SAVED";
+    if (path === "/news/apply-editor") return "APPLY_EDITOR";
+    if (path.startsWith("/news/topics/")) return "TOPIC";
+    if (path.startsWith("/news/category/")) return "HOME";
+    return "HOME";
+  }, [location.pathname]);
+
+  // When on a category route, set the category from the URL
+  // When at /news (no category param), reset to General
+  useEffect(() => {
+    if (activePage === "HOME") {
+      if (categoryName) {
+        const resolved = categorySlugToName[categoryName.toLowerCase()];
+        if (resolved && resolved !== currentCategory) {
+          setCurrentCategory(resolved);
+        }
+      } else if (currentCategory !== "General") {
+        setCurrentCategory("General");
+      }
+    }
+  }, [location.pathname, categoryName, categorySlugToName, currentCategory, setCurrentCategory]);
+
+  const setActivePage = useCallback((page) => {
+    const routes = {
+      HOME: "/news",
+      TRENDING: "/news/trending",
+      SAVED: "/news/saved",
+      APPLY_EDITOR: "/news/apply-editor",
+    };
+    navigate(routes[page] || "/news");
+  }, [navigate]);
 
   const handleLocationChange = () => {
     setFeedKey(prev => prev + 1);
@@ -57,7 +109,13 @@ export default function HomePage() {
       backgroundImage: "none",
     }}>
       {activePage === "HOME" && (
-        <CategoryBar category={currentCategory} setCategory={setCurrentCategory} />
+        <CategoryBar
+          category={currentCategory}
+          setCategory={(cat) => {
+            // Navigate to the category URL if different from current
+            navigate(`/news/category/${cat.toLowerCase()}`);
+          }}
+        />
       )}
 
       <div className="home-grid">
@@ -67,13 +125,13 @@ export default function HomePage() {
             setActivePage={setActivePage} 
             onLocationChange={handleLocationChange}
             onOpenAvatar={() => setAvatarOpen(true)}
-            isAvatarOpen={avatarOpen}
           />
         </div>
 
         <div className="home-feed">
           {activePage === "HOME" && <Feed key={feedKey} category={currentCategory} onAskAI={setSelectedPost} />}
           {activePage === "TRENDING" && <TrendingTopics />}
+          {activePage === "TOPIC" && topicId && <TopicDetails topicId={Number(topicId)} goBack={() => navigate("/news/trending")} />}
           {activePage === "SAVED" && <SavedNews />}
           {activePage === "APPLY_EDITOR" && <ApplyEditorPage />}
         </div>
@@ -92,6 +150,7 @@ export default function HomePage() {
         />
       )}
 
+      {/* AI News Presenter modal */}
       <AvatarPage open={avatarOpen} onClose={() => setAvatarOpen(false)} />
     </div>
   );

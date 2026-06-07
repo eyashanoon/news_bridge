@@ -18,7 +18,7 @@
     <description>News crawler phase 1 backend</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>

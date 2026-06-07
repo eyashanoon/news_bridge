@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/topics")
@@ -37,10 +38,14 @@ public class TopicController {
         this.registeredUserRepository = registeredUserRepository;
     }
 
-    // ─── Public: Get all topics (visible to everyone, same as admin view) ───
+    // ─── Get all topics (admin uses this; public/users see only ACTIVE via query param) ───
 
     @GetMapping
-    public ResponseEntity<List<TopicResponse>> getAllTopics() {
+    public ResponseEntity<List<TopicResponse>> getAllTopics(
+            @RequestParam(required = false, defaultValue = "false") String activeOnly) {
+        if ("true".equalsIgnoreCase(activeOnly)) {
+            return ResponseEntity.ok(topicService.getAllActiveTopics());
+        }
         return ResponseEntity.ok(topicService.getAllTopics());
     }
 
@@ -94,6 +99,15 @@ public class TopicController {
     @GetMapping("/{id}/posts")
     public ResponseEntity<List<TopicPostResponse>> getTopicPosts(@PathVariable Long id) {
         return ResponseEntity.ok(topicService.getPostsByTopic(id));
+    }
+
+    // ─── Admin: delete a post from a topic ────────────────────────────────────
+
+    @DeleteMapping("/{topicId}/posts/{postId}")
+    @PreAuthorize("hasRole('DELETE_ANY_ARTICLE') or hasRole('MANAGE_EVENTS') or hasRole('MANAGE_USERS')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTopicPost(@PathVariable Long topicId, @PathVariable Long postId) {
+        topicService.deleteTopicPost(topicId, postId);
     }
 
     // ─── Editor: create post in a topic ──────────────────────────────────────
@@ -230,5 +244,48 @@ public class TopicController {
             ? editor.getFields().stream().map(f -> f.getId()).collect(java.util.stream.Collectors.toList())
             : List.of();
         return topicService.getTopicsForEditor(email, fieldIds);
+    }
+
+    /**
+     * Check if the current editor can request to post in a topic based on field matching.
+     * Returns whether the editor is eligible, their current assignment status if any, and field info.
+     */
+    @GetMapping("/{topicId}/can-request")
+    public ResponseEntity<Map<String, Object>> canRequestToPost(
+            @PathVariable Long topicId,
+            Authentication authentication) {
+        String email = authentication.getName();
+        EditorUser editor = editorUserRepository.findByEmail(email).orElse(null);
+        if (editor == null) {
+            return ResponseEntity.ok(Map.of(
+                "eligible", false,
+                "reason", "Only editors can request to post"
+            ));
+        }
+
+        com.example.newscrawler.entity.Topic topic = topicService.getTopicEntityById(topicId);
+        if (topic == null) {
+            return ResponseEntity.ok(Map.of(
+                "eligible", false,
+                "reason", "Topic not found"
+            ));
+        }
+
+        // Check field match
+        boolean fieldsMatch = topicEditorService.fieldsMatch(editor, topic);
+
+        // Check existing assignment
+        String assignmentStatus = topicEditorService.getAssignmentStatus(topicId, editor.getId());
+
+        Map<String, Object> response = new java.util.HashMap<>();
+        response.put("eligible", fieldsMatch);
+        response.put("assignmentStatus", assignmentStatus);
+        response.put("editorFieldIds", editor.getFields().stream().map(com.example.newscrawler.entity.CategoryField::getId).collect(Collectors.toList()));
+        response.put("topicFieldIds", topic.getFields().stream().map(com.example.newscrawler.entity.CategoryField::getId).collect(Collectors.toList()));
+        if (!fieldsMatch) {
+            response.put("reason", "Your fields don't match this topic's fields");
+        }
+
+        return ResponseEntity.ok(response);
     }
 }
