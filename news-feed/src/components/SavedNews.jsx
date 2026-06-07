@@ -1,5 +1,6 @@
 // SavedNews.jsx — Full-featured saved news page with collections, notes, stats, and more
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   getLocalSavedPosts,
   fetchSavedPostsFromBackend,
@@ -229,8 +230,34 @@ function SavedPostCard({ post, onUnsave, onOpen, collectionId, collections, onAd
         <span className="saved-post-time">{timeAgo(post.savedAt)}</span>
       </div>
 
+      {/* Topic context banner for topic posts */}
+      {post.isTopicPost && post.topicTitle && (
+        <div className="saved-post-topic-context">
+          <span className="saved-post-topic-label">📰 Topic</span>
+          <span className="saved-post-topic-name">{post.topicTitle}</span>
+          {post.topicDescription && (
+            <p className="saved-post-topic-desc">{post.topicDescription.slice(0, 80)}{post.topicDescription.length > 80 ? "..." : ""}</p>
+          )}
+          {post.topicTags?.length > 0 && (
+            <div className="saved-post-topic-tags">
+              {post.topicTags.slice(0, 3).map((t, i) => (
+                <span key={i} className="saved-post-topic-tag">#{t}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {post.title && <h4 className="saved-post-title">{post.title}</h4>}
       {post.text && <p className="saved-post-text">{post.text.slice(0, 120)}...</p>}
+
+      {/* Editor info for topic posts */}
+      {post.isTopicPost && post.authorName && (
+        <div className="saved-post-author-info">
+          <span className="saved-post-author-icon">✍️</span>
+          <span className="saved-post-author-name">{post.authorName}</span>
+        </div>
+      )}
 
       {/* Collection badges */}
       {post.collections?.length > 0 && (
@@ -317,6 +344,7 @@ function SavedPostCard({ post, onUnsave, onOpen, collectionId, collections, onAd
 
 // ─── Stats Component ────────────────────────────────────────
 function SavedStats({ posts, collections }) {
+  const { t } = useTranslation();
   const avgNoteLength = posts.filter((p) => getNote(p.id)).length;
   const colStats = collections.map((c) => ({
     name: `${c.icon} ${c.name}`,
@@ -334,22 +362,22 @@ function SavedStats({ posts, collections }) {
       <div className="saved-stat-card">
         <span className="saved-stat-icon">📦</span>
         <span className="saved-stat-value">{posts.length}</span>
-        <span className="saved-stat-label">Total Saved</span>
+        <span className="saved-stat-label">{t("totalSaved")}</span>
       </div>
       <div className="saved-stat-card">
         <span className="saved-stat-icon">📂</span>
         <span className="saved-stat-value">{collections.length}</span>
-        <span className="saved-stat-label">Collections</span>
+        <span className="saved-stat-label">{t("collections")}</span>
       </div>
       <div className="saved-stat-card">
         <span className="saved-stat-icon">📝</span>
         <span className="saved-stat-value">{avgNoteLength}</span>
-        <span className="saved-stat-label">With Notes</span>
+        <span className="saved-stat-label">{t("withNotes")}</span>
       </div>
       <div className="saved-stat-card">
         <span className="saved-stat-icon">{topCategory?.[0] ? "🏷️" : "📭"}</span>
         <span className="saved-stat-value">{topCategory?.[1] || 0}</span>
-        <span className="saved-stat-label">{topCategory?.[0] || "No posts"}</span>
+        <span className="saved-stat-label">{topCategory?.[0] || t("all")}</span>
       </div>
     </div>
   );
@@ -357,6 +385,7 @@ function SavedStats({ posts, collections }) {
 
 // ─── Main Component ─────────────────────────────────────────
 export default function SavedNews() {
+  const { t } = useTranslation();
   const [savedPosts, setSavedPosts] = useState([]);
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -435,7 +464,7 @@ export default function SavedNews() {
     return (
       <div className="saved-loading">
         <div className="saved-loading-spinner">🔄</div>
-        <p>Loading your saved news...</p>
+        <p>{t("loading")}</p>
       </div>
     );
   }

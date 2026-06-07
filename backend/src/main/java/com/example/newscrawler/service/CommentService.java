@@ -86,7 +86,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponse voteOnComment(Long commentId, Long userId, int voteType) {
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository.findByIdWithUser(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
         AppUser user = userRepository.findById(userId)
@@ -122,7 +122,7 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId, Long userId) {
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository.findByIdWithUser(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
         // Check if user is the owner

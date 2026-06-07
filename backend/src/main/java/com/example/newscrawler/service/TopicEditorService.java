@@ -139,6 +139,16 @@ public class TopicEditorService {
     }
 
     /**
+     * Get the status of an editor's assignment for a specific topic.
+     * Returns null if no assignment exists.
+     */
+    public String getAssignmentStatus(Long topicId, Long editorId) {
+        return topicEditorRepository.findByTopicIdAndEditorId(topicId, editorId)
+            .map(TopicEditorAssignment::getStatus)
+            .orElse(null);
+    }
+
+    /**
      * Check if an editor can post to a topic.
      * Both field match AND approved/assigned status must be true.
      */
@@ -158,7 +168,7 @@ public class TopicEditorService {
     /**
      * Check if editor's fields match at least one of the topic's fields.
      */
-    private boolean fieldsMatch(EditorUser editor, Topic topic) {
+    public boolean fieldsMatch(EditorUser editor, Topic topic) {
         Set<Long> editorFieldIds = editor.getFields().stream()
             .map(CategoryField::getId)
             .collect(Collectors.toSet());

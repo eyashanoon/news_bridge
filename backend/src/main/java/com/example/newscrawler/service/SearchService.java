@@ -141,8 +141,9 @@ public class SearchService {
                     post.getArticle() != null ? post.getArticle().getId() : null,
                     post.getArticle() != null ? post.getArticle().getUrl() : null,
                     post.getArticle() != null ? post.getArticle().getCreatedAt() : null,
-                    post.getTelegramPost() != null ? post.getTelegramPost().getId() : null
-            ));
+                    post.getTelegramPost().getId()
+
+                    ));
         }
 
         return result;

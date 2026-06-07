@@ -5,8 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 import { detectItemLanguage } from "../utils/languageUtils";
 import { searchPosts } from "../api/searchApi";
 import { categoryTheme } from "../utils/categoryColors";
-
-const AI_BASE_URL = "http://localhost:9000";
+import { AI_BASE_URL } from "../utils/aiFetch";
 const POST_PLACEHOLDER_IMG =
   "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE=";
 
@@ -143,6 +142,13 @@ export default function PostModal({ post, onClose }) {
   useEffect(() => {
     if (!currentPost?.id) return;
 
+    // If post has embedded _content blocks (from topic posts), use those directly
+    if (currentPost._content && Array.isArray(currentPost._content) && currentPost._content.length > 0) {
+      setContent(currentPost._content);
+      setIsLoading(false);
+      return;
+    }
+
     const loadContent = async () => {
       setIsLoading(true);
       setContent([]);
@@ -167,7 +173,7 @@ export default function PostModal({ post, onClose }) {
     };
 
     loadContent();
-  }, [currentPost?.id, currentPost?.text]);
+  }, [currentPost?.id, currentPost?.text, currentPost?._content]);
 
   // Fetch related posts (same category, excluding current post)
   useEffect(() => {
@@ -335,6 +341,53 @@ export default function PostModal({ post, onClose }) {
               <div className="meta-row">
                 {currentPost.label ? t(`category_${currentPost.label}`, currentPost.label) : ""} {currentPost.lang ? `· ${currentPost.lang}` : ""}
               </div>
+
+              {/* Topic context for topic posts */}
+              {currentPost.isTopicPost && (
+                <>
+                  {/* Topic info banner */}
+                  {currentPost.topicTitle && (
+                    <div className="modal-topic-context">
+                      <div className="modal-topic-context-header">
+                        <span className="modal-topic-label">📰 Topic</span>
+                        <span className="modal-topic-name">{currentPost.topicTitle}</span>
+                      </div>
+                      {currentPost.topicTags?.length > 0 && (
+                        <div className="modal-topic-tags">
+                          {currentPost.topicTags.slice(0, 5).map((tag, i) => (
+                            <span key={i} className="modal-topic-tag">#{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Author info for topic posts in modal — clickable to profile */}
+                  {currentPost.authorName && (
+                    <div
+                      className="flex items-center gap-2 mt-3 mb-3 pb-3 border-b border-gray-100 cursor-pointer hover:opacity-80"
+                      onClick={() => {
+                        if (currentPost.authorId) {
+                          window.open(`/profile/${currentPost.authorId}`, "_self");
+                        }
+                      }}
+                    >
+                      {currentPost.authorAvatar && (
+                        <img
+                          src={currentPost.authorAvatar}
+                          alt={currentPost.authorName}
+                          className="w-9 h-9 rounded-full object-cover"
+                          onError={(e) => { e.target.style.display = "none"; }}
+                        />
+                      )}
+                      <div>
+                        <p className="text-sm font-semibold text-gray-800">{currentPost.authorName}</p>
+                        <p className="text-xs text-blue-500">View Profile →</p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
 
               {isLoading ? (
                 <div className="text-sm" style={{ color: "var(--text-muted)" }}>{t("loadingArticleDetails")}</div>

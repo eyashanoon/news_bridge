@@ -207,20 +207,127 @@ class Predictor:
 
 # ── CLI demo ──────────────────────────────────────────────────────────────────
 
-if __name__ == "__main__":
+_DEMO_SAMPLES = [
+    {
+        "label": "content_article",
+        "url": "https://example.com/news/2024/03/15/earthquake-hits-turkey",
+        "title": "7.2 Magnitude Earthquake Strikes Eastern Turkey",
+        "text": (
+            "A powerful earthquake struck eastern Turkey early Monday, "
+            "causing widespread damage across several provinces. "
+            "Rescue teams have been deployed to search for survivors."
+        ),
+        "meta_tags": {"description": "Live updates on the earthquake in Turkey"},
+        "headings": ["H1: Earthquake Hits Turkey", "H2: Death Toll Rises"],
+        "num_links": 18,
+        "text_length": 4200,
+        "image_count": 3,
+        "dom_stats": {"total_tags": 340, "p_count": 12, "div_count": 45,
+                      "list_items": 8, "tables": 0, "forms": 1},
+        "url_features": {"url_depth": 5, "url_has_date": 1, "url_has_article_kw": 1,
+                           "url_has_video_kw": 0, "url_has_audio_kw": 0,
+                           "url_has_listing_kw": 0, "url_query_count": 0,
+                           "url_length": 62, "is_root_path": 0},
+        "structural_features": {"article_tag_count": 1, "video_tag_count": 0,
+                                "audio_tag_count": 0, "nav_count": 1,
+                                "time_tag_count": 1, "figure_count": 2,
+                                "blockquote_count": 1, "h1_count": 1, "h2_count": 3,
+                                "h3_count": 2, "list_items_with_links": 4,
+                                "pagination_present": 0, "has_author": 1,
+                                "has_comments": 1, "breadcrumb_count": 1,
+                                "avg_link_text_len": 22.0, "nav_link_ratio": 0.15,
+                                "ad_slot_count": 2, "word_count": 680,
+                                "schema_type": "NewsArticle", "og_type": "article"},
+    },
+    {
+        "label": "listing_article",
+        "url": "https://example.com/world/news",
+        "title": "World News - Latest Headlines",
+        "text": "Browse the latest world news stories from our correspondents.",
+        "meta_tags": {"description": "Latest world news headlines and breaking stories"},
+        "headings": [
+            "H1: World News",
+            "H2: Earthquake Hits Turkey",
+            "H2: EU Summit Concludes",
+            "H2: Markets Rally on Jobs Data",
+        ],
+        "num_links": 85,
+        "text_length": 900,
+        "image_count": 12,
+        "dom_stats": {"total_tags": 520, "p_count": 4, "div_count": 90,
+                      "list_items": 40, "tables": 0, "forms": 1},
+        "url_features": {"url_depth": 2, "url_has_date": 0, "url_has_article_kw": 0,
+                           "url_has_video_kw": 0, "url_has_audio_kw": 0,
+                           "url_has_listing_kw": 1, "url_query_count": 0,
+                           "url_length": 32, "is_root_path": 0},
+        "structural_features": {"article_tag_count": 0, "video_tag_count": 0,
+                                "audio_tag_count": 0, "nav_count": 2,
+                                "time_tag_count": 0, "figure_count": 12,
+                                "blockquote_count": 0, "h1_count": 1, "h2_count": 15,
+                                "h3_count": 0, "list_items_with_links": 35,
+                                "pagination_present": 1, "has_author": 0,
+                                "has_comments": 0, "breadcrumb_count": 1,
+                                "avg_link_text_len": 38.0, "nav_link_ratio": 0.25,
+                                "ad_slot_count": 4, "word_count": 120,
+                                "schema_type": "CollectionPage", "og_type": "website"},
+    },
+    {
+        "label": "other",
+        "url": "https://example.com/",
+        "title": "Example News - Home",
+        "text": "Welcome to Example News. Watch live, browse sections, and subscribe.",
+        "meta_tags": {"description": "Your trusted source for breaking news"},
+        "headings": ["H1: Example News", "H2: Trending Now", "H2: Video Highlights"],
+        "num_links": 120,
+        "text_length": 600,
+        "image_count": 8,
+        "dom_stats": {"total_tags": 680, "p_count": 6, "div_count": 110,
+                      "list_items": 25, "tables": 0, "forms": 2},
+        "url_features": {"url_depth": 0, "url_has_date": 0, "url_has_article_kw": 0,
+                           "url_has_video_kw": 1, "url_has_audio_kw": 0,
+                           "url_has_listing_kw": 0, "url_query_count": 0,
+                           "url_length": 22, "is_root_path": 1},
+        "structural_features": {"article_tag_count": 0, "video_tag_count": 3,
+                                "audio_tag_count": 0, "nav_count": 3,
+                                "time_tag_count": 0, "figure_count": 5,
+                                "blockquote_count": 0, "h1_count": 1, "h2_count": 4,
+                                "h3_count": 6, "list_items_with_links": 18,
+                                "pagination_present": 0, "has_author": 0,
+                                "has_comments": 0, "breadcrumb_count": 0,
+                                "avg_link_text_len": 14.0, "nav_link_ratio": 0.55,
+                                "ad_slot_count": 6, "word_count": 90,
+                                "schema_type": "WebPage", "og_type": "website"},
+    },
+]
+
+
+def _load_cli_samples(dataset_file: Path, limit: int = 5) -> list[dict]:
+    """Load records from dataset.jsonl, or fall back to built-in demos."""
     import json
+
+    if dataset_file.is_file():
+        samples = []
+        with open(dataset_file, "r", encoding="utf-8") as fh:
+            for line in fh:
+                if line.strip():
+                    samples.append(json.loads(line))
+                if len(samples) >= limit:
+                    break
+        return samples
+
+    print(
+        f"Note: {dataset_file} not found — using built-in demo samples.\n"
+        f"      Pass a JSONL path as the first argument to classify your own records."
+    )
+    return _DEMO_SAMPLES[:limit]
+
+
+if __name__ == "__main__":
     from config import DATASET_FILE
 
+    dataset_arg = Path(sys.argv[1]) if len(sys.argv) > 1 else DATASET_FILE
     predictor = Predictor()
-
-    # Pick a few sample records from the dataset and classify them
-    samples = []
-    with open(DATASET_FILE, "r", encoding="utf-8") as fh:
-        for line in fh:
-            if line.strip():
-                samples.append(json.loads(line))
-            if len(samples) >= 5:
-                break
+    samples = _load_cli_samples(dataset_arg)
 
     print("\n── Sample predictions ─────────────────────────────────────")
     for rec in samples:

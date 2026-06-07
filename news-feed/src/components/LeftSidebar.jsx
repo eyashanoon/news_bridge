@@ -1,20 +1,12 @@
 // LeftSidebar.jsx
 import { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
+import { useSession } from "../context/SessionContext";
 
-export default function LeftSidebar({ setActivePage, activePage, onLocationChange, onOpenAvatar, isAvatarOpen }) {
+export default function LeftSidebar({ setActivePage, activePage, onLocationChange, onOpenAvatar }) {
   const { t } = useTranslation();
-  const sessionStr = localStorage.getItem("nf_token");
-  const isEditor = (() => {
-    try {
-      const parts = sessionStr?.split(".");
-      if (parts?.length >= 2) {
-        const payload = JSON.parse(atob(parts[1]));
-        return payload?.type === "EDITOR";
-      }
-    } catch {}
-    return false;
-  })();
+  const { session } = useSession();
+  const isEditor = session?.type === "EDITOR";
   const [location, setLocation] = useState(null);
   const [locationMenuOpen, setLocationMenuOpen] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
@@ -187,6 +179,16 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
 
       <div className="sidebar-section">
         <div
+          className="sidebar-nav-item"
+          onClick={() => onOpenAvatar?.()}
+        >
+          <span>🎙️</span>
+          <span>{t("newsPresenter", "News Presenter")}</span>
+        </div>
+      </div>
+
+      <div className="sidebar-section">
+        <div
           className={`sidebar-nav-item ${activePage === "HOME" ? "active" : ""}`}
           onClick={() => setActivePage("HOME")}
         >
@@ -207,15 +209,7 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
           onClick={() => setActivePage("SAVED")}
         >
           <span>💾</span>
-          <span>{t("savedNewsNav")}</span>
-        </div>
-
-        <div
-          className={`sidebar-nav-item ${activePage === "AVATAR" || isAvatarOpen ? "active" : ""}`}
-          onClick={() => onOpenAvatar?.()}
-        >
-          <span>🤖</span>
-          <span>{t("aiPresenter")}</span>
+          <span>Saved News</span>
         </div>
       </div>
 

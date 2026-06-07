@@ -29,6 +29,12 @@ export default function App() {
         <Route path="news" element={<HomePage />} />
         <Route path="feed" element={<Navigate to="/news" replace />} />
         <Route path="home" element={<Navigate to="/news" replace />} />
+        <Route path="news/trending" element={<HomePage />} />
+        <Route path="news/saved" element={<HomePage />} />
+        <Route path="news/avatar" element={<HomePage />} />
+        <Route path="news/apply-editor" element={<HomePage />} />
+        <Route path="news/topics/:topicId" element={<HomePage />} />
+        <Route path="news/category/:categoryName" element={<HomePage />} />
 
         {/* Auth Pages */}
         <Route path="auth" element={<Navigate to="/auth/login" replace />} />
@@ -44,7 +50,6 @@ export default function App() {
         <Route path="profile" element={<ProfilePage />} />
         <Route path="profile/:username" element={<ProfilePage />} />
 
-        <Route path="news" element={<FeedPage />} />
 
         {/* Legacy & Misc Pages */}
         <Route path="cms" element={<CmsPage />} />

@@ -10,8 +10,7 @@ import { apiFetch } from "../utils/apiFetch";
 import { ensureUserInitialized } from "../utils/auth";
 import { getUserId } from "../utils/userId";
 import { detectItemLanguage } from "../utils/languageUtils";
-
-const AI_BASE_URL = "http://localhost:9000";
+import { AI_BASE_URL } from "../utils/aiFetch";
 
 // Translate helper for comments
 async function translateText(text, sourceLang, targetLang) {

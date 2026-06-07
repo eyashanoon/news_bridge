@@ -335,3 +335,14 @@ html, body {
 .term-wrap .xterm-viewport {
   overflow-y: auto !important;
 }
+
+.term-wrap .xterm,
+.term-wrap .xterm-screen,
+.term-wrap .xterm-helper-textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.term-wrap .xterm .xterm-selection {
+  display: block;
+}

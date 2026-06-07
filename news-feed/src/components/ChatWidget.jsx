@@ -101,7 +101,7 @@ export default function ChatWidget({ category, selectedPost }) {
         ...prev,
         {
           role: "assistant",
-          content: t("aiThinking"),
+          content: t("aiUnavailable"),
         },
       ]);
     } finally {

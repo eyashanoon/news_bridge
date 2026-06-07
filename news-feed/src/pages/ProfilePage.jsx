@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { api } from "../api";
 import { useSession } from "../context/SessionContext";
 
@@ -40,6 +41,7 @@ function resizeImage(file, maxDim = 400, quality = 0.8) {
 }
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const { username } = useParams();
   const { session } = useSession();
   const nav = useNavigate();
@@ -83,11 +85,11 @@ export default function ProfilePage() {
         coverImage: res.data.coverImage || ""
       });
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to load profile");
+      setError(err.response?.data?.message || t("profileLoadError"));
     } finally {
       setLoading(false);
     }
-  }, [username, session?.token]);
+  }, [username, session?.token, t]);
 
   useEffect(() => {
     loadProfile();
@@ -131,7 +133,7 @@ export default function ProfilePage() {
       setProfile(res.data);
       setEditing(false);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update profile");
+      setError(err.response?.data?.message || t("profileLoadError"));
     }
   };
 
@@ -139,7 +141,7 @@ export default function ProfilePage() {
     return (
       <div className="profile-page-loading">
         <div className="loading-spinner" />
-        <p>Loading profile...</p>
+        <p>{t("profileLoading")}</p>
       </div>
     );
   }
@@ -148,9 +150,9 @@ export default function ProfilePage() {
     return (
       <div className="profile-error-container">
         <div className="profile-error-card">
-          <h2>Profile Not Found</h2>
+          <h2>{t("profileNotFound")}</h2>
           <p>{error}</p>
-          <button className="btn btn-primary" onClick={() => nav(-1)}>Go Back</button>
+          <button className="btn btn-primary" onClick={() => nav(-1)}>{t("goBack")}</button>
         </div>
       </div>
     );
@@ -171,7 +173,7 @@ export default function ProfilePage() {
               alt={profile.username}
             />
             <span className={`profile-type-badge ${isEditor ? "editor-badge" : "user-badge"}`}>
-              {isEditor ? "EDITOR" : "MEMBER"}
+              {isEditor ? t("editorBadge") : t("memberBadge")}
             </span>
           </div>
           <div className="profile-info">
@@ -186,20 +188,20 @@ export default function ProfilePage() {
       <div className="profile-body">
         {/* Bio Card */}
         <div className="profile-card">
-          <h3>About</h3>
-          <p className="profile-bio">{profile.bio || "No bio yet."}</p>
+          <h3>{t("about")}</h3>
+          <p className="profile-bio">{profile.bio || t("noBio")}</p>
         </div>
 
         {/* Personal Info Card */}
         <div className="profile-card">
-          <h3>Personal Information</h3>
+          <h3>{t("personalInfo")}</h3>
           <div className="profile-details-grid">
             <div className="profile-detail-item">
-              <span className="detail-label">Full Name</span>
-              <span className="detail-value">{profile.fullName || "Not set"}</span>
+              <span className="detail-label">{t("fullName")}</span>
+              <span className="detail-value">{profile.fullName || t("notSet")}</span>
             </div>
             <div className="profile-detail-item">
-              <span className="detail-label">Username</span>
+              <span className="detail-label">{t("username")}</span>
               <span className="detail-value">@{profile.username}</span>
             </div>
           </div>
@@ -208,18 +210,18 @@ export default function ProfilePage() {
         {/* Editor-specific info */}
         {isEditor && (
           <div className="profile-card editor-card">
-            <h3>📰 Editor Information</h3>
+            <h3>📰 {t("editorInfo")}</h3>
             <div className="profile-details-grid">
               <div className="profile-detail-item">
-                <span className="detail-label">Experience</span>
-                <span className="detail-value">{profile.experience || "Not specified"}</span>
+                <span className="detail-label">{t("experience")}</span>
+                <span className="detail-value">{profile.experience || t("notSpecified")}</span>
               </div>
               <div className="profile-detail-item">
-                <span className="detail-label">Fields</span>
+                <span className="detail-label">{t("fields")}</span>
                 <span className="detail-value">
                   {profile.fields?.length > 0 
                     ? profile.fields.map(f => f.name).join(", ") 
-                    : "Not specified"}
+                    : t("notSpecified")}
                 </span>
               </div>
             </div>
@@ -230,7 +232,7 @@ export default function ProfilePage() {
         {isOwnProfile && (
           <div className="profile-actions">
             <button className="btn btn-primary" onClick={() => setEditing(true)}>
-              ✏️ Edit Profile
+              ✏️ {t("editProfile")}
             </button>
           </div>
         )}
@@ -241,13 +243,13 @@ export default function ProfilePage() {
         <div className="modal-overlay" onClick={() => setEditing(false)}>
           <div className="profile-edit-modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Edit Profile</h2>
+              <h2>{t("editProfile")}</h2>
               <button className="modal-close" onClick={() => setEditing(false)}>x</button>
             </div>
             <form onSubmit={handleUpdate} className="profile-edit-form">
               {/* Avatar upload */}
               <label className="image-upload-label">
-                <span>Profile Picture</span>
+                <span>{t("profilePicture")}</span>
                 <div className="image-upload-row">
                   <input
                     ref={avatarInputRef}
@@ -262,7 +264,7 @@ export default function ProfilePage() {
                     onClick={() => avatarInputRef.current?.click()}
                     disabled={uploadingAvatar}
                   >
-                    {uploadingAvatar ? "Uploading..." : "📷 Choose Image"}
+                    {uploadingAvatar ? t("uploading") : "📷 " + t("chooseImage")}
                   </button>
                   {editForm.profilePicture && (
                     <img src={editForm.profilePicture} alt="preview" className="upload-preview" />
@@ -270,7 +272,7 @@ export default function ProfilePage() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Or paste image URL"
+                  placeholder={t("orPasteImageUrl")}
                   value={editForm.profilePicture}
                   onChange={e => setEditForm({...editForm, profilePicture: e.target.value})}
                 />
@@ -278,7 +280,7 @@ export default function ProfilePage() {
 
               {/* Cover image upload */}
               <label className="image-upload-label">
-                <span>Cover Image</span>
+                <span>{t("coverImage")}</span>
                 <div className="image-upload-row">
                   <input
                     ref={coverInputRef}
@@ -293,7 +295,7 @@ export default function ProfilePage() {
                     onClick={() => coverInputRef.current?.click()}
                     disabled={uploadingCover}
                   >
-                    {uploadingCover ? "Uploading..." : "🖼️ Choose Cover"}
+                    {uploadingCover ? t("uploading") : "🖼️ " + t("chooseCover")}
                   </button>
                   {editForm.coverImage && (
                     <img src={editForm.coverImage} alt="cover preview" className="upload-preview cover" />
@@ -301,33 +303,33 @@ export default function ProfilePage() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Or paste cover image URL"
+                  placeholder={t("orPasteCoverUrl")}
                   value={editForm.coverImage}
                   onChange={e => setEditForm({...editForm, coverImage: e.target.value})}
                 />
               </label>
 
               <label>
-                <span>Full Name</span>
+                <span>{t("fullName")}</span>
                 <input
                   type="text"
-                  placeholder="Your full name"
+                  placeholder={t("yourFullName")}
                   value={editForm.fullName}
                   onChange={e => setEditForm({...editForm, fullName: e.target.value})}
                 />
               </label>
               <label>
-                <span>Bio</span>
+                <span>{t("about")}</span>
                 <textarea
-                  placeholder="Tell us about yourself"
+                  placeholder={t("tellUsAboutYourself")}
                   value={editForm.bio}
                   onChange={e => setEditForm({...editForm, bio: e.target.value})}
                   rows={4}
                 />
               </label>
               <div className="profile-edit-actions">
-                <button type="button" className="btn" onClick={() => setEditing(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Save Changes</button>
+                <button type="button" className="btn" onClick={() => setEditing(false)}>{t("cancel")}</button>
+                <button type="submit" className="btn btn-primary">{t("saveChanges")}</button>
               </div>
             </form>
           </div>

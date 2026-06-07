@@ -32,6 +32,26 @@ public class Topic {
 
     private int contributorCount;
 
+    // ─── Trending Statistics (computed every minute by scheduler) ──────────
+
+    /** Total likes across all topic posts */
+    private int totalLikes;
+
+    /** Total dislikes across all topic posts */
+    private int totalDislikes;
+
+    /** Total comments count across all regular posts linked to this topic's articles */
+    private int totalComments;
+
+    /** Composite activity score based on recency and engagement */
+    private double activityScore;
+
+    /** Timestamp of the most recent activity (latest post) on this topic */
+    private LocalDateTime lastActivityAt;
+
+    /** Timestamp when statistics were last recalculated */
+    private LocalDateTime statsUpdatedAt;
+
     /**
      * DRAFT     — only visible to admin
      * ACTIVE    — visible to all users (trending)
@@ -98,4 +118,22 @@ public class Topic {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public int getTotalLikes() { return totalLikes; }
+    public void setTotalLikes(int totalLikes) { this.totalLikes = totalLikes; }
+
+    public int getTotalDislikes() { return totalDislikes; }
+    public void setTotalDislikes(int totalDislikes) { this.totalDislikes = totalDislikes; }
+
+    public int getTotalComments() { return totalComments; }
+    public void setTotalComments(int totalComments) { this.totalComments = totalComments; }
+
+    public double getActivityScore() { return activityScore; }
+    public void setActivityScore(double activityScore) { this.activityScore = activityScore; }
+
+    public LocalDateTime getLastActivityAt() { return lastActivityAt; }
+    public void setLastActivityAt(LocalDateTime lastActivityAt) { this.lastActivityAt = lastActivityAt; }
+
+    public LocalDateTime getStatsUpdatedAt() { return statsUpdatedAt; }
+    public void setStatsUpdatedAt(LocalDateTime statsUpdatedAt) { this.statsUpdatedAt = statsUpdatedAt; }
 }

@@ -8,6 +8,9 @@ public class EditorUserDto {
     public String username;
     public String email;
     public UserStatus status;
+    public String fullName;
+    public String bio;
+    public String profilePicture;
     public String experience;
     public List<CategoryFieldDto> fields;
     public String references;

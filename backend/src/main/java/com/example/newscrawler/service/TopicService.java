@@ -2,19 +2,25 @@ package com.example.newscrawler.service;
 
 import com.example.newscrawler.dto.*;
 import com.example.newscrawler.entity.CategoryField;
+import com.example.newscrawler.entity.EditorUser;
 import com.example.newscrawler.entity.Topic;
 import com.example.newscrawler.entity.TopicPost;
 import com.example.newscrawler.repository.CategoryFieldRepository;
+import com.example.newscrawler.repository.EditorUserRepository;
 import com.example.newscrawler.repository.TopicRepository;
 import com.example.newscrawler.repository.TopicPostRepository;
+import jakarta.persistence.EntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +30,12 @@ public class TopicService {
     private final TopicPostRepository topicPostRepository;
     private final CategoryFieldRepository categoryFieldRepository;
     private final TopicEditorService topicEditorService;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private EditorUserRepository editorUserRepository;
 
     public TopicService(TopicRepository topicRepository,
                         TopicPostRepository topicPostRepository,
@@ -75,6 +87,13 @@ public class TopicService {
         Topic topic = topicRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Topic not found: " + id));
         return toTopicResponse(topic);
+    }
+
+    /**
+     * Get the raw Topic entity by ID (for internal use, not for API responses).
+     */
+    public Topic getTopicEntityById(Long id) {
+        return topicRepository.findById(id).orElse(null);
     }
 
     /**
@@ -155,6 +174,32 @@ public class TopicService {
         topicRepository.deleteById(id);
     }
 
+    /**
+     * Admin deletes a single post from a topic.
+     */
+    @Transactional
+    public void deleteTopicPost(Long topicId, Long postId) {
+        TopicPost post = topicPostRepository.findById(postId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+
+        if (!post.getTopic().getId().equals(topicId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Post does not belong to this topic");
+        }
+
+        // Log the deletion warning
+        System.out.println("ADMIN DELETED POST #" + postId + " by '" + post.getAuthor() 
+            + "' from topic '" + post.getTopic().getTitle() + "'");
+
+        topicPostRepository.delete(post);
+
+        // Update topic stats
+        Topic topic = post.getTopic();
+        topic.setPostCount(topicPostRepository.countByTopicId(topicId));
+        topic.setContributorCount((int) topicPostRepository.findByTopicIdOrderByCreatedAtDesc(topicId)
+                .stream().map(TopicPost::getAuthorEmail).distinct().count());
+        topicRepository.save(topic);
+    }
+
     // ─── Topic Posts ──────────────────────────────────────────────────────────
 
     public List<TopicPostResponse> getPostsByTopic(Long topicId) {
@@ -180,6 +225,7 @@ public class TopicService {
 
         TopicPost post = new TopicPost();
         post.setTopic(topic);
+        post.setTitle(request.title);
         post.setText(request.text);
         post.setLabel(request.label);
         post.setLang(request.lang != null ? request.lang : "en");
@@ -188,6 +234,19 @@ public class TopicService {
         post.setDislikes(0);
         post.setAuthor(authorName);
         post.setAuthorEmail(authorEmail);
+        // Look up editor profile picture from DB
+        if (editorId != null) {
+            try {
+                EditorUser editorUser = entityManager.find(EditorUser.class, editorId);
+                if (editorUser != null && editorUser.getProfilePicture() != null && !editorUser.getProfilePicture().isBlank()) {
+                    post.setAuthorProfilePicture(editorUser.getProfilePicture());
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        post.setMediaUrl(request.mediaUrl);
+        post.setMediaType(request.mediaType);
         post = topicPostRepository.save(post);
 
         // Update topic stats
@@ -231,6 +290,14 @@ public class TopicService {
             r.fieldNames = Collections.emptyList();
         }
 
+        // Map trending statistics
+        r.totalLikes = topic.getTotalLikes();
+        r.totalDislikes = topic.getTotalDislikes();
+        r.totalComments = topic.getTotalComments();
+        r.activityScore = topic.getActivityScore();
+        r.lastActivityAt = topic.getLastActivityAt() != null ? topic.getLastActivityAt().toString() : null;
+        r.statsUpdatedAt = topic.getStatsUpdatedAt() != null ? topic.getStatsUpdatedAt().toString() : null;
+
         return r;
     }
 
@@ -238,6 +305,7 @@ public class TopicService {
         TopicPostResponse r = new TopicPostResponse();
         r.id = post.getId();
         r.topicId = post.getTopic().getId();
+        r.title = post.getTitle();
         r.text = post.getText();
         r.label = post.getLabel();
         r.lang = post.getLang();
@@ -247,7 +315,64 @@ public class TopicService {
         r.likes = post.getLikes();
         r.dislikes = post.getDislikes();
         r.author = post.getAuthor();
+        // Try to find editor ID from email
+        if (post.getAuthorEmail() != null) {
+            try {
+                EditorUser editorUser = entityManager.find(EditorUser.class, 
+                    editorUserRepository.findByEmail(post.getAuthorEmail()).map(EditorUser::getId).orElse(null));
+                if (editorUser != null) {
+                    r.authorId = editorUser.getId();
+                }
+            } catch (Exception e) {
+                r.authorId = null;
+            }
+        }
+        r.authorEmail = post.getAuthorEmail();
+        r.authorProfilePicture = post.getAuthorProfilePicture();
+        r.mediaUrl = post.getMediaUrl();
+        r.mediaType = post.getMediaType();
+        // Build mediaItems from the stored JSON in mediaUrl or as a single item
+        r.mediaItems = buildMediaItems(post.getMediaUrl(), post.getMediaType());
         r.createdAt = post.getCreatedAt();
         return r;
+    }
+
+    /**
+     * Build a list of media items from the stored mediaUrl/mediaType.
+     * Supports both single media and JSON-encoded multi-media.
+     */
+    private List<Map<String, String>> buildMediaItems(String mediaUrl, String mediaType) {
+        List<Map<String, String>> items = new java.util.ArrayList<>();
+        if (mediaUrl == null || mediaUrl.isBlank()) return items;
+
+        // Try to parse as JSON array of {type, url} objects
+        try {
+            if (mediaUrl.trim().startsWith("[")) {
+                ObjectMapper mapper = new ObjectMapper();
+                List<Map<String, String>> parsed = mapper.readValue(mediaUrl, List.class);
+                if (parsed != null && !parsed.isEmpty()) {
+                    for (Object obj : parsed) {
+                        if (obj instanceof Map) {
+                            Map<String, String> item = new java.util.HashMap<>();
+                            @SuppressWarnings("unchecked")
+                            Map<String, Object> raw = (Map<String, Object>) obj;
+                            item.put("type", raw.getOrDefault("type", "image").toString());
+                            item.put("url", raw.getOrDefault("url", "").toString());
+                            items.add(item);
+                        }
+                    }
+                    if (!items.isEmpty()) return items;
+                }
+            }
+        } catch (Exception e) {
+            // Not JSON, fall through to single item
+        }
+
+        // Single media item fallback
+        Map<String, String> single = new java.util.HashMap<>();
+        single.put("type", mediaType != null ? mediaType : "image");
+        single.put("url", mediaUrl);
+        items.add(single);
+        return items;
     }
 }

@@ -31,6 +31,7 @@ import math
 import re
 import sys
 import time
+import xml.etree.ElementTree as ET
 from collections import Counter, defaultdict, deque
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -43,10 +44,12 @@ from bs4 import BeautifulSoup
 
 # ── Constants ──────────────────────────────────────────────────────────────────
 
-REQUEST_TIMEOUT    = 15           # seconds per HTTP request
+REQUEST_TIMEOUT    = 60           # seconds per HTTP request (browser challenges need longer)
 REQUEST_DELAY      = 0.5          # polite crawl delay between requests (seconds)
 MAX_CONTENT_BYTES  = 5_000_000    # skip pages larger than 5 MB
 MAX_LINKS_PER_PAGE = 500          # cap extracted links per page
+MAX_SITEMAP_SEED_URLS = 80        # cap BFS seeds when the root page is unreachable
+MAX_CHILD_SITEMAPS    = 5         # child sitemaps to expand from a sitemap index
 
 _HEADERS = {
     "User-Agent": (
@@ -67,6 +70,12 @@ _LISTING_KW    = {
     "section", "sections", "archive", "archives", "index", "listing",
     "listings", "feed", "search", "results", "latest", "recent",
     "collection", "collections",
+}
+
+# First path segments that are never section listings (sitemap-pages.xml fallback).
+_SITEMAP_NON_LISTING_SEGMENTS = {
+    "info", "story", "video", "author", "puzzles",
+    "watch-live", "sky-news-profiles",
 }
 
 
@@ -108,6 +117,62 @@ def same_domain(url: str, root: str) -> bool:
     host = urlparse(url).netloc.lower()
     root_host = urlparse(root).netloc.lower()
     return host == root_host or host.endswith("." + root_host)
+
+
+def _parse_sitemap_locs(xml_text: str) -> list[str]:
+    """Return all <loc> URLs from a sitemap or sitemap index document."""
+    try:
+        root = ET.fromstring(xml_text)
+    except ET.ParseError:
+        return []
+
+    ns = ""
+    if root.tag.startswith("{"):
+        ns = root.tag.split("}")[0] + "}"
+
+    locs: list[str] = []
+    for loc in root.iter(f"{ns}loc"):
+        if loc.text:
+            locs.append(loc.text.strip())
+    return locs
+
+
+def _is_section_sitemap(url: str) -> bool:
+    """True for sitemaps that list section/listing pages (not individual articles)."""
+    lowered = url.lower()
+    if "sitemap-pages" in lowered:
+        return True
+    if any(
+        token in lowered
+        for token in ("sitemap-news", "video", "image", "puzzle", "weather")
+    ):
+        return False
+    return False
+
+
+def _infer_listing_from_sitemap_url(url: str) -> Optional[tuple[str, float]]:
+    """
+    Infer page type from URL shape when a sitemap-pages.xml entry is CDN-blocked.
+
+    Used for sites (e.g. Sky News) where Akamai allows the sitemap but blocks
+    automated fetches of main section pages.
+    """
+    parsed = urlparse(url)
+    segments = [s for s in parsed.path.split("/") if s]
+    if not segments:
+        return None
+
+    first = segments[0].lower()
+    if first in _SITEMAP_NON_LISTING_SEGMENTS:
+        return ("other", 0.9)
+    if first in {"story", "video"}:
+        return ("content_article", 0.9)
+
+    # Section / topic landing pages are typically one or two path segments.
+    if len(segments) <= 2:
+        return ("listing_article", 0.88)
+
+    return None
 
 
 def _url_features(url: str) -> dict:
@@ -525,10 +590,11 @@ class ListingDiscoverer:
         self.request_delay = request_delay
         self._log_callback = log_callback
         self._session      = self._make_session()
-        self._cache:          dict[str, CacheEntry] = {}
-        self._tree_urls:      set[str]              = set()   # fast dedup guard
-        self._pattern_cache:  dict[str, str]        = {}      # pattern → label
-        self._grouper         = URLPatternGrouper()
+        self._cache:              dict[str, CacheEntry] = {}
+        self._tree_urls:          set[str]              = set()   # fast dedup guard
+        self._sitemap_seed_urls:  set[str]              = set()
+        self._pattern_cache:      dict[str, str]        = {}      # pattern → label
+        self._grouper             = URLPatternGrouper()
 
         if predictor is None:
             from page_classifier import Predictor
@@ -553,6 +619,62 @@ class ListingDiscoverer:
         s.headers.update(_HEADERS)
         return s
 
+    def _fetch_sitemap_seed_urls(self, root_url: str) -> list[str]:
+        """
+        When the homepage is CDN-blocked, seed discovery from /sitemap.xml.
+        Expands sitemap indexes and returns same-domain page URLs.
+        """
+        from web_fetch import fetch_html
+
+        parsed = urlparse(root_url)
+        origin = f"{parsed.scheme}://{parsed.netloc}"
+
+        locs: list[str] = []
+        for sitemap_url in (f"{origin}/sitemap-pages.xml", f"{origin}/sitemap.xml"):
+            sitemap_result = fetch_html(
+                sitemap_url,
+                profile="discovery",
+                timeout=REQUEST_TIMEOUT,
+                allow_browser=False,
+                use_cache=False,
+            )
+            if not sitemap_result.html:
+                continue
+
+            doc_locs = _parse_sitemap_locs(sitemap_result.html)
+            if "<sitemapindex" in sitemap_result.html.lower():
+                child_maps = [
+                    loc for loc in doc_locs if _is_section_sitemap(loc)
+                ][:MAX_CHILD_SITEMAPS]
+                for child_url in child_maps:
+                    child_result = fetch_html(
+                        child_url,
+                        profile="discovery",
+                        timeout=REQUEST_TIMEOUT,
+                        allow_browser=False,
+                        use_cache=False,
+                    )
+                    if child_result.html:
+                        locs.extend(_parse_sitemap_locs(child_result.html))
+            else:
+                locs.extend(doc_locs)
+
+            if locs:
+                break
+
+        seeds: list[str] = []
+        seen: set[str] = set()
+        for loc in locs:
+            norm = normalize_url(loc)
+            if not norm or norm in seen or not same_domain(norm, root_url):
+                continue
+            seen.add(norm)
+            seeds.append(norm)
+            self._sitemap_seed_urls.add(norm)
+            if len(seeds) >= MAX_SITEMAP_SEED_URLS:
+                break
+        return seeds
+
     def _fetch(self, url: str) -> Optional[BeautifulSoup]:
         """
         Fetch *url* and parse it.  Returns None on any error (network,
@@ -560,26 +682,29 @@ class ListingDiscoverer:
         cache entry if one already exists.
         """
         try:
-            resp = self._session.get(
-                url,
-                timeout=REQUEST_TIMEOUT,
-                allow_redirects=True,
-                stream=True,
-            )
-            resp.raise_for_status()
+            from web_fetch import fetch_soup
 
-            if "html" not in resp.headers.get("Content-Type", ""):
+            soup, result = fetch_soup(
+                url,
+                profile="discovery",
+                timeout=REQUEST_TIMEOUT,
+                allow_browser=True,
+            )
+            if soup is None:
+                entry = self._cache.get(url)
+                if entry:
+                    detail = result.error or f"HTTP {result.status_code} via {result.method}"
+                    entry.fetch_error = detail
                 return None
 
-            raw = b""
-            for chunk in resp.iter_content(chunk_size=65_536):
-                raw += chunk
-                if len(raw) >= MAX_CONTENT_BYTES:
-                    break
+            # Cap oversized pages the same way as before.
+            raw = str(soup).encode("utf-8", errors="replace")
+            if len(raw) > MAX_CONTENT_BYTES:
+                raw = raw[:MAX_CONTENT_BYTES]
+                soup = BeautifulSoup(raw, "lxml")
+            return soup
 
-            return BeautifulSoup(raw, "lxml")
-
-        except requests.RequestException as exc:
+        except Exception as exc:
             entry = self._cache.get(url)
             if entry:
                 entry.fetch_error = str(exc)
@@ -609,8 +734,10 @@ class ListingDiscoverer:
 
     def _classify(self, url: str, soup: BeautifulSoup) -> dict:
         """Run the page classifier on a fetched page and return its result dict."""
+        from page_classifier.classification_policy import classify_with_policy
+
         feats = extract_page_features(soup, url)
-        return self._predictor.predict_raw(
+        primary = self._predictor.predict_raw(
             title               = feats["title"],
             text                = feats["text"],
             url                 = url,
@@ -622,6 +749,12 @@ class ListingDiscoverer:
             num_links           = feats["num_links"],
             text_length         = feats["text_length"],
             image_count         = feats["image_count"],
+        )
+        return classify_with_policy(
+            primary,
+            url=url,
+            title=feats["title"],
+            text=feats["text"],
         )
 
     # ── Cache helpers ──────────────────────────────────────────────────────────
@@ -674,7 +807,51 @@ class ListingDiscoverer:
             time.sleep(self.request_delay)
 
             if soup is None:
-                self._log("  [skip] Could not fetch page - skipping children.")
+                entry = self._cache.get(url)
+                detail = entry.fetch_error if entry and entry.fetch_error else "unknown error"
+                self._log(f"  [skip] Could not fetch page ({detail}) - skipping children.")
+
+                if entry and url in self._sitemap_seed_urls:
+                    inferred = _infer_listing_from_sitemap_url(url)
+                    if inferred:
+                        label, conf = inferred
+                        entry.classification = label
+                        entry.confidence = conf
+                        entry.processed = True
+                        if label == "listing_article":
+                            entry.added_to_tree = True
+                            self._log(
+                                f"  [sitemap-infer] CDN-blocked URL inferred as "
+                                f"listing from sitemap structure: {url}"
+                            )
+                        else:
+                            entry.added_to_tree = False
+                            entry.rejection_reason = f"sitemap-infer: {label}"
+                            self._log(
+                                f"  [sitemap-infer] CDN-blocked URL inferred as "
+                                f"{label} (not added to tree): {url}"
+                            )
+                        continue
+
+                if (
+                    depth == 0
+                    and normalize_url(url) == normalize_url(self.root_url)
+                ):
+                    seed_urls = self._fetch_sitemap_seed_urls(self.root_url)
+                    if seed_urls:
+                        self._log(
+                            f"  [sitemap] Root blocked — seeding BFS with "
+                            f"{len(seed_urls)} URL(s) from sitemap.xml"
+                        )
+                        for seed_url in seed_urls:
+                            if seed_url in self._tree_urls:
+                                continue
+                            entry = self._register(seed_url, discovered_from=url)
+                            child_node = TreeNode(url=seed_url, depth=depth + 1)
+                            node.children.append(child_node)
+                            self._tree_urls.add(seed_url)
+                            entry.added_to_tree = True
+                            queue.append((child_node, depth + 1))
                 continue
 
             # ── Classify current node (root counts as accepted; still record) ─
@@ -690,6 +867,9 @@ class ListingDiscoverer:
                     node_entry.rejection_reason = f"classified as {result['label']}"
                     node_entry.added_to_tree    = False
                     continue
+
+                if depth > 0 and result["label"] == "listing_article":
+                    node_entry.added_to_tree = True
 
             # ── Stop expanding at max depth ───────────────────────────────────
             if depth >= self.max_depth:
@@ -858,11 +1038,12 @@ class ListingDiscoverer:
                         queue.append((child_node, depth + 1))
 
         return {
-            "root_url":      self.root_url,
-            "max_depth":     self.max_depth,
-            "tree":          root_node.to_dict(),
-            "cache":         [e.to_dict() for e in self._cache.values()],
-            "pattern_cache": self._pattern_cache,
+            "root_url":           self.root_url,
+            "max_depth":          self.max_depth,
+            "tree":               root_node.to_dict(),
+            "cache":              [e.to_dict() for e in self._cache.values()],
+            "pattern_cache":      self._pattern_cache,
+            "sitemap_seed_urls":  sorted(self._sitemap_seed_urls),
         }
 
 

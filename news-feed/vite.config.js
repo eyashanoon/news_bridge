@@ -14,6 +14,11 @@ export default defineConfig({
         bypass: avatarApiProxyBypass,
       },
       "/auth": "http://localhost:8080",
+      "/ai": {
+        target: "http://localhost:9000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ai/, ""),
+      },
     },
   },
 });

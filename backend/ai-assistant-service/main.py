@@ -1,4 +1,5 @@
 import logging
+import threading
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Header
@@ -36,15 +37,18 @@ async def lifespan(app: FastAPI):
         f"{len(ingested_posts)} ingested posts tracked"
     )
 
-    # Run initial ingestion synchronously on startup (before scheduler)
-    try:
-        logger.info("Running initial auto-ingestion on startup...")
-        auto_ingest_job()
-        store.save()
-        persist_ingested()
-        logger.info("Initial ingestion and persistence complete")
-    except Exception as e:
-        logger.warning(f"Initial auto-ingestion failed: {e}")
+    def run_initial_ingest():
+        try:
+            logger.info("Running initial auto-ingestion on startup...")
+            auto_ingest_job()
+            store.save()
+            persist_ingested()
+            logger.info("Initial ingestion and persistence complete")
+        except Exception as e:
+            logger.warning(f"Initial auto-ingestion failed: {e}")
+
+    # Do not block HTTP startup on ingestion (can take minutes when backend is slow)
+    threading.Thread(target=run_initial_ingest, daemon=True).start()
 
     # Start periodic auto-ingestion (every 15 minutes)
     scheduler.add_job(

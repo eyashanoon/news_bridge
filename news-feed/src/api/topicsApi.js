@@ -8,7 +8,8 @@ import { getToken } from "../utils/auth";
  */
 export async function fetchTopics() {
   try {
-    const res = await apiFetch("/api/topics");
+    // activeOnly=true returns only ACTIVE topics from the backend
+    const res = await apiFetch("/api/topics?activeOnly=true");
     if (res.ok) {
       return await res.json();
     }
@@ -52,16 +53,19 @@ export async function fetchTopicPosts(topicId) {
  * Create a new post in a topic (editor/authenticated users only).
  * Uses the axios api instance which properly handles auth and proxy.
  */
-export async function createTopicPost(topicId, { text, label, lang, tags }) {
+export async function createTopicPost(topicId, { title, text, label, lang, tags, mediaUrl, mediaType }) {
   const token = getToken();
   if (!token) throw new Error("Authentication required to post in topics");
 
   const cfg = authConfig(token);
   const res = await api.post(`/api/topics/${topicId}/posts`, {
+    title: title || null,
     text,
     label: label || "Update",
     lang: lang || "en",
     tags: tags || [],
+    mediaUrl: mediaUrl || null,
+    mediaType: mediaType || null,
   }, cfg);
 
   return res.data;
@@ -80,6 +84,24 @@ export async function requestToPost(topicId) {
 }
 
 /**
+ * Check if the current editor can request to post in a topic.
+ * Returns { eligible, assignmentStatus, reason }.
+ */
+export async function canRequestToPost(topicId) {
+  const token = getToken();
+  if (!token) return { eligible: false, reason: "Not authenticated" };
+
+  try {
+    const cfg = authConfig(token);
+    const res = await api.get(`/api/topics/${topicId}/can-request`, cfg);
+    return res.data;
+  } catch (err) {
+    console.warn("Failed to check eligibility:", err.message);
+    return { eligible: false, reason: "Check failed" };
+  }
+}
+
+/**
  * Fetch the current editor's assignments for all topics.
  */
 export async function getMyAssignments() {
@@ -92,6 +114,23 @@ export async function getMyAssignments() {
     return res.data;
   } catch (err) {
     console.warn("Failed to fetch assignments:", err.message);
+    return [];
+  }
+}
+
+/**
+ * Fetch topics for the current editor (ACTIVE + DRAFT topics matching their fields).
+ */
+export async function getMyTopics() {
+  const token = getToken();
+  if (!token) return [];
+
+  try {
+    const cfg = authConfig(token);
+    const res = await api.get("/api/topics/my-topics", cfg);
+    return res.data;
+  } catch (err) {
+    console.warn("Failed to fetch my topics:", err.message);
     return [];
   }
 }

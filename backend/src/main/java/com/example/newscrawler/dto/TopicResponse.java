@@ -18,4 +18,12 @@ public class TopicResponse {
     public LocalDateTime createdAt;
     public List<Long> fieldIds;
     public List<String> fieldNames;
+
+    // ─── Trending Statistics ──────────────────────────────────────────────
+    public int totalLikes;
+    public int totalDislikes;
+    public int totalComments;
+    public double activityScore;
+    public String lastActivityAt; // ISO string for frontend
+    public String statsUpdatedAt; // ISO string for frontend
 }

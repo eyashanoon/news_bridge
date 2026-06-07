@@ -1,5 +1,8 @@
 package com.example.newscrawler.dto;
+
+import java.time.LocalDateTime;
 import java.util.List;
+
 public class EditorRequestResponse {
     public Long id;
     public Long userId;
@@ -11,4 +14,6 @@ public class EditorRequestResponse {
     public String status;
     public String references;
     public List<String> attachments;
+    public LocalDateTime createdAt;
+    public LocalDateTime updatedAt;
 }

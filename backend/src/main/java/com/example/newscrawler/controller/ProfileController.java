@@ -49,6 +49,21 @@ public class ProfileController {
 
     @GetMapping("/{username}")
     public Object getProfileByUsername(@PathVariable String username) {
+        // Try numeric ID lookup first (used by topic post author links)
+        try {
+            Long id = Long.parseLong(username);
+            EditorUser editorById = editorUserRepository.findById(id).orElse(null);
+            if (editorById != null) {
+                return editorUserService.getEditorByEmail(editorById.getEmail());
+            }
+            RegisteredUser userById = registeredUserRepository.findById(id).orElse(null);
+            if (userById != null) {
+                return mapRegisteredUser(userById);
+            }
+        } catch (NumberFormatException ignored) {
+            // not a numeric ID, continue with username/email lookup
+        }
+
         // Try registered user first
         RegisteredUser user = registeredUserRepository.findByUsername(username).orElse(null);
         if (user != null) {
@@ -79,6 +94,8 @@ public class ProfileController {
 
         EditorUser editor = editorUserRepository.findByEmail(email).orElse(null);
         if (editor != null) {
+            if (updates.containsKey("fullName")) editor.setFullName((String) updates.get("fullName"));
+            if (updates.containsKey("bio")) editor.setBio((String) updates.get("bio"));
             if (updates.containsKey("profilePicture")) editor.setProfilePicture((String) updates.get("profilePicture"));
             editorUserRepository.save(editor);
             return editorUserService.getEditorByEmail(email);
