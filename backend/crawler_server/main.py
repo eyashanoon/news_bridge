@@ -193,48 +193,64 @@ class EndpointScheduler:
 
     # ── Endpoint loading ──────────────────────────────────────────────────────
 
-    def load_endpoints(self) -> None:
-        """Fetch all active endpoints from the backend and populate the pending pool."""
+    @staticmethod
+    def _is_crawlable_root(root: dict) -> bool:
+        return root.get("status", "").upper() == "ACTIVE"
+
+    @staticmethod
+    def _is_crawlable_endpoint(ep: dict, root: dict | None = None) -> bool:
+        if ep.get("status", "").upper() != "ACTIVE":
+            return False
+        if root is not None and not EndpointScheduler._is_crawlable_root(root):
+            return False
+        return True
+
+    def _seed_endpoint_state(self, eid: int, ep: dict) -> None:
+        persisted_score = ep.get("crawlScore")
+        if persisted_score is not None:
+            with self._scores_lock:
+                if eid not in self._scores:
+                    self._scores[eid] = float(persisted_score)
+
+        last_crawled = ep.get("lastCrawledAt")
+        if last_crawled and eid not in self._last_crawled_time:
+            try:
+                lc = datetime.fromisoformat(last_crawled.replace("Z", "+00:00"))
+                elapsed = (datetime.now(timezone.utc) - lc).total_seconds()
+                self._last_crawled_time[eid] = time.time() - elapsed
+            except Exception:
+                pass
+
+    def sync_endpoints(self) -> None:
+        """Sync the pending pool with currently crawlable roots/endpoints from the backend."""
         try:
             roots = self._backend.get_roots()
-            loaded = 0
+            crawlable: dict[int, dict] = {}
+            for root in roots:
+                if not self._is_crawlable_root(root):
+                    continue
+                root_id = int(root["id"])
+                for ep in self._backend.get_endpoints(root_id):
+                    if not self._is_crawlable_endpoint(ep, root):
+                        continue
+                    eid = int(ep["id"])
+                    self._seed_endpoint_state(eid, ep)
+                    crawlable[eid] = ep
+
             with self._cv:
-                for root in roots:
-                    root_id = int(root["id"])
-                    endpoints = self._backend.get_endpoints(root_id)
-                    for ep in endpoints:
-                        if ep.get("status", "").upper() != "ACTIVE":
-                            continue
-                        eid = int(ep["id"])
-
-                        # Seed production score from backend persisted value
-                        persisted_score = ep.get("crawlScore")
-                        if persisted_score is not None:
-                            with self._scores_lock:
-                                if eid not in self._scores:
-                                    self._scores[eid] = float(persisted_score)
-
-                        # Seed last_crawled_time from backend lastCrawledAt
-                        last_crawled = ep.get("lastCrawledAt")
-                        if last_crawled and eid not in self._last_crawled_time:
-                            try:
-                                lc = datetime.fromisoformat(
-                                    last_crawled.replace("Z", "+00:00")
-                                )
-                                elapsed = (
-                                    datetime.now(timezone.utc) - lc
-                                ).total_seconds()
-                                self._last_crawled_time[eid] = time.time() - elapsed
-                            except Exception:
-                                pass
-
-                        self._pending[eid] = ep
-                        loaded += 1
-
+                for eid in list(self._pending.keys()):
+                    if eid not in crawlable and eid not in self._active:
+                        del self._pending[eid]
+                for eid, ep in crawlable.items():
+                    self._pending[eid] = ep
                 self._cv.notify_all()
-            self._log("INFO", f"Scheduler loaded {loaded} active endpoint(s) into pool")
+            self._log("INFO", f"Scheduler synced {len(crawlable)} active endpoint(s) into pool")
         except Exception as ex:
-            self._log("ERROR", f"Failed to load endpoints: {ex}")
+            self._log("ERROR", f"Failed to sync endpoints: {ex}")
+
+    def load_endpoints(self) -> None:
+        """Fetch all active endpoints from the backend and populate the pending pool."""
+        self.sync_endpoints()
 
     # ── Worker ────────────────────────────────────────────────────────────────
 
@@ -441,23 +457,41 @@ class EndpointScheduler:
 
     def run_endpoint_now(self, endpoint_id: int) -> dict:
         """Run a specific endpoint immediately in a one-shot background thread."""
-        ep: dict | None = self._pending.get(endpoint_id)
-        if ep is None:
-            try:
-                roots = self._backend.get_roots()
-                for root in roots:
-                    root_id = int(root["id"])
-                    endpoints = self._backend.get_endpoints(root_id)
-                    for e in endpoints:
-                        if int(e["id"]) == endpoint_id:
-                            ep = e
-                            break
-                    if ep:
+        ep: dict | None = None
+        matched_root: dict | None = None
+        roots: list[dict] = []
+        try:
+            roots = self._backend.get_roots()
+            for root in roots:
+                root_id = int(root["id"])
+                for e in self._backend.get_endpoints(root_id):
+                    if int(e["id"]) == endpoint_id:
+                        ep = e
+                        matched_root = root
                         break
-            except Exception as ex:
-                return {"ok": False, "error": f"Backend lookup failed: {ex}"}
+                if ep:
+                    break
+        except Exception as ex:
+            return {"ok": False, "error": f"Backend lookup failed: {ex}"}
+
+        if ep is None:
+            ep = self._pending.get(endpoint_id)
+
         if ep is None:
             return {"ok": False, "error": f"Endpoint #{endpoint_id} not found"}
+
+        if matched_root is None:
+            root_id = int(ep.get("rootId") or ep.get("root_id") or 0)
+            matched_root = next(
+                (root for root in roots if int(root["id"]) == root_id),
+                {"status": "SUSPENDED"},
+            )
+
+        if not self._is_crawlable_endpoint(ep, matched_root):
+            return {
+                "ok": False,
+                "error": f"Endpoint #{endpoint_id} is suspended and cannot be crawled",
+            }
 
         listing_url = str(ep.get("url", ""))
         root_id = int(ep.get("rootId") or ep.get("root_id") or 0)
@@ -600,6 +634,13 @@ def restart_scheduler() -> dict:
     _push_log("INFO", "Scheduler restart requested by admin")
     _scheduler.restart()
     return {"ok": True, "message": "Crawler scheduler restarted"}
+
+
+@app.post("/control/reload")
+def reload_endpoints() -> dict:
+    _push_log("INFO", "Endpoint pool reload requested")
+    _scheduler.sync_endpoints()
+    return {"ok": True, "message": "Endpoint pool synced", **_scheduler.get_status()}
 
 
 class RunEndpointRequest(BaseModel):

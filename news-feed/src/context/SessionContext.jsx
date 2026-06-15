@@ -14,9 +14,10 @@ export function SessionProvider({ children }) {
   const syncToLocalStorage = (token, sessionData) => {
     if (token && sessionData?.userId) {
       localStorage.setItem("token", token);
-      localStorage.setItem("userId", sessionData.userId);
+      localStorage.setItem("userId", String(sessionData.userId));
       localStorage.setItem("userType", sessionData.type || "REGISTERED");
       localStorage.setItem("roles", JSON.stringify(sessionData.roles || []));
+      setToken(token);
     }
   };
 

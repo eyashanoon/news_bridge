@@ -37,8 +37,30 @@ public class TelegramChannel {
     @Column
     private Instant lastCrawledAt;
 
+    @Column(name = "crawl_score", nullable = false)
+    private double crawlScore = 1.0;
+
+    @Column(name = "total_crawls", nullable = false)
+    private int totalCrawls = 0;
+
+    /** Posts per day EMA — used by crawler scheduler */
+    @Column(name = "post_frequency", nullable = false)
+    private double postFrequency = 0.0;
+
+    @Column(name = "avg_view_count", nullable = false)
+    private double avgViewCount = 0.0;
+
+    @Column(name = "onboarding_completed", nullable = false)
+    private boolean onboardingCompleted = false;
+
     @Column(name = "added_by_email")
     private String addedByEmail;
+
+    @Column(name = "subscriber_count")
+    private Long subscriberCount;
+
+    @Column(length = 16)
+    private String language;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -74,8 +96,29 @@ public class TelegramChannel {
     public Instant getLastCrawledAt() { return lastCrawledAt; }
     public void setLastCrawledAt(Instant lastCrawledAt) { this.lastCrawledAt = lastCrawledAt; }
 
+    public double getCrawlScore() { return crawlScore; }
+    public void setCrawlScore(double crawlScore) { this.crawlScore = crawlScore; }
+
+    public int getTotalCrawls() { return totalCrawls; }
+    public void setTotalCrawls(int totalCrawls) { this.totalCrawls = totalCrawls; }
+
+    public double getPostFrequency() { return postFrequency; }
+    public void setPostFrequency(double postFrequency) { this.postFrequency = postFrequency; }
+
+    public double getAvgViewCount() { return avgViewCount; }
+    public void setAvgViewCount(double avgViewCount) { this.avgViewCount = avgViewCount; }
+
+    public boolean isOnboardingCompleted() { return onboardingCompleted; }
+    public void setOnboardingCompleted(boolean onboardingCompleted) { this.onboardingCompleted = onboardingCompleted; }
+
     public String getAddedByEmail() { return addedByEmail; }
     public void setAddedByEmail(String addedByEmail) { this.addedByEmail = addedByEmail; }
+
+    public Long getSubscriberCount() { return subscriberCount; }
+    public void setSubscriberCount(Long subscriberCount) { this.subscriberCount = subscriberCount; }
+
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
 
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }

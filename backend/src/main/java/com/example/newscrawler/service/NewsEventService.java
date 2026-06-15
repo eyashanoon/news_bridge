@@ -35,18 +35,35 @@ public class NewsEventService {
         CategoryField field = fieldRepository.findById(req.fieldId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Field not found"));
 
+        // Collect all field IDs from the request (both single fieldId and fieldIds array)
+        List<Long> allFieldIds = new java.util.ArrayList<>();
+        allFieldIds.add(req.fieldId);
+        if (req.fieldIds != null) {
+            for (Long fid : req.fieldIds) {
+                if (fid != null && !allFieldIds.contains(fid)) {
+                    allFieldIds.add(fid);
+                }
+            }
+        }
+
         NewsEvent event = new NewsEvent();
         event.setTitle(req.title);
         event.setDescription(req.description);
         event.setField(field);
+        event.setFieldIds(allFieldIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
         event.setStatus(req.status != null ? req.status : "DRAFT");
         event.setCreatedByEmail(adminEmail);
 
         NewsEventResponse response = mapToDto(eventRepository.save(event));
 
-        // If the event is PUBLIC from the start, create a corresponding topic
-        if ("PUBLIC".equals(event.getStatus())) {
-            createTopicFromEvent(event);
+        // Create topic for PUBLIC or EDITOR_VISIBLE events so they appear in Trending Topics
+        if ("PUBLIC".equals(event.getStatus()) || "EDITOR_VISIBLE".equals(event.getStatus())) {
+            Long topicId = createTopicFromEvent(event, allFieldIds);
+            if (topicId != null) {
+                event.setTopicId(topicId);
+                eventRepository.save(event);
+                response.topicId = topicId;
+            }
         }
 
         return response;
@@ -96,11 +113,31 @@ public class NewsEventService {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Field not found"));
             event.setField(field);
         }
+
+        // Collect all field IDs and persist them
+        List<Long> allFieldIds = new java.util.ArrayList<>();
+        if (req.fieldId != null) allFieldIds.add(req.fieldId);
+        if (req.fieldIds != null) {
+            for (Long fid : req.fieldIds) {
+                if (fid != null && !allFieldIds.contains(fid)) {
+                    allFieldIds.add(fid);
+                }
+            }
+        }
+        if (!allFieldIds.isEmpty()) {
+            event.setFieldIds(allFieldIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
+        }
+
         NewsEventResponse response = mapToDto(eventRepository.save(event));
 
-        // If the event is PUBLIC after update, create a corresponding topic
-        if ("PUBLIC".equals(event.getStatus())) {
-            createTopicFromEvent(event);
+        // Create topic for PUBLIC or EDITOR_VISIBLE events so they appear in Trending Topics
+        if ("PUBLIC".equals(event.getStatus()) || "EDITOR_VISIBLE".equals(event.getStatus())) {
+            Long topicId = createTopicFromEvent(event, allFieldIds);
+            if (topicId != null) {
+                event.setTopicId(topicId);
+                eventRepository.save(event);
+                response.topicId = topicId;
+            }
         }
 
         return response;
@@ -110,13 +147,44 @@ public class NewsEventService {
 
     @Transactional
     public NewsEventResponse changeStatus(Long id, String status) {
+        return changeStatus(id, status, null);
+    }
+
+    @Transactional
+    public NewsEventResponse changeStatus(Long id, String status, List<Long> fieldIds) {
         NewsEvent event = findEvent(id);
         event.setStatus(status);
         NewsEventResponse response = mapToDto(eventRepository.save(event));
 
-        // If the event transitions to PUBLIC, create a corresponding topic
-        if ("PUBLIC".equals(event.getStatus())) {
-            createTopicFromEvent(event);
+        // Create topic for PUBLIC or EDITOR_VISIBLE events so they appear in Trending Topics
+        if ("PUBLIC".equals(event.getStatus()) || "EDITOR_VISIBLE".equals(event.getStatus())) {
+            // Use provided fieldIds, or fall back to event's stored fieldIds, or the event's single field
+            if (fieldIds == null || fieldIds.isEmpty()) {
+                // Try to parse stored fieldIds from the comma-separated string
+                if (event.getFieldIds() != null && !event.getFieldIds().isBlank()) {
+                    try {
+                        String[] parts = event.getFieldIds().split(",");
+                        List<Long> stored = new java.util.ArrayList<>();
+                        for (String p : parts) {
+                            stored.add(Long.parseLong(p.trim()));
+                        }
+                        fieldIds = stored;
+                    } catch (Exception e) {
+                        fieldIds = List.of();
+                    }
+                }
+            }
+            if (fieldIds == null || fieldIds.isEmpty()) {
+                fieldIds = event.getField() != null
+                    ? List.of(event.getField().getId())
+                    : List.of();
+            }
+            Long topicId = createTopicFromEvent(event, fieldIds);
+            if (topicId != null) {
+                event.setTopicId(topicId);
+                eventRepository.save(event);
+                response.topicId = topicId;
+            }
         }
 
         return response;
@@ -127,6 +195,32 @@ public class NewsEventService {
     @Transactional
     public void deleteEvent(Long id) {
         NewsEvent event = findEvent(id);
+        // Delete the associated topic (if any). We prefer the explicit topicId
+        // foreign key, but fall back to a title match for older events created
+        // before that field existed.
+        try {
+            Long linkedTopicId = event.getTopicId();
+            boolean deleted = false;
+            if (linkedTopicId != null) {
+                try {
+                    topicService.deleteTopic(linkedTopicId);
+                    deleted = true;
+                } catch (Exception e) {
+                    System.err.println("Failed to delete topic by id " + linkedTopicId + " for event " + id + ": " + e.getMessage());
+                }
+            }
+            if (!deleted) {
+                var topics = topicService.getAllTopics();
+                for (var t : topics) {
+                    if (t.title != null && t.title.equals(event.getTitle())) {
+                        topicService.deleteTopic(t.id);
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to delete associated topic for event " + id + ": " + e.getMessage());
+        }
         eventRepository.delete(event);
     }
 
@@ -205,22 +299,43 @@ public class NewsEventService {
 
     /**
      * Create a Topic from a NewsEvent so it appears in the Trending Topics page.
-     * This is called automatically when an event's status is set to PUBLIC.
-     * If a Topic with a matching title already exists, it is skipped to avoid duplicates.
+     * This is called automatically when an event's status is set to PUBLIC or EDITOR_VISIBLE.
+     * If a Topic with a matching title already exists, it is updated instead of duplicated.
+     *
+     * @param event    the news event
+     * @param fieldIds list of all field IDs to assign to the topic (supports multiple fields)
+     * @return the ID of the created/updated topic, or {@code null} if creation failed
      */
-    private void createTopicFromEvent(NewsEvent event) {
+    private Long createTopicFromEvent(NewsEvent event, List<Long> fieldIds) {
         try {
-            // Check if a topic with this title already exists (avoid duplicates)
-            boolean exists = topicService.getAllActiveTopics().stream()
-                .anyMatch(t -> t.title != null && t.title.equals(event.getTitle()));
-            if (exists) {
-                return;
+            // If a topic with this title already exists, update it instead of skipping
+            var existingTopic = topicService.getAllTopics().stream()
+                .filter(t -> t.title != null && t.title.equals(event.getTitle()))
+                .findFirst();
+
+            if (existingTopic.isPresent()) {
+                // Update existing topic's status and fields
+                var existingId = existingTopic.get().id;
+                CreateTopicRequest updateReq = new CreateTopicRequest();
+                updateReq.title = event.getTitle();
+                updateReq.description = event.getDescription();
+                updateReq.author = "News Bridge";
+                updateReq.imageUrl = null;
+                updateReq.tags = List.of("live", "event");
+                updateReq.fieldIds = fieldIds;
+                // EDITOR_VISIBLE events create DRAFT topics (visible only to matching editors),
+                // PUBLIC events create ACTIVE topics (visible to everyone)
+                updateReq.status = "PUBLIC".equals(event.getStatus()) ? "ACTIVE" : "DRAFT";
+                topicService.updateTopic(existingId, updateReq);
+                return existingId;
             }
 
-            // Build field IDs list from the event's field
-            List<Long> fieldIds = event.getField() != null
-                ? List.of(event.getField().getId())
-                : List.of();
+            // If no fieldIds provided, fall back to the event's single field
+            if (fieldIds == null || fieldIds.isEmpty()) {
+                fieldIds = event.getField() != null
+                    ? List.of(event.getField().getId())
+                    : List.of();
+            }
 
             CreateTopicRequest request = new CreateTopicRequest();
             request.title = event.getTitle();
@@ -229,11 +344,19 @@ public class NewsEventService {
             request.imageUrl = null;
             request.tags = List.of("live", "event");
             request.fieldIds = fieldIds;
+            // EDITOR_VISIBLE events create DRAFT topics (visible only to matching editors),
+            // PUBLIC events create ACTIVE topics (visible to everyone)
+            request.status = "PUBLIC".equals(event.getStatus()) ? "ACTIVE" : "DRAFT";
 
-            topicService.createTopic(request, event.getCreatedByEmail() != null ? event.getCreatedByEmail() : "system@newsbridge.app");
+            var created = topicService.createTopic(
+                request,
+                event.getCreatedByEmail() != null ? event.getCreatedByEmail() : "system@newsbridge.app"
+            );
+            return created != null ? created.id : null;
         } catch (Exception e) {
             // Log but don't fail the event status change
             System.err.println("Failed to create topic from event " + event.getId() + ": " + e.getMessage());
+            return null;
         }
     }
 
@@ -246,12 +369,27 @@ public class NewsEventService {
         dto.createdByEmail = event.getCreatedByEmail();
         dto.createdAt = event.getCreatedAt();
         dto.updatedAt = event.getUpdatedAt();
+        dto.topicId = event.getTopicId();
         if (event.getField() != null) {
             CategoryFieldDto fieldDto = new CategoryFieldDto();
             fieldDto.id = event.getField().getId();
             fieldDto.name = event.getField().getName();
             fieldDto.description = event.getField().getDescription();
             dto.field = fieldDto;
+        }
+        // Parse stored fieldIds comma-separated string into list
+        if (event.getFieldIds() != null && !event.getFieldIds().isBlank()) {
+            try {
+                dto.fieldIds = java.util.Arrays.stream(event.getFieldIds().split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .map(Long::valueOf)
+                    .collect(Collectors.toList());
+            } catch (Exception e) {
+                dto.fieldIds = java.util.Collections.emptyList();
+            }
+        } else {
+            dto.fieldIds = java.util.Collections.emptyList();
         }
         return dto;
     }

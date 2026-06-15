@@ -8,7 +8,7 @@
  *   scene.js       – Three.js scene, bones, morph targets
  *   tts.js         – text-to-speech (Edge TTS)
  *   lipsync.js     – lip-sync animation driver
- *   rhubarb.js     – Rhubarb API call + WAV encoder + fallback
+ *   rhubarb.js     – Rhubarb phoneme analysis via /api/rhubarb
  *   gestures.js    – hand-gesture choreography
  *   pose-studio.js – Pose Studio UI (bones, poses, panels)
  *
@@ -22,7 +22,7 @@
  */
 
 // ── Scene & character ─────────────────────────────────────────
-import { initScene, loadCharacter, updateScreenText, raiseCharacter, lowerCharacter, saveCharacterPosition } from './scene.js';
+import { initScene, loadCharacter, updateScreenText, raiseCharacter, lowerCharacter, moveCharacterLeft, moveCharacterRight, moveCharacterForward, moveCharacterBack, saveCharacterPosition } from './scene.js';
 
 // ── TTS ───────────────────────────────────────────────────────
 import { synthesise } from './tts.js';
@@ -34,7 +34,7 @@ import { playWithLipSync, setAudioDelay } from './lipsync.js';
 // playWithLipSync(blob, cues, durationSec, options) – plays audio + drives mouth
 // setAudioDelay(seconds) – how long to delay audio after animation starts (default 0.1 s)
 
-// ── Rhubarb (phoneme lip-sync + energy fallback) ──────────────
+// ── Rhubarb (phoneme lip-sync) ────────────────────────────────
 import { buildLipSyncCues } from './rhubarb.js';
 // buildLipSyncCues(audioBlob, text) → [{time, shape}] via Rhubarb (/api/rhubarb)
 
@@ -66,6 +66,10 @@ const delayLabel  = document.getElementById('main-delay-label'); // label next t
 const emotionToggle = document.getElementById('emotion-toggle-main');
 const raiseBtn   = document.getElementById('character-raise');
 const lowerBtn   = document.getElementById('character-lower');
+const leftBtn    = document.getElementById('character-left');
+const rightBtn   = document.getElementById('character-right');
+const forwardBtn = document.getElementById('character-forward');
+const backBtn    = document.getElementById('character-back');
 const savePosBtn = document.getElementById('character-save');
 // ── Audio-delay slider ────────────────────────────────────────
 // Positive delay → mouth starts before audio → looks natural.
@@ -108,11 +112,25 @@ if (emotionToggle) {
   });
 }
 
+const MOVE_STEP = 0.02;
+
+if (leftBtn) {
+  leftBtn.addEventListener('click', () => moveCharacterLeft(MOVE_STEP));
+}
+if (rightBtn) {
+  rightBtn.addEventListener('click', () => moveCharacterRight(MOVE_STEP));
+}
+if (forwardBtn) {
+  forwardBtn.addEventListener('click', () => moveCharacterForward(MOVE_STEP));
+}
+if (backBtn) {
+  backBtn.addEventListener('click', () => moveCharacterBack(MOVE_STEP));
+}
 if (raiseBtn) {
-  raiseBtn.addEventListener('click', () => raiseCharacter(0.06));
+  raiseBtn.addEventListener('click', () => raiseCharacter(MOVE_STEP));
 }
 if (lowerBtn) {
-  lowerBtn.addEventListener('click', () => lowerCharacter(0.06));
+  lowerBtn.addEventListener('click', () => lowerCharacter(MOVE_STEP));
 }
 if (savePosBtn) {
   savePosBtn.addEventListener('click', () => {
@@ -189,7 +207,6 @@ async function handleSpeak(text) {
       : await synthesise(text, { enhanced: false });
 
     // B. Decode audio once.
-    //    Decoding here gives us the exact duration and raw PCM for the energy fallback.
     //    The decoded buffer is passed to playWithLipSync so it does not decode again
     //    (double-decoding caused a visible mouth-start delay).
     const audioCtx      = new AudioContext();

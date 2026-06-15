@@ -13,6 +13,14 @@ import { dark as dc, th } from "../utils/darkColors";
 import GuestSignupPrompt from "./GuestSignupPrompt";
 import PostCommentsModal from "./PostCommentsModal";
 import { useTranslation } from "react-i18next";
+import {
+  detectItemLanguage,
+  needsTranslation as itemNeedsTranslation,
+  getTranslationTargetLang,
+  getTranslateButtonLabel,
+  getLanguageDisplayLabel,
+} from "../utils/languageUtils";
+import { translateText } from "../utils/translateUtils";
 
 function formatPublishedAt(value) {
   if (!value) return "";
@@ -32,26 +40,41 @@ function formatPublishedAt(value) {
   return "just now";
 }
 
-export default function Post({ post, onAskAI, onPress }) {
+export default function Post({ post, onAskAI, onPress, isVisible = false }) {
   const theme = categoryTheme[post.label]?.light || categoryTheme.General.light;
   const navigation = useNavigation();
   const { session } = useSession();
   const { darkMode } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage || i18n.language;
+  const isRtl = lang === "ar";
+  const postLang = detectItemLanguage(post);
+  const needsTranslation = itemNeedsTranslation(post, lang);
   const isGuest = !session?.type || session?.type === "PRIMITIVE";
   const [isSaved, setIsSaved] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes || 0);
   const [dislikesCount, setDislikesCount] = useState(post.dislikes || 0);
-  const [reaction, setReaction] = useState(post.userReaction);
+  const [reaction, setReaction] = useState(post.userReaction ?? null);
+
+  useEffect(() => {
+    setLikesCount(post.likes || 0);
+    setDislikesCount(post.dislikes || 0);
+    setReaction(post.userReaction ?? null);
+  }, [post.id, post.likes, post.dislikes, post.userReaction]);
   const [media, setMedia] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [guestPrompt, setGuestPrompt] = useState(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translatedTitle, setTranslatedTitle] = useState(null);
+  const [translatedFullText, setTranslatedFullText] = useState(null);
+  const [showTranslated, setShowTranslated] = useState(false);
 
   // ─── Interaction Tracking (matches web Post.jsx) ───────────
   const visibleStart = useRef(null);
   const viewSent = useRef(false);
 
   const sendView = async () => {
+    if (post.isTopicPost) return;
     if (viewSent.current) return;
     viewSent.current = true;
     try {
@@ -62,6 +85,7 @@ export default function Post({ post, onAskAI, onPress }) {
   };
 
   const sendTimeSpent = async (seconds) => {
+    if (post.isTopicPost) return;
     try {
       await ensureUserInitialized();
       const userId = await getUserId();
@@ -77,22 +101,51 @@ export default function Post({ post, onAskAI, onPress }) {
     } catch (e) { console.warn("Click tracking failed:", e); }
   };
 
-  // Record view when mounted (FlatList brings items into view)
+  // View tracking when ≥60% visible (matches web IntersectionObserver threshold)
   useEffect(() => {
+    if (!isVisible) {
+      if (visibleStart.current) {
+        const seconds = (Date.now() - visibleStart.current) / 1000.0;
+        if (seconds > 1) sendTimeSpent(seconds);
+        visibleStart.current = null;
+      }
+      return;
+    }
     visibleStart.current = Date.now();
     sendView();
     return () => {
-      // Record time spent when unmounted (scrolled away)
       if (visibleStart.current) {
         const seconds = (Date.now() - visibleStart.current) / 1000.0;
-        if (seconds > 1) {
-          sendTimeSpent(seconds);
-        }
+        if (seconds > 1) sendTimeSpent(seconds);
+        visibleStart.current = null;
       }
     };
-  }, []);
+  }, [isVisible, post.id]);
 
-  const displayText = post.text || "";
+  const handleTranslate = async () => {
+    if (showTranslated) {
+      setShowTranslated(false);
+      return;
+    }
+    if (!needsTranslation) return;
+    setIsTranslating(true);
+    try {
+      const targetLang = getTranslationTargetLang(lang);
+      if (post.title) {
+        const translated = await translateText(post.title, postLang, targetLang);
+        setTranslatedTitle(translated || post.title);
+      }
+      if (post.text) {
+        const translated = await translateText(post.text, postLang, targetLang);
+        setTranslatedFullText(translated || post.text);
+      }
+      setShowTranslated(true);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const displayText = showTranslated && translatedFullText ? translatedFullText : (post.text || "");
   const MAX_CHARS = 220;
   const isLongText = displayText.length > MAX_CHARS;
   const previewText = isLongText ? displayText.slice(0, MAX_CHARS) + "..." : displayText;
@@ -119,13 +172,16 @@ export default function Post({ post, onAskAI, onPress }) {
     if (isGuest) { setGuestPrompt("like"); return; }
     await ensureUserInitialized();
     const userId = await getUserId();
+    const reactUrl = post.isTopicPost
+      ? `${API_CONFIG.baseURL}/api/topics/${post.topicId}/posts/${post.id}/react?userId=${userId}&type=${type}`
+      : `${API_CONFIG.baseURL}/api/posts/${post.id}/react?userId=${userId}&type=${type}`;
     try {
-      const res = await apiFetch(`${API_CONFIG.baseURL}/api/posts/${post.id}/react?userId=${userId}&type=${type}`, { method: "PUT" });
+      const res = await apiFetch(reactUrl, { method: "PUT" });
       if (!res.ok) return;
       const data = await res.json();
       setLikesCount(data.likes);
       setDislikesCount(data.dislikes);
-      setReaction(data.status === "REMOVED" ? null : type);
+      setReaction(data.userReaction ?? (data.status === "REMOVED" ? null : type));
     } catch (e) { console.error(e); }
   };
 
@@ -198,7 +254,7 @@ export default function Post({ post, onAskAI, onPress }) {
       style={[styles.card, { backgroundColor: th(darkMode, dc.surface, "#ffffff"), borderColor: th(darkMode, dc.border, theme.border) }]}
     >
       {/* Category color line */}
-      <View style={[styles.categoryLine, { backgroundColor: theme.accent }]} />
+      <View style={[styles.categoryLine, { backgroundColor: theme.accent, left: isRtl ? undefined : 0, right: isRtl ? 0 : undefined }]} />
 
       <View style={styles.header}>
         <View style={[styles.categoryBadge, { backgroundColor: theme.pillBg }]}>
@@ -223,9 +279,21 @@ export default function Post({ post, onAskAI, onPress }) {
         </View>
       )}
 
-      {post.title ? <Text style={[styles.title, { color: th(darkMode, dc.text, "#0b1a2b") }]}>{post.title}</Text> : null}
+      {post.title ? (
+        <Text style={[styles.title, { color: th(darkMode, dc.text, "#0b1a2b") }]}>
+          {showTranslated && translatedTitle ? translatedTitle : post.title}
+        </Text>
+      ) : null}
 
       <Text style={[styles.text, { color: th(darkMode, dc.textSecondary, "#3d5468") }]}>{previewText}</Text>
+
+      {needsTranslation && (
+        <TouchableOpacity onPress={handleTranslate} disabled={isTranslating} style={styles.translateBtn}>
+          <Text style={[styles.translateText, { color: theme.accent }]}>
+            {isTranslating ? t("translating") : showTranslated ? t("viewOriginal") : getTranslateButtonLabel(lang, t)}
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {isLongText ? (
         <TouchableOpacity onPress={() => onPress?.(post)}>
@@ -235,7 +303,14 @@ export default function Post({ post, onAskAI, onPress }) {
 
       {renderImages()}
 
-      {post.lang ? <Text style={[styles.lang, { color: th(darkMode, dc.muted, "#6e869a"), backgroundColor: th(darkMode, dc.subtle, "#f5f8fd") }]}>{post.lang}</Text> : null}
+      {postLang ? (
+        <Text
+          accessibilityLabel={t("postLanguage")}
+          style={[styles.lang, { color: th(darkMode, dc.muted, "#6e869a"), backgroundColor: th(darkMode, dc.subtle, "#f5f8fd"), alignSelf: isRtl ? "flex-end" : "flex-start" }]}
+        >
+          {getLanguageDisplayLabel(postLang, t)}
+        </Text>
+      ) : null}
 
       {post.tags?.length > 0 && (
         <View style={styles.tags}>
@@ -398,6 +473,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
   },
+  translateBtn: { marginTop: 6, marginBottom: 4 },
+  translateText: { fontSize: 13, fontWeight: "600" },
   lang: {
     marginTop: 10,
     fontSize: 12,

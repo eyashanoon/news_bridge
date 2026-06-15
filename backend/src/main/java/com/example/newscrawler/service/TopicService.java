@@ -1,14 +1,18 @@
 package com.example.newscrawler.service;
 
 import com.example.newscrawler.dto.*;
+import com.example.newscrawler.entity.AppUser;
 import com.example.newscrawler.entity.CategoryField;
 import com.example.newscrawler.entity.EditorUser;
+import com.example.newscrawler.entity.ReactionType;
 import com.example.newscrawler.entity.Topic;
 import com.example.newscrawler.entity.TopicPost;
+import com.example.newscrawler.entity.TopicPostReaction;
 import com.example.newscrawler.repository.CategoryFieldRepository;
 import com.example.newscrawler.repository.EditorUserRepository;
 import com.example.newscrawler.repository.TopicRepository;
 import com.example.newscrawler.repository.TopicPostRepository;
+import com.example.newscrawler.repository.TopicPostReactionRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,6 +33,7 @@ public class TopicService {
 
     private final TopicRepository topicRepository;
     private final TopicPostRepository topicPostRepository;
+    private final TopicPostReactionRepository topicPostReactionRepository;
     private final CategoryFieldRepository categoryFieldRepository;
     private final TopicEditorService topicEditorService;
 
@@ -39,10 +45,12 @@ public class TopicService {
 
     public TopicService(TopicRepository topicRepository,
                         TopicPostRepository topicPostRepository,
+                        TopicPostReactionRepository topicPostReactionRepository,
                         CategoryFieldRepository categoryFieldRepository,
                         TopicEditorService topicEditorService) {
         this.topicRepository = topicRepository;
         this.topicPostRepository = topicPostRepository;
+        this.topicPostReactionRepository = topicPostReactionRepository;
         this.categoryFieldRepository = categoryFieldRepository;
         this.topicEditorService = topicEditorService;
     }
@@ -169,9 +177,61 @@ public class TopicService {
 
     @Transactional
     public void deleteTopic(Long id) {
-        topicPostRepository.findByTopicIdOrderByCreatedAtDesc(id)
-                .forEach(tp -> topicPostRepository.delete(tp));
+        // 1) Delete all child rows that reference this topic
+        clearTopicChildren(id);
+        // 2) Delete the topic itself
         topicRepository.deleteById(id);
+    }
+
+    /**
+     * Delete every topic (and all their child rows: posts, editor assignments,
+     * etc.). Used by the admin cleanup endpoint to clear out orphaned/duplicated
+     * topics that were left behind by the old title-match logic. The admin's
+     * events will auto-recreate the canonical topics the next time the
+     * backend processes them.
+     *
+     * @return number of topics that were deleted
+     */
+    @Transactional
+    public int deleteAllTopics() {
+        List<Topic> all = topicRepository.findAll();
+        int count = all.size();
+        // 1) Wipe ALL editor assignments in one shot — they're the main blocker
+        //    for cascading topic deletes (FK on topic_editor_assignments.topic_id).
+        try {
+            entityManager.createNativeQuery("DELETE FROM topic_editor_assignments").executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Failed to clear topic_editor_assignments: " + e.getMessage());
+        }
+        // 2) For each topic, delete its posts (the @ManyToOne between topic_posts
+        //    and topics is normally safe, but be explicit).
+        for (Topic t : all) {
+            topicPostRepository.findByTopicIdOrderByCreatedAtDesc(t.getId())
+                    .forEach(tp -> topicPostRepository.delete(tp));
+        }
+        // 3) Bulk-delete the topics themselves.
+        topicRepository.deleteAll(all);
+        return count;
+    }
+
+    /**
+     * Clean up all child rows that reference a topic (posts, editor assignments,
+     * etc.) so the topic can be deleted without violating any FK constraints.
+     */
+    @Transactional
+    protected void clearTopicChildren(Long topicId) {
+        // Editor assignments
+        try {
+            entityManager.createNativeQuery(
+                "DELETE FROM topic_editor_assignments WHERE topic_id = :tid")
+                .setParameter("tid", topicId)
+                .executeUpdate();
+        } catch (Exception e) {
+            System.err.println("Failed to clear topic_editor_assignments for topic " + topicId + ": " + e.getMessage());
+        }
+        // Posts (also done via repository for entity-manager flush ordering)
+        topicPostRepository.findByTopicIdOrderByCreatedAtDesc(topicId)
+                .forEach(tp -> topicPostRepository.delete(tp));
     }
 
     /**
@@ -190,6 +250,7 @@ public class TopicService {
         System.out.println("ADMIN DELETED POST #" + postId + " by '" + post.getAuthor() 
             + "' from topic '" + post.getTopic().getTitle() + "'");
 
+        topicPostReactionRepository.deleteByTopicPost_Id(postId);
         topicPostRepository.delete(post);
 
         // Update topic stats
@@ -202,10 +263,20 @@ public class TopicService {
 
     // ─── Topic Posts ──────────────────────────────────────────────────────────
 
-    public List<TopicPostResponse> getPostsByTopic(Long topicId) {
-        return topicPostRepository.findByTopicIdOrderByCreatedAtDesc(topicId)
-                .stream()
-                .map(this::toTopicPostResponse)
+    public List<TopicPostResponse> getPostsByTopic(Long topicId, AppUser appUser) {
+        List<TopicPost> posts = topicPostRepository.findByTopicIdOrderByCreatedAtDesc(topicId);
+        Map<Long, ReactionType> userReactionMap = new HashMap<>();
+
+        if (appUser != null && !posts.isEmpty()) {
+            List<Long> postIds = posts.stream().map(TopicPost::getId).toList();
+            for (TopicPostReaction reaction : topicPostReactionRepository
+                    .findByAppUserIdAndTopicPostIdIn(appUser.getId(), postIds)) {
+                userReactionMap.put(reaction.getTopicPost().getId(), reaction.getReactionType());
+            }
+        }
+
+        return posts.stream()
+                .map(post -> toTopicPostResponse(post, userReactionMap.get(post.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -255,7 +326,7 @@ public class TopicService {
                 .stream().map(TopicPost::getAuthorEmail).distinct().count());
         topicRepository.save(topic);
 
-        return toTopicPostResponse(post);
+        return toTopicPostResponse(post, null);
     }
 
     // ─── Mappers ──────────────────────────────────────────────────────────────
@@ -301,7 +372,7 @@ public class TopicService {
         return r;
     }
 
-    private TopicPostResponse toTopicPostResponse(TopicPost post) {
+    private TopicPostResponse toTopicPostResponse(TopicPost post, ReactionType userReaction) {
         TopicPostResponse r = new TopicPostResponse();
         r.id = post.getId();
         r.topicId = post.getTopic().getId();
@@ -314,21 +385,35 @@ public class TopicService {
                 : Collections.emptyList();
         r.likes = post.getLikes();
         r.dislikes = post.getDislikes();
+        r.userReaction = userReaction;
         r.author = post.getAuthor();
-        // Try to find editor ID from email
+        r.authorEmail = post.getAuthorEmail();
+        // Try to find editor from email — use CURRENT profile data (not stale snapshot)
         if (post.getAuthorEmail() != null) {
             try {
-                EditorUser editorUser = entityManager.find(EditorUser.class, 
-                    editorUserRepository.findByEmail(post.getAuthorEmail()).map(EditorUser::getId).orElse(null));
+                EditorUser editorUser = editorUserRepository.findByEmail(post.getAuthorEmail()).orElse(null);
                 if (editorUser != null) {
                     r.authorId = editorUser.getId();
+                    // Always prefer the editor's current profile picture over the stored snapshot
+                    if (editorUser.getProfilePicture() != null && !editorUser.getProfilePicture().isBlank()) {
+                        r.authorProfilePicture = editorUser.getProfilePicture();
+                    }
+                    // Always prefer the editor's current display name over the stored snapshot
+                    String displayName = editorUser.getUsername() != null ? editorUser.getUsername() : editorUser.getFullName();
+                    if (displayName != null && !displayName.isBlank()) {
+                        r.author = displayName;
+                    }
+                } else {
+                    // Fallback to stored snapshot if editor no longer exists
+                    r.authorProfilePicture = post.getAuthorProfilePicture();
                 }
             } catch (Exception e) {
                 r.authorId = null;
+                r.authorProfilePicture = post.getAuthorProfilePicture();
             }
+        } else {
+            r.authorProfilePicture = post.getAuthorProfilePicture();
         }
-        r.authorEmail = post.getAuthorEmail();
-        r.authorProfilePicture = post.getAuthorProfilePicture();
         r.mediaUrl = post.getMediaUrl();
         r.mediaType = post.getMediaType();
         // Build mediaItems from the stored JSON in mediaUrl or as a single item

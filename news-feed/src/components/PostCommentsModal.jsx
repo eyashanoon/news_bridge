@@ -9,30 +9,13 @@ import { useSession } from "../context/SessionContext";
 import { apiFetch } from "../utils/apiFetch";
 import { ensureUserInitialized } from "../utils/auth";
 import { getUserId } from "../utils/userId";
-import { detectItemLanguage } from "../utils/languageUtils";
-import { AI_BASE_URL } from "../utils/aiFetch";
-
-// Translate helper for comments
-async function translateText(text, sourceLang, targetLang) {
-  if (!text || !text.trim()) return "";
-  try {
-    const res = await fetch(`${AI_BASE_URL}/translate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, source_lang: sourceLang, target_lang: targetLang }),
-    });
-    if (!res.ok) throw new Error(`Translation failed: ${res.status}`);
-    const data = await res.json();
-    const translated = (data.translatedText || "").trim();
-    if (!translated || /^(i can'?t|cannot|sorry|i'm sorry|i will not|cannot fulfill)/i.test(translated)) {
-      return text;
-    }
-    return translated;
-  } catch (err) {
-    console.error("Comment translation error:", err.message);
-    return text;
-  }
-}
+import {
+  detectItemLanguage,
+  needsTranslation as itemNeedsTranslation,
+  getTranslationTargetLang,
+  getTranslateButtonLabel,
+} from "../utils/languageUtils";
+import { translateText } from "../utils/translateUtils";
 
 function getAvatarUrl(comment) {
   if (comment.profilePicture && comment.profilePicture.trim()) return comment.profilePicture;
@@ -121,7 +104,7 @@ const CommentItem = memo(function CommentItem({
   const hasReplies = (comment.replies || []).length > 0;
 
   const commentLang = detectItemLanguage(comment);
-  const needsCommentTranslation = (lang === "ar" && commentLang !== "ar") || (lang !== "ar" && commentLang === "ar");
+  const needsCommentTranslation = itemNeedsTranslation(comment, lang);
   const [translatedComment, setTranslatedComment] = useState(null);
   const [showTranslatedComment, setShowTranslatedComment] = useState(false);
   const [isTranslatingComment, setIsTranslatingComment] = useState(false);
@@ -134,9 +117,8 @@ const CommentItem = memo(function CommentItem({
     if (!needsCommentTranslation || !comment.content) return;
     setIsTranslatingComment(true);
     try {
-      const targetLang = lang === "ar" ? "ar" : "en";
-      const sourceLang = lang === "ar" ? "en" : "ar";
-      const result = await translateText(comment.content, sourceLang, targetLang);
+      const targetLang = getTranslationTargetLang(lang);
+      const result = await translateText(comment.content, commentLang, targetLang);
       setTranslatedComment(result);
       setShowTranslatedComment(true);
     } catch (err) {
@@ -188,7 +170,7 @@ const CommentItem = memo(function CommentItem({
                 transition: "color var(--transition-fast)", padding: 0,
               }}
             >
-              {isTranslatingComment ? t("translating") : showTranslatedComment ? t("viewOriginal") : (lang === "ar" ? t("translateToAr") : t("translateToEn"))}
+              {isTranslatingComment ? t("translating") : showTranslatedComment ? t("viewOriginal") : getTranslateButtonLabel(lang, t)}
             </button>
           )}
 
@@ -348,13 +330,18 @@ export default function PostCommentsModal({ post, onClose }) {
     loadComments();
   }, [sortBy, post?.id]);
 
-  const readFileAsDataUrl = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+  const uploadAttachmentFile = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const endpoint = file.type.startsWith("video/")
+      ? "/api/upload/video"
+      : "/api/upload/image";
+    const res = await fetch(endpoint, { method: "POST", body: formData });
+    if (!res.ok) throw new Error("Failed to upload attachment");
+    const data = await res.json();
+    if (!data.url) throw new Error("Upload response missing URL");
+    return data.url;
+  };
 
   const submitComment = async ({ content, parentCommentId = null }) => {
     const trimmed = (content || "").trim();
@@ -368,7 +355,7 @@ export default function PostCommentsModal({ post, onClose }) {
         attachmentUrl = attachment.url;
         attachmentType = "gif";
       } else if (attachment?.kind === "file") {
-        attachmentUrl = await readFileAsDataUrl(attachment.file);
+        attachmentUrl = await uploadAttachmentFile(attachment.file);
         attachmentType = attachment.file.type.startsWith("video/") ? "video" : "image";
       }
       const res = await authFetch(`/api/comments`, {

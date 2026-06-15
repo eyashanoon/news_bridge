@@ -4,7 +4,7 @@ import { aiFetch } from "../utils/aiFetch";
 import { useTranslation } from "react-i18next";
 
 export default function ChatWidget({ category, selectedPost }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -59,6 +59,7 @@ export default function ChatWidget({ category, selectedPost }) {
           question: userMessage,
           postId: postId,
           tags: tags,
+          language: i18n.language,
           top_k: 5,
         }),
       });

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   View, Text, Modal, ScrollView, Image, TouchableOpacity, TextInput,
   StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform,
-  Dimensions, FlatList,
+  Dimensions,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useSession } from "../context/SessionContext";
@@ -11,35 +11,98 @@ import { dark as dc, th } from "../utils/darkColors";
 import { ensureUserInitialized, getToken } from "../utils/auth";
 import { API_CONFIG } from "../api/config";
 import { useTranslation } from "react-i18next";
+import {
+  detectItemLanguage,
+  needsTranslation as itemNeedsTranslation,
+  getTranslationTargetLang,
+  getTranslateButtonLabel,
+} from "../utils/languageUtils";
+import { translateText } from "../utils/translateUtils";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 // Same GIPHY API key as the web news-feed
 const GIPHY_API_KEY = "lLef25w3W2ATXHCNsZflpvzbwQ44DFeE";
-const EMOJI_DATA_CDN = "https://cdn.jsdelivr.net/npm/@emoji-mart/data";
+const EMOJI_DATA_URL = "https://cdn.jsdelivr.net/npm/@emoji-mart/data@1.2.1/sets/14/native.json";
+
+const COMMON_EMOJIS = [
+  "😀", "😂", "😍", "🥰", "😊", "😭", "😡", "👍", "👎", "❤️", "🔥", "🎉",
+  "👏", "🙏", "💯", "✅", "❌", "⭐", "🤔", "😮", "😢", "🥳", "💪", "👀",
+  "🙌", "💡", "📰", "🌍", "⚽", "🏀", "🎵", "☀️", "🌧️", "🍕", "☕", "🚀",
+];
 
 const PLACEHOLDER_AVATAR = "https://ui-avatars.com/api/?name=User&background=0f172a&color=ffffff";
 const POST_PLACEHOLDER_IMG = "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE=";
 
 // Emoji data fetched from the same CDN that emoji-picker-react uses
 let _emojiDataCache = null;
+function buildEmojiCategories(data) {
+  const emojiMap = data?.emojis || {};
+  return (data?.categories || [])
+    .map((cat) => ({
+      id: cat.id,
+      label: cat.name || cat.id,
+      emojis: (cat.emojis || [])
+        .map((emojiId) => {
+          const entry = emojiMap[emojiId];
+          if (!entry) return null;
+          const native = getNativeEmoji(entry.skins);
+          if (!native) return null;
+          return {
+            id: entry.id || emojiId,
+            name: entry.name,
+            native,
+            keywords: entry.keywords || [],
+          };
+        })
+        .filter(Boolean),
+    }))
+    .filter((cat) => cat.emojis.length > 0);
+}
+
 async function loadEmojiData() {
   if (_emojiDataCache) return _emojiDataCache;
   try {
-    const res = await fetch(EMOJI_DATA_CDN);
+    const res = await fetch(EMOJI_DATA_URL);
     if (!res.ok) throw new Error("Failed to load emoji data");
-    _emojiDataCache = await res.json();
-    return _emojiDataCache;
+    const data = await res.json();
+    _emojiDataCache = data;
+    return data;
   } catch (e) {
     console.warn("Emoji data load failed, using fallback:", e.message);
-    _emojiDataCache = { categories: [] };
+    _emojiDataCache = {
+      categories: [{ id: "common", name: "Common", emojis: COMMON_EMOJIS.map((_, idx) => `common_${idx}`) }],
+      emojis: Object.fromEntries(
+        COMMON_EMOJIS.map((native, idx) => [
+          `common_${idx}`,
+          { id: `common_${idx}`, name: native, skins: [{ native }], keywords: [] },
+        ])
+      ),
+    };
     return _emojiDataCache;
   }
+}
+
+function resolveMediaUrl(url) {
+  if (!url) return null;
+  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("file://")) {
+    return url;
+  }
+  return `${API_CONFIG.baseURL}${url.startsWith("/") ? url : `/${url}`}`;
 }
 
 // Extract native emoji from a skin entry
 function getNativeEmoji(skins) {
   if (!skins || skins.length === 0) return null;
   return skins[0]?.native || null;
+}
+
+function getGifPreviewUrl(gif) {
+  return (
+    gif?.images?.fixed_height?.url
+    || gif?.images?.downsized?.url
+    || gif?.images?.original?.url
+    || null
+  );
 }
 
 function shorten(text, max = 45) {
@@ -90,9 +153,30 @@ function insertReplyIntoTree(nodes, parentCommentId, createdReply) {
 }
 
 // ─── Comment Item ───────────────────────────────────────────
-function CommentItem({ comment, depth = 0, onReply, voteComment, onPreviewAttachment }) {
+function CommentItem({ comment, depth = 0, onReply, voteComment, onPreviewAttachment, darkMode, uiLang, t }) {
   const [showReplies, setShowReplies] = useState(true);
   const hasReplies = (comment.replies || []).length > 0;
+  const commentLang = detectItemLanguage(comment);
+  const needsCommentTranslation = itemNeedsTranslation(comment, uiLang);
+  const [translatedComment, setTranslatedComment] = useState(null);
+  const [showTranslatedComment, setShowTranslatedComment] = useState(false);
+  const [isTranslatingComment, setIsTranslatingComment] = useState(false);
+
+  const handleTranslateComment = async () => {
+    if (showTranslatedComment) {
+      setShowTranslatedComment(false);
+      return;
+    }
+    if (!needsCommentTranslation || !comment.content) return;
+    setIsTranslatingComment(true);
+    try {
+      const result = await translateText(comment.content, commentLang, getTranslationTargetLang(uiLang));
+      setTranslatedComment(result);
+      setShowTranslatedComment(true);
+    } finally {
+      setIsTranslatingComment(false);
+    }
+  };
 
   return (
     <View style={[styles.commentItem, depth > 0 && styles.replyItem]}>
@@ -106,7 +190,17 @@ function CommentItem({ comment, depth = 0, onReply, voteComment, onPreviewAttach
             <Text style={[styles.commentTime, { color: th(darkMode, dc.muted, "#94a3b8") }]}>{timeAgo(comment.createdAt)}</Text>
           </View>
 
-          <Text style={[styles.commentContent, { color: th(darkMode, dc.textSecondary, "#334155") }]}>{comment.content}</Text>
+          <Text style={[styles.commentContent, { color: th(darkMode, dc.textSecondary, "#334155") }]}>
+            {showTranslatedComment && translatedComment ? translatedComment : comment.content}
+          </Text>
+
+          {needsCommentTranslation && comment.content ? (
+            <TouchableOpacity onPress={handleTranslateComment} disabled={isTranslatingComment}>
+              <Text style={[styles.translateCommentBtn, { color: th(darkMode, dc.muted, "#64748b") }]}>
+                {isTranslatingComment ? t("translating") : showTranslatedComment ? t("viewOriginal") : getTranslateButtonLabel(uiLang, t)}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
 
           {comment.attachmentUrl ? (
             <TouchableOpacity
@@ -118,7 +212,7 @@ function CommentItem({ comment, depth = 0, onReply, voteComment, onPreviewAttach
                   <Text style={styles.videoPlaceholderText}>🎥 Video Attachment</Text>
                 </View>
               ) : (
-                <Image source={{ uri: comment.attachmentUrl }} style={styles.commentAttachment} resizeMode="cover" />
+                <Image source={{ uri: resolveMediaUrl(comment.attachmentUrl) }} style={styles.commentAttachment} resizeMode="cover" />
               )}
             </TouchableOpacity>
           ) : null}
@@ -165,6 +259,9 @@ function CommentItem({ comment, depth = 0, onReply, voteComment, onPreviewAttach
               onReply={onReply}
               voteComment={voteComment}
               onPreviewAttachment={onPreviewAttachment}
+              darkMode={darkMode}
+              uiLang={uiLang}
+              t={t}
             />
           ))}
         </View>
@@ -186,17 +283,7 @@ function EmojiPickerPanel({ onSelect, onClose }) {
     let cancelled = false;
     loadEmojiData().then((data) => {
       if (cancelled) return;
-      const cats = (data.categories || []).map((cat) => ({
-        id: cat.id,
-        label: cat.name || cat.id,
-        emojis: (cat.emojis || []).map((e) => ({
-          id: e.id,
-          name: e.name,
-          native: getNativeEmoji(e.skins),
-          keywords: e.keywords || [],
-        })).filter((e) => e.native),
-      }));
-      setCategories(cats);
+      setCategories(buildEmojiCategories(data));
       setLoading(false);
     });
     return () => { cancelled = true; };
@@ -263,22 +350,24 @@ function EmojiPickerPanel({ onSelect, onClose }) {
       {loading ? (
         <ActivityIndicator style={{ padding: 20 }} size="small" color="#64748b" />
       ) : (
-        <FlatList
-          data={displayEmojis}
-          numColumns={8}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.emojiGridInner}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.emojiItem} onPress={() => onSelect(item.native)}>
-              <Text style={styles.emojiChar}>{item.native}</Text>
-            </TouchableOpacity>
-          )}
-          ListEmptyComponent={
-            <Text style={{ textAlign: "center", color: "#94a3b8", padding: 16, fontSize: 13 }}>
-              No emojis found
-            </Text>
-          }
-        />
+        <ScrollView style={styles.emojiGridScroll} nestedScrollEnabled keyboardShouldPersistTaps="handled">
+          <View style={styles.emojiGridInner}>
+            {displayEmojis.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.emojiItem}
+                onPress={() => onSelect(item.native)}
+              >
+                <Text style={styles.emojiChar}>{item.native}</Text>
+              </TouchableOpacity>
+            ))}
+            {displayEmojis.length === 0 ? (
+              <Text style={{ textAlign: "center", color: "#94a3b8", padding: 16, fontSize: 13, width: "100%" }}>
+                No emojis found
+              </Text>
+            ) : null}
+          </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -333,17 +422,19 @@ function GifPickerPanel({ onSelect, onClose }) {
       {loading ? (
         <ActivityIndicator style={{ padding: 20 }} size="small" color="#64748b" />
       ) : (
-        <FlatList
-          data={gifs}
-          numColumns={3}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.gifGrid}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.gifItem} onPress={() => onSelect(item)}>
-              <Image source={{ uri: item.images?.fixed_height?.url }} style={styles.gifImage} />
-            </TouchableOpacity>
-          )}
-        />
+        <ScrollView style={styles.gifGridScroll} nestedScrollEnabled keyboardShouldPersistTaps="handled">
+          <View style={styles.gifGrid}>
+            {gifs.map((item) => {
+              const previewUrl = getGifPreviewUrl(item);
+              if (!previewUrl) return null;
+              return (
+                <TouchableOpacity key={item.id} style={styles.gifItem} onPress={() => onSelect(item)}>
+                  <Image source={{ uri: previewUrl }} style={styles.gifImage} />
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -353,6 +444,8 @@ function GifPickerPanel({ onSelect, onClose }) {
 export default function PostCommentsModal({ post, visible, onClose }) {
   const { session } = useSession();
   const { darkMode } = useTheme();
+  const { t, i18n } = useTranslation();
+  const uiLang = i18n.language;
   const canComment = session?.type === "REGISTERED" || session?.type === "EDITOR";
 
   const [sortBy, setSortBy] = useState("recency");
@@ -368,10 +461,8 @@ export default function PostCommentsModal({ post, visible, onClose }) {
   const [submitting, setSubmitting] = useState(false);
 
   const authFetch = async (url, options = {}) => {
-    if (!options.method || options.method === "GET") {
-      await ensureUserInitialized();
-    }
-    const token = session?.token || (await getToken());
+    const activeSession = session?.token ? session : await ensureUserInitialized();
+    const token = activeSession?.token || (await getToken());
     const headers = {
       ...(options.headers || {}),
       Authorization: `Bearer ${token}`,
@@ -439,13 +530,49 @@ export default function PostCommentsModal({ post, visible, onClose }) {
     if (visible) loadComments();
   }, [sortBy, post?.id, visible]);
 
-  const readFileAsDataUrl = (uri) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      // For RN, we use the uri directly as base64 via expo-file-system
-      // For simplicity, send the URI directly for now
-      resolve(uri);
+  const uploadAttachmentFile = async (asset) => {
+    const mimeType = asset.type || "image/jpeg";
+    const endpoint = mimeType.startsWith("video/")
+      ? `${API_CONFIG.baseURL}/api/upload/video`
+      : `${API_CONFIG.baseURL}/api/upload/image`;
+    const token = session?.token || (await getToken());
+
+    // Expo's fetch cannot serialize RN file FormData parts ({ uri, name, type }).
+    // XMLHttpRequest uses the native networking stack which still supports them.
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", endpoint);
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+      xhr.onload = () => {
+        try {
+          if (xhr.status < 200 || xhr.status >= 300) {
+            reject(new Error(`Failed to upload attachment (${xhr.status})`));
+            return;
+          }
+          const data = JSON.parse(xhr.responseText);
+          if (!data.url) {
+            reject(new Error("Upload response missing URL"));
+            return;
+          }
+          resolve(data.url);
+        } catch (err) {
+          reject(err);
+        }
+      };
+
+      xhr.onerror = () => reject(new Error("Failed to upload attachment"));
+      xhr.onabort = () => reject(new Error("Upload cancelled"));
+
+      const formData = new FormData();
+      formData.append("file", {
+        uri: asset.uri,
+        name: asset.name || (mimeType.startsWith("video/") ? "upload.mp4" : "upload.jpg"),
+        type: mimeType,
+      });
+      xhr.send(formData);
     });
+  };
 
   const submitComment = async ({ content, parentCommentId = null }) => {
     const trimmed = (content || "").trim();
@@ -460,8 +587,8 @@ export default function PostCommentsModal({ post, visible, onClose }) {
         attachmentUrl = attachment.url;
         attachmentType = "gif";
       } else if (attachment?.kind === "file") {
-        attachmentUrl = attachment.uri;
-        attachmentType = attachment.type?.startsWith("video/") ? "video" : "image";
+        attachmentUrl = await uploadAttachmentFile(attachment);
+        attachmentType = (attachment.type || "").startsWith("video/") ? "video" : "image";
       }
       const res = await authFetch(`${API_CONFIG.baseURL}/api/comments`, {
         method: "POST",
@@ -523,12 +650,11 @@ export default function PostCommentsModal({ post, visible, onClose }) {
         kind: "file",
         uri: asset.uri,
         name: asset.fileName || "attachment",
-        type: asset.mimeType || "image",
+        type: asset.mimeType || "image/jpeg",
       });
     }
   };
 
-  const { t } = useTranslation();
   const SORT_OPTIONS = [
     { value: "recency", label: t("sortRecency") },
     { value: "newest", label: t("sortNewest") },
@@ -624,6 +750,9 @@ export default function PostCommentsModal({ post, visible, onClose }) {
                       onReply={setReplyingTo}
                       voteComment={voteComment}
                       onPreviewAttachment={setPreviewAttachment}
+                      darkMode={darkMode}
+                      uiLang={uiLang}
+                      t={t}
                     />
                   ))
                 )}
@@ -665,7 +794,9 @@ export default function PostCommentsModal({ post, visible, onClose }) {
                 {showGifPicker ? (
                   <GifPickerPanel
                     onSelect={(gif) => {
-                      setAttachment({ kind: "gif", url: gif.images?.original?.url, name: gif.title || "GIF" });
+                      const url = getGifPreviewUrl(gif);
+                      if (!url) return;
+                      setAttachment({ kind: "gif", url, name: gif.title || "GIF" });
                       setShowGifPicker(false);
                     }}
                     onClose={() => setShowGifPicker(false)}
@@ -735,7 +866,7 @@ export default function PostCommentsModal({ post, visible, onClose }) {
                 <Text style={{ padding: 20, textAlign: "center" }}>Video attachment preview</Text>
               ) : (
                 <Image
-                  source={{ uri: previewAttachment.url }}
+                  source={{ uri: resolveMediaUrl(previewAttachment.url) }}
                   style={styles.lightboxImage}
                   resizeMode="contain"
                 />
@@ -792,13 +923,14 @@ const styles = StyleSheet.create({
   // Comment Item
   commentItem: { marginBottom: 16 },
   replyItem: { marginLeft: 24, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: "#e2e8f0" },  // dark via inline
-  commentRow: { flexDirection: "flex-start" },
+  commentRow: { flexDirection: "row" },
   commentAvatar: { width: 36, height: 36, borderRadius: 18, marginRight: 10, marginTop: 2 },
   commentBody: { flex: 1 },
   commentHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 },
   commentAuthor: { fontSize: 14, fontWeight: "600", color: "#0b1a2b" },
   commentTime: { fontSize: 12, color: "#94a3b8" },
   commentContent: { fontSize: 14, color: "#334155", lineHeight: 20, marginBottom: 6 },
+  translateCommentBtn: { fontSize: 12, fontWeight: "600", marginBottom: 6 },
 
   // Attachment
   attachmentBtn: { marginTop: 4, marginBottom: 6 },
@@ -851,6 +983,7 @@ const styles = StyleSheet.create({
   emojiCloseBtn: { width: 32, height: 32, justifyContent: "center", alignItems: "center" },
   emojiCloseText: { fontSize: 16, color: "#6e869a" },
   emojiGrid: { maxHeight: 220 },
+  emojiGridScroll: { maxHeight: 220 },
   emojiGridInner: { flexDirection: "row", flexWrap: "wrap", padding: 4 },
   emojiItem: { width: "12.5%", aspectRatio: 1, justifyContent: "center", alignItems: "center" },
   emojiChar: { fontSize: 22 },
@@ -859,8 +992,9 @@ const styles = StyleSheet.create({
   gifPicker: { backgroundColor: "#f8faff", borderRadius: 12, borderWidth: 1, borderColor: "#e2e8f0", marginBottom: 8, maxHeight: 280 },
   gifHeader: { flexDirection: "row", alignItems: "center", padding: 8, gap: 8, borderBottomWidth: 1, borderBottomColor: "#e2e8f0" },
   gifSearchInput: { flex: 1, borderWidth: 1, borderColor: "#e2e8f0", borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6, fontSize: 14, color: "#0b1a2b", backgroundColor: "#fff" },
-  gifGrid: { padding: 4 },
-  gifItem: { flex: 1, margin: 2, borderRadius: 8, overflow: "hidden" },
+  gifGridScroll: { maxHeight: 280 },
+  gifGrid: { flexDirection: "row", flexWrap: "wrap", padding: 4 },
+  gifItem: { width: "33.33%", padding: 2, borderRadius: 8, overflow: "hidden" },
   gifImage: { width: "100%", height: 100 },
 
   // Lightbox

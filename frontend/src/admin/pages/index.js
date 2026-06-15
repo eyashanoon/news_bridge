@@ -1,0 +1,11 @@
+export { default as DashboardPage } from "./DashboardPage";
+export { default as AdminsPage } from "./AdminsPage";
+export { default as UsersPage } from "./UsersPage";
+export { default as EditorsPage } from "./EditorsPage";
+export { default as EditorDetailPage } from "./EditorDetailPage";
+export { default as ArticlesPage } from "./ArticlesPage";
+export { default as SourcesPage } from "./SourcesPage";
+export { default as EditorRequestsPage } from "./EditorRequestsPage";
+export { default as CrawlerPage } from "./CrawlerPage";
+export { default as TopicsFieldsPage } from "./TopicsFieldsPage";
+export { default as TelegramPage } from "./TelegramPage";

@@ -21,6 +21,13 @@ import {
 import { categoryTheme } from "../utils/categoryColors";
 import { useTheme } from "../context/ThemeContext";
 import { useTranslation } from "react-i18next";
+import {
+  detectItemLanguage,
+  needsTranslation as itemNeedsTranslation,
+  getTranslationTargetLang,
+  getTranslateButtonLabel,
+} from "../utils/languageUtils";
+import { translateText } from "../utils/translateUtils";
 
 // ─── Helpers ─────────────────────────────────────────────────
 function timeAgo(timestamp, lang) {
@@ -133,9 +140,11 @@ export default function SavedNewsPage({ navigation }) {
   };
 
   // ─── Loading ─────────────────────────────────────────────
+  const isRtl = i18n.language === "ar";
+
   if (loading) {
     return (
-      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
         <TopBar navigation={navigation} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#3b82f6" />
@@ -148,7 +157,7 @@ export default function SavedNewsPage({ navigation }) {
   // ─── Empty state ──────────────────────────────────────────
   if (savedPosts.length === 0) {
     return (
-      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
         <TopBar navigation={navigation} />
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
            <Text style={[styles.pageTitle, { color: th(darkMode, dc.text, "#0b1a2b") }]}>{t("savedNews")}</Text>
@@ -171,7 +180,7 @@ export default function SavedNewsPage({ navigation }) {
   const colName = selectedCollection ? collections.find((c) => c.id === selectedCollection)?.name : null;
 
   return (
-    <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+    <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
       <TopBar navigation={navigation} />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {/* Header */}
@@ -427,9 +436,40 @@ export default function SavedNewsPage({ navigation }) {
 function SavedPostCard({ post, collections, onUnsave, onOpen, pickerPostId, setPickerPostId, editingNoteId, setEditingNoteId, noteText, setNoteText, refreshData, darkMode, lang }) {
   const { t } = useTranslation();
   const [localNote, setLocalNote] = useState(post.note || "");
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translatedTitle, setTranslatedTitle] = useState(null);
+  const [translatedText, setTranslatedText] = useState(null);
+  const [showTranslated, setShowTranslated] = useState(false);
+  const postLang = detectItemLanguage(post);
+  const needsTranslation = itemNeedsTranslation(post, lang);
   const colors = categoryTheme[post.label]?.light || categoryTheme.General.light;
   const isEditingNote = editingNoteId === post.id;
   const isPickerOpen = pickerPostId === post.id;
+
+  const handleTranslate = async (e) => {
+    e?.stopPropagation?.();
+    if (showTranslated) {
+      setShowTranslated(false);
+      return;
+    }
+    if (!needsTranslation) return;
+    setIsTranslating(true);
+    try {
+      const targetLang = getTranslationTargetLang(lang);
+      if (post.title) {
+        setTranslatedTitle(await translateText(post.title, postLang, targetLang) || post.title);
+      }
+      if (post.text) {
+        setTranslatedText(await translateText(post.text, postLang, targetLang) || post.text);
+      }
+      setShowTranslated(true);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const displayTitle = showTranslated && translatedTitle ? translatedTitle : post.title;
+  const displayText = showTranslated && translatedText ? translatedText : (post.text || "");
 
   return (
     <TouchableOpacity activeOpacity={0.85} style={[styles.card, { backgroundColor: th(darkMode, dc.surface, "#fff"), borderColor: th(darkMode, dc.border, "#e2e8f0") }]} onPress={() => onOpen(post)}>
@@ -460,8 +500,16 @@ function SavedPostCard({ post, collections, onUnsave, onOpen, pickerPostId, setP
       )}
 
       {/* Title & text */}
-      {post.title ? <Text style={[styles.cardTitle, { color: th(darkMode, dc.text, "#0b1a2b") }]}>{post.title}</Text> : null}
-      {post.text ? <Text style={[styles.cardText, { color: th(darkMode, dc.textSecondary, "#3d5468") }]} numberOfLines={3}>{post.text}</Text> : null}
+      {displayTitle ? <Text style={[styles.cardTitle, { color: th(darkMode, dc.text, "#0b1a2b") }]}>{displayTitle}</Text> : null}
+      {displayText ? <Text style={[styles.cardText, { color: th(darkMode, dc.textSecondary, "#3d5468") }]} numberOfLines={3}>{displayText}</Text> : null}
+
+      {needsTranslation && (
+        <TouchableOpacity onPress={handleTranslate} disabled={isTranslating}>
+          <Text style={[styles.translateBtn, { color: th(darkMode, dc.muted, "#64748b") }]}>
+            {isTranslating ? t("translating") : showTranslated ? t("viewOriginal") : getTranslateButtonLabel(lang, t)}
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {/* Editor info */}
       {post.isTopicPost && post.authorName && (
@@ -684,6 +732,7 @@ const styles = StyleSheet.create({
   topicTag: { fontSize: 11, fontWeight: "500", paddingHorizontal: 8, paddingVertical: 2, borderRadius: 9999, overflow: "hidden" },
   cardTitle: { fontSize: 16, fontWeight: "700", marginBottom: 4 },
   cardText: { fontSize: 14, lineHeight: 20, marginBottom: 8 },
+  translateBtn: { fontSize: 12, fontWeight: "600", marginBottom: 8 },
   authorRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 },
   authorIcon: { fontSize: 14 },
   authorName: { fontSize: 13, fontWeight: "600" },

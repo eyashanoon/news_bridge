@@ -11,6 +11,8 @@ import java.util.List;
 public interface EditorRequestRepository extends JpaRepository<EditorRequest, Long> {
     List<EditorRequest> findByUserEmail(String email);
 
+    java.util.Optional<EditorRequest> findFirstByUser_IdAndStatusOrderByUpdatedAtDesc(Long userId, String status);
+
     long countByStatus(String status);
 
     @Query("SELECT DISTINCT r FROM EditorRequest r LEFT JOIN FETCH r.fields ORDER BY r.status ASC")

@@ -31,8 +31,10 @@ Summary of changes made to wire Avatar Studio into **news-feed** and fix TTS / R
 - `rhubarb.js` silently fell back to **energy-based** mouth animation
 
 **Fix:**
-- Downloaded full package → `news-feed/tools/Rhubarb-Lip-Sync-1.14.0-Windows/`  
-  (`rhubarb.exe` + `res/sphinx/acoustic-model/`)
+- Downloaded full packages:
+  - Linux: `news-feed/tools/Rhubarb-Lip-Sync-1.14.0-Linux/` (`rhubarb` + `res/`)
+  - Windows: `news-feed/tools/Rhubarb-Lip-Sync-1.14.0-Windows/` (`rhubarb.exe` + `res/`)
+- `avatarStudioApi.js` picks the platform binary first (Linux on Linux, Windows on Windows)
 - Server converts **MP3 → WAV** with `audio-decode` before running Rhubarb
 - `rhubarb.js`: POST the **TTS MP3 blob** to `/api/rhubarb`; **throw** on failure (no energy fallback)
 - `main.js`: status text `Analyzing lip sync…` during Rhubarb
@@ -83,7 +85,9 @@ Uses existing CSS: `.modal-overlay`, `.avatar-modal-content`, `.avatar-modal-clo
 | `src/pages/HomePage.jsx` | Popup wiring |
 | `public/avatar-studio/public/test.html` | Lab UI + styles |
 | `public/avatar-studio/public/test.js` | Lab logic + Rhubarb import |
-| `tools/Rhubarb-Lip-Sync-1.14.0-Windows/` | **New** — full Rhubarb distribution (~85 MB) |
+| `tools/Rhubarb-Lip-Sync-1.14.0-Linux/` | **New** — full Rhubarb distribution (Linux) |
+| `tools/Rhubarb-Lip-Sync-1.14.0-Windows/` | **New** — full Rhubarb distribution (Windows) |
+| `avatar-studio-component/public/rhubarb.js` | Source: Rhubarb-only lip-sync (no energy fallback) |
 
 ---
 

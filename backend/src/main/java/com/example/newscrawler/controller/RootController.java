@@ -75,7 +75,7 @@ public class RootController {
 
     // ── Discovery tools ────────────────────────────────────────────────────
 
-    /** Verify site credibility via the NewsGuard API. */
+    /** Verify site credibility via open-source evaluation APIs and datasets. */
     @PostMapping("/{id}/verify")
     public NewsGuardVerifyResponse verify(@PathVariable Long id) {
         return rootDiscoveryService.verify(id);

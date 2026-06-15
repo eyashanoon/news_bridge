@@ -1,6 +1,10 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3307/news_crawler_new?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    url: ${DB_URL:jdbc:mysql://localhost:3307/news_crawler?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
     username: ${DB_USERNAME:news_user}
     password: ${DB_PASSWORD:news_pass}
   jpa:
@@ -13,16 +17,19 @@ spring:
         format_sql: true
 
   mail:
-    host: ${MAIL_HOST:localhost}
-    port: ${MAIL_PORT:1025}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:adamqobbajtv@gmail.com}
+    password: ${MAIL_PASSWORD:mvih padc laxo xmzx}
     properties:
       mail:
         smtp:
-          auth: false
+          auth: true
           starttls:
-            enable: false
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
   security:
     jwt:
@@ -30,6 +37,10 @@ spring:
       expiration: ${JWT_EXPIRATION:86400000}
 
 app:
+  upload:
+    dir: ${UPLOAD_DIR:uploads}
+  mail:
+    dev-log-only: ${MAIL_DEV_LOG_ONLY:false}
   bootstrap:
     owner-email: owner@news.local
     owner-password: change-me
@@ -44,9 +55,18 @@ telegram-crawler:
   server:
     base-url: ${TELEGRAM_CRAWLER_BASE_URL:http://localhost:8200}
 
+tag:
+  service:
+    base-url: ${TAG_SERVICE_BASE_URL:http://localhost:8001}
+
 wayback:
   api:
     cdx-url: ${WAYBACK_CDX_URL:https://web.archive.org/cdx/search/cdx}
+
+verification:
+  mbfc-ratings-url: ${VERIFICATION_MBFC_URL:https://raw.githubusercontent.com/drmikecrowe/mbfcext/main/docs/v3/combined.json}
+  opensources-url: ${VERIFICATION_OPENSOURCES_URL:https://raw.githubusercontent.com/BigMcLargeHuge/opensources/master/sources/sources.json}
+  tranco-api-url: ${VERIFICATION_TRANCO_URL:https://tranco-list.eu/api/ranks/domain}
 
 endpoint-discovery:
   server:

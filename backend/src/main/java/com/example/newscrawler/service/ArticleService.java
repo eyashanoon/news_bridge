@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -127,7 +128,10 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public PagedResponse<ArticleListItemResponse> findForAdmin(Long rootId, Long endpointId, String search, int page, int size) {
-        Pageable pageable = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 200));
+        Pageable pageable = PageRequest.of(
+                Math.max(page, 0),
+                Math.min(Math.max(size, 1), 200),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
         Specification<Article> spec = Specification.where(null);
 
         if (rootId != null) {
@@ -233,10 +237,12 @@ public class ArticleService {
         return toResponse(articleRepository.save(article));
     }
 
+    @Transactional
     public void delete(Long id) {
         if (!articleRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Article not found");
         }
+        postService.deletePostsForArticle(id);
         articleRepository.deleteById(id);
     }
 

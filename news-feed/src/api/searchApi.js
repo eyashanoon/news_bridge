@@ -283,6 +283,14 @@ async function fetchAllPostsForSearch() {
     return "";
   })();
 
+  const langParam = (() => {
+    try {
+      const lang = localStorage.getItem("newsbridge_lang") || "en";
+      return `&lang=${encodeURIComponent(lang)}`;
+    } catch {}
+    return "&lang=en";
+  })();
+
   const allPosts = [];
   const seen = new Set();
   const MAX_PAGES = 20;
@@ -291,7 +299,7 @@ async function fetchAllPostsForSearch() {
   // Fetch multiple pages of general feed
   for (let p = 0; p < MAX_PAGES; p++) {
     try {
-      const res = await apiFetch(`/api/feed?userId=${userId}&limit=${PAGE_SIZE}&page=${p}${locParams}`);
+      const res = await apiFetch(`/api/feed?userId=${userId}&category=General&limit=${PAGE_SIZE}&page=${p}${locParams}${langParam}`);
       if (!res.ok) break;
       const posts = await res.json();
       if (!Array.isArray(posts) || posts.length === 0) break;
@@ -311,7 +319,7 @@ async function fetchAllPostsForSearch() {
   const categories = ["General", "Politics", "Sports", "Finance", "Medical", "Tech", "Culture", "Religion"];
   for (const cat of categories) {
     try {
-      const res = await apiFetch(`/api/feed?userId=${userId}&category=${cat}&limit=50&page=0${locParams}`);
+      const res = await apiFetch(`/api/feed?userId=${userId}&category=${cat}&limit=50&page=0${locParams}${langParam}`);
       if (!res.ok) continue;
       const posts = await res.json();
       if (!Array.isArray(posts)) continue;

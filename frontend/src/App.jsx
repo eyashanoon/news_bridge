@@ -1,9 +1,21 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import SiteLayout from "./components/SiteLayout";
-import AdminLayout from "./components/AdminLayout";
+import AdminLayout from "./admin/layout/AdminLayout";
 import { useSession } from "./context/SessionContext";
-import AdminPage from "./pages/AdminPage";
+import DashboardPage from "./admin/pages/DashboardPage";
+import AdminsPage from "./admin/pages/AdminsPage";
+import UsersPage from "./admin/pages/UsersPage";
+import ArticlesPage from "./admin/pages/ArticlesPage";
+import SourcesPage from "./admin/pages/SourcesPage";
+import EditorRequestsPage from "./admin/pages/EditorRequestsPage";
+import EditorsPage from "./admin/pages/EditorsPage";
+import EditorDetailPage from "./admin/pages/EditorDetailPage";
+import CrawlerPage from "./admin/pages/CrawlerPage";
+import TopicsFieldsPage from "./admin/pages/TopicsFieldsPage";
+import TelegramPage from "./admin/pages/TelegramPage";
+import TelegramChannelDetailPage from "./admin/pages/TelegramChannelDetailPage";
+import TelegramPostDetailPage from "./admin/pages/TelegramPostDetailPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AuthPage from "./pages/AuthPage";
 import CmsPage from "./pages/CmsPage";
@@ -30,19 +42,22 @@ export default function App() {
       <Route path="/admin">
         <Route path="login" element={<AdminLoginPage />} />
         <Route element={isAdmin ? <AdminLayout /> : <Navigate to="/admin/login" replace />}>
-            <Route index element={<AdminPage />} />
-            <Route path="admins" element={<AdminPage target="admins" />} />
-            <Route path="users" element={<AdminPage target="users" />} />
-            <Route path="articles" element={<AdminPage target="articles" />} />
-            <Route path="roots" element={<AdminPage target="roots" />} />
-            <Route path="endpoints" element={<AdminPage target="endpoints" />} />
-            <Route path="editor-requests" element={<AdminPage target="editor-requests" />} />
-            <Route path="crawler" element={<AdminPage target="crawler" />} />
-            <Route path="fields" element={<AdminPage target="fields" />} />
-            <Route path="events" element={<AdminPage target="events" />} />
-            <Route path="topics" element={<AdminPage target="topics" />} />
-        <Route path="telegram" element={<AdminPage target="telegram" />} />
-            <Route path="events/:id" element={<EventDetailPage />} />
+            <Route index element={<DashboardPage />} />
+            <Route path="admins" element={<AdminsPage />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="editors" element={<EditorsPage />} />
+            <Route path="editors/:id" element={<EditorDetailPage />} />
+            <Route path="articles" element={<ArticlesPage />} />
+            <Route path="roots" element={<SourcesPage section="roots" />} />
+            <Route path="endpoints" element={<SourcesPage section="endpoints" />} />
+            <Route path="editor-requests" element={<EditorRequestsPage />} />
+            <Route path="crawler" element={<CrawlerPage />} />
+            <Route path="fields" element={<TopicsFieldsPage section="fields" />} />
+            <Route path="topics" element={<TopicsFieldsPage section="topics" />} />
+            <Route path="telegram" element={<TelegramPage />} />
+            <Route path="telegram/channels/:channelId" element={<TelegramChannelDetailPage />} />
+            <Route path="telegram/posts/:postId" element={<TelegramPostDetailPage />} />
+            <Route path="topics/:id" element={<EventDetailPage />} />
         </Route>
       </Route>
 

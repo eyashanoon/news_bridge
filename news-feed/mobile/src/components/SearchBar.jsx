@@ -56,8 +56,8 @@ function SearchResultCard({ post, onPress, darkMode }) {
     <TouchableOpacity style={[styles.resultItem, { borderBottomColor: th(darkMode, dc.subtle, "#f1f5f9") }]} onPress={() => onPress(post)} activeOpacity={0.8}>
       <View style={[styles.resultDot, { backgroundColor: theme.accent }]} />
       <View style={styles.resultContent}>
-        <Text style={styles.resultTitle} numberOfLines={1}>{post.title || "Untitled"}</Text>
-        <Text style={styles.resultPreview} numberOfLines={2}>{truncate(post.text)}</Text>
+          <Text style={[styles.resultTitle, { color: th(darkMode, dc.text, "#0b1a2b") }]} numberOfLines={1}>{post.title || "Untitled"}</Text>
+        <Text style={[styles.resultPreview, { color: th(darkMode, dc.textSecondary, "#3d5468") }]} numberOfLines={2}>{truncate(post.text)}</Text>
 
         {imageCount > 0 ? (
           <View style={styles.resultImages}>
@@ -80,12 +80,12 @@ function SearchResultCard({ post, onPress, darkMode }) {
               <Text style={[styles.resultCategoryText, { color: theme.pillText }]}>{post.label}</Text>
             </View>
           ) : null}
-          <Text style={styles.resultTime}>{formatRelativeTime(post.articleCreatedAt)}</Text>
-          {post.lang ? <Text style={styles.resultLang}>{post.lang}</Text> : null}
+          <Text style={[styles.resultTime, { color: th(darkMode, dc.muted, "#6e869a") }]}>{formatRelativeTime(post.articleCreatedAt)}</Text>
+          {post.lang ? <Text style={[styles.resultLang, { color: th(darkMode, dc.textSecondary, "#64748b"), backgroundColor: th(darkMode, dc.subtle, "#f1f5f9") }]}>{post.lang}</Text> : null}
           {post.tags?.length > 0 ? (
             <View style={styles.resultTags}>
               {post.tags.slice(0, 2).map((tag, idx) => (
-                <Text key={idx} style={styles.resultTag}>#{tag}</Text>
+                <Text key={idx} style={[styles.resultTag, { color: th(darkMode, dc.textSecondary, "#64748b") }]}>#{tag}</Text>
               ))}
             </View>
           ) : null}
@@ -138,7 +138,7 @@ export default function SearchBar({ onPostPress, onAdvancedSearch }) {
         />
         {query.length > 0 ? (
           <TouchableOpacity onPress={() => { setQuery(""); setResults([]); setShowResults(false); }}>
-            <Text style={styles.clearBtn}>✕</Text>
+           <Text style={[styles.clearBtn, { color: th(darkMode, dc.muted, "#6e869a") }]}>✕</Text>
           </TouchableOpacity>
         ) : null}
         <TouchableOpacity onPress={onAdvancedSearch} style={styles.advancedBtn}>

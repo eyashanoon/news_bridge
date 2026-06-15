@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">News Bridge</string>
-    <string name="feed">Feed</string>
-    <string name="refresh">Refresh</string>
-    <string name="loading">Loading...</string>
-    <string name="error">Error</string>
-    <string name="retry">Retry</string>
-    <string name="open_source">Open Source</string>
-</resources>

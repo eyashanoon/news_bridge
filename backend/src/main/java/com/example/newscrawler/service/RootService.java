@@ -21,15 +21,18 @@ public class RootService {
     private final RootRepository rootRepository;
     private final EndpointRepository endpointRepository;
     private final EndpointService endpointService;
+    private final CrawlerSyncService crawlerSyncService;
 
     public RootService(
             RootRepository rootRepository,
             EndpointRepository endpointRepository,
-            EndpointService endpointService
+            EndpointService endpointService,
+            CrawlerSyncService crawlerSyncService
     ) {
         this.rootRepository = rootRepository;
         this.endpointRepository = endpointRepository;
         this.endpointService = endpointService;
+        this.crawlerSyncService = crawlerSyncService;
     }
 
     public RootResponse create(CreateRootRequest request) {
@@ -84,7 +87,9 @@ public class RootService {
         if (parsedStatus == RecordStatus.SUSPENDED) {
             endpointRepository.findByRootId(id).forEach(endpoint -> endpoint.setStatus(RecordStatus.SUSPENDED));
         }
-        return toResponse(rootRepository.save(root));
+        RootResponse response = toResponse(rootRepository.save(root));
+        crawlerSyncService.notifyEndpointPoolChanged();
+        return response;
     }
 
     @Transactional

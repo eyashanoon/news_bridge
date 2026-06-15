@@ -3,19 +3,20 @@ import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
 import { dark as dc, th } from "../utils/darkColors";
+import { switchLanguage } from "../i18n/i18n";
 
 export default function LanguageToggle({ size = 36 }) {
   const { i18n } = useTranslation();
   const { darkMode } = useTheme();
 
-  const switchLang = () => {
+  const handleSwitchLang = () => {
     const newLang = i18n.language === "en" ? "ar" : "en";
-    i18n.changeLanguage(newLang);
+    switchLanguage(newLang);
   };
 
   return (
     <TouchableOpacity
-      onPress={switchLang}
+      onPress={handleSwitchLang}
       style={[
         styles.button,
         {

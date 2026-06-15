@@ -1,13 +1,20 @@
 package com.example.newscrawler.controller;
 
 import com.example.newscrawler.dto.*;
+import com.example.newscrawler.entity.AppUser;
 import com.example.newscrawler.entity.EditorUser;
+import com.example.newscrawler.entity.ReactionType;
 import com.example.newscrawler.entity.RegisteredUser;
+import com.example.newscrawler.entity.TopicPost;
 import com.example.newscrawler.entity.UserRole;
 import com.example.newscrawler.repository.EditorUserRepository;
 import com.example.newscrawler.repository.RegisteredUserRepository;
+import com.example.newscrawler.repository.TopicPostRepository;
+import com.example.newscrawler.service.AppUserResolver;
 import com.example.newscrawler.service.TopicEditorService;
+import com.example.newscrawler.service.TopicPostReactionService;
 import com.example.newscrawler.service.TopicService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,15 +33,24 @@ public class TopicController {
 
     private final TopicService topicService;
     private final TopicEditorService topicEditorService;
+    private final TopicPostReactionService topicPostReactionService;
+    private final AppUserResolver appUserResolver;
+    private final TopicPostRepository topicPostRepository;
     private final EditorUserRepository editorUserRepository;
     private final RegisteredUserRepository registeredUserRepository;
 
     public TopicController(TopicService topicService,
                            TopicEditorService topicEditorService,
+                           TopicPostReactionService topicPostReactionService,
+                           AppUserResolver appUserResolver,
+                           TopicPostRepository topicPostRepository,
                            EditorUserRepository editorUserRepository,
                            RegisteredUserRepository registeredUserRepository) {
         this.topicService = topicService;
         this.topicEditorService = topicEditorService;
+        this.topicPostReactionService = topicPostReactionService;
+        this.appUserResolver = appUserResolver;
+        this.topicPostRepository = topicPostRepository;
         this.editorUserRepository = editorUserRepository;
         this.registeredUserRepository = registeredUserRepository;
     }
@@ -94,11 +111,72 @@ public class TopicController {
         topicService.deleteTopic(id);
     }
 
+    // ─── Admin: delete ALL topics (cleanup) ──────────────────────────────────
+    //
+    // One-time cleanup endpoint to wipe the trending-topics table.
+    // Topics are normally auto-created/recreated from admin events, so this
+    // is safe to call after deploying the topicId-link fix to remove
+    // orphaned/duplicated topics that were left behind by the old
+    // title-match logic.
+    //
+    // Pass ?confirm=true to actually perform the delete (safety guard).
+
+    @DeleteMapping("/all")
+    @PreAuthorize("hasRole('MANAGE_USERS') or hasRole('MANAGE_EVENTS')")
+    public ResponseEntity<Map<String, Object>> deleteAllTopics(
+            @RequestParam(required = false, defaultValue = "false") String confirm) {
+        if (!"true".equalsIgnoreCase(confirm)) {
+            return ResponseEntity.ok(Map.of(
+                "status", "preview",
+                "message", "This will delete ALL topics and their posts. Pass ?confirm=true to proceed.",
+                "topicCount", topicService.getAllTopics().size()
+            ));
+        }
+        int deleted = topicService.deleteAllTopics();
+        return ResponseEntity.ok(Map.of(
+            "status", "ok",
+            "message", "All topics and their posts have been deleted. They will be re-created automatically the next time an admin creates/updates a PUBLIC or EDITOR_VISIBLE event.",
+            "deletedCount", deleted
+        ));
+    }
+
     // ─── Get posts for a topic ───────────────────────────────────────────────
 
     @GetMapping("/{id}/posts")
-    public ResponseEntity<List<TopicPostResponse>> getTopicPosts(@PathVariable Long id) {
-        return ResponseEntity.ok(topicService.getPostsByTopic(id));
+    public ResponseEntity<List<TopicPostResponse>> getTopicPosts(
+            @PathVariable Long id,
+            @RequestParam(required = false) String userId,
+            HttpServletRequest request) {
+        AppUser appUser = null;
+        try {
+            appUser = appUserResolver.resolve(request, userId);
+        } catch (ResponseStatusException ignored) {
+            // Guests without a valid session still receive posts without userReaction.
+        }
+        return ResponseEntity.ok(topicService.getPostsByTopic(id, appUser));
+    }
+
+    @PutMapping("/{topicId}/posts/{postId}/react")
+    public ResponseEntity<Map<String, Object>> reactToTopicPost(
+            @PathVariable Long topicId,
+            @PathVariable Long postId,
+            @RequestParam ReactionType type,
+            @RequestParam(required = false) String userId,
+            HttpServletRequest request) {
+        AppUser appUser = appUserResolver.resolve(request, userId);
+        String status = topicPostReactionService.react(appUser, topicId, postId, type);
+
+        TopicPost post = topicPostRepository.findById(postId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic post not found"));
+
+        ReactionType userReaction = topicPostReactionService.getUserReaction(appUser.getId(), postId).orElse(null);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", status);
+        body.put("likes", post.getLikes());
+        body.put("dislikes", post.getDislikes());
+        body.put("userReaction", userReaction);
+        return ResponseEntity.ok(body);
     }
 
     // ─── Admin: delete a post from a topic ────────────────────────────────────

@@ -1,9 +1,12 @@
 import "./src/i18n/i18n";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import * as Linking from "expo-linking";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SessionProvider, useSession } from "./src/context/SessionContext";
 import { ThemeProvider } from "./src/context/ThemeContext";
+import { I18nManager } from "react-native";
+import { useTranslation } from "react-i18next";
 import HomePage from "./src/pages/HomePage";
 import AuthPage from "./src/pages/AuthPage";
 import AdvancedSearchPage from "./src/pages/AdvancedSearchPage";
@@ -13,7 +16,10 @@ import SavedNewsPage from "./src/pages/SavedNewsPage";
 import AIAssistantPage from "./src/pages/AIAssistantPage";
 import ApplyEditorPage from "./src/pages/ApplyEditorPage";
 import ProfilePage from "./src/pages/ProfilePage";
+import PresenterPage from "./src/pages/PresenterPage";
 import LeftSidebar from "./src/components/LeftSidebar";
+import NewsBriefPage from "./src/pages/NewsBriefPage";
+import TelegramFeedPage from "./src/pages/TelegramFeedPage";
 import { useTheme } from "./src/context/ThemeContext";
 import { ActivityIndicator, View, Text, StyleSheet, StatusBar } from "react-native";
 import { useNavigationContainerRef } from "@react-navigation/native";
@@ -22,10 +28,26 @@ import { PlusJakartaSans_500Medium, PlusJakartaSans_600SemiBold, PlusJakartaSans
 
 function DarkModeWrapper() {
   const { darkMode } = useTheme();
+  const { th } = require("./src/utils/darkColors");
   return <StatusBar barStyle={darkMode ? "light-content" : "dark-content"} backgroundColor={darkMode ? "#0f172a" : "#f1f5f9"} />;
 }
 
 const Stack = createNativeStackNavigator();
+
+const linking = {
+  prefixes: [Linking.createURL("/"), "newsbridge://"],
+  config: {
+    screens: {
+      NewsFeed: {
+        path: "news/category/:category",
+        parse: {
+          category: (value) => value || "general",
+        },
+      },
+      TelegramFeed: "news/telegram",
+    },
+  },
+};
 
 function BootScreen() {
   return (
@@ -47,7 +69,7 @@ function AppNavigator() {
 
   return (
     <View style={{ flex: 1 }}>
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer ref={navigationRef} linking={linking}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="NewsFeed" component={HomePage} />
           <Stack.Screen name="Auth" component={AuthPage} initialParams={{ mode: "login" }} />
@@ -57,14 +79,19 @@ function AppNavigator() {
           <Stack.Screen name="SavedNews" component={SavedNewsPage} />
           <Stack.Screen name="AIAssistant" component={AIAssistantPage} />
           <Stack.Screen name="ApplyEditor" component={ApplyEditorPage} />
+          <Stack.Screen name="Presenter" component={PresenterPage} />
+          <Stack.Screen name="NewsBrief" component={NewsBriefPage} />
+          <Stack.Screen name="TelegramFeed" component={TelegramFeedPage} />
           <Stack.Screen name="Profile" component={ProfilePage} />
         </Stack.Navigator>
       </NavigationContainer>
-      <LeftSidebar
-        visible={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        navigationRef={navigationRef}
-      />
+      <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, direction: "ltr" }} pointerEvents="box-none">
+        <LeftSidebar
+          visible={menuOpen}
+          onClose={() => setMenuOpen(false)}
+          navigationRef={navigationRef}
+        />
+      </View>
     </View>
   );
 }

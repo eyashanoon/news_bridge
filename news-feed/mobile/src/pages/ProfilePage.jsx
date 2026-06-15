@@ -23,7 +23,7 @@ export default function ProfilePage({ navigation, route }) {
   const { currentCategory, darkMode } = useTheme();
   const theme = categoryTheme[currentCategory]?.light || categoryTheme.General.light;
   const { session } = useSession();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const username = route?.params?.username || null;
 
   const [profile, setProfile] = useState(null);
@@ -116,9 +116,11 @@ export default function ProfilePage({ navigation, route }) {
     }
   };
 
+  const isRtl = i18n.language === "ar";
+
   if (loading) {
     return (
-      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
         <TopBar navigation={navigation} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#3b82f6" />
@@ -130,7 +132,7 @@ export default function ProfilePage({ navigation, route }) {
 
   if (error && !profile) {
     return (
-      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
         <TopBar navigation={navigation} />
         <View style={styles.errorContainer}>
            <Text style={[styles.errorTitle, { color: th(darkMode, dc.text, "#0b1a2b") }]}>{t("profileNotFound")}</Text>
@@ -146,7 +148,7 @@ export default function ProfilePage({ navigation, route }) {
   if (!profile) return null;
 
   return (
-    <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, "#f8fafc") }]}>
+    <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, "#f8fafc"), direction: isRtl ? "rtl" : "ltr" }]}>
       <TopBar navigation={navigation} />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {/* Profile Header */}

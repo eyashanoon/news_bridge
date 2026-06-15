@@ -11,6 +11,13 @@ public class TelegramChannelResponse {
     public String status;
     public int totalPostsCollected;
     public Instant lastCrawledAt;
+    public double crawlScore;
+    public int totalCrawls;
+    public double postFrequency;
+    public double avgViewCount;
+    public boolean onboardingCompleted;
+    public double crawlPriority;
+    public boolean waitlist;
     public String addedByEmail;
     public Instant createdAt;
     public Instant updatedAt;

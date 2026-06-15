@@ -1,0 +1,618 @@
+"filename", "language", "PowerShell", "Markdown", "JavaScript", "JavaScript JSX", "PostCSS", "JSON", "HTML", "Python", "pip requirements", "TypeScript", "TypeScript JSX", "YAML", "JSON with Comments", "Java", "Batch", "Java Properties", "XML", "MS SQL", "comment", "blank", "total"
+"c:\Users\eyash\news_bridge\.claude\agents\test.agent.md", "Markdown", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\AndroidManifest.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 3, 21
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\drawable\ic_launcher_background.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 170, 0, 0, 1, 171
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\drawable\ic_launcher_foreground.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 30
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\mipmap-anydpi-v26\ic_launcher.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\mipmap-anydpi-v26\ic_launcher_round.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\values-ar\strings.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 9
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\values-night\themes.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 1, 1, 7
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\values\colors.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 10
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\values\strings.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 9
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\values\themes.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 5
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\xml\backup_rules.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 4, 0, 13
+"c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\xml\data_extraction_rules.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 10, 0, 19
+"c:\Users\eyash\news_bridge\OLD\android_app\gradle.properties", "Java Properties", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 13, 0, 16
+"c:\Users\eyash\news_bridge\OLD\android_app\gradle\gradle-daemon-jvm.properties", "Java Properties", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 1, 1, 13
+"c:\Users\eyash\news_bridge\OLD\android_app\gradle\wrapper\gradle-wrapper.properties", "Java Properties", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 1, 1, 10
+"c:\Users\eyash\news_bridge\OLD\android_app\gradlew.bat", "Batch", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 32, 22, 95
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\AndroidManifest.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 4, 34
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\drawable\ic_launcher_background.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 170, 0, 0, 1, 171
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\drawable\ic_launcher_foreground.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 30
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\mipmap-anydpi-v26\ic_launcher.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\mipmap-anydpi-v26\ic_launcher_round.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\values-ar\strings.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 52
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\values-night\themes.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 5, 0, 16
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\values\colors.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 10
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\values\strings.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 52
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\values\themes.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 5, 0, 16
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\xml\backup_rules.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 4, 0, 13
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\xml\data_extraction_rules.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 10, 0, 19
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\xml\network_security_config.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 6
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\gradle.properties", "Java Properties", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 13, 0, 15
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\gradle\gradle-daemon-jvm.properties", "Java Properties", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 1, 1, 13
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\gradle\wrapper\gradle-wrapper.properties", "Java Properties", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 1, 1, 10
+"c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\gradlew.bat", "Batch", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 32, 22, 95
+"c:\Users\eyash\news_bridge\avatar-studio-component\EXAMPLES.md", "Markdown", 0, 253, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 306
+"c:\Users\eyash\news_bridge\avatar-studio-component\README.md", "Markdown", 0, 292, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 382
+"c:\Users\eyash\news_bridge\avatar-studio-component\SETUP.md", "Markdown", 0, 134, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 178
+"c:\Users\eyash\news_bridge\avatar-studio-component\START_HERE.md", "Markdown", 0, 156, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 203
+"c:\Users\eyash\news_bridge\avatar-studio-component\package.json", "JSON", 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 34
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\emotion.js", "JavaScript", 0, 0, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 12, 105
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\gestures.js", "JavaScript", 0, 0, 231, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 33, 307
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\legacy.html", "HTML", 0, 0, 0, 0, 0, 0, 356, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 358
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\lipsync.js", "JavaScript", 0, 0, 211, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 179, 45, 435
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\main.js", "JavaScript", 0, 0, 155, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 30, 253
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\pose-studio.js", "JavaScript", 0, 0, 213, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 34, 340
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\recorder.js", "JavaScript", 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 12, 79
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\rhubarb.js", "JavaScript", 0, 0, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 8, 108
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\scene.js", "JavaScript", 0, 0, 712, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 178, 111, 1001
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\style.css", "PostCSS", 0, 0, 0, 0, 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 11, 88
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\test.js", "JavaScript", 0, 0, 855, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 134, 107, 1096
+"c:\Users\eyash\news_bridge\avatar-studio-component\public\tts.js", "JavaScript", 0, 0, 208, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 33, 323
+"c:\Users\eyash\news_bridge\avatar-studio-component\src\AvatarStudioFrame.jsx", "JavaScript JSX", 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 3, 80
+"c:\Users\eyash\news_bridge\avatar-studio-component\src\index.js", "JavaScript", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3
+"c:\Users\eyash\news_bridge\avatar\bake_poses_to_shapekeys.py", "Python", 0, 0, 0, 0, 0, 0, 0, 94, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 24, 141
+"c:\Users\eyash\news_bridge\avatar\debug.html", "HTML", 0, 0, 0, 0, 0, 0, 138, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 156
+"c:\Users\eyash\news_bridge\avatar\export_avatar.py", "Python", 0, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 12, 104
+"c:\Users\eyash\news_bridge\avatar\index.html", "HTML", 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 5, 47
+"c:\Users\eyash\news_bridge\avatar\inspect_action_frames.py", "Python", 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 24
+"c:\Users\eyash\news_bridge\avatar\inspect_avatar.py", "Python", 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 21
+"c:\Users\eyash\news_bridge\avatar\inspect_poses.py", "Python", 0, 0, 0, 0, 0, 0, 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 8, 56
+"c:\Users\eyash\news_bridge\avatar\package-lock.json", "JSON", 0, 0, 0, 0, 0, 2123, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2124
+"c:\Users\eyash\news_bridge\avatar\package.json", "JSON", 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 22
+"c:\Users\eyash\news_bridge\avatar\server.js", "JavaScript", 0, 0, 167, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 37, 253
+"c:\Users\eyash\news_bridge\avatar\src\avatar.js", "JavaScript", 0, 0, 126, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 21, 157
+"c:\Users\eyash\news_bridge\avatar\src\bonePicker.js", "JavaScript", 0, 0, 199, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 38, 264
+"c:\Users\eyash\news_bridge\avatar\src\lipSync.js", "JavaScript", 0, 0, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 16, 123
+"c:\Users\eyash\news_bridge\avatar\src\main.js", "JavaScript", 0, 0, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 22, 149
+"c:\Users\eyash\news_bridge\avatar\src\scene.js", "JavaScript", 0, 0, 77, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 14, 105
+"c:\Users\eyash\news_bridge\avatar\src\speech.js", "JavaScript", 0, 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 16, 112
+"c:\Users\eyash\news_bridge\avatar\src\style.css", "PostCSS", 0, 0, 0, 0, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 31, 225
+"c:\Users\eyash\news_bridge\avatar\src\syncTest.js", "JavaScript", 0, 0, 610, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 54, 103, 767
+"c:\Users\eyash\news_bridge\avatar\src\visemeTest.js", "JavaScript", 0, 0, 219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 39, 278
+"c:\Users\eyash\news_bridge\avatar\test.html", "HTML", 0, 0, 0, 0, 0, 0, 251, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 273
+"c:\Users\eyash\news_bridge\avatar\viseme-test.html", "HTML", 0, 0, 0, 0, 0, 0, 122, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 20, 146
+"c:\Users\eyash\news_bridge\avatar\vite.config.js", "JavaScript", 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 4, 33
+"c:\Users\eyash\news_bridge\backend\README.md", "Markdown", 0, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 101
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\config.py", "Python", 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 10
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\core\embedder.py", "Python", 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8, 26
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\core\llm.py", "Python", 0, 0, 0, 0, 0, 0, 0, 146, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 19, 228
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\ingestion\fetcher.py", "Python", 0, 0, 0, 0, 0, 0, 0, 86, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 24, 135
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\ingestion\processor.py", "Python", 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\logic\news_brief.py", "Python", 0, 0, 0, 0, 0, 0, 0, 194, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 77, 53, 324
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\logic\post_logic.py", "Python", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 5, 27
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\logic\tag_extractor.py", "Python", 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 10, 103
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\logic\topic_logic.py", "Python", 0, 0, 0, 0, 0, 0, 0, 98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 26, 154
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\main.py", "Python", 0, 0, 0, 0, 0, 0, 0, 164, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 46, 242
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\rag\global_store.py", "Python", 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 6, 27
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\rag\ingest.py", "Python", 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 18, 94
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\rag\scheduler.py", "Python", 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 15, 90
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\rag\search.py", "Python", 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 9
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\rag\store.py", "Python", 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 13, 59
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\requirements.txt", "pip requirements", 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8
+"c:\Users\eyash\news_bridge\backend\ai-assistant-service\router.py", "Python", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 17
+"c:\Users\eyash\news_bridge\backend\ai-service\config.py", "Python", 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 13
+"c:\Users\eyash\news_bridge\backend\ai-service\ingestion\embedder.py", "Python", 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 9, 39
+"c:\Users\eyash\news_bridge\backend\ai-service\ingestion\fetcher.py", "Python", 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 24
+"c:\Users\eyash\news_bridge\backend\ai-service\ingestion\geo_extractor.py", "Python", 0, 0, 0, 0, 0, 0, 0, 123, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 19, 164
+"c:\Users\eyash\news_bridge\backend\ai-service\ingestion\processor.py", "Python", 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 13, 40
+"c:\Users\eyash\news_bridge\backend\ai-service\llm\generator.py", "Python", 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 6, 34
+"c:\Users\eyash\news_bridge\backend\ai-service\main.py", "Python", 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 33, 151
+"c:\Users\eyash\news_bridge\backend\ai-service\requirements.txt", "pip requirements", 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8
+"c:\Users\eyash\news_bridge\backend\ai-service\retrieval\search.py", "Python", 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6, 20
+"c:\Users\eyash\news_bridge\backend\ai-service\retrieval\vector_store.py", "Python", 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 24, 90
+"c:\Users\eyash\news_bridge\backend\ai-service\scheduler\jobs.py", "Python", 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 30
+"c:\Users\eyash\news_bridge\backend\checker\__init__.py", "Python", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"c:\Users\eyash\news_bridge\backend\checker\url_model\__init__.py", "Python", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"c:\Users\eyash\news_bridge\backend\checker\url_model\classifier.py", "Python", 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 40
+"c:\Users\eyash\news_bridge\backend\checker\url_model\combined_data.json", "JSON", 0, 0, 0, 0, 0, 4158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4158
+"c:\Users\eyash\news_bridge\backend\checker\url_model\extractor.py", "Python", 0, 0, 0, 0, 0, 0, 0, 194, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 61, 56, 311
+"c:\Users\eyash\news_bridge\backend\checker\url_model\predict.py", "Python", 0, 0, 0, 0, 0, 0, 0, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 20, 130
+"c:\Users\eyash\news_bridge\backend\checker\url_model\utils.py", "Python", 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 20
+"c:\Users\eyash\news_bridge\backend\classifier_service\final_mode_V2\config.json", "JSON", 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 50
+"c:\Users\eyash\news_bridge\backend\classifier_service\final_mode_V2\tokenizer.json", "JSON", 0, 0, 0, 0, 0, 1000193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000193
+"c:\Users\eyash\news_bridge\backend\classifier_service\final_mode_V2\tokenizer_config.json", "JSON", 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 15
+"c:\Users\eyash\news_bridge\backend\classifier_service\news_classifier_app.py", "Python", 0, 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 16, 81
+"c:\Users\eyash\news_bridge\backend\crawler_server\backend_client.py", "Python", 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 16, 131
+"c:\Users\eyash\news_bridge\backend\crawler_server\crawler_service.py", "Python", 0, 0, 0, 0, 0, 0, 0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 27, 209
+"c:\Users\eyash\news_bridge\backend\crawler_server\main.py", "Python", 0, 0, 0, 0, 0, 0, 0, 475, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 70, 109, 654
+"c:\Users\eyash\news_bridge\backend\crawler_server\models.py", "Python", 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 38
+"c:\Users\eyash\news_bridge\backend\crawler_server\requirements.txt", "pip requirements", 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7
+"c:\Users\eyash\news_bridge\backend\crawler_server\settings.py", "Python", 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 46
+"c:\Users\eyash\news_bridge\backend\crawler_server\vv_adapter.py", "Python", 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 9, 39
+"c:\Users\eyash\news_bridge\backend\docker-compose.yml", "YAML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 2, 24
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\__init__.py", "Python", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 1, 9
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\listing_discoverer.py", "Python", 0, 0, 0, 0, 0, 0, 0, 634, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200, 134, 968
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\__init__.py", "Python", 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\checkpoints\tokenizer\tokenizer.json", "JSON", 0, 0, 0, 0, 0, 1000186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000186
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\checkpoints\tokenizer\tokenizer_config.json", "JSON", 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 15
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\config.py", "Python", 0, 0, 0, 0, 0, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 11, 71
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\features.py", "Python", 0, 0, 0, 0, 0, 0, 0, 93, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 24, 170
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\model.py", "Python", 0, 0, 0, 0, 0, 0, 0, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 79, 26, 184
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\predict.py", "Python", 0, 0, 0, 0, 0, 0, 0, 146, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 28, 237
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\requirements.txt", "pip requirements", 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 16
+"c:\Users\eyash\news_bridge\backend\endpoint_discovery\service.py", "Python", 0, 0, 0, 0, 0, 0, 0, 231, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 62, 334
+"c:\Users\eyash\news_bridge\backend\extractor\__init__.py", "Python", 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"c:\Users\eyash\news_bridge\backend\extractor\content_model\__init__.py", "Python", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 17
+"c:\Users\eyash\news_bridge\backend\extractor\content_model\dl_article_model_url_supervised.pt", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3097, 0, 0, 8, 3105
+"c:\Users\eyash\news_bridge\backend\extractor\content_model\extract_dl.py", "Python", 0, 0, 0, 0, 0, 0, 0, 971, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 171, 1156
+"c:\Users\eyash\news_bridge\backend\extractor\content_model\features.py", "Python", 0, 0, 0, 0, 0, 0, 0, 94, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 135
+"c:\Users\eyash\news_bridge\backend\extractor\content_model\generate_test_htmls.py", "Python", 0, 0, 0, 0, 0, 0, 0, 152, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 178
+"c:\Users\eyash\news_bridge\backend\extractor\content_model\model.py", "Python", 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 11, 81
+"c:\Users\eyash\news_bridge\backend\extractor\content_model\model_utils.py", "Python", 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 54
+"c:\Users\eyash\news_bridge\backend\extractor\content_model\view_extraction.py", "Python", 0, 0, 0, 0, 0, 0, 0, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 16, 137
+"c:\Users\eyash\news_bridge\backend\init.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 2, 7
+"c:\Users\eyash\news_bridge\backend\pom.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 8, 108
+"c:\Users\eyash\news_bridge\backend\post_processor.py", "Python", 0, 0, 0, 0, 0, 0, 0, 277, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 61, 354
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\NewsCrawlerApplication.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 4, 15
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\config\CustomUserDetailsService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 0, 0, 5, 9, 73
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\config\DataInitializer.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 435, 0, 0, 0, 0, 31, 45, 511
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\config\OpenApiConfig.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 3, 23
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\config\SecurityConfig.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 104, 0, 0, 0, 0, 0, 13, 117
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\AdminAuthController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 11, 73
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\AdminController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 13, 76
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\AppUserController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 0, 0, 10, 42
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\ArticleBlockController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 0, 0, 10, 42
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\ArticleController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 103, 0, 0, 0, 0, 0, 21, 124
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\ArticleTitleController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 0, 0, 10, 42
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\AuthController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 264, 0, 0, 0, 0, 8, 54, 326
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\CacheEndpointController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 0, 0, 13, 68
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\CategoryFieldController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 8, 46
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\CommentController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 0, 25, 11, 109
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\CrawlerAdminController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0, 17, 98
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\DashboardController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 9, 42
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\EditorRequestController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 0, 3, 13, 76
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\EditorUserController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, 10, 52
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\EndpointController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 15, 80
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\FeedController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 87, 0, 0, 0, 0, 4, 20, 111
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\LiveNewsController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 0, 4, 13, 69
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\NewsEventController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 0, 0, 0, 0, 13, 31, 134
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\PostController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 0, 0, 0, 0, 20, 18, 113
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\PrimitiveUserController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 2, 6, 32
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\ProfileController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101, 0, 0, 0, 0, 6, 19, 126
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\RegisteredUserController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 0, 10, 63
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\RootController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 85, 0, 0, 0, 0, 5, 19, 109
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\SearchController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 14, 7, 61
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\TelegramChannelController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 0, 0, 12, 72
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\TelegramCrawlerAdminController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 15, 80
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\TelegramPostController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 0, 0, 11, 66
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\TopicController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 204, 0, 0, 0, 0, 46, 42, 292
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\UploadController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 4, 11, 64
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\UserManagementController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 167, 0, 0, 0, 0, 0, 21, 188
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\UserPreferenceController.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 8, 42
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ActivateEditorRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 6
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\AdminResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 1, 11
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleBlockResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 4, 18
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleBlocksResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 3, 17
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleContentItemResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 2, 11
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleContentResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 3, 7
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleListItemResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 3, 16
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 3, 17
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\BulkCreateTelegramPostsRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3, 8
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\BulkSaveEndpointsRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 3, 9
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CacheEndpointResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 3, 19
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CategoryFieldDto.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 2, 11
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CommentResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 2, 21
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CommentVoteRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 6
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateAdminRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 4, 15
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateArticleBlockRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 4, 16
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateArticleRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 5, 19
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateCacheEndpointRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 11, 28
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateCommentRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 2, 10
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateEndpointRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 4, 12
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateLiveNewsPostRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 2, 8
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateNewsEventRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 2, 9
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreatePostRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 3, 14
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreatePublishRequestDto.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 6
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateRootRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 4, 12
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateTelegramChannelRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 2, 9
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateTelegramPostRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 3, 16
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateTopicPostRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 2, 13
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateTopicRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 2, 13
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\DashboardStatsResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 2, 10
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EditorApplicationRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 3, 13
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EditorAttachmentDto.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 2, 8
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EditorRequestResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 3, 20
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EditorUserDto.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 3, 20
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EditorUserResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 3, 21
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EndpointResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 3, 17
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\FeedPostDTO.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 6, 46
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\LiveNewsPostResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 3, 18
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\LoginRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 1, 9, 37
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\LoginResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 3, 11
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\MediaItemResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 2, 5
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\NewsEventResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 3, 15
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\NewsGuardVerifyResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 2, 12
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\PagedResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 3, 13
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\PostByTagResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 1, 11, 43
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\PostDTO.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 12, 53
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\PublishRequestResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 3, 17
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\RegisteredUserDto.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 2, 13
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\RegisteredUserResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 3, 14
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\RootResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 3, 14
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\SignupRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 2, 18
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\TelegramChannelResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 3, 18
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\TelegramPostResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 3, 19
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\TopicAssignmentResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 2, 15
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\TopicPostResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 1, 3, 27
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\TopicResponse.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 1, 4, 30
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateAdminNameRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 6
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateAdminRolesRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3, 8
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateEditorProfileRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateLiveNewsPostRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 2, 7
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateRecordStatusRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 2, 7
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateUserRolesRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3, 8
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateUserStatusRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 2, 6
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\AbstractMediaArticleBlock.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 2, 5
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Admin.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 71, 0, 0, 0, 0, 0, 20, 91
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\AllowedRole.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 13, 56
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\AnalysisResult.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 2, 10
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\AppUser.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 0, 15, 68
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Article.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 85, 0, 0, 0, 0, 0, 27, 112
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleAttachmentBlock.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 13, 54
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleAudioBlock.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 13, 54
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleBlock.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 25, 90
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleBlockType.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 2, 11
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleImageBlock.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 13, 54
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleOtherBlock.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 12, 53
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleTextBlock.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 11, 49
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleTitle.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 0, 18, 71
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleVideoBlock.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 13, 54
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\CacheEndpoint.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 106, 0, 0, 0, 0, 0, 34, 140
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\CategoryField.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 0, 0, 8, 40
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Comment.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 92, 0, 0, 0, 0, 2, 33, 127
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\CommentVote.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 0, 0, 2, 21, 82
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\EditorAttachment.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 14, 59
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\EditorRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 66, 0, 0, 0, 0, 0, 24, 90
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\EditorRequestAttachment.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 14, 59
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\EditorUser.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 10, 39
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Endpoint.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 88, 0, 0, 0, 0, 0, 29, 117
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ExpertiseField.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\LiveNewsPost.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 1, 18, 60
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\NewsEvent.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 6, 20, 70
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Post.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 0, 0, 1, 30, 85
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\PostInteraction.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 0, 0, 0, 0, 16, 55
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\PostReaction.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 13, 44
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\PostTag.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 15, 37
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\PrimitiveUser.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 4, 14
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\PublishPermissionRequest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 4, 19, 64
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ReactionType.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 7, 12
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\RecordStatus.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 2, 7
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\RegisteredUser.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 51, 0, 0, 0, 0, 0, 17, 68
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Root.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 0, 0, 18, 70
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\TelegramChannel.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 56, 0, 0, 0, 0, 1, 26, 83
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\TelegramPost.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 1, 25, 79
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Topic.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 13, 43, 140
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\TopicEditorAssignment.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 0, 0, 0, 0, 15, 54
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\TopicPost.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 66, 0, 0, 0, 0, 0, 33, 99
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\UserPreference.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 13, 42
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\UserRole.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 0, 6, 7, 49
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\UserStatus.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 2, 8
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\UserType.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 2, 9
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\VerificationCode.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 14, 62
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\VerificationType.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 1, 6
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\AdminRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 3, 11
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\AllowedRoleRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 3, 15
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\AppUserRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 4, 9
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\ArticleBlockRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3, 8
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\ArticleRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 9, 26
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\ArticleTitleRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3, 8
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\CacheEndpointRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 1, 9, 29
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\CategoryFieldRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 5, 15
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\CommentRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 7, 10, 38
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\CommentVoteRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 2, 6, 19
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\EditorAttachmentRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\EditorRequestAttachmentRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\EditorRequestRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 6, 19
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\EditorUserRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\EndpointRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 12, 27
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\LiveNewsPostRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 4, 17
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\NewsEventRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 4, 17
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PostInteractionRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 1, 6, 19
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PostReactionRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 2, 8, 30
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PostRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 14, 17, 79
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PostTagRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 2, 12, 25
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PrimitiveUserRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 3, 8
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PublishPermissionRequestRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 4, 19
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\RegisteredUserRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 2, 12
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\RootRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 8, 25
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\TelegramChannelRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 4, 15
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\TelegramPostRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 4, 17
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\TopicEditorRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 3, 17
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\TopicPostRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 5, 9, 37
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\TopicRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 3, 12
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\UserPreferenceRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 6, 15
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\VerificationCodeRepository.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 2, 13
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\security\JwtAuthenticationFilter.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 96, 0, 0, 0, 0, 5, 19, 120
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\security\JwtTokenProvider.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 107, 0, 0, 0, 0, 0, 21, 128
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\AdminService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 119, 0, 0, 0, 0, 0, 20, 139
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\AppUserService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 1, 13, 76
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\ArticleBlockService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 10, 40
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\ArticleService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 369, 0, 0, 0, 0, 1, 53, 423
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\ArticleTitleService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 10, 40
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\CacheEndpointService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 111, 0, 0, 0, 0, 1, 24, 136
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\CategoryFieldService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 70, 0, 0, 0, 0, 2, 9, 81
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\CommentService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 162, 0, 0, 0, 0, 12, 31, 205
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\CrawlerAdminService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 114, 0, 0, 0, 0, 0, 21, 135
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\EditorRequestService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 229, 0, 0, 0, 0, 18, 41, 288
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\EditorUserService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 96, 0, 0, 0, 0, 0, 21, 117
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\EmailService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 46, 0, 0, 0, 0, 1, 9, 56
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\EndpointService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 177, 0, 0, 0, 0, 1, 35, 213
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\FeedService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 184, 0, 0, 0, 0, 14, 55, 253
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\InteractionService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 9, 32, 125
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\LiveNewsService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 87, 0, 0, 0, 0, 5, 21, 113
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\NewsEventService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 195, 0, 0, 0, 0, 28, 50, 273
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\PostReactionService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 0, 3, 27, 98
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\PostService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 85, 0, 0, 0, 0, 3, 24, 112
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\RootDiscoveryService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 267, 0, 0, 0, 0, 42, 51, 360
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\RootService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 124, 0, 0, 0, 0, 0, 24, 148
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\SearchService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 116, 0, 0, 0, 0, 14, 19, 149
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TelegramChannelService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 0, 0, 0, 0, 0, 15, 108
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TelegramCrawlerAdminService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 107, 0, 0, 0, 0, 0, 16, 123
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TelegramPostService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 1, 20, 131
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TopicEditorService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 140, 0, 0, 0, 0, 37, 29, 206
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TopicService.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 287, 0, 0, 0, 0, 46, 45, 378
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TopicStatsScheduler.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 0, 37, 21, 130
+"c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\test.code-workspace", "JSON with Comments", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 11
+"c:\Users\eyash\news_bridge\backend\src\main\resources\application.yml", "YAML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 51, 0, 0, 0, 0, 0, 0, 0, 9, 60
+"c:\Users\eyash\news_bridge\backend\tag_service\app.py", "Python", 0, 0, 0, 0, 0, 0, 0, 249, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 86, 373
+"c:\Users\eyash\news_bridge\backend\tag_service\appCUDA.py", "Python", 0, 0, 0, 0, 0, 0, 0, 121, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 39, 190
+"c:\Users\eyash\news_bridge\backend\tag_service\requirements.txt", "pip requirements", 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 12
+"c:\Users\eyash\news_bridge\backend\tag_service\test.py", "Python", 0, 0, 0, 0, 0, 0, 0, 145, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 22, 187
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\backend_client.py", "Python", 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 11, 50
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\main.py", "Python", 0, 0, 0, 0, 0, 0, 0, 265, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 58, 346
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\requirements.txt", "pip requirements", 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\scraper.py", "Python", 0, 0, 0, 0, 0, 0, 0, 360, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 80, 492
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\settings.py", "Python", 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 34
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\setup_session.py", "Python", 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 10, 71
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\start.ps1", "PowerShell", 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\telegram_client.py", "Python", 0, 0, 0, 0, 0, 0, 0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 38, 214
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\test_arabic.py", "Python", 0, 0, 0, 0, 0, 0, 0, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 47
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\test_arabic2.py", "Python", 0, 0, 0, 0, 0, 0, 0, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 15, 121
+"c:\Users\eyash\news_bridge\backend\telegram_crawler\test_verify.py", "Python", 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"c:\Users\eyash\news_bridge\docs\LOCATION_PRIORITIZATION.md", "Markdown", 0, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 94
+"c:\Users\eyash\news_bridge\frontend\README.md", "Markdown", 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 17
+"c:\Users\eyash\news_bridge\frontend\eslint.config.js", "JavaScript", 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 30
+"c:\Users\eyash\news_bridge\frontend\index.html", "HTML", 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 14
+"c:\Users\eyash\news_bridge\frontend\package-lock.json", "JSON", 0, 0, 0, 0, 0, 2944, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2945
+"c:\Users\eyash\news_bridge\frontend\package.json", "JSON", 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 30
+"c:\Users\eyash\news_bridge\frontend\public\favicon.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"c:\Users\eyash\news_bridge\frontend\public\icons.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 1, 25
+"c:\Users\eyash\news_bridge\frontend\src\App.css", "PostCSS", 0, 0, 0, 0, 2071, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 299, 2411
+"c:\Users\eyash\news_bridge\frontend\src\App.jsx", "JavaScript JSX", 0, 0, 0, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 9, 74
+"c:\Users\eyash\news_bridge\frontend\src\api.js", "JavaScript", 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 16
+"c:\Users\eyash\news_bridge\frontend\src\assets\react.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"c:\Users\eyash\news_bridge\frontend\src\assets\vite.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 2
+"c:\Users\eyash\news_bridge\frontend\src\auth.js", "JavaScript", 0, 0, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 60
+"c:\Users\eyash\news_bridge\frontend\src\components\AdminLayout.jsx", "JavaScript JSX", 0, 0, 0, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 61
+"c:\Users\eyash\news_bridge\frontend\src\components\SiteLayout.jsx", "JavaScript JSX", 0, 0, 0, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 86
+"c:\Users\eyash\news_bridge\frontend\src\components\article\ArticleCard.jsx", "JavaScript JSX", 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 28
+"c:\Users\eyash\news_bridge\frontend\src\components\article\ArticleOverlay.jsx", "JavaScript JSX", 0, 0, 0, 130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 149
+"c:\Users\eyash\news_bridge\frontend\src\components\article\articleHelpers.jsx", "JavaScript JSX", 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 31
+"c:\Users\eyash\news_bridge\frontend\src\context\SessionContext.jsx", "JavaScript JSX", 0, 0, 0, 55, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 62
+"c:\Users\eyash\news_bridge\frontend\src\index.css", "PostCSS", 0, 0, 0, 0, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22, 202
+"c:\Users\eyash\news_bridge\frontend\src\main.jsx", "JavaScript JSX", 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 17
+"c:\Users\eyash\news_bridge\frontend\src\pages\AdminLoginPage.jsx", "JavaScript JSX", 0, 0, 0, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10, 64
+"c:\Users\eyash\news_bridge\frontend\src\pages\AdminPage.jsx", "JavaScript JSX", 0, 0, 0, 2768, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 242, 3050
+"c:\Users\eyash\news_bridge\frontend\src\pages\ApplyEditorPage.jsx", "JavaScript JSX", 0, 0, 0, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 108
+"c:\Users\eyash\news_bridge\frontend\src\pages\AuthPage.jsx", "JavaScript JSX", 0, 0, 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 60
+"c:\Users\eyash\news_bridge\frontend\src\pages\CmsPage.jsx", "JavaScript JSX", 0, 0, 0, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 77
+"c:\Users\eyash\news_bridge\frontend\src\pages\DataPage.jsx", "JavaScript JSX", 0, 0, 0, 116, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 128
+"c:\Users\eyash\news_bridge\frontend\src\pages\EditorPage.jsx", "JavaScript JSX", 0, 0, 0, 253, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 30, 286
+"c:\Users\eyash\news_bridge\frontend\src\pages\EventDetailPage.jsx", "JavaScript JSX", 0, 0, 0, 353, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 28, 387
+"c:\Users\eyash\news_bridge\frontend\src\pages\FeedPage.jsx", "JavaScript JSX", 0, 0, 0, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 11, 71
+"c:\Users\eyash\news_bridge\frontend\src\pages\NotFoundPage.jsx", "JavaScript JSX", 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 12
+"c:\Users\eyash\news_bridge\frontend\vite.config.js", "JavaScript", 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 14
+"c:\Users\eyash\news_bridge\news-feed\README.md", "Markdown", 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 17
+"c:\Users\eyash\news_bridge\news-feed\data\avatar\poses.json", "JSON", 0, 0, 0, 0, 0, 1295, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1295
+"c:\Users\eyash\news_bridge\news-feed\data\avatar\presenter-animation.json", "JSON", 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11
+"c:\Users\eyash\news_bridge\news-feed\docs\FEED_ALGORITHM.md", "Markdown", 0, 197, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 83, 280
+"c:\Users\eyash\news_bridge\news-feed\eslint.config.js", "JavaScript", 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 30
+"c:\Users\eyash\news_bridge\news-feed\extract_codes.py", "Python", 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8, 34
+"c:\Users\eyash\news_bridge\news-feed\index.html", "HTML", 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18
+"c:\Users\eyash\news_bridge\news-feed\mobile-temp\.claude\settings.json", "JSON with Comments", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 1, 6
+"c:\Users\eyash\news_bridge\news-feed\mobile-temp\AGENTS.md", "Markdown", 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4
+"c:\Users\eyash\news_bridge\news-feed\mobile-temp\App.js", "JavaScript", 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 21
+"c:\Users\eyash\news_bridge\news-feed\mobile-temp\CLAUDE.md", "Markdown", 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"c:\Users\eyash\news_bridge\news-feed\mobile-temp\app.json", "JSON", 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 25
+"c:\Users\eyash\news_bridge\news-feed\mobile-temp\index.js", "JavaScript", 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 9
+"c:\Users\eyash\news_bridge\news-feed\mobile-temp\package-lock.json", "JSON", 0, 0, 0, 0, 0, 6058, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6059
+"c:\Users\eyash\news_bridge\news-feed\mobile-temp\package.json", "JSON", 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 19
+"c:\Users\eyash\news_bridge\news-feed\mobile\AGENTS.md", "Markdown", 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4
+"c:\Users\eyash\news_bridge\news-feed\mobile\App.js", "JavaScript", 0, 0, 98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 108
+"c:\Users\eyash\news_bridge\news-feed\mobile\CLAUDE.md", "Markdown", 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"c:\Users\eyash\news_bridge\news-feed\mobile\app.json", "JSON", 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 29
+"c:\Users\eyash\news_bridge\news-feed\mobile\index.js", "JavaScript", 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 9
+"c:\Users\eyash\news_bridge\news-feed\mobile\package-lock.json", "JSON", 0, 0, 0, 0, 0, 7381, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7382
+"c:\Users\eyash\news_bridge\news-feed\mobile\package.json", "JSON", 0, 0, 0, 0, 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 38
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\api\api.js", "JavaScript", 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 16
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\api\config.js", "JavaScript", 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 2, 15
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\api\searchApi.js", "JavaScript", 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 33
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\api\topicsApi.js", "JavaScript", 0, 0, 106, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 16, 149
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\CategoryBar.jsx", "JavaScript JSX", 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 52
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\Feed.jsx", "JavaScript JSX", 0, 0, 0, 101, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 116
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\GuestSignupPrompt.jsx", "JavaScript JSX", 0, 0, 0, 118, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 120
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\LanguageToggle.jsx", "JavaScript JSX", 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4, 52
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\LeftSidebar.jsx", "JavaScript JSX", 0, 0, 0, 151, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 9, 163
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\Post.jsx", "JavaScript JSX", 0, 0, 0, 475, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 35, 515
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\PostCommentsModal.jsx", "JavaScript JSX", 0, 0, 0, 777, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 66, 872
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\PostModal.jsx", "JavaScript JSX", 0, 0, 0, 334, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 25, 374
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\SearchBar.jsx", "JavaScript JSX", 0, 0, 0, 198, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 212
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\TopBar.jsx", "JavaScript JSX", 0, 0, 0, 199, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 13, 218
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\TopicCard.jsx", "JavaScript JSX", 0, 0, 0, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 11, 218
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\components\TopicPost.jsx", "JavaScript JSX", 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 51
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\context\SessionContext.jsx", "JavaScript JSX", 0, 0, 0, 91, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10, 102
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\context\ThemeContext.jsx", "JavaScript JSX", 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 40
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\i18n\ar.json", "JSON", 0, 0, 0, 0, 0, 471, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 472
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\i18n\en.json", "JSON", 0, 0, 0, 0, 0, 2607, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2608
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\i18n\i18n.js", "JavaScript", 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 61
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\AIAssistantPage.jsx", "JavaScript JSX", 0, 0, 0, 270, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 24, 297
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\AdvancedSearchPage.jsx", "JavaScript JSX", 0, 0, 0, 330, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 23, 360
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\ApplyEditorPage.jsx", "JavaScript JSX", 0, 0, 0, 318, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 36, 372
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\AuthPage.jsx", "JavaScript JSX", 0, 0, 0, 219, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 235
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\HomePage.jsx", "JavaScript JSX", 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5, 39
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\ProfilePage.jsx", "JavaScript JSX", 0, 0, 0, 349, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 35, 399
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\SavedNewsPage.jsx", "JavaScript JSX", 0, 0, 0, 629, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 55, 721
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\TopicDetailsPage.jsx", "JavaScript JSX", 0, 0, 0, 443, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 28, 477
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\TrendingTopicsPage.jsx", "JavaScript JSX", 0, 0, 0, 105, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8, 114
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\apiFetch.js", "JavaScript", 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 19
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\auth.js", "JavaScript", 0, 0, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 12, 91
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\categoryColors.js", "JavaScript", 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 41
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\darkColors.js", "JavaScript", 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 10, 50
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\languageUtils.js", "JavaScript", 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 3, 33
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\savedPosts.js", "JavaScript", 0, 0, 163, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 26, 194
+"c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\userId.js", "JavaScript", 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5
+"c:\Users\eyash\news_bridge\news-feed\package-lock.json", "JSON", 0, 0, 0, 0, 0, 5014, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5015
+"c:\Users\eyash\news_bridge\news-feed\package.json", "JSON", 0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 43
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\CHANGES.md", "Markdown", 0, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 96
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\EXAMPLES.md", "Markdown", 0, 253, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 306
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\README.md", "Markdown", 0, 292, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 382
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\SETUP.md", "Markdown", 0, 134, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 178
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\START_HERE.md", "Markdown", 0, 156, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 203
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\package.json", "JSON", 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 34
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\emotion.js", "JavaScript", 0, 0, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 12, 105
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\gestures.js", "JavaScript", 0, 0, 231, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 33, 307
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\legacy.html", "HTML", 0, 0, 0, 0, 0, 0, 373, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 375
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\lipsync.js", "JavaScript", 0, 0, 211, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 179, 45, 435
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\main.js", "JavaScript", 0, 0, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 30, 283
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\pose-studio.js", "JavaScript", 0, 0, 217, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 92, 34, 343
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\presenter-animation.js", "JavaScript", 0, 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 81
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\recorder.js", "JavaScript", 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 12, 79
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\rhubarb.js", "JavaScript", 0, 0, 55, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 7, 98
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\scene.js", "JavaScript", 0, 0, 730, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 179, 114, 1023
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\style.css", "PostCSS", 0, 0, 0, 0, 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 11, 88
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\test.html", "HTML", 0, 0, 0, 0, 0, 0, 1082, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 40, 1136
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\test.js", "JavaScript", 0, 0, 871, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 134, 106, 1111
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\tts.js", "JavaScript", 0, 0, 208, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 33, 323
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\src\AvatarStudioFrame.jsx", "JavaScript JSX", 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 3, 80
+"c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\src\index.js", "JavaScript", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3
+"c:\Users\eyash\news_bridge\news-feed\public\vite.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"c:\Users\eyash\news_bridge\news-feed\src\App.css", "PostCSS", 0, 0, 0, 0, 3532, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 138, 368, 4038
+"c:\Users\eyash\news_bridge\news-feed\src\App.jsx", "JavaScript JSX", 0, 0, 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 62
+"c:\Users\eyash\news_bridge\news-feed\src\api.js", "JavaScript", 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 15
+"c:\Users\eyash\news_bridge\news-feed\src\api\searchApi.js", "JavaScript", 0, 0, 273, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 32, 346
+"c:\Users\eyash\news_bridge\news-feed\src\api\topicsApi.js", "JavaScript", 0, 0, 105, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 15, 151
+"c:\Users\eyash\news_bridge\news-feed\src\assets\react.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+"c:\Users\eyash\news_bridge\news-feed\src\auth.js", "JavaScript", 0, 0, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 59
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\EXAMPLES.md", "Markdown", 0, 253, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 306
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\README.md", "Markdown", 0, 292, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 382
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\SETUP.md", "Markdown", 0, 134, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 178
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\START_HERE.md", "Markdown", 0, 156, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 203
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\package.json", "JSON", 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 34
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\emotion.js", "JavaScript", 0, 0, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 12, 105
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\gestures.js", "JavaScript", 0, 0, 231, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 33, 307
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\legacy.html", "HTML", 0, 0, 0, 0, 0, 0, 356, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 358
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\lipsync.js", "JavaScript", 0, 0, 211, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 179, 45, 435
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\main.js", "JavaScript", 0, 0, 155, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 30, 253
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\pose-studio.js", "JavaScript", 0, 0, 213, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 34, 340
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\recorder.js", "JavaScript", 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 12, 79
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\rhubarb.js", "JavaScript", 0, 0, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 8, 108
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\scene.js", "JavaScript", 0, 0, 712, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 178, 111, 1001
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\style.css", "PostCSS", 0, 0, 0, 0, 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 11, 88
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\test.js", "JavaScript", 0, 0, 855, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 134, 107, 1096
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\tts.js", "JavaScript", 0, 0, 208, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 33, 323
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\src\AvatarStudioFrame.jsx", "JavaScript JSX", 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 3, 80
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\src\index.js", "JavaScript", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3
+"c:\Users\eyash\news_bridge\news-feed\src\avatar-style.css", "PostCSS", 0, 0, 0, 0, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 31, 225
+"c:\Users\eyash\news_bridge\news-feed\src\avatar.js", "JavaScript", 0, 0, 126, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 21, 157
+"c:\Users\eyash\news_bridge\news-feed\src\components\AvatarPage.jsx", "JavaScript JSX", 0, 0, 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 45
+"c:\Users\eyash\news_bridge\news-feed\src\components\AvatarStudioFrame.jsx", "JavaScript JSX", 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 3, 80
+"c:\Users\eyash\news_bridge\news-feed\src\components\CategoryBar.jsx", "JavaScript JSX", 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4, 53
+"c:\Users\eyash\news_bridge\news-feed\src\components\ChatWidget.jsx", "JavaScript JSX", 0, 0, 0, 158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 27, 189
+"c:\Users\eyash\news_bridge\news-feed\src\components\Feed.jsx", "JavaScript JSX", 0, 0, 0, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 20, 100
+"c:\Users\eyash\news_bridge\news-feed\src\components\GuestSignupPrompt.jsx", "JavaScript JSX", 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 26
+"c:\Users\eyash\news_bridge\news-feed\src\components\LanguageToggle.jsx", "JavaScript JSX", 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 21
+"c:\Users\eyash\news_bridge\news-feed\src\components\LeftSidebar.jsx", "JavaScript JSX", 0, 0, 0, 195, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 18, 216
+"c:\Users\eyash\news_bridge\news-feed\src\components\NewsBrief.jsx", "JavaScript JSX", 0, 0, 0, 239, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 27, 277
+"c:\Users\eyash\news_bridge\news-feed\src\components\Post.jsx", "JavaScript JSX", 0, 0, 0, 490, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 54, 558
+"c:\Users\eyash\news_bridge\news-feed\src\components\PostCard.jsx", "JavaScript JSX", 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 16
+"c:\Users\eyash\news_bridge\news-feed\src\components\PostCommentsModal.jsx", "JavaScript JSX", 0, 0, 0, 583, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 47, 634
+"c:\Users\eyash\news_bridge\news-feed\src\components\PostModal.jsx", "JavaScript JSX", 0, 0, 0, 587, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 57, 666
+"c:\Users\eyash\news_bridge\news-feed\src\components\SavedNews.jsx", "JavaScript JSX", 0, 0, 0, 543, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 50, 617
+"c:\Users\eyash\news_bridge\news-feed\src\components\SearchBar.jsx", "JavaScript JSX", 0, 0, 0, 445, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 39, 493
+"c:\Users\eyash\news_bridge\news-feed\src\components\SiteLayout.jsx", "JavaScript JSX", 0, 0, 0, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 16, 110
+"c:\Users\eyash\news_bridge\news-feed\src\components\TopBar.jsx", "JavaScript JSX", 0, 0, 0, 119, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 14, 136
+"c:\Users\eyash\news_bridge\news-feed\src\components\TopicCard.jsx", "JavaScript JSX", 0, 0, 0, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 12, 99
+"c:\Users\eyash\news_bridge\news-feed\src\components\TopicDetails.jsx", "JavaScript JSX", 0, 0, 0, 137, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 16, 161
+"c:\Users\eyash\news_bridge\news-feed\src\components\TopicPost.jsx", "JavaScript JSX", 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 54
+"c:\Users\eyash\news_bridge\news-feed\src\components\TrendingTopics.jsx", "JavaScript JSX", 0, 0, 0, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8, 88
+"c:\Users\eyash\news_bridge\news-feed\src\components\article\ArticleCard.jsx", "JavaScript JSX", 0, 0, 0, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 64
+"c:\Users\eyash\news_bridge\news-feed\src\components\article\ArticleOverlay.jsx", "JavaScript JSX", 0, 0, 0, 130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 148
+"c:\Users\eyash\news_bridge\news-feed\src\components\article\articleHelpers.jsx", "JavaScript JSX", 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 30
+"c:\Users\eyash\news_bridge\news-feed\src\context\SessionContext.jsx", "JavaScript JSX", 0, 0, 0, 85, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 9, 95
+"c:\Users\eyash\news_bridge\news-feed\src\context\ThemeContext.jsx", "JavaScript JSX", 0, 0, 0, 46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 12, 62
+"c:\Users\eyash\news_bridge\news-feed\src\i18n\ar.json", "JSON", 0, 0, 0, 0, 0, 458, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 459
+"c:\Users\eyash\news_bridge\news-feed\src\i18n\en.json", "JSON", 0, 0, 0, 0, 0, 2598, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2599
+"c:\Users\eyash\news_bridge\news-feed\src\i18n\i18n.js", "JavaScript", 0, 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 49
+"c:\Users\eyash\news_bridge\news-feed\src\index.css", "PostCSS", 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\eyash\news_bridge\news-feed\src\lipSync.js", "JavaScript", 0, 0, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 16, 123
+"c:\Users\eyash\news_bridge\news-feed\src\main.jsx", "JavaScript JSX", 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 24
+"c:\Users\eyash\news_bridge\news-feed\src\pages\ApplyEditorPage.jsx", "JavaScript JSX", 0, 0, 0, 725, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 57, 822
+"c:\Users\eyash\news_bridge\news-feed\src\pages\AuthPage.jsx", "JavaScript JSX", 0, 0, 0, 268, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 282
+"c:\Users\eyash\news_bridge\news-feed\src\pages\CmsPage.jsx", "JavaScript JSX", 0, 0, 0, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 76
+"c:\Users\eyash\news_bridge\news-feed\src\pages\DataPage.jsx", "JavaScript JSX", 0, 0, 0, 116, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 127
+"c:\Users\eyash\news_bridge\news-feed\src\pages\EditorPage.jsx", "JavaScript JSX", 0, 0, 0, 253, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 28, 284
+"c:\Users\eyash\news_bridge\news-feed\src\pages\FeedPage.jsx", "JavaScript JSX", 0, 0, 0, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10, 73
+"c:\Users\eyash\news_bridge\news-feed\src\pages\HomePage.jsx", "JavaScript JSX", 0, 0, 0, 158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 184
+"c:\Users\eyash\news_bridge\news-feed\src\pages\NotFoundPage.jsx", "JavaScript JSX", 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 11
+"c:\Users\eyash\news_bridge\news-feed\src\pages\ProfilePage.jsx", "JavaScript JSX", 0, 0, 0, 421, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 22, 453
+"c:\Users\eyash\news_bridge\news-feed\src\scene.js", "JavaScript", 0, 0, 77, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 14, 105
+"c:\Users\eyash\news_bridge\news-feed\src\speech.js", "JavaScript", 0, 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 16, 111
+"c:\Users\eyash\news_bridge\news-feed\src\utils\aiFetch.js", "JavaScript", 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 12
+"c:\Users\eyash\news_bridge\news-feed\src\utils\apiFetch.js", "JavaScript", 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 7, 31
+"c:\Users\eyash\news_bridge\news-feed\src\utils\auth.js", "JavaScript", 0, 0, 97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 29, 133
+"c:\Users\eyash\news_bridge\news-feed\src\utils\categoryColors.js", "JavaScript", 0, 0, 237, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 242
+"c:\Users\eyash\news_bridge\news-feed\src\utils\categoryConfig.js", "JavaScript", 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 11
+"c:\Users\eyash\news_bridge\news-feed\src\utils\languageUtils.js", "JavaScript", 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 4, 37
+"c:\Users\eyash\news_bridge\news-feed\src\utils\savedPosts.js", "JavaScript", 0, 0, 170, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 28, 209
+"c:\Users\eyash\news_bridge\news-feed\src\utils\userId.js", "JavaScript", 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 6
+"c:\Users\eyash\news_bridge\news-feed\vite-plugins\avatarStudioApi.js", "JavaScript", 0, 0, 294, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 23, 329
+"c:\Users\eyash\news_bridge\news-feed\vite.config.js", "JavaScript", 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 19
+"c:\Users\eyash\news_bridge\news_bridge_mobile\.expo\README.md", "Markdown", 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 14
+"c:\Users\eyash\news_bridge\news_bridge_mobile\.expo\devices.json", "JSON", 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"c:\Users\eyash\news_bridge\news_bridge_mobile\.expo\types\router.d.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 15
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\app\(tabs)\_layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 4, 36
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\app\(tabs)\explore.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 109, 0, 0, 0, 0, 0, 0, 0, 0, 4, 113
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\app\(tabs)\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 94, 0, 0, 0, 0, 0, 0, 0, 0, 5, 99
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\app\_layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 5, 25
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\app\modal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 4, 30
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\external-link.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 2, 3, 26
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\haptic-tab.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 1, 2, 19
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\hello-wave.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 2, 20
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\parallax-scroll-view.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 0, 0, 0, 0, 0, 7, 80
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\themed-text.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 0, 0, 0, 0, 0, 6, 61
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\themed-view.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\ui\collapsible.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 6, 46
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\ui\icon-symbol.ios.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 2, 33
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\ui\icon-symbol.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 11, 5, 42
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\constants\theme.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 8, 5, 54
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\hooks\use-color-scheme.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\hooks\use-color-scheme.web.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 3, 6, 22
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\hooks\use-theme-color.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 22
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\scripts\reset-project.js", "JavaScript", 0, 0, 89, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 14, 113
+"c:\Users\eyash\news_bridge\news_bridge_mobile\app.json", "JSON", 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 50
+"c:\Users\eyash\news_bridge\news_bridge_mobile\expo-env.d.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 3
+"c:\Users\eyash\news_bridge\news_bridge_mobile\package-lock.json", "JSON", 0, 0, 0, 0, 0, 13107, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 13108
+"c:\Users\eyash\news_bridge\news_bridge_mobile\package.json", "JSON", 0, 0, 0, 0, 0, 55, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 56
+"c:\Users\eyash\news_bridge\news_bridge_mobile\src\api\auth.js", "JavaScript", 0, 0, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 19, 106
+"c:\Users\eyash\news_bridge\news_bridge_mobile\src\components\AIQueryModal.jsx", "JavaScript JSX", 0, 0, 0, 354, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 20, 388
+"c:\Users\eyash\news_bridge\news_bridge_mobile\src\components\PostCard.jsx", "JavaScript JSX", 0, 0, 0, 1241, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 46, 116, 1403
+"c:\Users\eyash\news_bridge\news_bridge_mobile\src\screens\FeedScreen.jsx", "JavaScript JSX", 0, 0, 0, 399, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 24, 434
+"c:\Users\eyash\news_bridge\news_bridge_mobile\src\screens\SavedNewsScreen.jsx", "JavaScript JSX", 0, 0, 0, 892, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 72, 1004
+"c:\Users\eyash\news_bridge\news_bridge_mobile\src\utils\storage.js", "JavaScript", 0, 0, 106, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 21, 144
+"c:\Users\eyash\news_bridge\service-manager\README.md", "Markdown", 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 74
+"c:\Users\eyash\news_bridge\service-manager\electron\main.js", "JavaScript", 0, 0, 243, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 46, 294
+"c:\Users\eyash\news_bridge\service-manager\electron\preload.js", "JavaScript", 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 30
+"c:\Users\eyash\news_bridge\service-manager\electron\services.json", "JSON", 0, 0, 0, 0, 0, 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 84
+"c:\Users\eyash\news_bridge\service-manager\package-lock.json", "JSON", 0, 0, 0, 0, 0, 2658, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2659
+"c:\Users\eyash\news_bridge\service-manager\package.json", "JSON", 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 21
+"c:\Users\eyash\news_bridge\service-manager\src\index.html", "HTML", 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 49
+"c:\Users\eyash\news_bridge\service-manager\src\renderer.js", "JavaScript", 0, 0, 325, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 50, 381
+"c:\Users\eyash\news_bridge\service-manager\src\styles.css", "PostCSS", 0, 0, 0, 0, 289, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 338
+"c:\Users\eyash\news_bridge\service-manager\src\vendor\xterm-addon-fit.js", "JavaScript", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2
+"c:\Users\eyash\news_bridge\service-manager\src\vendor\xterm.css", "PostCSS", 0, 0, 0, 0, 136, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 27, 210
+"c:\Users\eyash\news_bridge\service-manager\src\vendor\xterm.js", "JavaScript", 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2
+"c:\Users\eyash\news_bridge\service-manager\start.ps1", "PowerShell", 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 10
+"c:\Users\eyash\news_bridge\start-services.ps1", "PowerShell", 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 31
+"Total", "-", 35, 2994, 13450, 19339, 6797, 2051847, 2791, 7282, 48, 80, 571, 73, 16, 9943, 82, 43, 3914, 5, 6322, 10203, 2135835

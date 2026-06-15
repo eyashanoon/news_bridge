@@ -26,4 +26,24 @@ public interface PostReactionRepository extends JpaRepository<PostReaction, Long
         GROUP BY pr.post.id, pr.reactionType
     """)
     List<Object[]> countReactionsForPosts(@Param("postIds") List<Long> postIds);
+
+    @Query("SELECT pr.reactionType, COUNT(pr) FROM PostReaction pr GROUP BY pr.reactionType")
+    List<Object[]> aggregateByReactionType();
+
+    @Query("""
+        SELECT pr.appUser.id, pr.reactionType, COUNT(pr)
+        FROM PostReaction pr
+        GROUP BY pr.appUser.id, pr.reactionType
+        """)
+    List<Object[]> aggregateByUserAndType();
+
+    @Query("""
+        SELECT pr.reactionType, COUNT(pr)
+        FROM PostReaction pr
+        WHERE pr.appUser.id = :userId
+        GROUP BY pr.reactionType
+        """)
+    List<Object[]> aggregateByUserAndTypeForUser(@Param("userId") Long userId);
+
+    void deleteByPost_Id(Long postId);
 }

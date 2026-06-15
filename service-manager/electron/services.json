@@ -65,6 +65,15 @@
     "health": { "type": "tcp", "host": "127.0.0.1", "port": 5174 }
   },
   {
+    "id": "avatar-speech",
+    "name": "Avatar Speech",
+    "description": "TTS + Rhubarb lip-sync server for avatar (port 3001)",
+    "cwd": "avatar",
+    "command": "node server.js",
+    "dependsOn": [],
+    "health": { "type": "tcp", "host": "127.0.0.1", "port": 3001 }
+  },
+  {
     "id": "ai",
     "name": "AI Assistant",
     "description": "RAG / news brief service (port 9000)",
@@ -109,5 +118,14 @@
     "command": "python -m uvicorn main:app --port 9001 --host 0.0.0.0 --reload",
     "dependsOn": ["ollama"],
     "health": { "type": "tcp", "host": "127.0.0.1", "port": 9001 }
+  },
+  {
+    "id": "android",
+    "name": "Android App",
+    "description": "Expo mobile app for Android (port 8081)",
+    "cwd": "news-feed/mobile",
+    "command": "npm start",
+    "dependsOn": ["backend"],
+    "health": { "type": "tcp", "host": "127.0.0.1", "port": 8081 }
   }
 ]

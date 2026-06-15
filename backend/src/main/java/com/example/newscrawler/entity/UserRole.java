@@ -37,6 +37,7 @@ public enum UserRole {
     VIEW_TELEGRAM_POSTS,
     CONTROL_TELEGRAM_CRAWLER,
     WRITE_TELEGRAM_POSTS,
+    VIEW_ADMIN_ACTIVITY,
 
     // Deprecated Legacy Roles (Kept strictly to prevent database deserialization crashes on existing rows)
     @Deprecated OWNER,

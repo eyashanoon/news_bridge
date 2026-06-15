@@ -3,25 +3,27 @@ package com.example.newscrawler.service;
 import com.example.newscrawler.entity.*;
 import com.example.newscrawler.repository.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostReactionService {
 
     private final PostReactionRepository reactionRepository;
-    private final PostRepository postRepository;
     private final PostTagRepository postTagRepository;
     private final UserPreferenceRepository preferenceRepository;
+    private final PostVisibilityService postVisibilityService;
 
     public PostReactionService(PostReactionRepository reactionRepository,
-                               PostRepository postRepository,
                                PostTagRepository postTagRepository,
-                               UserPreferenceRepository preferenceRepository) {
+                               UserPreferenceRepository preferenceRepository,
+                               PostVisibilityService postVisibilityService) {
         this.reactionRepository = reactionRepository;
-        this.postRepository = postRepository;
         this.postTagRepository = postTagRepository;
         this.preferenceRepository = preferenceRepository;
+        this.postVisibilityService = postVisibilityService;
     }
 
     private void updateUserPreference(AppUser AppUser, String tag, double delta) {
@@ -32,9 +34,9 @@ public class PostReactionService {
         preferenceRepository.save(pref);
     }
 
+    @Transactional
     public String react(AppUser AppUser, Long postId, ReactionType type) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = postVisibilityService.requireVisiblePost(postId);
 
         double delta = (type == ReactionType.LIKE) ? 3.0 : -3.5;
 
@@ -88,6 +90,11 @@ public class PostReactionService {
 
     public long getDislikesCount(Long postId) {
         return reactionRepository.countByPostIdAndReactionType(postId, ReactionType.DISLIKE);
+    }
+
+    public Optional<ReactionType> getUserReaction(Long appUserId, Long postId) {
+        return reactionRepository.findByAppUserIdAndPostId(appUserId, postId)
+                .map(PostReaction::getReactionType);
     }
 }
 

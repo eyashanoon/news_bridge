@@ -9,6 +9,11 @@ export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(false);
   const [currentCategory, setCurrentCategory] = useState("General");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [feedRefreshKey, setFeedRefreshKey] = useState(0);
+
+  const bumpFeedRefresh = useCallback(() => {
+    setFeedRefreshKey((k) => k + 1);
+  }, []);
 
   // Restore persisted theme on mount
   useEffect(() => {
@@ -26,8 +31,17 @@ export function ThemeProvider({ children }) {
   }, []);
 
   const value = useMemo(
-    () => ({ darkMode, toggleDarkMode, currentCategory, setCurrentCategory, menuOpen, setMenuOpen }),
-    [darkMode, toggleDarkMode, currentCategory, menuOpen]
+    () => ({
+      darkMode,
+      toggleDarkMode,
+      currentCategory,
+      setCurrentCategory,
+      menuOpen,
+      setMenuOpen,
+      feedRefreshKey,
+      bumpFeedRefresh,
+    }),
+    [darkMode, toggleDarkMode, currentCategory, menuOpen, feedRefreshKey, bumpFeedRefresh]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

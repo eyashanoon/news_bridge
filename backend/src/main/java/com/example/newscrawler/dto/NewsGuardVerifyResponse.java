@@ -1,11 +1,24 @@
 package com.example.newscrawler.dto;
 
+import java.util.List;
+import java.util.Map;
+
 public record NewsGuardVerifyResponse(
         boolean found,
-        Integer domainAgeYears,     // years since oldest Wayback Machine capture
-        Integer trustScore,         // 0–100 combined (age + Wikidata presence)
-        Integer reliabilityScore,   // 0–100 based on domain age alone
-        String  biasLabel,          // "Left" / "Center-Left" / "Center" / "Center-Right" / "Right" / "Unknown"
-        String  trustLabel,         // "MAJOR SOURCE" / "PROMINENT" / "ESTABLISHED" / "EMERGING" / "NEW SITE"
-        String  description         // human-readable summary
+        Integer domainAgeYears,
+        Integer trustScore,
+        Integer reliabilityScore,
+        String biasLabel,
+        String trustLabel,
+        String description,
+        String factualReporting,
+        String agendaBias,
+        String organizationName,
+        String siteDescription,
+        Integer biasPosition,
+        String trustSource,
+        String biasSource,
+        String infoSource,
+        List<VerificationSourceDto> sources,
+        Map<String, Object> metadata
 ) {}

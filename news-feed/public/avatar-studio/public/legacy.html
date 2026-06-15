@@ -15,6 +15,119 @@
   </script>
   <link rel="stylesheet" href="./style.css" />
   <style>
+    /* ── Mobile: hide desktop panels by default, show toggle button ── */
+    @media (max-width: 768px) {
+      #anim-panel { display: none !important; }
+      #tab-nav { display: none !important; }
+      #delay-control { display: none !important; }
+      #input-section {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        padding: 0.6rem 0.8rem 1.2rem !important;
+        background: rgba(8,8,24,0.96) !important;
+        border-top: 1px solid #2a2a5a;
+        z-index: 250;
+        max-height: 50vh;
+        overflow-y: auto;
+        border-radius: 1rem 1rem 0 0;
+        transform: translateY(calc(100% - 3rem));
+        transition: transform 0.3s ease;
+      }
+      #input-section.expanded { transform: translateY(0); }
+      #input-section::before {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 4px;
+        background: #4a4aff;
+        border-radius: 2px;
+        margin: 0 auto 0.4rem;
+        cursor: pointer;
+      }
+      #pose-selects { display: none !important; }
+      #input-row input { font-size: 14px !important; padding: 0.6rem 0.8rem !important; }
+      #input-row button { font-size: 13px !important; padding: 0.5rem 0.8rem !important; }
+      #position-controls { gap: 0.3rem !important; }
+      #position-controls button { font-size: 11px !important; padding: 0.4rem 0.5rem !important; }
+      .feature-toggle-row { display: none !important; }
+      #status-msg { font-size: 11px !important; margin-top: 0.3rem !important; }
+      .mobile-drag-handle {
+        display: block;
+        width: 40px;
+        height: 5px;
+        background: #4a4aff;
+        border-radius: 3px;
+        margin: 0 auto 0.5rem;
+        cursor: pointer;
+      }
+
+      /* ── Mobile: show bottom tab bar ── */
+      #mobile-tab-bar {
+        display: flex !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 300;
+        background: rgba(10, 10, 26, 0.96);
+        border-top: 1px solid #2a2a5a;
+        backdrop-filter: blur(12px);
+        justify-content: space-around;
+        padding: 0.3rem 0;
+        padding-bottom: max(0.3rem, env(safe-area-inset-bottom, 0.3rem));
+      }
+      #mobile-tab-bar .mobile-tab-btn {
+        flex: 1;
+        text-align: center;
+        padding: 0.35rem 0.2rem;
+        border: none;
+        background: transparent;
+        color: #666;
+        font-size: 0.65rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        border-radius: 0.5rem;
+        margin: 0 0.2rem;
+        transition: background 0.2s, color 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.1rem;
+      }
+      #mobile-tab-bar .mobile-tab-btn .tab-icon {
+        font-size: 1.2rem;
+      }
+      #mobile-tab-bar .mobile-tab-btn.active {
+        color: #fff;
+        background: rgba(74,74,255,0.25);
+      }
+      #mobile-tab-bar .mobile-tab-btn:active {
+        background: rgba(74,74,255,0.15);
+      }
+
+      /* ── Mobile: news brief panel positioned from bottom ── */
+      #brief-panel {
+        left: 0.5rem !important;
+        right: 0.5rem !important;
+        top: auto !important;
+        bottom: 3.5rem !important;
+        transform: none !important;
+        width: auto !important;
+        max-height: 60vh !important;
+        border-radius: 0.75rem !important;
+      }
+    }
+
+    /* Desktop: hide mobile toggle and mobile tab bar */
+    @media (min-width: 769px) {
+      .mobile-toggle { display: none !important; }
+      #mobile-tab-bar { display: none !important; }
+    }
+
     #tab-nav {
       position: fixed;
       top: 1rem;
@@ -329,12 +442,30 @@
       </div>
     </div>
   </div>
+  <!-- Desktop tab nav -->
   <nav id="tab-nav">
-    <a href="./legacy.html" class="tab-link active">Avatar</a>
-    <a href="./test.html" class="tab-link">Lip-Sync Lab</a>
+    <a href="./legacy.html" class="tab-link active" data-tab="avatar">Avatar</a>
+    <a href="./legacy.html" class="tab-link" data-tab="news-brief">News Brief</a>
+    <a href="./test.html" class="tab-link" data-tab="lipsync">Lip-Sync Lab</a>
+  </nav>
+  <!-- Mobile bottom tab bar -->
+  <nav id="mobile-tab-bar">
+    <button class="mobile-tab-btn active" data-tab="avatar">
+      <span class="tab-icon">🧑</span>
+      <span>Avatar</span>
+    </button>
+    <button class="mobile-tab-btn" data-tab="news-brief">
+      <span class="tab-icon">📺</span>
+      <span>Brief</span>
+    </button>
+    <button class="mobile-tab-btn" data-tab="lipsync">
+      <span class="tab-icon">🎤</span>
+      <span>Lab</span>
+    </button>
   </nav>
   <main id="app">
     <section id="input-section">
+      <div class="mobile-drag-handle" id="mobile-handle"></div>
       <div id="pose-selects">
         <select id="pose-quick-R" class="pose-quick-sel"><option value="">— R. Hand pose —</option></select>
         <select id="pose-quick-L" class="pose-quick-sel"><option value="">— L. Hand pose —</option></select>
@@ -356,15 +487,126 @@
           Emotion Hands + News Tone
         </label>
       </div>
-      <div id="position-controls">
-        <button id="character-lower">Lower</button>
-        <button id="character-raise">Raise</button>
-        <button id="character-save">Save</button>
+      <div id="position-controls" style="flex-wrap:wrap">
+        <button id="character-left">◀ Left</button>
+        <button id="character-raise">▲ Up</button>
+        <button id="character-right">Right ▶</button>
+        <button id="character-lower">▼ Down</button>
+        <button id="character-forward">Forward ▲</button>
+        <button id="character-back">Back ▼</button>
+        <button id="character-save" style="flex-basis:100%">Save Position</button>
       </div>
       <p id="status-msg"></p>
     </section>
   </main>
   <script type="module" src="./main.js"></script>
+  <script type="module">
+    // ── Tab Switching ──────────────────────────────────────────────
+    import { initNewsBriefUI, handleNewsBriefMessage, abortNewsBrief } from './news-brief.js';
+    import { handleAvatarPositionMessage } from './avatar-position.js';
+
+    // Find elements
+    const tabNav = document.getElementById('tab-nav');
+    const mobileTabBar = document.getElementById('mobile-tab-bar');
+    const animPanel = document.getElementById('anim-panel');
+    const inputSection = document.getElementById('input-section');
+    const delayControl = document.getElementById('delay-control');
+
+    // Create news-brief panel in the same position as anim-panel
+    const briefPanel = document.createElement('div');
+    briefPanel.id = 'brief-panel';
+    briefPanel.style.cssText = `
+      position: fixed; left: 1.2rem; top: 50%; transform: translateY(-50%);
+      z-index: 200; background: rgba(8, 8, 24, 0.94);
+      border: 1px solid #2a2a5a; border-radius: 1rem;
+      backdrop-filter: blur(14px);
+      width: 260px; max-height: 88vh; overflow-y: auto;
+      display: none; /* hidden by default */
+    `;
+    document.body.appendChild(briefPanel);
+
+    // Initialize News Brief UI inside the panel
+    initNewsBriefUI(briefPanel);
+
+    // Tab switching
+    function switchTab(tabName) {
+      // Update active state on desktop tabs
+      document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('active'));
+      document.querySelector(`.tab-link[data-tab="${tabName}"]`)?.classList.add('active');
+
+      // Update active state on mobile tabs
+      document.querySelectorAll('.mobile-tab-btn').forEach(el => el.classList.remove('active'));
+      document.querySelector(`.mobile-tab-btn[data-tab="${tabName}"]`)?.classList.add('active');
+
+      // Show/hide panels
+      const isAvatar = tabName === 'avatar';
+      const isBrief = tabName === 'news-brief';
+      const isLipsync = tabName === 'lipsync';
+
+      animPanel.style.display = isAvatar ? '' : 'none';
+      briefPanel.style.display = isBrief ? '' : 'none';
+      inputSection.style.display = isAvatar ? '' : 'none';
+      delayControl.style.display = isAvatar ? '' : 'none';
+
+      // If leaving news-brief, abort any running operation
+      if (!isBrief) {
+        abortNewsBrief();
+      }
+    }
+
+    // Listen for desktop tab clicks
+    tabNav.addEventListener('click', (e) => {
+      const tabLink = e.target.closest('.tab-link');
+      if (!tabLink) return;
+      e.preventDefault();
+      const tab = tabLink.dataset.tab;
+      if (tab === 'lipsync') {
+        window.location.href = './test.html';
+        return;
+      }
+      switchTab(tab);
+    });
+
+    // Listen for mobile tab clicks
+    mobileTabBar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.mobile-tab-btn');
+      if (!btn) return;
+      const tab = btn.dataset.tab;
+      if (tab === 'lipsync') {
+        window.location.href = './test.html';
+        return;
+      }
+      switchTab(tab);
+    });
+
+    function handleHostMessage(event) {
+      try {
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        if (data.type === 'switch-tab' && data.tab) {
+          switchTab(data.tab);
+          return;
+        }
+        if (handleAvatarPositionMessage(data)) {
+          return;
+        }
+      } catch (_) { /* non-JSON, ignore */ }
+
+      handleNewsBriefMessage(event);
+    }
+
+    // React Native WebView (iOS) + iframe parent
+    window.addEventListener('message', handleHostMessage);
+    // React Native WebView (Android)
+    document.addEventListener('message', handleHostMessage);
+
+    // Also forward from parent if needed
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'news-brief', action: 'ready' }, '*');
+    }
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'avatar-position', action: 'ready' }));
+    }
+  </script>
   <div id="delay-control">
     <label for="main-delay-slider">Sync&nbsp;Delay</label>
     <input id="main-delay-slider" type="range" min="0" max="2" step="0.05" value="0.1" />

@@ -8,16 +8,26 @@ import { ensureUserInitialized } from "../utils/auth";
 import { API_CONFIG } from "../api/config";
 import { useTranslation } from "react-i18next";
 
-export default function Feed({ category, onAskAI, onPostPress, navigation }) {
-  const { t } = useTranslation();
+export default function Feed({ category, onAskAI, onPostPress, refreshKey = 0 }) {
+  const { t, i18n } = useTranslation();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchPosts = useCallback(async (reset = false) => {
-    if (loading) return;
+  const fetchGenRef = useRef(0);
+  const [visibleIds, setVisibleIds] = useState(() => new Set());
+
+  const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 60 }).current;
+
+  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+    const next = new Set(viewableItems.filter((v) => v.isViewable).map((v) => v.item.id));
+    setVisibleIds(next);
+  }).current;
+
+  const fetchPosts = useCallback(async (pageToFetch, reset = false) => {
+    const gen = fetchGenRef.current;
 
     try {
       setLoading(true);
@@ -25,19 +35,20 @@ export default function Feed({ category, onAskAI, onPostPress, navigation }) {
       const userId = await getUserId();
       const savedLocation = await AsyncStorage.getItem("user_location");
 
-      const currentPage = reset ? 0 : page;
-      let url = `${API_CONFIG.baseURL}/api/feed?userId=${userId}&category=${category}&limit=10&page=${currentPage}`;
+      let url = `${API_CONFIG.baseURL}/api/feed?userId=${userId}&category=${encodeURIComponent(category)}&limit=10&page=${pageToFetch}&lang=${encodeURIComponent(i18n.resolvedLanguage || i18n.language || "en")}`;
 
       if (savedLocation) {
         const loc = JSON.parse(savedLocation);
-        if (loc?.lat && loc?.lon) {
+        if (loc?.lat != null && loc?.lon != null) {
           url += `&lat=${loc.lat}&lon=${loc.lon}`;
         }
       }
 
       const res = await apiFetch(url);
+      if (gen !== fetchGenRef.current) return;
       if (!res.ok) throw new Error("Failed to fetch feed");
       const data = await res.json();
+      if (gen !== fetchGenRef.current) return;
 
       if (data.length === 0) {
         setHasMore(false);
@@ -46,41 +57,49 @@ export default function Feed({ category, onAskAI, onPostPress, navigation }) {
 
       if (reset) {
         setPosts(data);
-        setPage(1);
       } else {
-        setPosts(prev => {
-          const existingIds = new Set(prev.map(p => p.id));
-          const filtered = data.filter(p => !existingIds.has(p.id));
+        setPosts((prev) => {
+          const existingIds = new Set(prev.map((p) => p.id));
+          const filtered = data.filter((p) => !existingIds.has(p.id));
           return [...prev, ...filtered];
         });
-        setPage(prev => prev + 1);
       }
+      setPage(pageToFetch + 1);
     } catch (err) {
       console.error("Feed fetch error:", err);
     } finally {
-      setLoading(false);
+      if (gen === fetchGenRef.current) {
+        setLoading(false);
+      }
     }
-  }, [category, page, loading]);
+  }, [category, i18n.language]);
 
   useEffect(() => {
+    fetchGenRef.current += 1;
     setPosts([]);
     setPage(0);
     setHasMore(true);
-    fetchPosts(true);
-  }, [category]);
+    fetchPosts(0, true);
+  }, [category, i18n.language, refreshKey, fetchPosts]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
+    fetchGenRef.current += 1;
     setPosts([]);
     setPage(0);
     setHasMore(true);
-    await fetchPosts(true);
+    await fetchPosts(0, true);
     setRefreshing(false);
-  }, [category]);
+  }, [fetchPosts]);
 
   const renderPost = useCallback(({ item }) => (
-    <Post post={item} onAskAI={onAskAI} onPress={onPostPress} />
-  ), [onAskAI, onPostPress]);
+    <Post
+      post={item}
+      isVisible={visibleIds.has(item.id)}
+      onAskAI={onAskAI}
+      onPress={onPostPress}
+    />
+  ), [onAskAI, onPostPress, visibleIds]);
 
   const renderFooter = () => {
     if (loading) {
@@ -96,9 +115,11 @@ export default function Feed({ category, onAskAI, onPostPress, navigation }) {
     <FlatList
       data={posts}
       renderItem={renderPost}
-      keyExtractor={item => String(item.id)}
-      onEndReached={() => hasMore && !loading && fetchPosts()}
+      keyExtractor={(item) => String(item.id)}
+      onEndReached={() => hasMore && !loading && fetchPosts(page, false)}
       onEndReachedThreshold={0.3}
+      onViewableItemsChanged={onViewableItemsChanged}
+      viewabilityConfig={viewabilityConfig}
       ListFooterComponent={renderFooter}
       refreshing={refreshing}
       onRefresh={onRefresh}

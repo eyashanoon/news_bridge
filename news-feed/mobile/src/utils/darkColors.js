@@ -11,7 +11,7 @@ export const dark = {
   textSecondary: "#cbd5e1",
   textMuted: "#94a3b8",
 
-  // Borders
+  // Border
   border: "#334155",
 
   // Brand
@@ -42,6 +42,11 @@ export const dark = {
 
   // Overlay
   overlay: "rgba(0, 0, 0, 0.7)",
+
+  // Alias (matches older code using dc.muted)
+  get muted() {
+    return this.textMuted;
+  },
 };
 
 // Helper to get themed style based on darkMode flag

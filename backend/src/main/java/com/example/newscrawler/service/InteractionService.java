@@ -10,19 +10,19 @@ import java.util.List;
 @Service
 public class InteractionService {
 
-    private final PostRepository postRepository;
     private final PostInteractionRepository interactionRepository;
     private final PostTagRepository postTagRepository;
     private final UserPreferenceRepository preferenceRepository;
+    private final PostVisibilityService postVisibilityService;
 
-    public InteractionService(PostRepository postRepository,
-                              PostInteractionRepository interactionRepository,
+    public InteractionService(PostInteractionRepository interactionRepository,
                               PostTagRepository postTagRepository,
-                              UserPreferenceRepository preferenceRepository) {
-        this.postRepository = postRepository;
+                              UserPreferenceRepository preferenceRepository,
+                              PostVisibilityService postVisibilityService) {
         this.interactionRepository = interactionRepository;
         this.postTagRepository = postTagRepository;
         this.preferenceRepository = preferenceRepository;
+        this.postVisibilityService = postVisibilityService;
     }
 
     private void updateUserPreference(AppUser AppUser, String tag, double delta) {
@@ -53,8 +53,7 @@ public class InteractionService {
     }
 
     public void recordView(AppUser AppUser, Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = postVisibilityService.requireVisiblePost(postId);
 
         PostInteraction interaction = interactionRepository
                 .findByAppUserIdAndPostId(AppUser.getId(), postId)
@@ -76,8 +75,7 @@ public class InteractionService {
     }
 
     public void recordTimeSpent(AppUser AppUser, Long postId, double seconds) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = postVisibilityService.requireVisiblePost(postId);
 
         PostInteraction interaction = interactionRepository
                 .findByAppUserIdAndPostId(AppUser.getId(), postId)
@@ -98,8 +96,7 @@ public class InteractionService {
     }
 
     public void recordClick(AppUser AppUser, Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = postVisibilityService.requireVisiblePost(postId);
 
         PostInteraction interaction = interactionRepository
                 .findByAppUserIdAndPostId(AppUser.getId(), postId)

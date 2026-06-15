@@ -1,9 +1,19 @@
 // LeftSidebar.jsx
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSession } from "../context/SessionContext";
+import {
+  COMMON_CITIES,
+  loadStoredLocation,
+  loadUserLocationFromServer,
+  saveUserLocation,
+  searchLocations,
+  reverseGeocode,
+} from "../utils/locationUtils";
 
 export default function LeftSidebar({ setActivePage, activePage, onLocationChange, onOpenAvatar }) {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { session } = useSession();
   const isEditor = session?.type === "EDITOR";
@@ -14,41 +24,16 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
 
-  const commonCities = [
-    { id: 'gaza', name: 'Gaza City', lat: 31.5017, lon: 34.4668 },
-    { id: 'khanyounis', name: 'Khan Younis', lat: 31.3453, lon: 34.3091 },
-    { id: 'rafah', name: 'Rafah', lat: 31.2919, lon: 34.2435 },
-    { id: 'north_gaza', name: 'North Gaza', lat: 31.5667, lon: 34.5333 },
-    { id: 'whole_gaza', name: 'All Gaza Strip', lat: 31.4167, lon: 34.4000 },
-  ];
-
-  const searchLocations = async (query) => {
-    if (query.length < 2) {
-      setSearchResults([]);
-      return;
-    }
-    setSearching(true);
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=10`);
-      const data = await res.json();
-      const results = data.map(item => ({
-        id: item.place_id,
-        name: item.display_name.split(',')[0],
-        fullName: item.display_name,
-        lat: parseFloat(item.lat),
-        lon: parseFloat(item.lon)
-      }));
-      setSearchResults(results);
-    } catch (e) {
-      setSearchResults([]);
-    }
-    setSearching(false);
-  };
-
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       if (searchQuery) {
-        searchLocations(searchQuery);
+        setSearching(true);
+        try {
+          setSearchResults(await searchLocations(searchQuery));
+        } catch {
+          setSearchResults([]);
+        }
+        setSearching(false);
       } else {
         setSearchResults([]);
       }
@@ -63,41 +48,31 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
         async (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-            const data = await res.json();
-            const name = data.address.city || data.address.town || data.address.village || data.address.county || data.address.state || data.address.country || 'Detected Location';
-            const userLoc = { name, lat, lon, auto: true };
-            setLocation(userLoc);
-            localStorage.setItem('user_location', JSON.stringify(userLoc));
-            onLocationChange?.();
-          } catch (e) {
-            const userLoc = { name: 'Detected Location', lat, lon, auto: true };
-            setLocation(userLoc);
-            localStorage.setItem('user_location', JSON.stringify(userLoc));
-            onLocationChange?.();
-          }
+          const name = await reverseGeocode(lat, lon);
+          const userLoc = { name, lat, lon, auto: true };
+          setLocation(userLoc);
+          await saveUserLocation(userLoc);
+          onLocationChange?.();
           setDetectingLocation(false);
         },
-        () => {
-          setDetectingLocation(false);
-        }
+        () => setDetectingLocation(false)
       );
+    } else {
+      setDetectingLocation(false);
     }
   };
 
-  const selectCity = (city) => {
+  const selectCity = async (city) => {
     setLocation(city);
-    localStorage.setItem('user_location', JSON.stringify(city));
+    await saveUserLocation(city);
     onLocationChange?.();
     setLocationMenuOpen(false);
   };
 
   useEffect(() => {
-    const saved = localStorage.getItem('user_location');
-    if (saved) {
-      setLocation(JSON.parse(saved));
-    }
+    loadUserLocationFromServer().then((loc) => {
+      if (loc) setLocation(loc);
+    });
   }, []);
 
   return (
@@ -143,7 +118,7 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
                     <div className="px-4 py-2 text-sm" style={{ color: "var(--text-muted)" }}>{t("loading")}</div>
                   )}
 
-                  {!searchQuery && !searching && commonCities.map(city => (
+                  {!searchQuery && !searching && COMMON_CITIES.map(city => (
                     <button
                       key={city.id}
                       onClick={() => selectCity(city)}
@@ -180,10 +155,10 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
       <div className="sidebar-section">
         <div
           className="sidebar-nav-item"
-          onClick={() => onOpenAvatar?.()}
+          onClick={() => navigate("/news/presenter")}
         >
           <span>🎙️</span>
-          <span>{t("newsPresenter", "News Presenter")}</span>
+          <span>{t("newsPresenter", "AI Presenter")}</span>
         </div>
       </div>
 
@@ -209,7 +184,15 @@ export default function LeftSidebar({ setActivePage, activePage, onLocationChang
           onClick={() => setActivePage("SAVED")}
         >
           <span>💾</span>
-          <span>Saved News</span>
+          <span>{t("savedNews")}</span>
+        </div>
+
+        <div
+          className={`sidebar-nav-item ${activePage === "TELEGRAM" ? "active" : ""}`}
+          onClick={() => setActivePage("TELEGRAM")}
+        >
+          <span>📡</span>
+          <span>{t("telegramSpecialNews", "Special News (Telegram)")}</span>
         </div>
       </div>
 
