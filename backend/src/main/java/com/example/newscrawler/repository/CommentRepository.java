@@ -4,6 +4,7 @@ import com.example.newscrawler.entity.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -34,4 +35,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     // Find comment by id with user eagerly loaded (for vote/create operations)
     @Query("SELECT c FROM Comment c LEFT JOIN FETCH c.user WHERE c.id = :id")
     java.util.Optional<Comment> findByIdWithUser(@Param("id") Long id);
+
+    @Modifying
+    @Query("DELETE FROM Comment c WHERE c.post.id = :postId AND c.parentComment IS NOT NULL")
+    void deleteRepliesByPostId(@Param("postId") Long postId);
+
+    @Modifying
+    @Query("DELETE FROM Comment c WHERE c.post.id = :postId")
+    void deleteAllByPostId(@Param("postId") Long postId);
 }

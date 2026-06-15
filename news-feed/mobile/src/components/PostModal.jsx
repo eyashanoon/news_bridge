@@ -7,26 +7,18 @@ import { searchPosts } from "../api/searchApi";
 import { useTheme } from "../context/ThemeContext";
 import { dark as dc, th } from "../utils/darkColors";
 import { useTranslation } from "react-i18next";
+import {
+  detectItemLanguage,
+  contentSampleFromBlocks,
+  normalizeLang,
+  getTranslationTargetLang,
+  getTranslateButtonLabel,
+  getLanguageDisplayLabel,
+} from "../utils/languageUtils";
+import { translateText } from "../utils/translateUtils";
 
-const AI_BASE_URL = "http://10.0.2.2:9000";
 const POST_PLACEHOLDER_IMG = "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE=";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-async function translateText(text, sourceLang, targetLang) {
-  if (!text || !text.trim()) return "";
-  try {
-    const res = await fetch(`${AI_BASE_URL}/translate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, source_lang: sourceLang, target_lang: targetLang }),
-    });
-    if (!res.ok) return text;
-    const data = await res.json();
-    const translated = (data.translatedText || "").trim();
-    if (!translated || /^(i can'?t|cannot|sorry|i'm sorry|i will not|cannot fulfill)/i.test(translated)) return text;
-    return translated;
-  } catch { return text; }
-}
 
 function fallbackContentFromText(text) {
   if (!text) return [];
@@ -110,7 +102,7 @@ function RelatedPostCard({ post, onClick }) {
 export default function PostModal({ post, visible, onClose }) {
   const theme = categoryTheme[post?.label]?.light || categoryTheme.General.light;
   const { darkMode } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [content, setContent] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [relatedPosts, setRelatedPosts] = useState([]);
@@ -121,9 +113,10 @@ export default function PostModal({ post, visible, onClose }) {
   const [translatedText, setTranslatedText] = useState(null);
   const [showTranslated, setShowTranslated] = useState(false);
 
-  // determine language
-  const postLang = post?.lang || (post?.isArabic ? "ar" : "en");
-  const needsTranslation = false; // simplified — could check lang
+  const uiLang = i18n.language;
+  const blockText = contentSampleFromBlocks(content);
+  const postLang = post ? detectItemLanguage(post, blockText) : "";
+  const needsTranslation = Boolean(postLang && postLang !== normalizeLang(uiLang));
 
   // Load content
   useEffect(() => {
@@ -181,17 +174,17 @@ export default function PostModal({ post, visible, onClose }) {
 
   const handleTranslate = async () => {
     if (showTranslated) { setShowTranslated(false); return; }
+    if (!needsTranslation) return;
     setIsTranslating(true);
     try {
-      const targetLang = "en";
-      const sourceLang = "ar";
+      const targetLang = getTranslationTargetLang(uiLang);
       if (post?.title) {
-        const t = await translateText(post.title, sourceLang, targetLang);
-        setTranslatedTitle(t || post.title);
+        const translated = await translateText(post.title, postLang, targetLang);
+        setTranslatedTitle(translated || post.title);
       }
       if (post?.text) {
-        const t = await translateText(post.text, sourceLang, targetLang);
-        setTranslatedText(t || post.text);
+        const translated = await translateText(post.text, postLang, targetLang);
+        setTranslatedText(translated || post.text);
       }
       setShowTranslated(true);
     } catch {} finally { setIsTranslating(false); }
@@ -221,7 +214,7 @@ export default function PostModal({ post, visible, onClose }) {
             <ScrollView style={styles.textPane} contentContainerStyle={styles.textPaneContent} showsVerticalScrollIndicator={true}>
                 <View style={styles.metaRow}>
                   {post?.label ? <Text style={styles.metaRowText}>{post.label}</Text> : null}
-                  {post?.lang ? <Text style={styles.metaRowText}> · {post.lang}</Text> : null}
+                  {postLang ? <Text style={styles.metaRowText}> · {getLanguageDisplayLabel(postLang, t)}</Text> : null}
                 </View>
 
                 {/* Topic post author */}
@@ -264,7 +257,7 @@ export default function PostModal({ post, visible, onClose }) {
                 {needsTranslation && (
                   <TouchableOpacity onPress={handleTranslate} disabled={isTranslating} style={styles.translateBtn}>
                     <Text style={styles.translateBtnText}>
-                      {isTranslating ? t("translating") : showTranslated ? t("viewOriginal") : t("translateToEn")}
+                      {isTranslating ? t("translating") : showTranslated ? t("viewOriginal") : getTranslateButtonLabel(uiLang, t)}
                     </Text>
                   </TouchableOpacity>
                 )}

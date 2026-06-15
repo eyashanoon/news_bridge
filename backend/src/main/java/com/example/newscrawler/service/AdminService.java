@@ -3,6 +3,7 @@ package com.example.newscrawler.service;
 import com.example.newscrawler.dto.CreateAdminRequest;
 import com.example.newscrawler.dto.AdminResponse;
 import com.example.newscrawler.entity.Admin;
+import com.example.newscrawler.entity.AdminActivityAction;
 import com.example.newscrawler.entity.UserRole;
 import com.example.newscrawler.entity.UserStatus;
 import com.example.newscrawler.entity.UserType;
@@ -32,6 +33,9 @@ public class AdminService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AdminActivityLogService activityLogService;
 
     public AdminResponse createAdmin(CreateAdminRequest request) {
         if (adminRepository.existsByEmail(request.email)) {
@@ -63,7 +67,13 @@ public class AdminService {
         admin.setRoles(userRoles);
 
         admin = adminRepository.save(admin);
-        return mapToDto(admin);
+        AdminResponse created = mapToDto(admin);
+        activityLogService.logSuccess(
+                AdminActivityAction.ADMIN_CREATED,
+                "admin:" + created.id,
+                "Created admin account " + created.email + " with roles: " + String.join(", ", created.roles)
+        );
+        return created;
     }
     
     public AdminResponse updateAdminRoles(Long id, List<String> roles) {
@@ -83,7 +93,13 @@ public class AdminService {
             }
         }
         admin.setRoles(userRoles);
-        return mapToDto(adminRepository.save(admin));
+        AdminResponse updated = mapToDto(adminRepository.save(admin));
+        activityLogService.logSuccess(
+                AdminActivityAction.ROLE_CHANGED,
+                "admin:" + updated.id,
+                "Updated roles for " + updated.email + " → " + String.join(", ", updated.roles)
+        );
+        return updated;
     }
 
     public AdminResponse getAdminById(Long id) {
@@ -104,7 +120,13 @@ public class AdminService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid status: " + status);
         }
         admin.setStatus(parsed);
-        return mapToDto(adminRepository.save(admin));
+        AdminResponse updated = mapToDto(adminRepository.save(admin));
+        activityLogService.logSuccess(
+                AdminActivityAction.STATUS_CHANGED,
+                "admin:" + updated.id,
+                "Changed status for " + updated.email + " → " + updated.status
+        );
+        return updated;
     }
 
     public List<AdminResponse> listAllAdmins() {
@@ -113,7 +135,13 @@ public class AdminService {
 
     public void deleteAdmin(Long id) {
         Admin admin = adminRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
+        String email = admin.getEmail();
         adminRepository.delete(admin);
+        activityLogService.logSuccess(
+                AdminActivityAction.ADMIN_DELETED,
+                "admin:" + id,
+                "Deleted admin account " + email
+        );
     }
 
     public AdminResponse updateAdminName(Long id, String email) {
@@ -122,7 +150,13 @@ public class AdminService {
              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use");
         }
         admin.setEmail(email);
-        return mapToDto(adminRepository.save(admin));
+        AdminResponse updated = mapToDto(adminRepository.save(admin));
+        activityLogService.logSuccess(
+                AdminActivityAction.ADMIN_UPDATED,
+                "admin:" + updated.id,
+                "Updated admin profile email → " + updated.email
+        );
+        return updated;
     }
 
     private AdminResponse mapToDto(Admin admin) {

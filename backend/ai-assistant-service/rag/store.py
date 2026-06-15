@@ -1,59 +1,111 @@
-import faiss
-import numpy as np
+"""Vector store using FAISS (IndexFlatIP).
+
+Persisted to disk as faiss.index + meta.json for restarts.
+Stores text chunks with embeddings and metadata (postId, title, text).
+"""
+
 import json
 import os
+import faiss
+import numpy as np
+from typing import List, Dict, Optional, Tuple
 
-STORE_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
-INDEX_PATH = os.path.join(STORE_DIR, "faiss.index")
-META_PATH = os.path.join(STORE_DIR, "meta.json")
+from config import settings
 
 
 class VectorStore:
-    def __init__(self, dim: int, index_path: str = INDEX_PATH, meta_path: str = META_PATH):
-        self.index_path = index_path
-        self.meta_path = meta_path
-        self.dim = dim
+    """FAISS-based vector store with disk persistence."""
 
-        # Try to load existing index from disk
-        if os.path.exists(index_path) and os.path.exists(meta_path):
-            self.index = faiss.read_index(index_path)
-            with open(meta_path, "r", encoding="utf-8") as f:
-                self.meta = json.load(f)
-        else:
-            self.index = faiss.IndexFlatIP(dim)
-            self.meta = []
+    def __init__(self) -> None:
+        self.dim = settings.vector_dim
+        self.index_path = settings.vector_store_path
+        self.meta_path = settings.meta_store_path
 
-    def add(self, embedding, metadata):
-        embedding = np.array([embedding], dtype=np.float32)
-        self.index.add(embedding)
-        self.meta.append(metadata)
+        self.index: faiss.Index = faiss.IndexFlatIP(self.dim)
+        self.metadata: List[Dict] = []  # parallel list, one entry per vector
+        self._load()
 
-    def search(self, query_vec, top_k=5):
-        query_vec = np.array([query_vec], dtype=np.float32)
+    # ------------------------------------------------------------------
+    # Persistence
+    # ------------------------------------------------------------------
 
-        actual_k = min(top_k, self.index.ntotal)
-        if actual_k == 0:
-            return []
+    def _load(self) -> None:
+        """Load index + metadata from disk if they exist."""
+        if os.path.exists(self.index_path) and os.path.exists(self.meta_path):
+            self.index = faiss.read_index(self.index_path)
+            with open(self.meta_path, "r", encoding="utf-8") as f:
+                self.metadata = json.load(f)
 
-        scores, idxs = self.index.search(query_vec, actual_k)
-
-        results = []
-        for score, idx in zip(scores[0], idxs[0]):
-            if idx == -1:
-                continue
-
-            item = dict(self.meta[idx])
-            item["score"] = float(score)
-            results.append(item)
-
-        return results
-
-    def save(self):
-        """Persist the index and metadata to disk."""
-        os.makedirs(STORE_DIR, exist_ok=True)
+    def _save(self) -> None:
+        """Write index + metadata to disk."""
+        os.makedirs(os.path.dirname(self.index_path), exist_ok=True)
         faiss.write_index(self.index, self.index_path)
         with open(self.meta_path, "w", encoding="utf-8") as f:
-            json.dump(self.meta, f, ensure_ascii=False, default=str)
+            json.dump(self.metadata, f, ensure_ascii=False, indent=2)
 
-    def __len__(self):
+    # ------------------------------------------------------------------
+    # Operations
+    # ------------------------------------------------------------------
+
+    def add(
+        self,
+        vectors: np.ndarray,
+        meta_list: List[Dict],
+    ) -> None:
+        """Add vectors and their metadata to the store.
+
+        Args:
+            vectors: shape (n, dim) float32 array, already normalized.
+            meta_list: list of dicts with at least 'postId', 'title', 'text'.
+        """
+        if len(vectors) != len(meta_list):
+            raise ValueError("vectors and meta_list must have the same length")
+
+        self.index.add(vectors)
+        self.metadata.extend(meta_list)
+        self._save()
+
+    def search(
+        self,
+        query_vector: np.ndarray,
+        top_k: int = 5,
+    ) -> List[Tuple[float, Dict]]:
+        """Search for the top_k most similar vectors.
+
+        Args:
+            query_vector: shape (dim,) normalized vector.
+            top_k: number of results to return (clamped to index size).
+
+        Returns:
+            List of (score, metadata_dict) tuples, highest score first.
+        """
+        if self.index.ntotal == 0:
+            return []
+
+        k = min(top_k, self.index.ntotal)
+        # query_vector must be shape (1, dim)
+        scores, indices = self.index.search(query_vector.reshape(1, -1), k)
+
+        results = []
+        for score, idx in zip(scores[0], indices[0]):
+            if idx >= 0 and idx < len(self.metadata):
+                results.append((float(score), self.metadata[int(idx)]))
+        return results
+
+    @property
+    def size(self) -> int:
+        """Number of vectors currently in the store."""
         return self.index.ntotal
+
+    def clear(self) -> None:
+        """Remove all vectors and metadata."""
+        self.index = faiss.IndexFlatIP(self.dim)
+        self.metadata = []
+        if os.path.exists(self.index_path):
+            os.remove(self.index_path)
+        if os.path.exists(self.meta_path):
+            os.remove(self.meta_path)
+
+    def get_post_ids(self) -> set:
+        """Return the set of unique postIds currently stored."""
+        return {m["postId"] for m in self.metadata if "postId" in m}

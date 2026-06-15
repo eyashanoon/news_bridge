@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 
 export default function TrendingTopicsPage({ navigation }) {
   const { currentCategory, darkMode } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = categoryTheme[currentCategory]?.light || categoryTheme.General.light;
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,8 +43,10 @@ export default function TrendingTopicsPage({ navigation }) {
     navigation.navigate("TopicDetails", { topicId: id });
   };
 
+  const isRtl = i18n.language === "ar";
+
   return (
-    <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+    <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
       <TopBar navigation={navigation} />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {/* Header */}

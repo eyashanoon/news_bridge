@@ -104,6 +104,19 @@ public class DataInitializer {
                 jdbcTemplate.execute("ALTER TABLE registered_users ADD UNIQUE INDEX UK_username (username)");
                 logger.info("Successfully added unique index on registered_users.username.");
             } catch (Exception e) {}
+            try {
+                jdbcTemplate.execute("ALTER TABLE topic_posts MODIFY COLUMN media_url LONGTEXT");
+                logger.info("Successfully migrated topic_posts.media_url to LONGTEXT.");
+            } catch (Exception e) {}
+            try {
+                jdbcTemplate.execute("ALTER TABLE comments MODIFY COLUMN attachment_url LONGTEXT");
+                logger.info("Successfully migrated comments.attachment_url to LONGTEXT.");
+            } catch (Exception e) {
+                try {
+                    jdbcTemplate.execute("ALTER TABLE Comments MODIFY COLUMN attachment_url LONGTEXT");
+                    logger.info("Successfully migrated Comments.attachment_url to LONGTEXT.");
+                } catch (Exception ignored) {}
+            }
         };
     }
 
@@ -136,6 +149,7 @@ public class DataInitializer {
             roles.add(UserRole.MANAGE_TELEGRAM_CHANNELS);
             roles.add(UserRole.VIEW_TELEGRAM_POSTS);
             roles.add(UserRole.CONTROL_TELEGRAM_CRAWLER);
+            roles.add(UserRole.VIEW_ADMIN_ACTIVITY);
             roles.add(UserRole.OWNER);
             owner.setRoles(roles);
             adminRepository.save(owner);
@@ -202,6 +216,7 @@ public class DataInitializer {
             ensureAllowedRole(allowedRoleRepository, UserType.ADMIN, UserRole.MANAGE_TELEGRAM_CHANNELS);
             ensureAllowedRole(allowedRoleRepository, UserType.ADMIN, UserRole.VIEW_TELEGRAM_POSTS);
             ensureAllowedRole(allowedRoleRepository, UserType.ADMIN, UserRole.CONTROL_TELEGRAM_CRAWLER);
+            ensureAllowedRole(allowedRoleRepository, UserType.ADMIN, UserRole.VIEW_ADMIN_ACTIVITY);
             ensureAllowedRole(allowedRoleRepository, UserType.ADMIN, UserRole.OWNER);
 
             ensureAllowedRole(allowedRoleRepository, UserType.EDITOR, UserRole.PUBLISH_LIVE_NEWS);

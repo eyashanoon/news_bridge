@@ -1,0 +1,824 @@
+Date : 2026-06-06 04:05:48
+Directory : c:\Users\eyash\news_bridge
+Total : 616 files,  2119310 codes, 6322 comments, 10203 blanks, all 2135835 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |         34 |  2,051,847 |          0 |         29 |  2,051,876 |
+| JavaScript JSX     |         85 |     19,339 |        660 |      1,776 |     21,775 |
+| JavaScript         |         92 |     13,450 |      3,204 |      2,099 |     18,753 |
+| Java               |        209 |      9,943 |        546 |      2,482 |     12,971 |
+| Python             |         74 |      7,282 |      1,466 |      1,732 |     10,480 |
+| PostCSS            |         11 |      6,797 |        257 |        860 |      7,914 |
+| XML                |         33 |      3,914 |         39 |         28 |      3,981 |
+| Markdown           |         25 |      2,994 |          0 |        919 |      3,913 |
+| HTML               |         11 |      2,791 |         22 |        117 |      2,930 |
+| TypeScript JSX     |         14 |        571 |         14 |         60 |        645 |
+| Batch              |          2 |         82 |         64 |         44 |        190 |
+| TypeScript         |          6 |         80 |         18 |         20 |        118 |
+| YAML               |          2 |         73 |          0 |         11 |         84 |
+| pip requirements   |          6 |         48 |          2 |          9 |         59 |
+| Java Properties    |          6 |         43 |         30 |          4 |         77 |
+| PowerShell         |          3 |         35 |          0 |         10 |         45 |
+| JSON with Comments |          2 |         16 |          0 |          1 |         17 |
+| MS SQL             |          1 |          5 |          0 |          2 |          7 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                        | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                           |        616 |  2,119,310 |      6,322 |     10,203 |  2,135,835 |
+| . (Files)                                                                                                                   |          1 |         25 |          0 |          6 |         31 |
+| .claude                                                                                                                     |          1 |          0 |          0 |          1 |          1 |
+| .claude\agents                                                                                                              |          1 |          0 |          0 |          1 |          1 |
+| OLD                                                                                                                         |         33 |        813 |        133 |         58 |      1,004 |
+| OLD\android_app                                                                                                             |         16 |        349 |         62 |         29 |        440 |
+| OLD\android_app (Files)                                                                                                     |          2 |         44 |         45 |         22 |        111 |
+| OLD\android_app\app                                                                                                         |         12 |        286 |         15 |          5 |        306 |
+| OLD\android_app\app\src                                                                                                     |         12 |        286 |         15 |          5 |        306 |
+| OLD\android_app\app\src\main                                                                                                |         12 |        286 |         15 |          5 |        306 |
+| OLD\android_app\app\src\main (Files)                                                                                        |          1 |         18 |          0 |          3 |         21 |
+| OLD\android_app\app\src\main\res                                                                                            |         11 |        268 |         15 |          2 |        285 |
+| OLD\android_app\app\src\main\res\drawable                                                                                   |          2 |        200 |          0 |          1 |        201 |
+| OLD\android_app\app\src\main\res\mipmap-anydpi-v26                                                                          |          2 |         12 |          0 |          0 |         12 |
+| OLD\android_app\app\src\main\res\values                                                                                     |          3 |         24 |          0 |          0 |         24 |
+| OLD\android_app\app\src\main\res\values-ar                                                                                  |          1 |          9 |          0 |          0 |          9 |
+| OLD\android_app\app\src\main\res\values-night                                                                               |          1 |          5 |          1 |          1 |          7 |
+| OLD\android_app\app\src\main\res\xml                                                                                        |          2 |         18 |         14 |          0 |         32 |
+| OLD\android_app\gradle                                                                                                      |          2 |         19 |          2 |          2 |         23 |
+| OLD\android_app\gradle (Files)                                                                                              |          1 |         11 |          1 |          1 |         13 |
+| OLD\android_app\gradle\wrapper                                                                                              |          1 |          8 |          1 |          1 |         10 |
+| OLD\news_bridge_android_app                                                                                                 |         17 |        464 |         71 |         29 |        564 |
+| OLD\news_bridge_android_app (Files)                                                                                         |          2 |         43 |         45 |         22 |        110 |
+| OLD\news_bridge_android_app\app                                                                                             |         13 |        402 |         24 |          5 |        431 |
+| OLD\news_bridge_android_app\app\src                                                                                         |         13 |        402 |         24 |          5 |        431 |
+| OLD\news_bridge_android_app\app\src\main                                                                                    |         13 |        402 |         24 |          5 |        431 |
+| OLD\news_bridge_android_app\app\src\main (Files)                                                                            |          1 |         30 |          0 |          4 |         34 |
+| OLD\news_bridge_android_app\app\src\main\res                                                                                |         12 |        372 |         24 |          1 |        397 |
+| OLD\news_bridge_android_app\app\src\main\res\drawable                                                                       |          2 |        200 |          0 |          1 |        201 |
+| OLD\news_bridge_android_app\app\src\main\res\mipmap-anydpi-v26                                                              |          2 |         12 |          0 |          0 |         12 |
+| OLD\news_bridge_android_app\app\src\main\res\values                                                                         |          3 |         73 |          5 |          0 |         78 |
+| OLD\news_bridge_android_app\app\src\main\res\values-ar                                                                      |          1 |         52 |          0 |          0 |         52 |
+| OLD\news_bridge_android_app\app\src\main\res\values-night                                                                   |          1 |         11 |          5 |          0 |         16 |
+| OLD\news_bridge_android_app\app\src\main\res\xml                                                                            |          3 |         24 |         14 |          0 |         38 |
+| OLD\news_bridge_android_app\gradle                                                                                          |          2 |         19 |          2 |          2 |         23 |
+| OLD\news_bridge_android_app\gradle (Files)                                                                                  |          1 |         11 |          1 |          1 |         13 |
+| OLD\news_bridge_android_app\gradle\wrapper                                                                                  |          1 |          8 |          1 |          1 |         10 |
+| avatar                                                                                                                      |         22 |      4,778 |        342 |        460 |      5,580 |
+| avatar (Files)                                                                                                              |         13 |      3,113 |        127 |        160 |      3,400 |
+| avatar-studio-component                                                                                                     |         19 |      4,099 |        903 |        677 |      5,679 |
+| avatar-studio-component (Files)                                                                                             |          5 |        868 |          0 |        235 |      1,103 |
+| avatar-studio-component\public                                                                                              |         12 |      3,187 |        868 |        438 |      4,493 |
+| avatar-studio-component\src                                                                                                 |          2 |         44 |         35 |          4 |         83 |
+| avatar\src                                                                                                                  |          9 |      1,665 |        215 |        300 |      2,180 |
+| backend                                                                                                                     |        297 |  2,024,993 |      1,947 |      4,227 |  2,031,167 |
+| backend (Files)                                                                                                             |          5 |        474 |         16 |        104 |        594 |
+| backend\ai-assistant-service                                                                                                |         17 |        982 |        333 |        260 |      1,575 |
+| backend\ai-assistant-service (Files)                                                                                        |          4 |        188 |         34 |         55 |        277 |
+| backend\ai-assistant-service\core                                                                                           |          2 |        163 |         64 |         27 |        254 |
+| backend\ai-assistant-service\ingestion                                                                                      |          2 |        103 |         25 |         29 |        157 |
+| backend\ai-assistant-service\logic                                                                                          |          4 |        336 |        178 |         94 |        608 |
+| backend\ai-assistant-service\rag                                                                                            |          5 |        192 |         32 |         55 |        279 |
+| backend\ai-service                                                                                                          |         11 |        392 |         88 |        133 |        613 |
+| backend\ai-service (Files)                                                                                                  |          3 |         99 |         34 |         39 |        172 |
+| backend\ai-service\ingestion                                                                                                |          4 |        190 |         27 |         50 |        267 |
+| backend\ai-service\llm                                                                                                      |          1 |         15 |         13 |          6 |         34 |
+| backend\ai-service\retrieval                                                                                                |          2 |         66 |         14 |         30 |        110 |
+| backend\ai-service\scheduler                                                                                                |          1 |         22 |          0 |          8 |         30 |
+| backend\checker                                                                                                             |          7 |      4,494 |         76 |         93 |      4,663 |
+| backend\checker (Files)                                                                                                     |          1 |          1 |          0 |          1 |          2 |
+| backend\checker\url_model                                                                                                   |          6 |      4,493 |         76 |         92 |      4,661 |
+| backend\classifier_service                                                                                                  |          4 |  1,000,303 |         18 |         18 |  1,000,339 |
+| backend\classifier_service (Files)                                                                                          |          1 |         47 |         18 |         16 |         81 |
+| backend\classifier_service\final_mode_V2                                                                                    |          3 |  1,000,256 |          0 |          2 |  1,000,258 |
+| backend\crawler_server                                                                                                      |          7 |        851 |         97 |        176 |      1,124 |
+| backend\endpoint_discovery                                                                                                  |         11 |  1,001,435 |        467 |        291 |  1,002,193 |
+| backend\endpoint_discovery (Files)                                                                                          |          4 |        876 |        251 |        200 |      1,327 |
+| backend\endpoint_discovery\page_classifier                                                                                  |          7 |  1,000,559 |        216 |         91 |  1,000,866 |
+| backend\endpoint_discovery\page_classifier (Files)                                                                          |          5 |        359 |        216 |         90 |        665 |
+| backend\endpoint_discovery\page_classifier\checkpoints                                                                      |          2 |  1,000,200 |          0 |          1 |  1,000,201 |
+| backend\endpoint_discovery\page_classifier\checkpoints\tokenizer                                                            |          2 |  1,000,200 |          0 |          1 |  1,000,201 |
+| backend\extractor                                                                                                           |          9 |      4,502 |         80 |        283 |      4,865 |
+| backend\extractor (Files)                                                                                                   |          1 |          1 |          0 |          1 |          2 |
+| backend\extractor\content_model                                                                                             |          8 |      4,501 |         80 |        282 |      4,863 |
+| backend\src                                                                                                                 |        211 |     10,005 |        546 |      2,491 |     13,042 |
+| backend\src\main                                                                                                            |        211 |     10,005 |        546 |      2,491 |     13,042 |
+| backend\src\main\java                                                                                                       |        210 |      9,954 |        546 |      2,482 |     12,982 |
+| backend\src\main\java\com                                                                                                   |        210 |      9,954 |        546 |      2,482 |     12,982 |
+| backend\src\main\java\com\example                                                                                           |        210 |      9,954 |        546 |      2,482 |     12,982 |
+| backend\src\main\java\com\example\newscrawler                                                                               |        210 |      9,954 |        546 |      2,482 |     12,982 |
+| backend\src\main\java\com\example\newscrawler (Files)                                                                       |          2 |         22 |          0 |          4 |         26 |
+| backend\src\main\java\com\example\newscrawler\config                                                                        |          4 |        618 |         36 |         70 |        724 |
+| backend\src\main\java\com\example\newscrawler\controller                                                                    |         31 |      2,276 |        154 |        488 |      2,918 |
+| backend\src\main\java\com\example\newscrawler\dto                                                                           |         63 |        766 |          4 |        206 |        976 |
+| backend\src\main\java\com\example\newscrawler\entity                                                                        |         48 |      2,019 |         37 |        747 |      2,803 |
+| backend\src\main\java\com\example\newscrawler\repository                                                                    |         32 |        416 |         34 |        181 |        631 |
+| backend\src\main\java\com\example\newscrawler\security                                                                      |          2 |        203 |          5 |         40 |        248 |
+| backend\src\main\java\com\example\newscrawler\service                                                                       |         28 |      3,634 |        276 |        746 |      4,656 |
+| backend\src\main\resources                                                                                                  |          1 |         51 |          0 |          9 |         60 |
+| backend\tag_service                                                                                                         |          4 |        524 |         88 |        150 |        762 |
+| backend\telegram_crawler                                                                                                    |         11 |      1,031 |        138 |        228 |      1,397 |
+| docs                                                                                                                        |          1 |         70 |          0 |         24 |         94 |
+| frontend                                                                                                                    |         32 |      9,637 |        104 |        778 |     10,519 |
+| frontend (Files)                                                                                                            |          6 |      3,035 |          1 |         14 |      3,050 |
+| frontend\public                                                                                                             |          2 |         25 |          0 |          1 |         26 |
+| frontend\src                                                                                                                |         24 |      6,577 |        103 |        763 |      7,443 |
+| frontend\src (Files)                                                                                                        |          6 |      2,385 |         51 |        344 |      2,780 |
+| frontend\src\assets                                                                                                         |          2 |          2 |          0 |          1 |          3 |
+| frontend\src\components                                                                                                     |          5 |        308 |          0 |         47 |        355 |
+| frontend\src\components (Files)                                                                                             |          2 |        128 |          0 |         19 |        147 |
+| frontend\src\components\article                                                                                             |          3 |        180 |          0 |         28 |        208 |
+| frontend\src\context                                                                                                        |          1 |         55 |          0 |          7 |         62 |
+| frontend\src\pages                                                                                                          |         10 |      3,827 |         52 |        364 |      4,243 |
+| news-feed                                                                                                                   |        165 |     53,974 |      2,656 |      3,389 |     60,019 |
+| news-feed (Files)                                                                                                           |          7 |      5,151 |          4 |         21 |      5,176 |
+| news-feed\data                                                                                                              |          2 |      1,306 |          0 |          0 |      1,306 |
+| news-feed\data\avatar                                                                                                       |          2 |      1,306 |          0 |          0 |      1,306 |
+| news-feed\docs                                                                                                              |          1 |        197 |          0 |         83 |        280 |
+| news-feed\mobile                                                                                                            |         44 |     16,690 |        233 |        555 |     17,478 |
+| news-feed\mobile (Files)                                                                                                    |          7 |      7,550 |          3 |         19 |      7,572 |
+| news-feed\mobile-temp                                                                                                       |          8 |      6,129 |          3 |         13 |      6,145 |
+| news-feed\mobile-temp (Files)                                                                                               |          7 |      6,124 |          3 |         12 |      6,139 |
+| news-feed\mobile-temp\.claude                                                                                               |          1 |          5 |          0 |          1 |          6 |
+| news-feed\mobile\src                                                                                                        |         37 |      9,140 |        230 |        536 |      9,906 |
+| news-feed\mobile\src\api                                                                                                    |          4 |        160 |         31 |         22 |        213 |
+| news-feed\mobile\src\components                                                                                             |         12 |      2,695 |         66 |        202 |      2,963 |
+| news-feed\mobile\src\context                                                                                                |          2 |        123 |          2 |         17 |        142 |
+| news-feed\mobile\src\i18n                                                                                                   |          3 |      3,121 |          9 |         11 |      3,141 |
+| news-feed\mobile\src\pages                                                                                                  |          9 |      2,696 |         88 |        230 |      3,014 |
+| news-feed\mobile\src\utils                                                                                                  |          7 |        345 |         34 |         54 |        433 |
+| news-feed\public                                                                                                            |         23 |      5,403 |        911 |        756 |      7,070 |
+| news-feed\public (Files)                                                                                                    |          1 |          1 |          0 |          0 |          1 |
+| news-feed\public\avatar-studio                                                                                              |         22 |      5,402 |        911 |        756 |      7,069 |
+| news-feed\public\avatar-studio (Files)                                                                                      |          6 |        936 |          0 |        263 |      1,199 |
+| news-feed\public\avatar-studio\public                                                                                       |         14 |      4,422 |        876 |        489 |      5,787 |
+| news-feed\public\avatar-studio\src                                                                                          |          2 |         44 |         35 |          4 |         83 |
+| news-feed\src                                                                                                               |         79 |     18,804 |      1,493 |      1,938 |     22,235 |
+| news-feed\src (Files)                                                                                                       |         11 |      4,194 |        239 |        487 |      4,920 |
+| news-feed\src\api                                                                                                           |          2 |        378 |         72 |         47 |        497 |
+| news-feed\src\assets                                                                                                        |          1 |          1 |          0 |          0 |          1 |
+| news-feed\src\avatar-studio-component                                                                                       |         19 |      4,099 |        903 |        677 |      5,679 |
+| news-feed\src\avatar-studio-component (Files)                                                                               |          5 |        868 |          0 |        235 |      1,103 |
+| news-feed\src\avatar-studio-component\public                                                                                |         12 |      3,187 |        868 |        438 |      4,493 |
+| news-feed\src\avatar-studio-component\src                                                                                   |          2 |         44 |         35 |          4 |         83 |
+| news-feed\src\components                                                                                                    |         24 |      4,264 |        160 |        457 |      4,881 |
+| news-feed\src\components (Files)                                                                                            |         21 |      4,056 |        160 |        423 |      4,639 |
+| news-feed\src\components\article                                                                                            |          3 |        208 |          0 |         34 |        242 |
+| news-feed\src\context                                                                                                       |          2 |        131 |          5 |         21 |        157 |
+| news-feed\src\i18n                                                                                                          |          3 |      3,093 |          4 |         10 |      3,107 |
+| news-feed\src\pages                                                                                                         |          9 |      2,081 |         63 |        168 |      2,312 |
+| news-feed\src\utils                                                                                                         |          8 |        563 |         47 |         71 |        681 |
+| news-feed\vite-plugins                                                                                                      |          1 |        294 |         12 |         23 |        329 |
+| news_bridge_mobile                                                                                                          |         32 |     17,034 |        177 |        376 |     17,587 |
+| news_bridge_mobile (Files)                                                                                                  |          4 |     13,211 |          2 |          4 |     13,217 |
+| news_bridge_mobile\.expo                                                                                                    |          3 |         22 |          1 |         10 |         33 |
+| news_bridge_mobile\.expo (Files)                                                                                            |          2 |         11 |          0 |          7 |         18 |
+| news_bridge_mobile\.expo\types                                                                                              |          1 |         11 |          1 |          3 |         15 |
+| news_bridge_mobile\app-example                                                                                              |         19 |        729 |         39 |         90 |        858 |
+| news_bridge_mobile\app-example\app                                                                                          |          5 |        281 |          0 |         22 |        303 |
+| news_bridge_mobile\app-example\app (Files)                                                                                  |          2 |         46 |          0 |          9 |         55 |
+| news_bridge_mobile\app-example\app\(tabs)                                                                                   |          3 |        235 |          0 |         13 |        248 |
+| news_bridge_mobile\app-example\components                                                                                   |          9 |        290 |         14 |         38 |        342 |
+| news_bridge_mobile\app-example\components (Files)                                                                           |          6 |        193 |          3 |         25 |        221 |
+| news_bridge_mobile\app-example\components\ui                                                                                |          3 |         97 |         11 |         13 |        121 |
+| news_bridge_mobile\app-example\constants                                                                                    |          1 |         41 |          8 |          5 |         54 |
+| news_bridge_mobile\app-example\hooks                                                                                        |          3 |         28 |          7 |         11 |         46 |
+| news_bridge_mobile\app-example\scripts                                                                                      |          1 |         89 |         10 |         14 |        113 |
+| news_bridge_mobile\src                                                                                                      |          6 |      3,072 |        135 |        272 |      3,479 |
+| news_bridge_mobile\src\api                                                                                                  |          1 |         80 |          7 |         19 |        106 |
+| news_bridge_mobile\src\components                                                                                           |          2 |      1,595 |         60 |        136 |      1,791 |
+| news_bridge_mobile\src\screens                                                                                              |          2 |      1,291 |         51 |         96 |      1,438 |
+| news_bridge_mobile\src\utils                                                                                                |          1 |        106 |         17 |         21 |        144 |
+| service-manager                                                                                                             |         13 |      3,887 |         60 |        207 |      4,154 |
+| service-manager (Files)                                                                                                     |          4 |      2,737 |          0 |         27 |      2,764 |
+| service-manager\electron                                                                                                    |          3 |        354 |          5 |         49 |        408 |
+| service-manager\src                                                                                                         |          6 |        796 |         55 |        131 |        982 |
+| service-manager\src (Files)                                                                                                 |          3 |        658 |          6 |        104 |        768 |
+| service-manager\src\vendor                                                                                                  |          3 |        138 |         49 |         27 |        214 |
++-----------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                                    | language           | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\eyash\news_bridge\.claude\agents\test.agent.md                                                                     | Markdown           |          0 |          0 |          1 |          1 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\AndroidManifest.xml                                                 | XML                |         18 |          0 |          3 |         21 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\drawable\ic_launcher_background.xml                             | XML                |        170 |          0 |          1 |        171 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\drawable\ic_launcher_foreground.xml                             | XML                |         30 |          0 |          0 |         30 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\mipmap-anydpi-v26\ic_launcher.xml                               | XML                |          6 |          0 |          0 |          6 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\mipmap-anydpi-v26\ic_launcher_round.xml                         | XML                |          6 |          0 |          0 |          6 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\values-ar\strings.xml                                           | XML                |          9 |          0 |          0 |          9 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\values-night\themes.xml                                         | XML                |          5 |          1 |          1 |          7 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\values\colors.xml                                               | XML                |         10 |          0 |          0 |         10 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\values\strings.xml                                              | XML                |          9 |          0 |          0 |          9 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\values\themes.xml                                               | XML                |          5 |          0 |          0 |          5 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\xml\backup_rules.xml                                            | XML                |          9 |          4 |          0 |         13 |
+| c:\Users\eyash\news_bridge\OLD\android_app\app\src\main\res\xml\data_extraction_rules.xml                                   | XML                |          9 |         10 |          0 |         19 |
+| c:\Users\eyash\news_bridge\OLD\android_app\gradle.properties                                                                | Java Properties    |          3 |         13 |          0 |         16 |
+| c:\Users\eyash\news_bridge\OLD\android_app\gradle\gradle-daemon-jvm.properties                                              | Java Properties    |         11 |          1 |          1 |         13 |
+| c:\Users\eyash\news_bridge\OLD\android_app\gradle\wrapper\gradle-wrapper.properties                                         | Java Properties    |          8 |          1 |          1 |         10 |
+| c:\Users\eyash\news_bridge\OLD\android_app\gradlew.bat                                                                      | Batch              |         41 |         32 |         22 |         95 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\AndroidManifest.xml                                     | XML                |         30 |          0 |          4 |         34 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\drawable\ic_launcher_background.xml                 | XML                |        170 |          0 |          1 |        171 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\drawable\ic_launcher_foreground.xml                 | XML                |         30 |          0 |          0 |         30 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\mipmap-anydpi-v26\ic_launcher.xml                   | XML                |          6 |          0 |          0 |          6 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\mipmap-anydpi-v26\ic_launcher_round.xml             | XML                |          6 |          0 |          0 |          6 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\values-ar\strings.xml                               | XML                |         52 |          0 |          0 |         52 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\values-night\themes.xml                             | XML                |         11 |          5 |          0 |         16 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\values\colors.xml                                   | XML                |         10 |          0 |          0 |         10 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\values\strings.xml                                  | XML                |         52 |          0 |          0 |         52 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\values\themes.xml                                   | XML                |         11 |          5 |          0 |         16 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\xml\backup_rules.xml                                | XML                |          9 |          4 |          0 |         13 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\xml\data_extraction_rules.xml                       | XML                |          9 |         10 |          0 |         19 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\app\src\main\res\xml\network_security_config.xml                     | XML                |          6 |          0 |          0 |          6 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\gradle.properties                                                    | Java Properties    |          2 |         13 |          0 |         15 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\gradle\gradle-daemon-jvm.properties                                  | Java Properties    |         11 |          1 |          1 |         13 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\gradle\wrapper\gradle-wrapper.properties                             | Java Properties    |          8 |          1 |          1 |         10 |
+| c:\Users\eyash\news_bridge\OLD\news_bridge_android_app\gradlew.bat                                                          | Batch              |         41 |         32 |         22 |         95 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\EXAMPLES.md                                                              | Markdown           |        253 |          0 |         53 |        306 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\README.md                                                                | Markdown           |        292 |          0 |         90 |        382 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\SETUP.md                                                                 | Markdown           |        134 |          0 |         44 |        178 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\START_HERE.md                                                            | Markdown           |        156 |          0 |         47 |        203 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\package.json                                                             | JSON               |         33 |          0 |          1 |         34 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\emotion.js                                                        | JavaScript         |         79 |         14 |         12 |        105 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\gestures.js                                                       | JavaScript         |        231 |         43 |         33 |        307 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\legacy.html                                                       | HTML               |        356 |          0 |          2 |        358 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\lipsync.js                                                        | JavaScript         |        211 |        179 |         45 |        435 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\main.js                                                           | JavaScript         |        155 |         68 |         30 |        253 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\pose-studio.js                                                    | JavaScript         |        213 |         93 |         34 |        340 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\recorder.js                                                       | JavaScript         |         41 |         26 |         12 |         79 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\rhubarb.js                                                        | JavaScript         |         53 |         47 |          8 |        108 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\scene.js                                                          | JavaScript         |        712 |        178 |        111 |      1,001 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\style.css                                                         | PostCSS            |         73 |          4 |         11 |         88 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\test.js                                                           | JavaScript         |        855 |        134 |        107 |      1,096 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\public\tts.js                                                            | JavaScript         |        208 |         82 |         33 |        323 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\src\AvatarStudioFrame.jsx                                                | JavaScript JSX     |         43 |         34 |          3 |         80 |
+| c:\Users\eyash\news_bridge\avatar-studio-component\src\index.js                                                             | JavaScript         |          1 |          1 |          1 |          3 |
+| c:\Users\eyash\news_bridge\avatar\bake_poses_to_shapekeys.py                                                                | Python             |         94 |         23 |         24 |        141 |
+| c:\Users\eyash\news_bridge\avatar\debug.html                                                                                | HTML               |        138 |          0 |         18 |        156 |
+| c:\Users\eyash\news_bridge\avatar\export_avatar.py                                                                          | Python             |         68 |         24 |         12 |        104 |
+| c:\Users\eyash\news_bridge\avatar\index.html                                                                                | HTML               |         38 |          4 |          5 |         47 |
+| c:\Users\eyash\news_bridge\avatar\inspect_action_frames.py                                                                  | Python             |         16 |          4 |          4 |         24 |
+| c:\Users\eyash\news_bridge\avatar\inspect_avatar.py                                                                         | Python             |         14 |          3 |          4 |         21 |
+| c:\Users\eyash\news_bridge\avatar\inspect_poses.py                                                                          | Python             |         37 |         11 |          8 |         56 |
+| c:\Users\eyash\news_bridge\avatar\package-lock.json                                                                         | JSON               |      2,123 |          0 |          1 |      2,124 |
+| c:\Users\eyash\news_bridge\avatar\package.json                                                                              | JSON               |         21 |          0 |          1 |         22 |
+| c:\Users\eyash\news_bridge\avatar\server.js                                                                                 | JavaScript         |        167 |         49 |         37 |        253 |
+| c:\Users\eyash\news_bridge\avatar\src\avatar.js                                                                             | JavaScript         |        126 |         10 |         21 |        157 |
+| c:\Users\eyash\news_bridge\avatar\src\bonePicker.js                                                                         | JavaScript         |        199 |         27 |         38 |        264 |
+| c:\Users\eyash\news_bridge\avatar\src\lipSync.js                                                                            | JavaScript         |         72 |         35 |         16 |        123 |
+| c:\Users\eyash\news_bridge\avatar\src\main.js                                                                               | JavaScript         |        109 |         18 |         22 |        149 |
+| c:\Users\eyash\news_bridge\avatar\src\scene.js                                                                              | JavaScript         |         77 |         14 |         14 |        105 |
+| c:\Users\eyash\news_bridge\avatar\src\speech.js                                                                             | JavaScript         |         66 |         30 |         16 |        112 |
+| c:\Users\eyash\news_bridge\avatar\src\style.css                                                                             | PostCSS            |        187 |          7 |         31 |        225 |
+| c:\Users\eyash\news_bridge\avatar\src\syncTest.js                                                                           | JavaScript         |        610 |         54 |        103 |        767 |
+| c:\Users\eyash\news_bridge\avatar\src\visemeTest.js                                                                         | JavaScript         |        219 |         20 |         39 |        278 |
+| c:\Users\eyash\news_bridge\avatar\test.html                                                                                 | HTML               |        251 |          0 |         22 |        273 |
+| c:\Users\eyash\news_bridge\avatar\viseme-test.html                                                                          | HTML               |        122 |          4 |         20 |        146 |
+| c:\Users\eyash\news_bridge\avatar\vite.config.js                                                                            | JavaScript         |         24 |          5 |          4 |         33 |
+| c:\Users\eyash\news_bridge\backend\README.md                                                                                | Markdown           |         70 |          0 |         31 |        101 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\config.py                                                           | Python             |          6 |          0 |          4 |         10 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\core\embedder.py                                                    | Python             |         17 |          1 |          8 |         26 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\core\llm.py                                                         | Python             |        146 |         63 |         19 |        228 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\ingestion\fetcher.py                                                | Python             |         86 |         25 |         24 |        135 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\ingestion\processor.py                                              | Python             |         17 |          0 |          5 |         22 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\logic\news_brief.py                                                 | Python             |        194 |         77 |         53 |        324 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\logic\post_logic.py                                                 | Python             |         11 |         11 |          5 |         27 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\logic\tag_extractor.py                                              | Python             |         33 |         60 |         10 |        103 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\logic\topic_logic.py                                                | Python             |         98 |         30 |         26 |        154 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\main.py                                                             | Python             |        164 |         32 |         46 |        242 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\rag\global_store.py                                                 | Python             |         18 |          3 |          6 |         27 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\rag\ingest.py                                                       | Python             |         62 |         14 |         18 |         94 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\rag\scheduler.py                                                    | Python             |         62 |         13 |         15 |         90 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\rag\search.py                                                       | Python             |          6 |          0 |          3 |          9 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\rag\store.py                                                        | Python             |         44 |          2 |         13 |         59 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\requirements.txt                                                    | pip requirements   |          7 |          0 |          1 |          8 |
+| c:\Users\eyash\news_bridge\backend\ai-assistant-service\router.py                                                           | Python             |         11 |          2 |          4 |         17 |
+| c:\Users\eyash\news_bridge\backend\ai-service\config.py                                                                     | Python             |          8 |          0 |          5 |         13 |
+| c:\Users\eyash\news_bridge\backend\ai-service\ingestion\embedder.py                                                         | Python             |         26 |          4 |          9 |         39 |
+| c:\Users\eyash\news_bridge\backend\ai-service\ingestion\fetcher.py                                                          | Python             |         15 |          0 |          9 |         24 |
+| c:\Users\eyash\news_bridge\backend\ai-service\ingestion\geo_extractor.py                                                    | Python             |        123 |         22 |         19 |        164 |
+| c:\Users\eyash\news_bridge\backend\ai-service\ingestion\processor.py                                                        | Python             |         26 |          1 |         13 |         40 |
+| c:\Users\eyash\news_bridge\backend\ai-service\llm\generator.py                                                              | Python             |         15 |         13 |          6 |         34 |
+| c:\Users\eyash\news_bridge\backend\ai-service\main.py                                                                       | Python             |         84 |         34 |         33 |        151 |
+| c:\Users\eyash\news_bridge\backend\ai-service\requirements.txt                                                              | pip requirements   |          7 |          0 |          1 |          8 |
+| c:\Users\eyash\news_bridge\backend\ai-service\retrieval\search.py                                                           | Python             |         13 |          1 |          6 |         20 |
+| c:\Users\eyash\news_bridge\backend\ai-service\retrieval\vector_store.py                                                     | Python             |         53 |         13 |         24 |         90 |
+| c:\Users\eyash\news_bridge\backend\ai-service\scheduler\jobs.py                                                             | Python             |         22 |          0 |          8 |         30 |
+| c:\Users\eyash\news_bridge\backend\checker\__init__.py                                                                      | Python             |          1 |          0 |          1 |          2 |
+| c:\Users\eyash\news_bridge\backend\checker\url_model\__init__.py                                                            | Python             |          1 |          0 |          1 |          2 |
+| c:\Users\eyash\news_bridge\backend\checker\url_model\classifier.py                                                          | Python             |         28 |          0 |         12 |         40 |
+| c:\Users\eyash\news_bridge\backend\checker\url_model\combined_data.json                                                     | JSON               |      4,158 |          0 |          0 |      4,158 |
+| c:\Users\eyash\news_bridge\backend\checker\url_model\extractor.py                                                           | Python             |        194 |         61 |         56 |        311 |
+| c:\Users\eyash\news_bridge\backend\checker\url_model\predict.py                                                             | Python             |         95 |         15 |         20 |        130 |
+| c:\Users\eyash\news_bridge\backend\checker\url_model\utils.py                                                               | Python             |         17 |          0 |          3 |         20 |
+| c:\Users\eyash\news_bridge\backend\classifier_service\final_mode_V2\config.json                                             | JSON               |         49 |          0 |          1 |         50 |
+| c:\Users\eyash\news_bridge\backend\classifier_service\final_mode_V2\tokenizer.json                                          | JSON               |  1,000,193 |          0 |          0 |  1,000,193 |
+| c:\Users\eyash\news_bridge\backend\classifier_service\final_mode_V2\tokenizer_config.json                                   | JSON               |         14 |          0 |          1 |         15 |
+| c:\Users\eyash\news_bridge\backend\classifier_service\news_classifier_app.py                                                | Python             |         47 |         18 |         16 |         81 |
+| c:\Users\eyash\news_bridge\backend\crawler_server\backend_client.py                                                         | Python             |        110 |          5 |         16 |        131 |
+| c:\Users\eyash\news_bridge\backend\crawler_server\crawler_service.py                                                        | Python             |        161 |         21 |         27 |        209 |
+| c:\Users\eyash\news_bridge\backend\crawler_server\main.py                                                                   | Python             |        475 |         70 |        109 |        654 |
+| c:\Users\eyash\news_bridge\backend\crawler_server\models.py                                                                 | Python             |         33 |          0 |          5 |         38 |
+| c:\Users\eyash\news_bridge\backend\crawler_server\requirements.txt                                                          | pip requirements   |          7 |          0 |          0 |          7 |
+| c:\Users\eyash\news_bridge\backend\crawler_server\settings.py                                                               | Python             |         36 |          0 |         10 |         46 |
+| c:\Users\eyash\news_bridge\backend\crawler_server\vv_adapter.py                                                             | Python             |         29 |          1 |          9 |         39 |
+| c:\Users\eyash\news_bridge\backend\docker-compose.yml                                                                       | YAML               |         22 |          0 |          2 |         24 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\__init__.py                                                           | Python             |          0 |          8 |          1 |          9 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\listing_discoverer.py                                                 | Python             |        634 |        200 |        134 |        968 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\__init__.py                                           | Python             |          2 |          0 |          1 |          3 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\checkpoints\tokenizer\tokenizer.json                  | JSON               |  1,000,186 |          0 |          0 |  1,000,186 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\checkpoints\tokenizer\tokenizer_config.json           | JSON               |         14 |          0 |          1 |         15 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\config.py                                             | Python             |         39 |         21 |         11 |         71 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\features.py                                           | Python             |         93 |         53 |         24 |        170 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\model.py                                              | Python             |         79 |         79 |         26 |        184 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\page_classifier\predict.py                                            | Python             |        146 |         63 |         28 |        237 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\requirements.txt                                                      | pip requirements   |         11 |          2 |          3 |         16 |
+| c:\Users\eyash\news_bridge\backend\endpoint_discovery\service.py                                                            | Python             |        231 |         41 |         62 |        334 |
+| c:\Users\eyash\news_bridge\backend\extractor\__init__.py                                                                    | Python             |          1 |          0 |          1 |          2 |
+| c:\Users\eyash\news_bridge\backend\extractor\content_model\__init__.py                                                      | Python             |         11 |          0 |          6 |         17 |
+| c:\Users\eyash\news_bridge\backend\extractor\content_model\dl_article_model_url_supervised.pt                               | XML                |      3,097 |          0 |          8 |      3,105 |
+| c:\Users\eyash\news_bridge\backend\extractor\content_model\extract_dl.py                                                    | Python             |        971 |         14 |        171 |      1,156 |
+| c:\Users\eyash\news_bridge\backend\extractor\content_model\features.py                                                      | Python             |         94 |         10 |         31 |        135 |
+| c:\Users\eyash\news_bridge\backend\extractor\content_model\generate_test_htmls.py                                           | Python             |        152 |          0 |         26 |        178 |
+| c:\Users\eyash\news_bridge\backend\extractor\content_model\model.py                                                         | Python             |         43 |         27 |         11 |         81 |
+| c:\Users\eyash\news_bridge\backend\extractor\content_model\model_utils.py                                                   | Python             |         41 |          0 |         13 |         54 |
+| c:\Users\eyash\news_bridge\backend\extractor\content_model\view_extraction.py                                               | Python             |         92 |         29 |         16 |        137 |
+| c:\Users\eyash\news_bridge\backend\init.sql                                                                                 | MS SQL             |          5 |          0 |          2 |          7 |
+| c:\Users\eyash\news_bridge\backend\pom.xml                                                                                  | XML                |        100 |          0 |          8 |        108 |
+| c:\Users\eyash\news_bridge\backend\post_processor.py                                                                        | Python             |        277 |         16 |         61 |        354 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\NewsCrawlerApplication.java                        | Java               |         11 |          0 |          4 |         15 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\config\CustomUserDetailsService.java               | Java               |         59 |          5 |          9 |         73 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\config\DataInitializer.java                        | Java               |        435 |         31 |         45 |        511 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\config\OpenApiConfig.java                          | Java               |         20 |          0 |          3 |         23 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\config\SecurityConfig.java                         | Java               |        104 |          0 |         13 |        117 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\AdminAuthController.java                | Java               |         62 |          0 |         11 |         73 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\AdminController.java                    | Java               |         63 |          0 |         13 |         76 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\AppUserController.java                  | Java               |         32 |          0 |         10 |         42 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\ArticleBlockController.java             | Java               |         32 |          0 |         10 |         42 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\ArticleController.java                  | Java               |        103 |          0 |         21 |        124 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\ArticleTitleController.java             | Java               |         32 |          0 |         10 |         42 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\AuthController.java                     | Java               |        264 |          8 |         54 |        326 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\CacheEndpointController.java            | Java               |         55 |          0 |         13 |         68 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\CategoryFieldController.java            | Java               |         38 |          0 |          8 |         46 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\CommentController.java                  | Java               |         73 |         25 |         11 |        109 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\CrawlerAdminController.java             | Java               |         81 |          0 |         17 |         98 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\DashboardController.java                | Java               |         33 |          0 |          9 |         42 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\EditorRequestController.java            | Java               |         60 |          3 |         13 |         76 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\EditorUserController.java               | Java               |         42 |          0 |         10 |         52 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\EndpointController.java                 | Java               |         65 |          0 |         15 |         80 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\FeedController.java                     | Java               |         87 |          4 |         20 |        111 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\LiveNewsController.java                 | Java               |         52 |          4 |         13 |         69 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\NewsEventController.java                | Java               |         90 |         13 |         31 |        134 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\PostController.java                     | Java               |         75 |         20 |         18 |        113 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\PrimitiveUserController.java            | Java               |         24 |          2 |          6 |         32 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\ProfileController.java                  | Java               |        101 |          6 |         19 |        126 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\RegisteredUserController.java           | Java               |         53 |          0 |         10 |         63 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\RootController.java                     | Java               |         85 |          5 |         19 |        109 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\SearchController.java                   | Java               |         40 |         14 |          7 |         61 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\TelegramChannelController.java          | Java               |         60 |          0 |         12 |         72 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\TelegramCrawlerAdminController.java     | Java               |         65 |          0 |         15 |         80 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\TelegramPostController.java             | Java               |         55 |          0 |         11 |         66 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\TopicController.java                    | Java               |        204 |         46 |         42 |        292 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\UploadController.java                   | Java               |         49 |          4 |         11 |         64 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\UserManagementController.java           | Java               |        167 |          0 |         21 |        188 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\controller\UserPreferenceController.java           | Java               |         34 |          0 |          8 |         42 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ActivateEditorRequest.java                     | Java               |          4 |          0 |          2 |          6 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\AdminResponse.java                             | Java               |         10 |          0 |          1 |         11 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleBlockResponse.java                      | Java               |         14 |          0 |          4 |         18 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleBlocksResponse.java                     | Java               |         14 |          0 |          3 |         17 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleContentItemResponse.java                | Java               |          9 |          0 |          2 |         11 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleContentResponse.java                    | Java               |          4 |          0 |          3 |          7 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleListItemResponse.java                   | Java               |         13 |          0 |          3 |         16 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\ArticleResponse.java                           | Java               |         14 |          0 |          3 |         17 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\BulkCreateTelegramPostsRequest.java            | Java               |          5 |          0 |          3 |          8 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\BulkSaveEndpointsRequest.java                  | Java               |          6 |          0 |          3 |          9 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CacheEndpointResponse.java                     | Java               |         16 |          0 |          3 |         19 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CategoryFieldDto.java                          | Java               |          9 |          0 |          2 |         11 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CommentResponse.java                           | Java               |         19 |          0 |          2 |         21 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CommentVoteRequest.java                        | Java               |          4 |          0 |          2 |          6 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateAdminRequest.java                        | Java               |         11 |          0 |          4 |         15 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateArticleBlockRequest.java                 | Java               |         12 |          0 |          4 |         16 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateArticleRequest.java                      | Java               |         14 |          0 |          5 |         19 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateCacheEndpointRequest.java                | Java               |         17 |          0 |         11 |         28 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateCommentRequest.java                      | Java               |          8 |          0 |          2 |         10 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateEndpointRequest.java                     | Java               |          8 |          0 |          4 |         12 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateLiveNewsPostRequest.java                 | Java               |          6 |          0 |          2 |          8 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateNewsEventRequest.java                    | Java               |          7 |          0 |          2 |          9 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreatePostRequest.java                         | Java               |         11 |          0 |          3 |         14 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreatePublishRequestDto.java                   | Java               |          4 |          0 |          2 |          6 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateRootRequest.java                         | Java               |          8 |          0 |          4 |         12 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateTelegramChannelRequest.java              | Java               |          7 |          0 |          2 |          9 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateTelegramPostRequest.java                 | Java               |         13 |          0 |          3 |         16 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateTopicPostRequest.java                    | Java               |         11 |          0 |          2 |         13 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\CreateTopicRequest.java                        | Java               |         11 |          0 |          2 |         13 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\DashboardStatsResponse.java                    | Java               |          8 |          0 |          2 |         10 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EditorApplicationRequest.java                  | Java               |         10 |          0 |          3 |         13 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EditorAttachmentDto.java                       | Java               |          6 |          0 |          2 |          8 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EditorRequestResponse.java                     | Java               |         17 |          0 |          3 |         20 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EditorUserDto.java                             | Java               |         17 |          0 |          3 |         20 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EditorUserResponse.java                        | Java               |         18 |          0 |          3 |         21 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\EndpointResponse.java                          | Java               |         14 |          0 |          3 |         17 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\FeedPostDTO.java                               | Java               |         40 |          0 |          6 |         46 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\LiveNewsPostResponse.java                      | Java               |         15 |          0 |          3 |         18 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\LoginRequest.java                              | Java               |         27 |          1 |          9 |         37 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\LoginResponse.java                             | Java               |          8 |          0 |          3 |         11 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\MediaItemResponse.java                         | Java               |          3 |          0 |          2 |          5 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\NewsEventResponse.java                         | Java               |         12 |          0 |          3 |         15 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\NewsGuardVerifyResponse.java                   | Java               |         10 |          0 |          2 |         12 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\PagedResponse.java                             | Java               |         10 |          0 |          3 |         13 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\PostByTagResponse.java                         | Java               |         31 |          1 |         11 |         43 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\PostDTO.java                                   | Java               |         41 |          0 |         12 |         53 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\PublishRequestResponse.java                    | Java               |         14 |          0 |          3 |         17 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\RegisteredUserDto.java                         | Java               |         11 |          0 |          2 |         13 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\RegisteredUserResponse.java                    | Java               |         11 |          0 |          3 |         14 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\RootResponse.java                              | Java               |         11 |          0 |          3 |         14 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\SignupRequest.java                             | Java               |         16 |          0 |          2 |         18 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\TelegramChannelResponse.java                   | Java               |         15 |          0 |          3 |         18 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\TelegramPostResponse.java                      | Java               |         16 |          0 |          3 |         19 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\TopicAssignmentResponse.java                   | Java               |         13 |          0 |          2 |         15 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\TopicPostResponse.java                         | Java               |         23 |          1 |          3 |         27 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\TopicResponse.java                             | Java               |         25 |          1 |          4 |         30 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateAdminNameRequest.java                    | Java               |          4 |          0 |          2 |          6 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateAdminRolesRequest.java                   | Java               |          5 |          0 |          3 |          8 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateEditorProfileRequest.java                | Java               |          7 |          0 |          3 |         10 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateLiveNewsPostRequest.java                 | Java               |          5 |          0 |          2 |          7 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateRecordStatusRequest.java                 | Java               |          5 |          0 |          2 |          7 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateUserRolesRequest.java                    | Java               |          5 |          0 |          3 |          8 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\dto\UpdateUserStatusRequest.java                   | Java               |          4 |          0 |          2 |          6 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\AbstractMediaArticleBlock.java              | Java               |          3 |          0 |          2 |          5 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Admin.java                                  | Java               |         71 |          0 |         20 |         91 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\AllowedRole.java                            | Java               |         43 |          0 |         13 |         56 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\AnalysisResult.java                         | Java               |          8 |          0 |          2 |         10 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\AppUser.java                                | Java               |         53 |          0 |         15 |         68 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Article.java                                | Java               |         85 |          0 |         27 |        112 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleAttachmentBlock.java                 | Java               |         41 |          0 |         13 |         54 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleAudioBlock.java                      | Java               |         41 |          0 |         13 |         54 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleBlock.java                           | Java               |         65 |          0 |         25 |         90 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleBlockType.java                       | Java               |          9 |          0 |          2 |         11 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleImageBlock.java                      | Java               |         41 |          0 |         13 |         54 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleOtherBlock.java                      | Java               |         41 |          0 |         12 |         53 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleTextBlock.java                       | Java               |         38 |          0 |         11 |         49 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleTitle.java                           | Java               |         53 |          0 |         18 |         71 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ArticleVideoBlock.java                      | Java               |         41 |          0 |         13 |         54 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\CacheEndpoint.java                          | Java               |        106 |          0 |         34 |        140 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\CategoryField.java                          | Java               |         32 |          0 |          8 |         40 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Comment.java                                | Java               |         92 |          2 |         33 |        127 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\CommentVote.java                            | Java               |         59 |          2 |         21 |         82 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\EditorAttachment.java                       | Java               |         45 |          0 |         14 |         59 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\EditorRequest.java                          | Java               |         66 |          0 |         24 |         90 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\EditorRequestAttachment.java                | Java               |         45 |          0 |         14 |         59 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\EditorUser.java                             | Java               |         29 |          0 |         10 |         39 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Endpoint.java                               | Java               |         88 |          0 |         29 |        117 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ExpertiseField.java                         | Java               |          0 |          0 |          1 |          1 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\LiveNewsPost.java                           | Java               |         41 |          1 |         18 |         60 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\NewsEvent.java                              | Java               |         44 |          6 |         20 |         70 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Post.java                                   | Java               |         54 |          1 |         30 |         85 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\PostInteraction.java                        | Java               |         39 |          0 |         16 |         55 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\PostReaction.java                           | Java               |         31 |          0 |         13 |         44 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\PostTag.java                                | Java               |         22 |          0 |         15 |         37 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\PrimitiveUser.java                          | Java               |         10 |          0 |          4 |         14 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\PublishPermissionRequest.java               | Java               |         41 |          4 |         19 |         64 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\ReactionType.java                           | Java               |          5 |          0 |          7 |         12 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\RecordStatus.java                           | Java               |          5 |          0 |          2 |          7 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\RegisteredUser.java                         | Java               |         51 |          0 |         17 |         68 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Root.java                                   | Java               |         52 |          0 |         18 |         70 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\TelegramChannel.java                        | Java               |         56 |          1 |         26 |         83 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\TelegramPost.java                           | Java               |         53 |          1 |         25 |         79 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\Topic.java                                  | Java               |         84 |         13 |         43 |        140 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\TopicEditorAssignment.java                  | Java               |         39 |          0 |         15 |         54 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\TopicPost.java                              | Java               |         66 |          0 |         33 |         99 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\UserPreference.java                         | Java               |         29 |          0 |         13 |         42 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\UserRole.java                               | Java               |         36 |          6 |          7 |         49 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\UserStatus.java                             | Java               |          6 |          0 |          2 |          8 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\UserType.java                               | Java               |          7 |          0 |          2 |          9 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\VerificationCode.java                       | Java               |         48 |          0 |         14 |         62 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\entity\VerificationType.java                       | Java               |          5 |          0 |          1 |          6 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\AdminRepository.java                    | Java               |          8 |          0 |          3 |         11 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\AllowedRoleRepository.java              | Java               |         12 |          0 |          3 |         15 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\AppUserRepository.java                  | Java               |          5 |          0 |          4 |          9 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\ArticleBlockRepository.java             | Java               |          5 |          0 |          3 |          8 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\ArticleRepository.java                  | Java               |         17 |          0 |          9 |         26 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\ArticleTitleRepository.java             | Java               |          5 |          0 |          3 |          8 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\CacheEndpointRepository.java            | Java               |         19 |          1 |          9 |         29 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\CategoryFieldRepository.java            | Java               |         10 |          0 |          5 |         15 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\CommentRepository.java                  | Java               |         21 |          7 |         10 |         38 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\CommentVoteRepository.java              | Java               |         11 |          2 |          6 |         19 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\EditorAttachmentRepository.java         | Java               |          7 |          0 |          3 |         10 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\EditorRequestAttachmentRepository.java  | Java               |          7 |          0 |          3 |         10 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\EditorRequestRepository.java            | Java               |         13 |          0 |          6 |         19 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\EditorUserRepository.java               | Java               |          7 |          0 |          3 |         10 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\EndpointRepository.java                 | Java               |         15 |          0 |         12 |         27 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\LiveNewsPostRepository.java             | Java               |         13 |          0 |          4 |         17 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\NewsEventRepository.java                | Java               |         13 |          0 |          4 |         17 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PostInteractionRepository.java          | Java               |         12 |          1 |          6 |         19 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PostReactionRepository.java             | Java               |         20 |          2 |          8 |         30 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PostRepository.java                     | Java               |         48 |         14 |         17 |         79 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PostTagRepository.java                  | Java               |         11 |          2 |         12 |         25 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PrimitiveUserRepository.java            | Java               |          5 |          0 |          3 |          8 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\PublishPermissionRequestRepository.java | Java               |         15 |          0 |          4 |         19 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\RegisteredUserRepository.java           | Java               |         10 |          0 |          2 |         12 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\RootRepository.java                     | Java               |         17 |          0 |          8 |         25 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\TelegramChannelRepository.java          | Java               |         11 |          0 |          4 |         15 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\TelegramPostRepository.java             | Java               |         13 |          0 |          4 |         17 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\TopicEditorRepository.java              | Java               |         14 |          0 |          3 |         17 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\TopicPostRepository.java                | Java               |         23 |          5 |          9 |         37 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\TopicRepository.java                    | Java               |          9 |          0 |          3 |         12 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\UserPreferenceRepository.java           | Java               |          9 |          0 |          6 |         15 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\repository\VerificationCodeRepository.java         | Java               |         11 |          0 |          2 |         13 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\security\JwtAuthenticationFilter.java              | Java               |         96 |          5 |         19 |        120 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\security\JwtTokenProvider.java                     | Java               |        107 |          0 |         21 |        128 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\AdminService.java                          | Java               |        119 |          0 |         20 |        139 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\AppUserService.java                        | Java               |         62 |          1 |         13 |         76 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\ArticleBlockService.java                   | Java               |         30 |          0 |         10 |         40 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\ArticleService.java                        | Java               |        369 |          1 |         53 |        423 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\ArticleTitleService.java                   | Java               |         30 |          0 |         10 |         40 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\CacheEndpointService.java                  | Java               |        111 |          1 |         24 |        136 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\CategoryFieldService.java                  | Java               |         70 |          2 |          9 |         81 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\CommentService.java                        | Java               |        162 |         12 |         31 |        205 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\CrawlerAdminService.java                   | Java               |        114 |          0 |         21 |        135 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\EditorRequestService.java                  | Java               |        229 |         18 |         41 |        288 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\EditorUserService.java                     | Java               |         96 |          0 |         21 |        117 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\EmailService.java                          | Java               |         46 |          1 |          9 |         56 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\EndpointService.java                       | Java               |        177 |          1 |         35 |        213 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\FeedService.java                           | Java               |        184 |         14 |         55 |        253 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\InteractionService.java                    | Java               |         84 |          9 |         32 |        125 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\LiveNewsService.java                       | Java               |         87 |          5 |         21 |        113 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\NewsEventService.java                      | Java               |        195 |         28 |         50 |        273 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\PostReactionService.java                   | Java               |         68 |          3 |         27 |         98 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\PostService.java                           | Java               |         85 |          3 |         24 |        112 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\RootDiscoveryService.java                  | Java               |        267 |         42 |         51 |        360 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\RootService.java                           | Java               |        124 |          0 |         24 |        148 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\SearchService.java                         | Java               |        116 |         14 |         19 |        149 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TelegramChannelService.java                | Java               |         93 |          0 |         15 |        108 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TelegramCrawlerAdminService.java           | Java               |        107 |          0 |         16 |        123 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TelegramPostService.java                   | Java               |        110 |          1 |         20 |        131 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TopicEditorService.java                    | Java               |        140 |         37 |         29 |        206 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TopicService.java                          | Java               |        287 |         46 |         45 |        378 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\service\TopicStatsScheduler.java                   | Java               |         72 |         37 |         21 |        130 |
+| c:\Users\eyash\news_bridge\backend\src\main\java\com\example\newscrawler\test.code-workspace                                | JSON with Comments |         11 |          0 |          0 |         11 |
+| c:\Users\eyash\news_bridge\backend\src\main\resources\application.yml                                                       | YAML               |         51 |          0 |          9 |         60 |
+| c:\Users\eyash\news_bridge\backend\tag_service\app.py                                                                       | Python             |        249 |         38 |         86 |        373 |
+| c:\Users\eyash\news_bridge\backend\tag_service\appCUDA.py                                                                   | Python             |        121 |         30 |         39 |        190 |
+| c:\Users\eyash\news_bridge\backend\tag_service\requirements.txt                                                             | pip requirements   |          9 |          0 |          3 |         12 |
+| c:\Users\eyash\news_bridge\backend\tag_service\test.py                                                                      | Python             |        145 |         20 |         22 |        187 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\backend_client.py                                                       | Python             |         36 |          3 |         11 |         50 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\main.py                                                                 | Python             |        265 |         23 |         58 |        346 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\requirements.txt                                                        | pip requirements   |          7 |          0 |          1 |          8 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\scraper.py                                                              | Python             |        360 |         52 |         80 |        492 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\settings.py                                                             | Python             |         27 |          0 |          7 |         34 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\setup_session.py                                                        | Python             |         33 |         28 |         10 |         71 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\start.ps1                                                               | PowerShell         |          3 |          0 |          1 |          4 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\telegram_client.py                                                      | Python             |        161 |         15 |         38 |        214 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\test_arabic.py                                                          | Python             |         35 |          6 |          6 |         47 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\test_arabic2.py                                                         | Python             |         95 |         11 |         15 |        121 |
+| c:\Users\eyash\news_bridge\backend\telegram_crawler\test_verify.py                                                          | Python             |          9 |          0 |          1 |         10 |
+| c:\Users\eyash\news_bridge\docs\LOCATION_PRIORITIZATION.md                                                                  | Markdown           |         70 |          0 |         24 |         94 |
+| c:\Users\eyash\news_bridge\frontend\README.md                                                                               | Markdown           |          9 |          0 |          8 |         17 |
+| c:\Users\eyash\news_bridge\frontend\eslint.config.js                                                                        | JavaScript         |         28 |          0 |          2 |         30 |
+| c:\Users\eyash\news_bridge\frontend\index.html                                                                              | HTML               |         13 |          0 |          1 |         14 |
+| c:\Users\eyash\news_bridge\frontend\package-lock.json                                                                       | JSON               |      2,944 |          0 |          1 |      2,945 |
+| c:\Users\eyash\news_bridge\frontend\package.json                                                                            | JSON               |         29 |          0 |          1 |         30 |
+| c:\Users\eyash\news_bridge\frontend\public\favicon.svg                                                                      | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\eyash\news_bridge\frontend\public\icons.svg                                                                        | XML                |         24 |          0 |          1 |         25 |
+| c:\Users\eyash\news_bridge\frontend\src\App.css                                                                             | PostCSS            |      2,071 |         41 |        299 |      2,411 |
+| c:\Users\eyash\news_bridge\frontend\src\App.jsx                                                                             | JavaScript JSX     |         60 |          5 |          9 |         74 |
+| c:\Users\eyash\news_bridge\frontend\src\api.js                                                                              | JavaScript         |         13 |          0 |          3 |         16 |
+| c:\Users\eyash\news_bridge\frontend\src\assets\react.svg                                                                    | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\eyash\news_bridge\frontend\src\assets\vite.svg                                                                     | XML                |          1 |          0 |          1 |          2 |
+| c:\Users\eyash\news_bridge\frontend\src\auth.js                                                                             | JavaScript         |         51 |          0 |          9 |         60 |
+| c:\Users\eyash\news_bridge\frontend\src\components\AdminLayout.jsx                                                          | JavaScript JSX     |         56 |          0 |          5 |         61 |
+| c:\Users\eyash\news_bridge\frontend\src\components\SiteLayout.jsx                                                           | JavaScript JSX     |         72 |          0 |         14 |         86 |
+| c:\Users\eyash\news_bridge\frontend\src\components\article\ArticleCard.jsx                                                  | JavaScript JSX     |         25 |          0 |          3 |         28 |
+| c:\Users\eyash\news_bridge\frontend\src\components\article\ArticleOverlay.jsx                                               | JavaScript JSX     |        130 |          0 |         19 |        149 |
+| c:\Users\eyash\news_bridge\frontend\src\components\article\articleHelpers.jsx                                               | JavaScript JSX     |         25 |          0 |          6 |         31 |
+| c:\Users\eyash\news_bridge\frontend\src\context\SessionContext.jsx                                                          | JavaScript JSX     |         55 |          0 |          7 |         62 |
+| c:\Users\eyash\news_bridge\frontend\src\index.css                                                                           | PostCSS            |        175 |          5 |         22 |        202 |
+| c:\Users\eyash\news_bridge\frontend\src\main.jsx                                                                            | JavaScript JSX     |         15 |          0 |          2 |         17 |
+| c:\Users\eyash\news_bridge\frontend\src\pages\AdminLoginPage.jsx                                                            | JavaScript JSX     |         53 |          1 |         10 |         64 |
+| c:\Users\eyash\news_bridge\frontend\src\pages\AdminPage.jsx                                                                 | JavaScript JSX     |      2,768 |         40 |        242 |      3,050 |
+| c:\Users\eyash\news_bridge\frontend\src\pages\ApplyEditorPage.jsx                                                           | JavaScript JSX     |         95 |          0 |         13 |        108 |
+| c:\Users\eyash\news_bridge\frontend\src\pages\AuthPage.jsx                                                                  | JavaScript JSX     |         52 |          1 |          7 |         60 |
+| c:\Users\eyash\news_bridge\frontend\src\pages\CmsPage.jsx                                                                   | JavaScript JSX     |         68 |          0 |          9 |         77 |
+| c:\Users\eyash\news_bridge\frontend\src\pages\DataPage.jsx                                                                  | JavaScript JSX     |        116 |          0 |         12 |        128 |
+| c:\Users\eyash\news_bridge\frontend\src\pages\EditorPage.jsx                                                                | JavaScript JSX     |        253 |          3 |         30 |        286 |
+| c:\Users\eyash\news_bridge\frontend\src\pages\EventDetailPage.jsx                                                           | JavaScript JSX     |        353 |          6 |         28 |        387 |
+| c:\Users\eyash\news_bridge\frontend\src\pages\FeedPage.jsx                                                                  | JavaScript JSX     |         59 |          1 |         11 |         71 |
+| c:\Users\eyash\news_bridge\frontend\src\pages\NotFoundPage.jsx                                                              | JavaScript JSX     |         10 |          0 |          2 |         12 |
+| c:\Users\eyash\news_bridge\frontend\vite.config.js                                                                          | JavaScript         |         12 |          1 |          1 |         14 |
+| c:\Users\eyash\news_bridge\news-feed\README.md                                                                              | Markdown           |          9 |          0 |          8 |         17 |
+| c:\Users\eyash\news_bridge\news-feed\data\avatar\poses.json                                                                 | JSON               |      1,295 |          0 |          0 |      1,295 |
+| c:\Users\eyash\news_bridge\news-feed\data\avatar\presenter-animation.json                                                   | JSON               |         11 |          0 |          0 |         11 |
+| c:\Users\eyash\news_bridge\news-feed\docs\FEED_ALGORITHM.md                                                                 | Markdown           |        197 |          0 |         83 |        280 |
+| c:\Users\eyash\news_bridge\news-feed\eslint.config.js                                                                       | JavaScript         |         28 |          0 |          2 |         30 |
+| c:\Users\eyash\news_bridge\news-feed\extract_codes.py                                                                       | Python             |         24 |          2 |          8 |         34 |
+| c:\Users\eyash\news_bridge\news-feed\index.html                                                                             | HTML               |         18 |          0 |          0 |         18 |
+| c:\Users\eyash\news_bridge\news-feed\mobile-temp\.claude\settings.json                                                      | JSON with Comments |          5 |          0 |          1 |          6 |
+| c:\Users\eyash\news_bridge\news-feed\mobile-temp\AGENTS.md                                                                  | Markdown           |          2 |          0 |          2 |          4 |
+| c:\Users\eyash\news_bridge\news-feed\mobile-temp\App.js                                                                     | JavaScript         |         18 |          0 |          3 |         21 |
+| c:\Users\eyash\news_bridge\news-feed\mobile-temp\CLAUDE.md                                                                  | Markdown           |          1 |          0 |          1 |          2 |
+| c:\Users\eyash\news_bridge\news-feed\mobile-temp\app.json                                                                   | JSON               |         24 |          0 |          1 |         25 |
+| c:\Users\eyash\news_bridge\news-feed\mobile-temp\index.js                                                                   | JavaScript         |          3 |          3 |          3 |          9 |
+| c:\Users\eyash\news_bridge\news-feed\mobile-temp\package-lock.json                                                          | JSON               |      6,058 |          0 |          1 |      6,059 |
+| c:\Users\eyash\news_bridge\news-feed\mobile-temp\package.json                                                               | JSON               |         18 |          0 |          1 |         19 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\AGENTS.md                                                                       | Markdown           |          2 |          0 |          2 |          4 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\App.js                                                                          | JavaScript         |         98 |          0 |         10 |        108 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\CLAUDE.md                                                                       | Markdown           |          1 |          0 |          1 |          2 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\app.json                                                                        | JSON               |         28 |          0 |          1 |         29 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\index.js                                                                        | JavaScript         |          3 |          3 |          3 |          9 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\package-lock.json                                                               | JSON               |      7,381 |          0 |          1 |      7,382 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\package.json                                                                    | JSON               |         37 |          0 |          1 |         38 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\api\api.js                                                                  | JavaScript         |         14 |          0 |          2 |         16 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\api\config.js                                                               | JavaScript         |          9 |          4 |          2 |         15 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\api\searchApi.js                                                            | JavaScript         |         31 |          0 |          2 |         33 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\api\topicsApi.js                                                            | JavaScript         |        106 |         27 |         16 |        149 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\CategoryBar.jsx                                                  | JavaScript JSX     |         48 |          0 |          4 |         52 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\Feed.jsx                                                         | JavaScript JSX     |        101 |          0 |         15 |        116 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\GuestSignupPrompt.jsx                                            | JavaScript JSX     |        118 |          0 |          2 |        120 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\LanguageToggle.jsx                                               | JavaScript JSX     |         47 |          1 |          4 |         52 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\LeftSidebar.jsx                                                  | JavaScript JSX     |        151 |          3 |          9 |        163 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\Post.jsx                                                         | JavaScript JSX     |        475 |          5 |         35 |        515 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\PostCommentsModal.jsx                                            | JavaScript JSX     |        777 |         29 |         66 |        872 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\PostModal.jsx                                                    | JavaScript JSX     |        334 |         15 |         25 |        374 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\SearchBar.jsx                                                    | JavaScript JSX     |        198 |          0 |         14 |        212 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\TopBar.jsx                                                       | JavaScript JSX     |        199 |          6 |         13 |        218 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\TopicCard.jsx                                                    | JavaScript JSX     |        200 |          7 |         11 |        218 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\components\TopicPost.jsx                                                    | JavaScript JSX     |         47 |          0 |          4 |         51 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\context\SessionContext.jsx                                                  | JavaScript JSX     |         91 |          1 |         10 |        102 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\context\ThemeContext.jsx                                                    | JavaScript JSX     |         32 |          1 |          7 |         40 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\i18n\ar.json                                                                | JSON               |        471 |          0 |          1 |        472 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\i18n\en.json                                                                | JSON               |      2,607 |          0 |          1 |      2,608 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\i18n\i18n.js                                                                | JavaScript         |         43 |          9 |          9 |         61 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\AIAssistantPage.jsx                                                   | JavaScript JSX     |        270 |          3 |         24 |        297 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\AdvancedSearchPage.jsx                                                | JavaScript JSX     |        330 |          7 |         23 |        360 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\ApplyEditorPage.jsx                                                   | JavaScript JSX     |        318 |         18 |         36 |        372 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\AuthPage.jsx                                                          | JavaScript JSX     |        219 |          0 |         16 |        235 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\HomePage.jsx                                                          | JavaScript JSX     |         33 |          1 |          5 |         39 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\ProfilePage.jsx                                                       | JavaScript JSX     |        349 |         15 |         35 |        399 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\SavedNewsPage.jsx                                                     | JavaScript JSX     |        629 |         37 |         55 |        721 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\TopicDetailsPage.jsx                                                  | JavaScript JSX     |        443 |          6 |         28 |        477 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\pages\TrendingTopicsPage.jsx                                                | JavaScript JSX     |        105 |          1 |          8 |        114 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\apiFetch.js                                                           | JavaScript         |         18 |          0 |          1 |         19 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\auth.js                                                               | JavaScript         |         78 |          1 |         12 |         91 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\categoryColors.js                                                     | JavaScript         |         40 |          0 |          1 |         41 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\darkColors.js                                                         | JavaScript         |         28 |         12 |         10 |         50 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\languageUtils.js                                                      | JavaScript         |         14 |         16 |          3 |         33 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\savedPosts.js                                                         | JavaScript         |        163 |          5 |         26 |        194 |
+| c:\Users\eyash\news_bridge\news-feed\mobile\src\utils\userId.js                                                             | JavaScript         |          4 |          0 |          1 |          5 |
+| c:\Users\eyash\news_bridge\news-feed\package-lock.json                                                                      | JSON               |      5,014 |          0 |          1 |      5,015 |
+| c:\Users\eyash\news_bridge\news-feed\package.json                                                                           | JSON               |         42 |          0 |          1 |         43 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\CHANGES.md                                                        | Markdown           |         68 |          0 |         28 |         96 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\EXAMPLES.md                                                       | Markdown           |        253 |          0 |         53 |        306 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\README.md                                                         | Markdown           |        292 |          0 |         90 |        382 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\SETUP.md                                                          | Markdown           |        134 |          0 |         44 |        178 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\START_HERE.md                                                     | Markdown           |        156 |          0 |         47 |        203 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\package.json                                                      | JSON               |         33 |          0 |          1 |         34 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\emotion.js                                                 | JavaScript         |         79 |         14 |         12 |        105 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\gestures.js                                                | JavaScript         |        231 |         43 |         33 |        307 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\legacy.html                                                | HTML               |        373 |          0 |          2 |        375 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\lipsync.js                                                 | JavaScript         |        211 |        179 |         45 |        435 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\main.js                                                    | JavaScript         |        185 |         68 |         30 |        283 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\pose-studio.js                                             | JavaScript         |        217 |         92 |         34 |        343 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\presenter-animation.js                                     | JavaScript         |         66 |          5 |         10 |         81 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\recorder.js                                                | JavaScript         |         41 |         26 |         12 |         79 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\rhubarb.js                                                 | JavaScript         |         55 |         36 |          7 |         98 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\scene.js                                                   | JavaScript         |        730 |        179 |        114 |      1,023 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\style.css                                                  | PostCSS            |         73 |          4 |         11 |         88 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\test.html                                                  | HTML               |      1,082 |         14 |         40 |      1,136 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\test.js                                                    | JavaScript         |        871 |        134 |        106 |      1,111 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\public\tts.js                                                     | JavaScript         |        208 |         82 |         33 |        323 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\src\AvatarStudioFrame.jsx                                         | JavaScript JSX     |         43 |         34 |          3 |         80 |
+| c:\Users\eyash\news_bridge\news-feed\public\avatar-studio\src\index.js                                                      | JavaScript         |          1 |          1 |          1 |          3 |
+| c:\Users\eyash\news_bridge\news-feed\public\vite.svg                                                                        | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\eyash\news_bridge\news-feed\src\App.css                                                                            | PostCSS            |      3,532 |        138 |        368 |      4,038 |
+| c:\Users\eyash\news_bridge\news-feed\src\App.jsx                                                                            | JavaScript JSX     |         50 |          4 |          8 |         62 |
+| c:\Users\eyash\news_bridge\news-feed\src\api.js                                                                             | JavaScript         |         13 |          0 |          2 |         15 |
+| c:\Users\eyash\news_bridge\news-feed\src\api\searchApi.js                                                                   | JavaScript         |        273 |         41 |         32 |        346 |
+| c:\Users\eyash\news_bridge\news-feed\src\api\topicsApi.js                                                                   | JavaScript         |        105 |         31 |         15 |        151 |
+| c:\Users\eyash\news_bridge\news-feed\src\assets\react.svg                                                                   | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\eyash\news_bridge\news-feed\src\auth.js                                                                            | JavaScript         |         51 |          0 |          8 |         59 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\EXAMPLES.md                                                | Markdown           |        253 |          0 |         53 |        306 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\README.md                                                  | Markdown           |        292 |          0 |         90 |        382 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\SETUP.md                                                   | Markdown           |        134 |          0 |         44 |        178 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\START_HERE.md                                              | Markdown           |        156 |          0 |         47 |        203 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\package.json                                               | JSON               |         33 |          0 |          1 |         34 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\emotion.js                                          | JavaScript         |         79 |         14 |         12 |        105 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\gestures.js                                         | JavaScript         |        231 |         43 |         33 |        307 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\legacy.html                                         | HTML               |        356 |          0 |          2 |        358 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\lipsync.js                                          | JavaScript         |        211 |        179 |         45 |        435 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\main.js                                             | JavaScript         |        155 |         68 |         30 |        253 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\pose-studio.js                                      | JavaScript         |        213 |         93 |         34 |        340 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\recorder.js                                         | JavaScript         |         41 |         26 |         12 |         79 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\rhubarb.js                                          | JavaScript         |         53 |         47 |          8 |        108 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\scene.js                                            | JavaScript         |        712 |        178 |        111 |      1,001 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\style.css                                           | PostCSS            |         73 |          4 |         11 |         88 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\test.js                                             | JavaScript         |        855 |        134 |        107 |      1,096 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\public\tts.js                                              | JavaScript         |        208 |         82 |         33 |        323 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\src\AvatarStudioFrame.jsx                                  | JavaScript JSX     |         43 |         34 |          3 |         80 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-studio-component\src\index.js                                               | JavaScript         |          1 |          1 |          1 |          3 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar-style.css                                                                   | PostCSS            |        187 |          7 |         31 |        225 |
+| c:\Users\eyash\news_bridge\news-feed\src\avatar.js                                                                          | JavaScript         |        126 |         10 |         21 |        157 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\AvatarPage.jsx                                                          | JavaScript JSX     |         37 |          4 |          4 |         45 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\AvatarStudioFrame.jsx                                                   | JavaScript JSX     |         43 |         34 |          3 |         80 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\CategoryBar.jsx                                                         | JavaScript JSX     |         48 |          1 |          4 |         53 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\ChatWidget.jsx                                                          | JavaScript JSX     |        158 |          4 |         27 |        189 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\Feed.jsx                                                                | JavaScript JSX     |         79 |          1 |         20 |        100 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\GuestSignupPrompt.jsx                                                   | JavaScript JSX     |         25 |          1 |          0 |         26 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\LanguageToggle.jsx                                                      | JavaScript JSX     |         17 |          1 |          3 |         21 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\LeftSidebar.jsx                                                         | JavaScript JSX     |        195 |          3 |         18 |        216 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\NewsBrief.jsx                                                           | JavaScript JSX     |        239 |         11 |         27 |        277 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\Post.jsx                                                                | JavaScript JSX     |        490 |         14 |         54 |        558 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\PostCard.jsx                                                            | JavaScript JSX     |         15 |          1 |          0 |         16 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\PostCommentsModal.jsx                                                   | JavaScript JSX     |        583 |          4 |         47 |        634 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\PostModal.jsx                                                           | JavaScript JSX     |        587 |         22 |         57 |        666 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\SavedNews.jsx                                                           | JavaScript JSX     |        543 |         24 |         50 |        617 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\SearchBar.jsx                                                           | JavaScript JSX     |        445 |          9 |         39 |        493 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\SiteLayout.jsx                                                          | JavaScript JSX     |         92 |          2 |         16 |        110 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\TopBar.jsx                                                              | JavaScript JSX     |        119 |          3 |         14 |        136 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\TopicCard.jsx                                                           | JavaScript JSX     |         79 |          8 |         12 |         99 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\TopicDetails.jsx                                                        | JavaScript JSX     |        137 |          8 |         16 |        161 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\TopicPost.jsx                                                           | JavaScript JSX     |         47 |          3 |          4 |         54 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\TrendingTopics.jsx                                                      | JavaScript JSX     |         78 |          2 |          8 |         88 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\article\ArticleCard.jsx                                                 | JavaScript JSX     |         53 |          0 |         11 |         64 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\article\ArticleOverlay.jsx                                              | JavaScript JSX     |        130 |          0 |         18 |        148 |
+| c:\Users\eyash\news_bridge\news-feed\src\components\article\articleHelpers.jsx                                              | JavaScript JSX     |         25 |          0 |          5 |         30 |
+| c:\Users\eyash\news_bridge\news-feed\src\context\SessionContext.jsx                                                         | JavaScript JSX     |         85 |          1 |          9 |         95 |
+| c:\Users\eyash\news_bridge\news-feed\src\context\ThemeContext.jsx                                                           | JavaScript JSX     |         46 |          4 |         12 |         62 |
+| c:\Users\eyash\news_bridge\news-feed\src\i18n\ar.json                                                                       | JSON               |        458 |          0 |          1 |        459 |
+| c:\Users\eyash\news_bridge\news-feed\src\i18n\en.json                                                                       | JSON               |      2,598 |          0 |          1 |      2,599 |
+| c:\Users\eyash\news_bridge\news-feed\src\i18n\i18n.js                                                                       | JavaScript         |         37 |          4 |          8 |         49 |
+| c:\Users\eyash\news_bridge\news-feed\src\index.css                                                                          | PostCSS            |          1 |          0 |          0 |          1 |
+| c:\Users\eyash\news_bridge\news-feed\src\lipSync.js                                                                         | JavaScript         |         72 |         35 |         16 |        123 |
+| c:\Users\eyash\news_bridge\news-feed\src\main.jsx                                                                           | JavaScript JSX     |         19 |          2 |          3 |         24 |
+| c:\Users\eyash\news_bridge\news-feed\src\pages\ApplyEditorPage.jsx                                                          | JavaScript JSX     |        725 |         40 |         57 |        822 |
+| c:\Users\eyash\news_bridge\news-feed\src\pages\AuthPage.jsx                                                                 | JavaScript JSX     |        268 |          0 |         14 |        282 |
+| c:\Users\eyash\news_bridge\news-feed\src\pages\CmsPage.jsx                                                                  | JavaScript JSX     |         68 |          0 |          8 |         76 |
+| c:\Users\eyash\news_bridge\news-feed\src\pages\DataPage.jsx                                                                 | JavaScript JSX     |        116 |          0 |         11 |        127 |
+| c:\Users\eyash\news_bridge\news-feed\src\pages\EditorPage.jsx                                                               | JavaScript JSX     |        253 |          3 |         28 |        284 |
+| c:\Users\eyash\news_bridge\news-feed\src\pages\FeedPage.jsx                                                                 | JavaScript JSX     |         62 |          1 |         10 |         73 |
+| c:\Users\eyash\news_bridge\news-feed\src\pages\HomePage.jsx                                                                 | JavaScript JSX     |        158 |          9 |         17 |        184 |
+| c:\Users\eyash\news_bridge\news-feed\src\pages\NotFoundPage.jsx                                                             | JavaScript JSX     |         10 |          0 |          1 |         11 |
+| c:\Users\eyash\news_bridge\news-feed\src\pages\ProfilePage.jsx                                                              | JavaScript JSX     |        421 |         10 |         22 |        453 |
+| c:\Users\eyash\news_bridge\news-feed\src\scene.js                                                                           | JavaScript         |         77 |         14 |         14 |        105 |
+| c:\Users\eyash\news_bridge\news-feed\src\speech.js                                                                          | JavaScript         |         66 |         29 |         16 |        111 |
+| c:\Users\eyash\news_bridge\news-feed\src\utils\aiFetch.js                                                                   | JavaScript         |         10 |          1 |          1 |         12 |
+| c:\Users\eyash\news_bridge\news-feed\src\utils\apiFetch.js                                                                  | JavaScript         |         21 |          3 |          7 |         31 |
+| c:\Users\eyash\news_bridge\news-feed\src\utils\auth.js                                                                      | JavaScript         |         97 |          7 |         29 |        133 |
+| c:\Users\eyash\news_bridge\news-feed\src\utils\categoryColors.js                                                            | JavaScript         |        237 |          4 |          1 |        242 |
+| c:\Users\eyash\news_bridge\news-feed\src\utils\categoryConfig.js                                                            | JavaScript         |         10 |          1 |          0 |         11 |
+| c:\Users\eyash\news_bridge\news-feed\src\utils\languageUtils.js                                                             | JavaScript         |         14 |         19 |          4 |         37 |
+| c:\Users\eyash\news_bridge\news-feed\src\utils\savedPosts.js                                                                | JavaScript         |        170 |         11 |         28 |        209 |
+| c:\Users\eyash\news_bridge\news-feed\src\utils\userId.js                                                                    | JavaScript         |          4 |          1 |          1 |          6 |
+| c:\Users\eyash\news_bridge\news-feed\vite-plugins\avatarStudioApi.js                                                        | JavaScript         |        294 |         12 |         23 |        329 |
+| c:\Users\eyash\news_bridge\news-feed\vite.config.js                                                                         | JavaScript         |         16 |          2 |          1 |         19 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\.expo\README.md                                                               | Markdown           |          8 |          0 |          6 |         14 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\.expo\devices.json                                                            | JSON               |          3 |          0 |          1 |          4 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\.expo\types\router.d.ts                                                       | TypeScript         |         11 |          1 |          3 |         15 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\app\(tabs)\_layout.tsx                                            | TypeScript JSX     |         32 |          0 |          4 |         36 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\app\(tabs)\explore.tsx                                            | TypeScript JSX     |        109 |          0 |          4 |        113 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\app\(tabs)\index.tsx                                              | TypeScript JSX     |         94 |          0 |          5 |         99 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\app\_layout.tsx                                                   | TypeScript JSX     |         20 |          0 |          5 |         25 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\app\modal.tsx                                                     | TypeScript JSX     |         26 |          0 |          4 |         30 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\external-link.tsx                                      | TypeScript JSX     |         21 |          2 |          3 |         26 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\haptic-tab.tsx                                         | TypeScript JSX     |         16 |          1 |          2 |         19 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\hello-wave.tsx                                         | TypeScript JSX     |         18 |          0 |          2 |         20 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\parallax-scroll-view.tsx                               | TypeScript JSX     |         73 |          0 |          7 |         80 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\themed-text.tsx                                        | TypeScript JSX     |         55 |          0 |          6 |         61 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\themed-view.tsx                                        | TypeScript JSX     |         10 |          0 |          5 |         15 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\ui\collapsible.tsx                                     | TypeScript JSX     |         40 |          0 |          6 |         46 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\ui\icon-symbol.ios.tsx                                 | TypeScript JSX     |         31 |          0 |          2 |         33 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\components\ui\icon-symbol.tsx                                     | TypeScript JSX     |         26 |         11 |          5 |         42 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\constants\theme.ts                                                | TypeScript         |         41 |          8 |          5 |         54 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\hooks\use-color-scheme.ts                                         | TypeScript         |          1 |          0 |          1 |          2 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\hooks\use-color-scheme.web.ts                                     | TypeScript         |         13 |          3 |          6 |         22 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\hooks\use-theme-color.ts                                          | TypeScript         |         14 |          4 |          4 |         22 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app-example\scripts\reset-project.js                                          | JavaScript         |         89 |         10 |         14 |        113 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\app.json                                                                      | JSON               |         49 |          0 |          1 |         50 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\expo-env.d.ts                                                                 | TypeScript         |          0 |          2 |          1 |          3 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\package-lock.json                                                             | JSON               |     13,107 |          0 |          1 |     13,108 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\package.json                                                                  | JSON               |         55 |          0 |          1 |         56 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\src\api\auth.js                                                               | JavaScript         |         80 |          7 |         19 |        106 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\src\components\AIQueryModal.jsx                                               | JavaScript JSX     |        354 |         14 |         20 |        388 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\src\components\PostCard.jsx                                                   | JavaScript JSX     |      1,241 |         46 |        116 |      1,403 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\src\screens\FeedScreen.jsx                                                    | JavaScript JSX     |        399 |         11 |         24 |        434 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\src\screens\SavedNewsScreen.jsx                                               | JavaScript JSX     |        892 |         40 |         72 |      1,004 |
+| c:\Users\eyash\news_bridge\news_bridge_mobile\src\utils\storage.js                                                          | JavaScript         |        106 |         17 |         21 |        144 |
+| c:\Users\eyash\news_bridge\service-manager\README.md                                                                        | Markdown           |         52 |          0 |         22 |         74 |
+| c:\Users\eyash\news_bridge\service-manager\electron\main.js                                                                 | JavaScript         |        243 |          5 |         46 |        294 |
+| c:\Users\eyash\news_bridge\service-manager\electron\preload.js                                                              | JavaScript         |         28 |          0 |          2 |         30 |
+| c:\Users\eyash\news_bridge\service-manager\electron\services.json                                                           | JSON               |         83 |          0 |          1 |         84 |
+| c:\Users\eyash\news_bridge\service-manager\package-lock.json                                                                | JSON               |      2,658 |          0 |          1 |      2,659 |
+| c:\Users\eyash\news_bridge\service-manager\package.json                                                                     | JSON               |         20 |          0 |          1 |         21 |
+| c:\Users\eyash\news_bridge\service-manager\src\index.html                                                                   | HTML               |         44 |          0 |          5 |         49 |
+| c:\Users\eyash\news_bridge\service-manager\src\renderer.js                                                                  | JavaScript         |        325 |          6 |         50 |        381 |
+| c:\Users\eyash\news_bridge\service-manager\src\styles.css                                                                   | PostCSS            |        289 |          0 |         49 |        338 |
+| c:\Users\eyash\news_bridge\service-manager\src\vendor\xterm-addon-fit.js                                                    | JavaScript         |          1 |          1 |          0 |          2 |
+| c:\Users\eyash\news_bridge\service-manager\src\vendor\xterm.css                                                             | PostCSS            |        136 |         47 |         27 |        210 |
+| c:\Users\eyash\news_bridge\service-manager\src\vendor\xterm.js                                                              | JavaScript         |          1 |          1 |          0 |          2 |
+| c:\Users\eyash\news_bridge\service-manager\start.ps1                                                                        | PowerShell         |          7 |          0 |          3 |         10 |
+| c:\Users\eyash\news_bridge\start-services.ps1                                                                               | PowerShell         |         25 |          0 |          6 |         31 |
+| Total                                                                                                                       |                    |  2,119,310 |      6,322 |     10,203 |  2,135,835 |
++-----------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

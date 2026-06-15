@@ -20,6 +20,8 @@ public interface CacheEndpointRepository extends JpaRepository<CacheEndpoint, Lo
     java.util.List<CacheEndpoint> findBySourceEndpointIdAndUrlOrderByCreatedAtDesc(Long sourceEndpointId, String url);
     
     List<CacheEndpoint> findBySourceEndpointId(Long endpointId);
+
+    long countBySourceEndpointId(Long sourceEndpointId);
     
     List<CacheEndpoint> findByResult(AnalysisResult result);
 

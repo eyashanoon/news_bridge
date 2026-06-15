@@ -11,13 +11,8 @@ import { useTranslation } from "react-i18next";
 
 const PLACEHOLDER_IMG = "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE=";
 const CATEGORIES = ["", "General", "Politics", "Sports", "Finance", "Medical", "Tech", "Culture", "Religion"];
-const SORT_OPTIONS = [
-  { value: "relevance", label: "Relevance" },
-  { value: "date", label: "Newest" },
-  { value: "popularity", label: "Popular" },
-];
 
-function formatRelativeTime(value) {
+function formatRelativeTime(value, t_) {
   if (!value) return "";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
@@ -27,13 +22,13 @@ function formatRelativeTime(value) {
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   if (diffDays >= 7) return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
-  if (diffDays >= 1) return `${diffDays}d ago`;
-  if (diffHours >= 1) return `${diffHours}h ago`;
-  if (diffMinutes >= 1) return `${diffMinutes}m ago`;
-  return "just now";
+  if (diffDays >= 1) return t_ ? t_("daysAgo", { count: diffDays }) : `${diffDays}d ago`;
+  if (diffHours >= 1) return t_ ? t_("hoursAgo", { count: diffHours }) : `${diffHours}h ago`;
+  if (diffMinutes >= 1) return t_ ? t_("minutesAgo", { count: diffMinutes }) : `${diffMinutes}m ago`;
+  return t_ ? t_("justNow") : "just now";
 }
 
-function SearchResultCard({ post, onPress, darkMode }) {
+function SearchResultCard({ post, onPress, darkMode, t_ }) {
   const theme = categoryTheme[post.label]?.light || categoryTheme.General.light;
   const [media, setMedia] = useState(null);
 
@@ -84,7 +79,7 @@ function SearchResultCard({ post, onPress, darkMode }) {
               <Text style={[advStyles.resultCategoryText, { color: theme.pillText }]}>{post.label}</Text>
             </View>
           ) : null}
-          <Text style={[advStyles.resultTime, { color: th(darkMode, dc.muted, "#6e869a") }]}>{formatRelativeTime(post.articleCreatedAt)}</Text>
+          <Text style={[advStyles.resultTime, { color: th(darkMode, dc.muted, "#6e869a") }]}>{formatRelativeTime(post.articleCreatedAt, t_)}</Text>
           {post.lang ? <Text style={[advStyles.resultLang, { color: th(darkMode, dc.textSecondary, "#64748b"), backgroundColor: th(darkMode, dc.subtle, "#f1f5f9") }]}>{post.lang}</Text> : null}
         </View>
       </View>
@@ -148,8 +143,15 @@ export default function AdvancedSearchPage({ navigation, route }) {
 
   const hasActiveFilters = category || langFilter || dateFrom || dateTo || sortBy !== "relevance";
 
+  const isRtl = i18n.language === "ar";
+  const SORT_OPTIONS = [
+    { value: "relevance", label: t("sortRelevance") },
+    { value: "date", label: t("sortNewest") },
+    { value: "popularity", label: t("sortPopular") },
+  ];
+
   return (
-    <View style={[advStyles.container, { backgroundColor: th(darkMode, dc.bg, "#f0f4f9") }]}>
+    <View style={[advStyles.container, { backgroundColor: th(darkMode, dc.bg, "#f0f4f9"), direction: isRtl ? "rtl" : "ltr" }]}>
       <TopBar navigation={navigation} onMenuPress={() => {}} />
       {/* Header */}
       <View style={[advStyles.header, { backgroundColor: th(darkMode, dc.surface, "#fff"), borderBottomColor: th(darkMode, dc.border, "#e2e8f0") }]}>
@@ -200,7 +202,7 @@ export default function AdvancedSearchPage({ navigation, route }) {
                         onPress={() => setCategory(cat)}
                       >
                         <Text style={[advStyles.filterChipText, { color: th(darkMode, dc.textSecondary, "#3d5468") }, active && { color: "#fff", fontWeight: "600" }]}>
-                          {cat || t("all")}
+                          {cat ? t(`category_${cat}`) : t("all")}
                         </Text>
                       </TouchableOpacity>
                     );
@@ -305,7 +307,7 @@ export default function AdvancedSearchPage({ navigation, route }) {
           <View style={advStyles.resultsSection}>
             <Text style={[advStyles.resultsCount, { color: th(darkMode, dc.muted, "#6e869a") }]}>{t("resultsCount", { count: results.length })}</Text>
             {results.map((post) => (
-              <SearchResultCard key={post.id} post={post} onPress={handlePostPress} darkMode={darkMode} />
+              <SearchResultCard key={post.id} post={post} onPress={handlePostPress} darkMode={darkMode} t_={t} />
             ))}
           </View>
         ) : null}

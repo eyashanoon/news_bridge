@@ -39,7 +39,10 @@ export async function fetchTopicById(topicId) {
  */
 export async function fetchTopicPosts(topicId) {
   try {
-    const res = await apiFetch(`/api/topics/${topicId}/posts`);
+    const { getUserId } = await import("../utils/userId");
+    const userId = getUserId();
+    const userParam = userId ? `?userId=${encodeURIComponent(userId)}` : "";
+    const res = await apiFetch(`/api/topics/${topicId}/posts${userParam}`);
     if (res.ok) {
       return await res.json();
     }

@@ -1,246 +1,368 @@
+"""AI Assistant Service — FastAPI application.
+
+Provides AI-powered capabilities:
+- /query — Conversational Q&A & search
+- /news-brief — AI-generated news highlights
+- /translate — Text translation via LLM
+- /ingest/post/{post_id} — On-demand ingestion into vector store
+
+Backward-compatible with the old API contract (question/postId/tags/top_k format,
+translatedText response field, news-brief header-based auth, etc.).
+"""
+
 import logging
-import threading
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Header
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from apscheduler.schedulers.background import BackgroundScheduler
+from pydantic import BaseModel, Field
+from typing import Optional, List
 
-from router import route_request
-from logic.post_logic import summarize_post
-from logic.topic_logic import topic_search
-from logic.news_brief import build_news_brief
-from core.llm import generate, generate_news_brief, translate_text
+from config import settings
+from core.llm import LLM
+from core.embedder import Embedder
+from rag.store import VectorStore
+from rag.ingest import Ingester
+from rag.scheduler import IngestionScheduler
+from logic.backend_client import BackendClient
+from logic.query_service import QueryService
+from logic.news_brief_service import NewsBriefService
+from logic.translate_service import TranslateService
 
-from ingestion.fetcher import fetch_post_content
-from ingestion.processor import merge_paragraphs
-from rag.ingest import ingest_post
-from rag.global_store import store, ingested_posts, persist_ingested
-from rag.scheduler import auto_ingest_job
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 logger = logging.getLogger(__name__)
 
-scheduler = BackgroundScheduler()
+# ---------------------------------------------------------------------------
+# Singleton services (initialised at startup)
+# ---------------------------------------------------------------------------
+
+llm: LLM = None
+embedder: Embedder = None
+vector_store: VectorStore = None
+backend_client: BackendClient = None
+ingester: Ingester = None
+scheduler: IngestionScheduler = None
+query_service: QueryService = None
+news_brief_service: NewsBriefService = None
+translate_service: TranslateService = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifecycle: startup and shutdown events."""
-    logger.info("Starting up AI Assistant Service...")
+    """Startup and shutdown lifecycle."""
+    global llm, embedder, vector_store, backend_client
+    global ingester, scheduler, query_service, news_brief_service, translate_service
+
+    logger.info("Starting AI Assistant Service...")
+
+    # Initialise core components
+    llm = LLM()
+    embedder = Embedder()
+    vector_store = VectorStore()
+    backend_client = BackendClient()
+
+    # Initialise ingestion pipeline
+    ingester = Ingester(vector_store, embedder, backend_client)
+
+    # Initialise services
+    query_service = QueryService(llm, embedder, vector_store, ingester, backend_client)
+    news_brief_service = NewsBriefService(llm, backend_client)
+    translate_service = TranslateService(llm)
+
+    # Start auto-ingestion scheduler
+    scheduler = IngestionScheduler(ingester)
+    await scheduler.start()
+
     logger.info(
-        f"Vector store loaded with {len(store)} vectors, "
-        f"{len(ingested_posts)} ingested posts tracked"
+        "AI Assistant Service ready — %d vectors in store",
+        vector_store.size,
     )
 
-    def run_initial_ingest():
-        try:
-            logger.info("Running initial auto-ingestion on startup...")
-            auto_ingest_job()
-            store.save()
-            persist_ingested()
-            logger.info("Initial ingestion and persistence complete")
-        except Exception as e:
-            logger.warning(f"Initial auto-ingestion failed: {e}")
+    yield  # Application runs here
 
-    # Do not block HTTP startup on ingestion (can take minutes when backend is slow)
-    threading.Thread(target=run_initial_ingest, daemon=True).start()
-
-    # Start periodic auto-ingestion (every 15 minutes)
-    scheduler.add_job(
-        auto_ingest_job,
-        "interval",
-        minutes=15,
-        id="auto_ingest",
-        name="Auto-ingest recent posts",
-        replace_existing=True
-    )
-    scheduler.start()
-    logger.info("Scheduler started with auto-ingest every 15 minutes")
-
-    yield
-
+    # Shutdown
     logger.info("Shutting down AI Assistant Service...")
-    scheduler.shutdown(wait=False)
-    # Persist state on shutdown
-    try:
-        store.save()
-        persist_ingested()
-        logger.info("State persisted on shutdown")
-    except Exception as e:
-        logger.warning(f"Failed to persist state on shutdown: {e}")
+    scheduler.stop()
+    await backend_client.close()
 
 
-app = FastAPI(lifespan=lifespan)
+# ---------------------------------------------------------------------------
+# FastAPI app
+# ---------------------------------------------------------------------------
 
-# CORS — allow all origins for development (Expo web, Android emulator, etc.)
+app = FastAPI(
+    title=settings.app_name,
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+# Allow cross-origin requests from the news-feed frontend (port 5174) and
+# any other local dev frontends. In production, restrict to known origins.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=3600,
 )
 
 
+# ---------------------------------------------------------------------------
+# Request / Response models
+# ---------------------------------------------------------------------------
+
 class QueryRequest(BaseModel):
-    question: str
-    postId: int | None = None
-    type: str | None = None
+    """Backward-compatible query request — accepts both 'query' and 'question' fields."""
+    query: Optional[str] = None
+    question: Optional[str] = None
+    postId: Optional[int] = None
     tags: list[str] = []
-    top_k: int = 10  # Increased from 5 to 10 for better recall
+    language: Optional[str] = None
+    top_k: int = 5
+
+
+class QueryResponse(BaseModel):
+    answer: str
+    intent: Optional[str] = None
+    sources: Optional[list] = None
+
+
+class NewsBriefRequest(BaseModel):
+    user_id: Optional[str] = Field(None, description="User ID for personalised preferences")
+    language: str = Field("english", description="Response language: 'english' or 'arabic'")
+    max_posts: int = Field(12, ge=1, le=50)
+    min_posts: int = Field(5, ge=1, le=50)
 
 
 class TranslateRequest(BaseModel):
-    text: str
-    source_lang: str = "auto"
-    target_lang: str = "en"
+    text: str = Field(..., min_length=1, description="Text to translate")
+    target_lang: Optional[str] = Field(None, description="Target language, e.g. 'english', 'arabic'")
+    source_lang: Optional[str] = Field(None, description="Source language if known")
 
 
-@app.post("/translate")
-def translate(req: TranslateRequest):
-    """
-    Translate text using the LLM.
-    """
-    result = translate_text(
-        text=req.text,
-        source_lang=req.source_lang,
-        target_lang=req.target_lang
-    )
-    return {"translatedText": result}
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
 
-
-@app.post("/ingest/post/{post_id}")
-def ingest_single_post(post_id: int):
-
-    if post_id in ingested_posts:
-        return {
-            "status": "ALREADY_INGESTED",
-            "postId": post_id
-        }
-
-    chunks_added = ingest_post(store, post_id)
-
-    if chunks_added <= 0:
-        return {
-            "status": "FAILED",
-            "postId": post_id,
-            "error": "No text chunks were added"
-        }
-
-    ingested_posts.add(post_id)
-    persist_ingested()
-
+@app.get("/health")
+async def health():
+    """Health check endpoint."""
     return {
-        "status": "INGESTED",
-        "postId": post_id,
-        "chunks": chunks_added
+        "status": "ok",
+        "vectors_in_store": vector_store.size if vector_store else 0,
+        "llm_available": llm.is_available() if llm else False,
     }
 
 
-@app.post("/news-brief")
-def news_brief(
-    user_id: str = Header(default="android-app-anonymous", alias="X-User-Id"),
-    generate_summary: bool = Header(default=True, alias="X-Generate-Summary"),
-    language: str = Header(default="en", alias="X-Language"),
-):
-    """
-    Generate a news brief for the user — like hourly news highlights on TV.
-    
-    - Fetches recent posts (≤12 hours)
-    - Scores them based on user preferences, recency, and importance
-    - Dynamically determines how many to include
-    - Optionally generates an LLM-powered brief summary in the user's language
-    
-    Headers:
-      X-User-Id: the user's ID (default: anonymous)
-      X-Generate-Summary: whether to generate an LLM summary (default: true)
-      X-Language: 'en' for English, 'ar' for Arabic (default: en)
-    """
-    logger.info(f"News brief requested for user={user_id} language={language}")
-
-    # Build the brief data (scored posts)
-    brief_data = build_news_brief(user_id=user_id)
-
-    if brief_data["status"] != "SUCCESS":
-        return brief_data
-
-    # Generate LLM summary if requested
-    if generate_summary and brief_data.get("posts"):
-        try:
-            brief_text = generate_news_brief(brief_data["posts"], language=language)
-            brief_data["brief"] = brief_text
-        except Exception as e:
-            logger.error(f"Failed to generate brief summary: {e}")
-            brief_data["brief"] = None
-            brief_data["briefError"] = str(e)
-
-    return brief_data
-
-
 @app.post("/query")
-def query(req: QueryRequest, authorization: str = Header(None)):
+async def query_endpoint(req: QueryRequest):
+    """Conversational Q&A and search endpoint.
 
-    intent = route_request(req.dict())
+    Accepts both new-style ({"query": "..."}) and old-style
+    ({"question": "...", "postId": ..., "tags": [...], "top_k": ...}) requests.
 
-    # -------------------------
-    # CASE 1: POST SUMMARY
-    # -------------------------
-    if intent == "POST_SUMMARY":
-        if not req.postId:
-            return {
-                "answer": "I can only summarize if a post is selected.",
-                "sources": []
-            }
+    Returns answer text and optionally a sources list for backward compatibility.
+    """
+    if not query_service:
+        raise HTTPException(status_code=503, detail="Service not ready")
+
+    try:
+        query_text = req.query or req.question or ""
+        if not query_text:
+            raise HTTPException(status_code=400, detail="Missing 'query' or 'question' field")
+
+        from logic.router import classify_query
+        from logic.language_utils import normalize_language
+
+        intent, _ = classify_query(query_text)
+        response_lang = normalize_language(req.language, query_text)
+        # Pass postId/tags/language so post-specific and bilingual queries work correctly
+        answer = await query_service.answer(
+            query_text,
+            post_id=req.postId,
+            language=response_lang,
+            hint_tags=req.tags or None,
+        )
+
+        # Build sources list for backward compatibility (post-specific queries)
+        sources = []
+        if req.postId:
+            sources.append({"postId": req.postId})
+
+        return QueryResponse(
+            answer=answer,
+            intent=intent.value,
+            sources=sources,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Query failed")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/news-brief")
+async def news_brief_endpoint(
+    req: Optional[NewsBriefRequest] = None,
+    # Backward-compat headers (old-style clients use headers instead of body)
+    x_user_id: Optional[str] = Header(None, alias="X-User-Id"),
+    x_language: Optional[str] = Header(None, alias="X-Language"),
+):
+    """Generate an AI news brief with top stories.
+
+    Accepts both new-style (JSON body) and old-style (headers) requests.
+    Returns both old and new response fields for compatibility.
+    """
+    if not news_brief_service:
+        raise HTTPException(status_code=503, detail="Service not ready")
+
+    try:
+        # Merge parameters from body or headers (backward compat)
+        if req and req.user_id:
+            user_id = req.user_id
+        else:
+            user_id = x_user_id or None
+
+        # Determine language: body > header > default
+        language = "english"
+        if req and req.language:
+            language = req.language
+        elif x_language:
+            language = x_language
+
+        # Map short codes used by old clients
+        lang_map = {"en": "english", "ar": "arabic"}
+        language = lang_map.get(language, language)
+
+        result = await news_brief_service.generate_brief(
+            user_id=user_id,
+            language=language,
+        )
+
+        brief_text = result.get("brief_text", "")
 
         return {
-            "answer": summarize_post(fetch_post_content, req.postId),
-            "sources": [{"postId": req.postId}]
+            "status": "SUCCESS",
+            "posts": result.get("posts", []),
+            "brief": brief_text,
+            "brief_text": brief_text,
+            "average_score": result.get("average_score", 0.0),
+            "total_candidates": result.get("total_candidates", 0),
+            "selected_count": result.get("selected_count", 0),
+        }
+    except Exception as e:
+        logger.exception("News brief generation failed")
+        return {
+            "status": "FAILED",
+            "message": str(e),
+            "posts": [],
+            "brief": None,
+            "brief_text": "",
         }
 
-    # -------------------------
-    # CASE 2: POST Q&A
-    # -------------------------
-    if intent == "POST_QA":
-        if not req.postId:
+
+@app.post("/translate")
+async def translate_endpoint(req: TranslateRequest):
+    """Translate text between languages using the local LLM.
+
+    Accepts both new-style ({"text": "...", "target_lang": "english"}) and
+    old-style ({"text": "...", "source_lang": "auto", "target_lang": "en"}) requests.
+
+    Returns translatedText for backward compatibility with old clients.
+    """
+    if not translate_service:
+        raise HTTPException(status_code=503, detail="Service not ready")
+
+    try:
+        text = req.text
+        target_lang = req.target_lang or "english"
+        source_lang = req.source_lang
+
+        # Map short language codes used by old clients
+        lang_map = {"en": "english", "ar": "arabic", "auto": None}
+        if target_lang in lang_map:
+            target_lang = lang_map[target_lang] or "english"
+        if source_lang and source_lang in lang_map:
+            source_lang = lang_map[source_lang]
+
+        translated = translate_service.translate(
+            text=text,
+            target_lang=target_lang,
+            source_lang=source_lang,
+        )
+
+        return {
+            "translatedText": translated,
+            "translated_text": translated,
+            "target_lang": target_lang,
+            "source_lang": source_lang,
+        }
+    except Exception as e:
+        logger.exception("Translation failed")
+        return {
+            "translatedText": text,
+            "translated_text": text,
+            "target_lang": req.target_lang or "english",
+            "source_lang": req.source_lang,
+        }
+
+
+@app.post("/ingest/post/{post_id}")
+async def ingest_post_endpoint(post_id: int):
+    """Ingest a specific post into the vector store on demand.
+
+    Returns both new-style and old-style response fields for compatibility.
+    Legacy clients expect: {status: "INGESTED"|"FAILED", postId, chunks}
+    """
+    if not ingester:
+        raise HTTPException(status_code=503, detail="Service not ready")
+
+    try:
+        success = await ingester.ingest_post(post_id)
+        if success:
             return {
-                "answer": "I can only answer post questions if a post is selected.",
-                "sources": []
+                "success": True,
+                "status": "INGESTED",
+                "postId": post_id,
+                "chunks": 1,
+                "message": f"Post {post_id} ingested successfully",
             }
+        else:
+            return {
+                "success": False,
+                "status": "FAILED",
+                "postId": post_id,
+                "chunks": 0,
+                "message": f"Post {post_id} ingestion failed (no content or not found)",
+            }
+    except Exception as e:
+        logger.exception("Ingestion failed for post %d", post_id)
+        return {
+            "success": False,
+            "status": "FAILED",
+            "postId": post_id,
+            "chunks": 0,
+            "message": str(e),
+        }
 
-        content = fetch_post_content(req.postId)
-        text = merge_paragraphs(content)
 
-        answer = generate(req.question, [{
-            "postId": req.postId,
-            "text": text
-        }])
+# ---------------------------------------------------------------------------
+# Main entry point
+# ---------------------------------------------------------------------------
 
-        return {"answer": answer, "sources": [{"postId": req.postId}]}
+if __name__ == "__main__":
+    import uvicorn
 
-    # -------------------------
-    # CASE 3: TOPIC SEARCH / GENERAL RAG
-    # -------------------------
-    results = topic_search(
-        store=store,
-        question=req.question,
-        tags=req.tags,
-        top_k=req.top_k,
-        ingested_posts=ingested_posts
+    uvicorn.run(
+        "main:app",
+        host=settings.host,
+        port=settings.port,
+        reload=settings.debug,
     )
-
-    if not results:
-        return {
-            "answer": "I don't have enough information.",
-            "sources": []
-        }
-
-    answer = generate(req.question, results)
-
-    return {"answer": answer, "sources": results}

@@ -12,31 +12,14 @@ import { useTheme } from "../context/ThemeContext";
 import { useSession } from "../context/SessionContext";
 import GuestSignupPrompt from "./GuestSignupPrompt";
 import { useTranslation } from "react-i18next";
-import { detectItemLanguage } from "../utils/languageUtils";
-import { AI_BASE_URL } from "../utils/aiFetch";
-
-// Shared translate helper — detects LLM refusal messages and falls back to original text
-async function translateText(text, sourceLang, targetLang) {
-  if (!text || !text.trim()) return "";
-  try {
-    const res = await fetch(`${AI_BASE_URL}/translate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, source_lang: sourceLang, target_lang: targetLang }),
-    });
-    if (!res.ok) throw new Error(`Translation failed: ${res.status}`);
-    const data = await res.json();
-    const translated = (data.translatedText || "").trim();
-    if (!translated || /^(i can'?t|cannot|sorry|i'm sorry|i will not|cannot fulfill)/i.test(translated)) {
-      console.warn("Translation refused by LLM, showing original text");
-      return text;
-    }
-    return translated;
-  } catch (err) {
-    console.error("Translation error:", err.message);
-    return text;
-  }
-}
+import {
+  detectItemLanguage,
+  needsTranslation as itemNeedsTranslation,
+  getTranslationTargetLang,
+  getTranslateButtonLabel,
+  getLanguageDisplayLabel,
+} from "../utils/languageUtils";
+import { translateText } from "../utils/translateUtils";
 
 function formatPublishedAt(value, lang) {
   if (!value) return "";
@@ -74,15 +57,21 @@ export default function Post({ post, onAskAI }) {
   const { darkMode } = useTheme();
   const { session } = useSession();
   const { t, i18n } = useTranslation();
-  const lang = i18n.language;
+  const lang = i18n.resolvedLanguage || i18n.language;
   const postTheme = categoryTheme[post.label]?.[darkMode ? "dark" : "light"] || categoryTheme.General[darkMode ? "dark" : "light"];
 
   const postLang = detectItemLanguage(post);
-  const needsTranslation = (lang === "ar" && postLang !== "ar") || (lang !== "ar" && postLang === "ar");
+  const needsTranslation = itemNeedsTranslation(post, lang);
 
   const [likesCount, setLikesCount] = useState(post.likes);
   const [dislikesCount, setDislikesCount] = useState(post.dislikes);
-  const [reaction, setReaction] = useState(post.userReaction);
+  const [reaction, setReaction] = useState(post.userReaction ?? null);
+
+  useEffect(() => {
+    setLikesCount(post.likes);
+    setDislikesCount(post.dislikes);
+    setReaction(post.userReaction ?? null);
+  }, [post.id, post.likes, post.dislikes, post.userReaction]);
   const [media, setMedia] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -106,10 +95,10 @@ export default function Post({ post, onAskAI }) {
     if (isGuest) { setGuestPrompt("like"); return; }
     await ensureUserInitialized();
     const userId = getUserId();
-    const res = await apiFetch(
-      `/api/posts/${post.id}/react?userId=${userId}&type=${type}`,
-      { method: "PUT" }
-    );
+    const reactUrl = post.isTopicPost
+      ? `/api/topics/${post.topicId}/posts/${post.id}/react?userId=${userId}&type=${type}`
+      : `/api/posts/${post.id}/react?userId=${userId}&type=${type}`;
+    const res = await apiFetch(reactUrl, { method: "PUT" });
     if (!res.ok) {
       console.error("React failed");
       return;
@@ -117,14 +106,11 @@ export default function Post({ post, onAskAI }) {
     const data = await res.json();
     setLikesCount(data.likes);
     setDislikesCount(data.dislikes);
-    if (data.status === "REMOVED") {
-      setReaction(null);
-    } else {
-      setReaction(type);
-    }
+    setReaction(data.userReaction ?? (data.status === "REMOVED" ? null : type));
   };
 
   const sendView = async () => {
+    if (post.isTopicPost) return;
     if (viewSent.current) return;
     viewSent.current = true;
     await ensureUserInitialized();
@@ -135,6 +121,7 @@ export default function Post({ post, onAskAI }) {
   };
 
   const sendTimeSpent = async (seconds) => {
+    if (post.isTopicPost) return;
     await ensureUserInitialized();
     const userId = getUserId();
     await apiFetch(
@@ -203,16 +190,15 @@ export default function Post({ post, onAskAI }) {
     if (!needsTranslation) return;
     setIsTranslating(true);
     try {
-      const targetLang = lang === "ar" ? "ar" : "en";
-      const sourceLang = lang === "ar" ? "en" : "ar";
+      const targetLang = getTranslationTargetLang(lang);
 
       if (post.title) {
-        const t = await translateText(post.title, sourceLang, targetLang);
+        const t = await translateText(post.title, postLang, targetLang);
         setTranslatedTitle(t || post.title);
       }
       const fullText = post.text || "";
       if (fullText) {
-        const t = await translateText(fullText, sourceLang, targetLang);
+        const t = await translateText(fullText, postLang, targetLang);
         setTranslatedFullText(t || fullText);
       }
       setShowTranslated(true);
@@ -453,13 +439,17 @@ export default function Post({ post, onAskAI }) {
               transition: "color var(--transition-fast)", padding: 0,
             }}
           >
-            {isTranslating ? t("translating") : showTranslated ? t("viewOriginal") : (lang === "ar" ? t("translateToAr") : t("translateToEn"))}
+            {isTranslating ? t("translating") : showTranslated ? t("viewOriginal") : getTranslateButtonLabel(lang, t)}
           </button>
         )}
 
         {renderImages()}
 
-        {post.lang && <span className="post-lang">{post.lang}</span>}
+        {postLang && (
+          <span className="post-lang" title={t("postLanguage")}>
+            {getLanguageDisplayLabel(postLang, t)}
+          </span>
+        )}
 
         {post.tags?.length > 0 && (
           <div className="post-tags">
@@ -548,7 +538,6 @@ export default function Post({ post, onAskAI }) {
         <GuestSignupPrompt
           action={guestPrompt === "like" ? "like or dislike posts" : "save articles"}
           onClose={() => setGuestPrompt(null)}
-          onGoToLogin={(mode) => { window.location.href = `/auth?mode=${mode}`; }}
         />
       )}
     </>

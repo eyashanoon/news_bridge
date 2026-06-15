@@ -12,8 +12,9 @@ import { useTranslation } from "react-i18next";
 export default function ApplyEditorPage({ navigation }) {
   const { session, setNotice, updateToken } = useSession();
   const { currentCategory, darkMode } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = categoryTheme[currentCategory]?.light || categoryTheme.General.light;
+  const isRtl = i18n.language === "ar";
 
   const token = session?.token;
   const email = session?.email;
@@ -153,7 +154,7 @@ export default function ApplyEditorPage({ navigation }) {
   // ─── Not logged in
   if (!token) {
     return (
-      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
         <TopBar navigation={navigation} />
         <View style={[styles.statusBox, { backgroundColor: th(darkMode, dc.surface, "#fff"), borderColor: th(darkMode, dc.border, "#e2e8f0") }]}>
            <Text style={[styles.statusTitle, { color: th(darkMode, dc.text, "#0b1a2b") }]}>✍️ {t("applyEditorTitle")}</Text>
@@ -166,7 +167,7 @@ export default function ApplyEditorPage({ navigation }) {
   // ─── Guest account
   if (isPrimitive) {
     return (
-      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
         <TopBar navigation={navigation} />
         <View style={[styles.statusBox, { backgroundColor: th(darkMode, dc.surface, "#fff"), borderColor: th(darkMode, dc.border, "#e2e8f0") }]}>
            <Text style={[styles.statusTitle, { color: th(darkMode, dc.text, "#0b1a2b") }]}>✍️ {t("applyEditorTitle")}</Text>
@@ -179,7 +180,7 @@ export default function ApplyEditorPage({ navigation }) {
   // ─── Already editor
   if (isEditor) {
     return (
-      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
         <TopBar navigation={navigation} />
         <View style={[styles.statusBox, { backgroundColor: th(darkMode, dc.surface, "#fff"), borderColor: th(darkMode, dc.border, "#e2e8f0") }]}>
           <Text style={styles.statusIcon}>🎉</Text>
@@ -193,7 +194,7 @@ export default function ApplyEditorPage({ navigation }) {
   // ─── Approved, pending upgrade
   if (hasApprovedRequest) {
     return (
-      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
         <TopBar navigation={navigation} />
         <View style={[styles.statusBox, { backgroundColor: th(darkMode, dc.surface, "#fff"), borderColor: th(darkMode, dc.border, "#e2e8f0") }]}>
           <Text style={styles.statusIcon}>🎉</Text>
@@ -212,7 +213,7 @@ export default function ApplyEditorPage({ navigation }) {
   // ─── Pending
   if (hasPendingRequest) {
     return (
-      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
         <TopBar navigation={navigation} />
         <View style={[styles.statusBox, { backgroundColor: th(darkMode, dc.surface, "#fff"), borderColor: th(darkMode, dc.border, "#e2e8f0") }]}>
           <Text style={styles.statusIcon}>⏳</Text>
@@ -227,7 +228,7 @@ export default function ApplyEditorPage({ navigation }) {
   // ─── Rejected with cooldown
   if (hasRejectedRequest && cooldownInfo) {
     return (
-      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}>
+      <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}>
         <TopBar navigation={navigation} />
         <View style={[styles.statusBox, { backgroundColor: th(darkMode, dc.surface, "#fff"), borderColor: th(darkMode, dc.border, "#e2e8f0") }]}>
           <Text style={styles.statusIcon}>❌</Text>
@@ -246,7 +247,7 @@ export default function ApplyEditorPage({ navigation }) {
 
   // ─── Form (never applied OR rejected cooldown expired)
   return (
-    <KeyboardAvoidingView style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoidingView style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <TopBar navigation={navigation} />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
          <Text style={[styles.pageTitle, { color: th(darkMode, dc.text, "#0b1a2b") }]}>✍️ {t("applyEditorTitle")}</Text>

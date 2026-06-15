@@ -30,7 +30,7 @@ export default function TopicPost({ post, onPress, onAskAI, topic }) {
     tags: post.tags || [],
     likes: post.likes ?? 0,
     dislikes: post.dislikes ?? 0,
-    userReaction: null,
+    userReaction: post.userReaction ?? null,
     articleCreatedAt: post.createdAt,
     mediaUrl: mediaItems.length > 0 ? mediaItems[0].url : null,
     mediaType: mediaItems.length > 0 ? mediaItems[0].type : null,

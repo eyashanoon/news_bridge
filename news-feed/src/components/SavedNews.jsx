@@ -16,7 +16,15 @@ import {
   setNote,
   getUniqueTagsFromSaved,
 } from "../utils/savedPosts";
-import { categoryColors } from "../utils/categoryColors";
+import { categoryColors, categoryTheme } from "../utils/categoryColors";
+import { useTheme } from "../context/ThemeContext";
+import {
+  detectItemLanguage,
+  needsTranslation as itemNeedsTranslation,
+  getTranslationTargetLang,
+  getTranslateButtonLabel,
+} from "../utils/languageUtils";
+import { translateText } from "../utils/translateUtils";
 import PostModal from "./PostModal";
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -35,6 +43,7 @@ function timeAgo(timestamp) {
 // ─── Sub-Components ─────────────────────────────────────────
 
 function CollectionManager({ collections, selectedCollection, onSelectCollection, onRefresh }) {
+  const { t } = useTranslation();
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -44,23 +53,23 @@ function CollectionManager({ collections, selectedCollection, onSelectCollection
 
   const iconOptions = ["📁", "📰", "⭐", "❤️", "🔥", "💡", "📌", "🏷️", "🎯", "📚", "🗂️", "💎"];
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!newName.trim()) return;
-    createCollection(newName.trim(), newColIcon);
+    await createCollection(newName.trim(), newColIcon);
     setNewName("");
     setShowCreate(false);
     onRefresh();
   };
 
-  const handleRename = (id) => {
+  const handleRename = async (id) => {
     if (!editName.trim()) return;
-    renameCollection(id, editName.trim());
+    await renameCollection(id, editName.trim());
     setEditingId(null);
     onRefresh();
   };
 
-  const handleDelete = (id) => {
-    deleteCollection(id);
+  const handleDelete = async (id) => {
+    await deleteCollection(id);
     setShowMenuId(null);
     if (selectedCollection === id) onSelectCollection(null);
     onRefresh();
@@ -69,8 +78,8 @@ function CollectionManager({ collections, selectedCollection, onSelectCollection
   return (
     <div className="saved-collections-panel">
       <div className="saved-collections-header">
-        <h3>📂 Collections</h3>
-        <button className="saved-btn-icon" onClick={() => setShowCreate(!showCreate)} title="New Collection">
+        <h3>📂 {t("collections")}</h3>
+        <button className="saved-btn-icon" onClick={() => setShowCreate(!showCreate)} title={t("newCollection")}>
           ➕
         </button>
       </div>
@@ -91,14 +100,14 @@ function CollectionManager({ collections, selectedCollection, onSelectCollection
           <div className="saved-create-row">
             <input
               type="text"
-              placeholder="Collection name..."
+              placeholder={t("collectionNamePlaceholder")}
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
               autoFocus
             />
             <button className="saved-btn-sm saved-btn-primary" onClick={handleCreate}>
-              Create
+              {t("create")}
             </button>
           </div>
         </div>
@@ -108,7 +117,7 @@ function CollectionManager({ collections, selectedCollection, onSelectCollection
         className={`saved-col-item ${!selectedCollection ? "active" : ""}`}
         onClick={() => onSelectCollection(null)}
       >
-        <span>📦 All Saved</span>
+        <span>📦 {t("allSaved")}</span>
         <span className="saved-col-count">
           {collections.reduce((sum, c) => sum + c.postCount, 0)}
         </span>
@@ -156,10 +165,10 @@ function CollectionManager({ collections, selectedCollection, onSelectCollection
                     setShowMenuId(null);
                   }}
                 >
-                  ✏️ Rename
+                  ✏️ {t("rename")}
                 </button>
                 <button className="danger" onClick={() => handleDelete(col.id)}>
-                  🗑️ Delete
+                  🗑️ {t("delete")}
                 </button>
               </div>
             )}
@@ -171,11 +180,12 @@ function CollectionManager({ collections, selectedCollection, onSelectCollection
 }
 
 function NoteEditor({ postId, onUpdate }) {
+  const { t } = useTranslation();
   const [note, setNoteState] = useState(() => getNote(postId));
   const [editing, setEditing] = useState(false);
 
-  const handleSave = () => {
-    setNote(postId, note);
+  const handleSave = async () => {
+    await setNote(postId, note);
     setEditing(false);
     onUpdate?.();
   };
@@ -191,7 +201,7 @@ function NoteEditor({ postId, onUpdate }) {
             </button>
           </>
         ) : (
-          <span className="saved-note-empty">📝 Add a note...</span>
+          <span className="saved-note-empty">📝 {t("addNote")}</span>
         )}
       </div>
     );
@@ -202,14 +212,14 @@ function NoteEditor({ postId, onUpdate }) {
       <textarea
         value={note}
         onChange={(e) => setNoteState(e.target.value)}
-        placeholder="Write your thoughts about this article..."
+        placeholder={t("writeYourThoughts")}
         rows={3}
         autoFocus
       />
       <div className="saved-note-actions">
-        <button className="saved-btn-sm saved-btn-primary" onClick={handleSave}>Save</button>
+        <button className="saved-btn-sm saved-btn-primary" onClick={handleSave}>{t("save")}</button>
         <button className="saved-btn-sm" onClick={() => { setNoteState(getNote(postId)); setEditing(false); }}>
-          Cancel
+          {t("cancel")}
         </button>
       </div>
     </div>
@@ -217,15 +227,66 @@ function NoteEditor({ postId, onUpdate }) {
 }
 
 function SavedPostCard({ post, onUnsave, onOpen, collectionId, collections, onAddToCollection, onRemoveFromCollection }) {
-  const colors = categoryColors[post.label] || {};
+  const { t, i18n } = useTranslation();
+  const { darkMode } = useTheme();
+  const postTheme = categoryTheme[post.label]?.[darkMode ? "dark" : "light"] || categoryTheme.General[darkMode ? "dark" : "light"];
   const note = getNote(post.id);
   const [showColMenu, setShowColMenu] = useState(false);
 
+  // Translation state
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translatedTitle, setTranslatedTitle] = useState(null);
+  const [translatedText, setTranslatedText] = useState(null);
+  const [showTranslated, setShowTranslated] = useState(false);
+
+  const lang = i18n.language;
+  const postLang = detectItemLanguage(post);
+  const needsTranslation = itemNeedsTranslation(post, lang);
+
+  const handleTranslate = async (e) => {
+    e.stopPropagation();
+    if (showTranslated) {
+      setShowTranslated(false);
+      return;
+    }
+    if (!needsTranslation) return;
+    setIsTranslating(true);
+    try {
+      const targetLang = getTranslationTargetLang(lang);
+      if (post.title) {
+        const tOut = await translateText(post.title, postLang, targetLang);
+        setTranslatedTitle(tOut || post.title);
+      }
+      if (post.text) {
+        const tOut = await translateText(post.text, postLang, targetLang);
+        setTranslatedText(tOut || post.text);
+      }
+      setShowTranslated(true);
+    } catch (err) {
+      console.error("Translation error:", err.message);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const displayTitle = showTranslated && translatedTitle ? translatedTitle : post.title;
+  const displayText = showTranslated && translatedText ? translatedText : (post.text || "");
+
   return (
-    <div className="saved-post-card" onClick={() => onOpen(post)}>
+    <div
+      className="saved-post-card"
+      onClick={() => onOpen(post)}
+      style={{
+        background: postTheme.surface,
+        borderColor: postTheme.border,
+      }}
+    >
       <div className="saved-post-card-top">
-        <span className="saved-post-cat" style={{ background: colors.text || undefined, color: colors.text ? "#fff" : undefined }}>
-          {post.label}
+        <span
+          className="saved-post-cat"
+          style={{ background: postTheme.pillBg, color: postTheme.pillText }}
+        >
+          {t(`category_${post.label}`, post.label)}
         </span>
         <span className="saved-post-time">{timeAgo(post.savedAt)}</span>
       </div>
@@ -233,23 +294,38 @@ function SavedPostCard({ post, onUnsave, onOpen, collectionId, collections, onAd
       {/* Topic context banner for topic posts */}
       {post.isTopicPost && post.topicTitle && (
         <div className="saved-post-topic-context">
-          <span className="saved-post-topic-label">📰 Topic</span>
+          <span className="saved-post-topic-label">📰 {t("topic")}</span>
           <span className="saved-post-topic-name">{post.topicTitle}</span>
           {post.topicDescription && (
             <p className="saved-post-topic-desc">{post.topicDescription.slice(0, 80)}{post.topicDescription.length > 80 ? "..." : ""}</p>
           )}
           {post.topicTags?.length > 0 && (
             <div className="saved-post-topic-tags">
-              {post.topicTags.slice(0, 3).map((t, i) => (
-                <span key={i} className="saved-post-topic-tag">#{t}</span>
+              {post.topicTags.slice(0, 3).map((tg, i) => (
+                <span key={i} className="saved-post-topic-tag">#{tg}</span>
               ))}
             </div>
           )}
         </div>
       )}
 
-      {post.title && <h4 className="saved-post-title">{post.title}</h4>}
-      {post.text && <p className="saved-post-text">{post.text.slice(0, 120)}...</p>}
+      {displayTitle && <h4 className="saved-post-title">{displayTitle}</h4>}
+      {displayText && <p className="saved-post-text">{displayText.slice(0, 120)}...</p>}
+
+      {/* Translate link — translates full text */}
+      {needsTranslation && (
+        <button
+          className="saved-translate-btn"
+          onClick={handleTranslate}
+          disabled={isTranslating}
+        >
+          {isTranslating
+            ? t("translating")
+            : showTranslated
+              ? t("viewOriginal")
+              : getTranslateButtonLabel(lang, t)}
+        </button>
+      )}
 
       {/* Editor info for topic posts */}
       {post.isTopicPost && post.authorName && (
@@ -279,8 +355,8 @@ function SavedPostCard({ post, onUnsave, onOpen, collectionId, collections, onAd
       {/* Tags */}
       {post.tags?.length > 0 && (
         <div className="saved-post-mini-tags">
-          {post.tags.slice(0, 3).map((t, i) => (
-            <span key={i} className="saved-mini-tag">#{t}</span>
+          {post.tags.slice(0, 3).map((tg, i) => (
+            <span key={i} className="saved-mini-tag">#{tg}</span>
           ))}
         </div>
       )}
@@ -294,25 +370,25 @@ function SavedPostCard({ post, onUnsave, onOpen, collectionId, collections, onAd
               e.stopPropagation();
               setShowColMenu(!showColMenu);
             }}
-            title="Add to collection"
+            title={t("addToCollection")}
           >
             📂
           </button>
           {showColMenu && (
             <div className="saved-col-picker-dropdown">
-              {collections.length === 0 && <div className="saved-col-picker-empty">No collections yet</div>}
+              {collections.length === 0 && <div className="saved-col-picker-empty">{t("noCollectionsYet")}</div>}
               {collections.map((col) => {
                 const isInCol = post.collections?.includes(col.id);
                 return (
                   <button
                     key={col.id}
                     className={`saved-col-pick-option ${isInCol ? "active" : ""}`}
-                    onClick={() => {
+                    onClick={async () => {
                       if (isInCol) {
-                        removePostFromCollection(post.id, col.id);
+                        await removePostFromCollection(post.id, col.id);
                         onRemoveFromCollection?.();
                       } else {
-                        addPostToCollection(post.id, col.id);
+                        await addPostToCollection(post.id, col.id);
                         onAddToCollection?.();
                       }
                       setShowColMenu(false);
@@ -333,7 +409,7 @@ function SavedPostCard({ post, onUnsave, onOpen, collectionId, collections, onAd
         <button
           className="saved-action-btn danger"
           onClick={() => onUnsave(post.id)}
-          title="Remove from saved"
+          title={t("removeFromSaved")}
         >
           🗑️
         </button>
@@ -346,10 +422,6 @@ function SavedPostCard({ post, onUnsave, onOpen, collectionId, collections, onAd
 function SavedStats({ posts, collections }) {
   const { t } = useTranslation();
   const avgNoteLength = posts.filter((p) => getNote(p.id)).length;
-  const colStats = collections.map((c) => ({
-    name: `${c.icon} ${c.name}`,
-    count: c.postCount,
-  }));
 
   const categoryCounts = {};
   posts.forEach((p) => {
@@ -396,11 +468,11 @@ export default function SavedNews() {
   const [showStats, setShowStats] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
 
-  const refreshData = useCallback(() => {
+  const refreshData = useCallback(async () => {
     setCollections(getCollections());
     const posts = getLocalSavedPosts();
     setSavedPosts(posts);
-    syncCollectionCounts();
+    await syncCollectionCounts();
     setCollections(getCollections());
   }, []);
 
@@ -427,7 +499,7 @@ export default function SavedNews() {
     // Filter by tag
     if (selectedTag) {
       filtered = filtered.filter((p) => {
-        const tags = (p.tags || []).map((t) => t.toLowerCase());
+        const tags = (p.tags || []).map((tg) => tg.toLowerCase());
         return tags.includes(selectedTag.toLowerCase()) || p.label?.toLowerCase() === selectedTag.toLowerCase();
       });
     }
@@ -439,7 +511,7 @@ export default function SavedNews() {
         (p.title || "").toLowerCase().includes(q) ||
         (p.text || "").toLowerCase().includes(q) ||
         (p.label || "").toLowerCase().includes(q) ||
-        (p.tags || []).some((t) => t.toLowerCase().includes(q))
+        (p.tags || []).some((tg) => tg.toLowerCase().includes(q))
       );
     }
 
@@ -460,6 +532,12 @@ export default function SavedNews() {
     refreshData();
   };
 
+  const clearAllFilters = () => {
+    setSearchQuery("");
+    setSelectedTag(null);
+    setSelectedCollection(null);
+  };
+
   if (loading) {
     return (
       <div className="saved-loading">
@@ -474,11 +552,11 @@ export default function SavedNews() {
       {/* Header */}
       <div className="saved-header">
         <div>
-          <h1 className="saved-title">💾 Saved News</h1>
+          <h1 className="saved-title">💾 {t("savedNewsTitle")}</h1>
           <p className="saved-subtitle">
-            {savedPosts.length} {savedPosts.length === 1 ? "article" : "articles"} saved
+            {t("articlesCountSaved", { count: savedPosts.length })}
             {selectedCollection && collections.find((c) => c.id === selectedCollection)
-              ? ` in "${collections.find((c) => c.id === selectedCollection).name}"`
+              ? ` ${t("inCollection")} "${collections.find((c) => c.id === selectedCollection).name}"`
               : ""}
           </p>
         </div>
@@ -486,9 +564,9 @@ export default function SavedNews() {
           <button
             className={`saved-header-btn ${showStats ? "active" : ""}`}
             onClick={() => setShowStats(!showStats)}
-            title="Stats"
+            title={t("stats")}
           >
-            📊 Stats
+            📊 {t("stats")}
           </button>
         </div>
       </div>
@@ -500,17 +578,17 @@ export default function SavedNews() {
       {savedPosts.length === 0 && (
         <div className="saved-empty">
           <div className="saved-empty-icon">💾</div>
-          <h3>No saved articles yet</h3>
-          <p>Click the 💾 Save button on any post to save it here for later reading.</p>
+          <h3>{t("noSavedArticlesYet")}</h3>
+          <p>{t("savedArticlesDesc")}</p>
           <div className="saved-empty-tips">
             <div className="saved-tip">
-              <span>📂</span> Organize saves into collections
+              <span>📂</span> {t("organIntoSaves")}
             </div>
             <div className="saved-tip">
-              <span>📝</span> Add personal notes to articles
+              <span>📝</span> {t("addPersonalNotes")}
             </div>
             <div className="saved-tip">
-              <span>🏷️</span> Filter by tags and categories
+              <span>🏷️</span> {t("filterByTags")}
             </div>
           </div>
         </div>
@@ -530,13 +608,13 @@ export default function SavedNews() {
             {/* Tag filter */}
             {allTags.length > 0 && (
               <div className="saved-tags-section">
-                <h3>🏷️ Tags</h3>
+                <h3>🏷️ {t("tags")}</h3>
                 <div className="saved-tag-list">
                   <button
                     className={`saved-tag-pill ${!selectedTag ? "active" : ""}`}
                     onClick={() => setSelectedTag(null)}
                   >
-                    All
+                    {t("all")}
                   </button>
                   {allTags.map((tag) => (
                     <button
@@ -560,7 +638,7 @@ export default function SavedNews() {
                 <span>🔍</span>
                 <input
                   type="text"
-                  placeholder="Search saved articles..."
+                  placeholder={t("searchSavedPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -575,19 +653,19 @@ export default function SavedNews() {
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
               >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-                <option value="title">By Title</option>
-                <option value="category">By Category</option>
+                <option value="newest">{t("newestFirst")}</option>
+                <option value="oldest">{t("oldestFirst")}</option>
+                <option value="title">{t("byTitle")}</option>
+                <option value="category">{t("byCategory")}</option>
               </select>
             </div>
 
             {/* Posts grid */}
             {filteredPosts.length === 0 ? (
               <div className="saved-no-results">
-                <p>No articles match your filters.</p>
-                <button className="saved-btn-sm saved-btn-primary" onClick={() => { setSearchQuery(""); setSelectedTag(null); setSelectedCollection(null); }}>
-                  Clear Filters
+                <p>{t("noArticlesMatch")}</p>
+                <button className="saved-btn-sm saved-btn-primary" onClick={clearAllFilters}>
+                  {t("clearFilters")}
                 </button>
               </div>
             ) : (

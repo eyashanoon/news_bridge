@@ -28,12 +28,16 @@ class CrawlerService:
             self._log(f"Found {stats.roots_seen} root(s) to crawl")
 
             for root in roots:
+                if str(root.get("status", "")).upper() != "ACTIVE":
+                    continue
                 root_id = int(root["id"])
                 endpoints = self.backend.get_endpoints(root_id)
                 stats.listing_endpoints_seen += len(endpoints)
                 self._log(f"Root #{root_id}: {len(endpoints)} listing endpoint(s)")
 
                 for endpoint in endpoints:
+                    if str(endpoint.get("status", "")).upper() != "ACTIVE":
+                        continue
                     listing_endpoint_id = int(endpoint["id"])
                     listing_url = str(endpoint["url"])
                     created = self.crawl_endpoint(root_id, listing_endpoint_id, listing_url)

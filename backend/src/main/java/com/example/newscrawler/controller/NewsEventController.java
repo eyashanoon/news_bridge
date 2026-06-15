@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/events")
@@ -71,8 +72,15 @@ public class NewsEventController {
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('MANAGE_EVENTS') or hasRole('MANAGE_USERS')")
-    public NewsEventResponse changeStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        return eventService.changeStatus(id, body.get("status"));
+    public NewsEventResponse changeStatus(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+        String status = (String) body.get("status");
+        @SuppressWarnings("unchecked")
+        List<Integer> rawFieldIds = (List<Integer>) body.get("fieldIds");
+        List<Long> fieldIds = null;
+        if (rawFieldIds != null) {
+            fieldIds = rawFieldIds.stream().map(Long::valueOf).collect(Collectors.toList());
+        }
+        return eventService.changeStatus(id, status, fieldIds);
     }
 
     // ─── Admin: delete event ──────────────────────────────────────────────────

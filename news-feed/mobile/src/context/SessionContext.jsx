@@ -14,7 +14,7 @@ export function SessionProvider({ children }) {
     if (token && sessionData?.userId) {
       await setToken(token);
       await AsyncStorage.setItem("userId", sessionData.userId);
-      await AsyncStorage.setItem("userType", sessionData.type || "REGISTERED");
+      await AsyncStorage.setItem("userType", sessionData.type || "PRIMITIVE");
       await AsyncStorage.setItem("roles", JSON.stringify(sessionData.roles || []));
     }
   };

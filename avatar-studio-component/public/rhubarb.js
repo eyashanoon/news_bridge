@@ -5,22 +5,19 @@
  *
  * Responsibilities
  * ────────────────
- * 1. Encode a Web Audio AudioBuffer → 16-bit PCM WAV bytes
- *    (Rhubarb only accepts .wav / .ogg, not MP3).
- * 2. POST the WAV to the Vite server-side Rhubarb plugin
+ * 1. POST TTS audio (MP3 or WAV) to the Vite server-side Rhubarb plugin
  *    at /api/rhubarb and parse its JSON response.
- * 3. Fall back to energy-based cues if Rhubarb fails
- *    (exe missing, timeout, unexpected error, etc.).
+ * 2. Requires /api/rhubarb (Vite plugin + rhubarb binary + res/). No energy fallback.
+ *    See news-feed/public/avatar-studio/CHANGES.md
  *
  * Exports
  * ───────
- * buildLipSyncCues(decodedBuffer, text) → Promise<[{time, shape}]>
+ * buildLipSyncCues(audioBlob, text) → Promise<[{time, shape}]>
  * ─────────────────────────────────────────────────────────────
  */
 
-import { buildCuesFromRhubarbJSON, buildCuesFromAudio } from './lipsync.js';
-// buildCuesFromRhubarbJSON  – converts Rhubarb's { mouthCues:[{start,value}] } → [{time,shape}]
-// buildCuesFromAudio        – fallback: analyses PCM amplitude → rough [{time,shape}] cues
+import { buildCuesFromRhubarbJSON } from './lipsync.js';
+// buildCuesFromRhubarbJSON – Rhubarb JSON → [{time, shape}]
 
 // ── audioBufferToWav ──────────────────────────────────────────
 // Encodes a Web Audio AudioBuffer to a 16-bit PCM WAV ArrayBuffer.
@@ -73,35 +70,26 @@ export function audioBufferToWav(buffer) {
 }
 
 // ── buildLipSyncCues ──────────────────────────────────────────
-// Primary export. Attempts Rhubarb phoneme analysis; falls back to energy cues.
-//   decodedBuffer – Web Audio AudioBuffer (PCM float32, already decoded)
-//   text          – the spoken text, sent as the Rhubarb --dialogFile hint for accuracy
-// Returns: [{time: number (seconds), shape: 'A'|'B'|…|'X'}]
-export async function buildLipSyncCues(decodedBuffer, text) {
-  try {
-    const wavBytes = audioBufferToWav(decodedBuffer); // encode PCM float32 → WAV bytes
-    // Text goes in the URL query string so the Vite plugin can read it without parsing the body
-    const url = `/api/rhubarb?text=${encodeURIComponent(text)}`;
-    const res = await fetch(url, {
-      method:  'POST',
-      headers: { 'Content-Type': 'audio/wav' }, // signal that body is raw WAV data
-      body:    wavBytes,
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({})); // response body may not be JSON
-      throw new Error(err.error ?? `HTTP ${res.status}`);
-    }
-    // Rhubarb returns: { mouthCues: [{start, end, value}, …] }
-    // buildCuesFromRhubarbJSON converts that to [{time, shape}]
-    
-    const rhubarbJson = await res.json();
-    return buildCuesFromRhubarbJSON(rhubarbJson);
-  } catch (err) {
-    // Common failure reasons: rhubarb.exe not found, audio > 30 s timeout,
-    // malformed WAV, or network error hitting the Vite dev server.
-    console.warn('[rhubarb] Failed, falling back to energy cues:', err.message);
-    // buildCuesFromAudio derives mouth openness from PCM amplitude — less accurate
-    // but never fails and needs no external binary
-    return buildCuesFromAudio(decodedBuffer);
+// Sends TTS audio (MP3) to the dev server; Rhubarb runs server-side (MP3→WAV→phonemes).
+export async function buildLipSyncCues(audioBlob, text) {
+  if (!audioBlob?.size) {
+    throw new Error('[rhubarb] Missing audio blob for lip-sync analysis');
   }
+  const contentType = audioBlob.type?.includes('wav') ? 'audio/wav' : 'audio/mpeg';
+  const url = `/api/rhubarb?text=${encodeURIComponent(text)}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': contentType },
+    body: audioBlob,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error ?? `[rhubarb] HTTP ${res.status}`);
+  }
+  const rhubarbJson = await res.json();
+  if (!rhubarbJson?.mouthCues?.length) {
+    throw new Error('[rhubarb] No mouth cues returned');
+  }
+  console.log('[rhubarb] cues:', rhubarbJson.mouthCues.length);
+  return buildCuesFromRhubarbJSON(rhubarbJson);
 }

@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, ScrollV
 import { useTheme } from "../context/ThemeContext";
 import { dark as dc, th } from "../utils/darkColors";
 import { useTranslation } from "react-i18next";
+import LocationPicker from "./LocationPicker";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -19,6 +20,8 @@ export default function LeftSidebar({ visible, onClose, navigationRef }) {
     navigationRef?.current?.navigate(screen);
   };
 
+  const translateX = visible ? 0 : -SCREEN_WIDTH * 0.75;
+
   return (
     <>
       {visible && (
@@ -34,9 +37,9 @@ export default function LeftSidebar({ visible, onClose, navigationRef }) {
         style={[
           styles.container,
           {
-            transform: [{ translateX: visible ? 0 : -SCREEN_WIDTH * 0.75 }],
+            transform: [{ translateX }],
             backgroundColor: th(darkMode, dc.surface, "#fff"),
-            borderRightColor: th(darkMode, dc.border, "#e2e8f0"),
+            direction: "ltr", // isolate from page-level RTL so left:0 stays as visual left
           },
         ]}
         pointerEvents={visible ? "auto" : "none"}
@@ -49,6 +52,8 @@ export default function LeftSidebar({ visible, onClose, navigationRef }) {
         </View>
 
         <ScrollView style={styles.body}>
+          <LocationPicker />
+
           {/* Navigation */}
           <View style={[styles.section, { borderBottomColor: th(darkMode, dc.subtle, "#f1f5f9") }]}>
             <TouchableOpacity style={styles.navItem} onPress={() => navigateTo("NewsFeed")}>
@@ -63,6 +68,14 @@ export default function LeftSidebar({ visible, onClose, navigationRef }) {
               <Text style={styles.navIcon}>💾</Text>
               <Text style={[styles.navText, { color: th(darkMode, dc.textSecondary, "#334155") }]}>{t("savedNews")}</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.navItem} onPress={() => navigateTo("TelegramFeed")}>
+              <Text style={styles.navIcon}>📡</Text>
+              <Text style={[styles.navText, { color: th(darkMode, dc.textSecondary, "#334155") }]}>{t("telegramSpecialNews", "Special News (Telegram)")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.navItem} onPress={() => navigateTo("Presenter")}>
+              <Text style={styles.navIcon}>🎙️</Text>
+              <Text style={[styles.navText, { color: th(darkMode, dc.textSecondary, "#334155") }]}>{t("newsPresenter", "News Presenter")}</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.navItem} onPress={() => navigateTo("AIAssistant")}>
               <Text style={styles.navIcon}>🤖</Text>
               <Text style={[styles.navText, { color: th(darkMode, dc.textSecondary, "#334155") }]}>{t("aiAssistant")}</Text>
@@ -70,6 +83,10 @@ export default function LeftSidebar({ visible, onClose, navigationRef }) {
             <TouchableOpacity style={styles.navItem} onPress={() => navigateTo("ApplyEditor")}>
               <Text style={styles.navIcon}>✍️</Text>
               <Text style={[styles.navText, { color: th(darkMode, dc.textSecondary, "#334155") }]}>{t("applyEditor")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.navItem} onPress={() => navigateTo("NewsBrief")}>
+              <Text style={styles.navIcon}>📺</Text>
+              <Text style={[styles.navText, { color: th(darkMode, dc.textSecondary, "#334155") }]}>{t("newsBrief", "News Brief")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.navItem} onPress={() => navigateTo("AdvancedSearch")}>
               <Text style={styles.navIcon}>🔍</Text>
@@ -115,6 +132,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.35)",
     zIndex: 90,
   },
+  backdropRtl: {},
   container: {
     position: "absolute",
     top: 0,

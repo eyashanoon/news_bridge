@@ -141,7 +141,7 @@ export default function TopicDetailsPage({ navigation, route }) {
   if (!topic) return null;
 
   return (
-    <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, "#f8fafc") }]}>
+    <View style={[styles.container, { backgroundColor: th(darkMode, dc.bg, "#f8fafc"), direction: i18n.language === "ar" ? "rtl" : "ltr" }]}>
       <TopBar navigation={navigation} />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {/* Back button */}

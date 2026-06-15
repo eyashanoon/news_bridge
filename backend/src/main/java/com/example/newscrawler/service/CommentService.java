@@ -24,19 +24,23 @@ public class CommentService {
     private final CommentVoteRepository commentVoteRepository;
     private final PostRepository postRepository;
     private final AppUserRepository userRepository;
+    private final PostVisibilityService postVisibilityService;
 
     public CommentService(CommentRepository commentRepository, 
                           CommentVoteRepository commentVoteRepository,
                           PostRepository postRepository,
-                          AppUserRepository userRepository) {
+                          AppUserRepository userRepository,
+                          PostVisibilityService postVisibilityService) {
         this.commentRepository = commentRepository;
         this.commentVoteRepository = commentVoteRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.postVisibilityService = postVisibilityService;
     }
 
     @Transactional
     public CommentResponse createComment(CreateCommentRequest request, Long userId) {
+        postVisibilityService.requireVisible(request.postId());
         Post post = postRepository.findById(request.postId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
         
@@ -63,6 +67,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public Page<CommentResponse> getCommentsByPost(Long postId, String sortBy, int page, int size, Long userId) {
+        postVisibilityService.requireVisible(postId);
         Pageable pageable = PageRequest.of(page, size);
         
         Page<Comment> comments;

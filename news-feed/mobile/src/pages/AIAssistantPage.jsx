@@ -80,6 +80,7 @@ export default function AIAssistantPage({ navigation, route }) {
           question: userMessage,
           postId: postId,
           tags: tags,
+          language: lang,
           top_k: 5,
         }),
       });
@@ -127,9 +128,11 @@ export default function AIAssistantPage({ navigation, route }) {
     }
   };
 
+  const isRtl = i18n.language === "ar";
+
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg) }]}
+      style={[styles.container, { backgroundColor: th(darkMode, dc.bg, theme.bg), direction: isRtl ? "rtl" : "ltr" }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={0}
     >

@@ -1,0 +1,16 @@
+package com.example.newscrawler.entity;
+
+public enum AdminActivityAction {
+    ADMIN_CREATED,
+    ADMIN_UPDATED,
+    ADMIN_DELETED,
+    ROLE_CHANGED,
+    STATUS_CHANGED,
+    USER_MANAGEMENT,
+    TELEGRAM_MANAGEMENT,
+    TOPIC_MANAGEMENT,
+    CONTENT_MODERATION,
+    SYSTEM_CONFIG,
+    CRAWLER_MANAGEMENT,
+    ADMIN_LOGIN
+}

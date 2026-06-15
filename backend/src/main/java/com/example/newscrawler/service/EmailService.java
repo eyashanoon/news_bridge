@@ -35,6 +35,14 @@ public class EmailService {
         sendEmail(to, subject, body);
     }
 
+    public void sendMfaCode(String to, String code) {
+        String subject = "Your NewsBridge login verification code";
+        String body = "Your login verification code is: " + code + "\n\n"
+                    + "This code will expire in 15 minutes.\n\n"
+                    + "If you did not attempt to log in, please ignore this email and secure your account.";
+        sendEmail(to, subject, body);
+    }
+
     private void sendEmail(String to, String subject, String body) {
         // If no SMTP server is configured, log the email to console
         if (mailSender == null || "localhost".equals(mailHost)) {

@@ -1,0 +1,101 @@
+/* Admin design tokens — structural standardization; visual theme unchanged */
+:root {
+  --admin-bg-base: #020617;
+  --admin-surface: rgba(15, 23, 42, 0.86);
+  --admin-surface-elevated: rgba(30, 41, 59, 0.85);
+  --admin-border: rgba(56, 189, 248, 0.24);
+  --admin-border-muted: #334155;
+  --admin-accent: #0ea5e9;
+  --admin-accent-strong: #2563eb;
+  --admin-text-primary: #f1f5f9;
+  --admin-text-secondary: #e2e8f0;
+  --admin-text-muted: #94a3b8;
+  --admin-danger: #f87171;
+  --admin-success: #22c55e;
+  --admin-warning: #f59e0b;
+
+  --admin-space-1: 0.25rem;
+  --admin-space-2: 0.5rem;
+  --admin-space-3: 0.75rem;
+  --admin-space-4: 1rem;
+  --admin-space-5: 1.25rem;
+  --admin-space-6: 1.5rem;
+  --admin-space-8: 2rem;
+
+  --admin-radius-sm: 6px;
+  --admin-radius-md: 10px;
+  --admin-radius-lg: 14px;
+
+  --admin-font-family: 'Outfit', sans-serif;
+  --admin-font-size-xs: 0.78rem;
+  --admin-font-size-sm: 0.88rem;
+  --admin-font-size-md: 0.92rem;
+  --admin-font-size-lg: 1.5rem;
+  --admin-font-weight-medium: 600;
+  --admin-font-weight-bold: 700;
+  --admin-font-weight-heavy: 800;
+
+  --admin-sidebar-width: 280px;
+  --admin-sidebar-width-collapsed: 72px;
+  --admin-transition-fast: 0.18s ease;
+  --admin-transition-normal: 0.25s ease;
+}
+
+/* Bridge app-level tokens to the admin dark theme (avoids light --text on dark surfaces). */
+.admin-layout {
+  --text: var(--admin-text-primary);
+  --text-muted: var(--admin-text-muted);
+  --muted: var(--admin-text-muted);
+  --bg: var(--admin-bg-base);
+  --surface: var(--admin-surface);
+  --surface-soft: var(--admin-surface-elevated);
+  --surface-2: #1a2035;
+  --border: var(--admin-border-muted);
+  --line: var(--admin-border-muted);
+  --bg-subtle: rgba(148, 163, 184, 0.08);
+  color: var(--admin-text-secondary);
+}
+
+.admin-layout h1,
+.admin-layout h2,
+.admin-layout h3,
+.admin-layout h4,
+.admin-layout h5,
+.admin-layout h6 {
+  color: var(--admin-text-primary);
+}
+
+.admin-layout .admin-table td {
+  color: var(--admin-text-secondary);
+}
+
+.admin-layout .admin-stat-card h3,
+.admin-layout .admin-stat-card h4,
+.admin-layout .tg-chart-card h4,
+.admin-layout .endpoint-group-title {
+  color: var(--admin-text-primary);
+}
+
+.admin-layout .user-mgmt-profile-grid > div > span:not(.user-mgmt-profile-label) {
+  color: var(--admin-text-secondary);
+}
+
+.admin-layout .admin-form .admin-form-hint {
+  font-size: 0.8rem;
+  color: var(--admin-text-muted);
+  margin: 0;
+}
+
+.admin-layout .admin-fields-row--parent {
+  background: rgba(30, 41, 59, 0.45);
+}
+
+.admin-layout .admin-fields-parent-cell {
+  color: var(--admin-text-muted);
+  font-size: 0.85rem;
+}
+
+.admin-layout .admin-fields-general-label {
+  color: var(--admin-text-muted);
+  opacity: 0.85;
+}

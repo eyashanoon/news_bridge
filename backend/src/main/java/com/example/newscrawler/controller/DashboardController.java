@@ -27,11 +27,27 @@ public class DashboardController {
     @Autowired
     private EditorRequestRepository editorRequestRepository;
 
+    @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
+    private TelegramPostRepository telegramPostRepository;
+
+    @Autowired
+    private LiveNewsPostRepository liveNewsPostRepository;
+
+    @Autowired
+    private TopicPostRepository topicPostRepository;
+
     @GetMapping("/stats")
     @PreAuthorize("isAuthenticated()")
     public DashboardStatsResponse getStats() {
         DashboardStatsResponse stats = new DashboardStatsResponse();
-        stats.totalArticles = articleRepository.count();
+        stats.totalArticles = articleRepository.count()
+                + postRepository.count()
+                + telegramPostRepository.count()
+                + liveNewsPostRepository.count()
+                + topicPostRepository.count();
         stats.totalRegisteredUsers = registeredUserRepository.count();
         stats.totalEditors = editorUserRepository.count();
         stats.totalAdmins = adminRepository.count();

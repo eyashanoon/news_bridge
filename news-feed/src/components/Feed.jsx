@@ -7,36 +7,41 @@ import { ensureUserInitialized } from "../utils/auth";
 import { useTranslation } from "react-i18next";
 
 export default function Feed({ category, onAskAI }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
   const loader = useRef(null);
+  const fetchGenRef = useRef(0);
 
-  const fetchPosts = useCallback(async () => {
-    if (loading || !hasMore) return;
+  const fetchPosts = useCallback(async (pageToFetch, reset = false) => {
+    const gen = fetchGenRef.current;
 
     try {
       setLoading(true);
 
       await ensureUserInitialized();
       const userId = getUserId();
-      const savedLocation = localStorage.getItem('user_location');
+      const savedLocation = localStorage.getItem("user_location");
 
-      let url = `/api/feed?userId=${userId}&category=${category}&limit=10&page=${page}`;
+      let url = `/api/feed?userId=${userId}&category=${encodeURIComponent(category)}&limit=10&page=${pageToFetch}&lang=${encodeURIComponent(i18n.resolvedLanguage || i18n.language || "en")}`;
 
       if (savedLocation) {
         const loc = JSON.parse(savedLocation);
-        url += `&lat=${loc.lat}&lon=${loc.lon}`;
+        if (loc?.lat != null && loc?.lon != null) {
+          url += `&lat=${loc.lat}&lon=${loc.lon}`;
+        }
       }
 
       const res = await apiFetch(url);
+      if (gen !== fetchGenRef.current) return;
 
       if (!res.ok) throw new Error("Failed to fetch feed");
 
       const data = await res.json();
+      if (gen !== fetchGenRef.current) return;
 
       if (data.length === 0) {
         setHasMore(false);
@@ -44,34 +49,35 @@ export default function Feed({ category, onAskAI }) {
       }
 
       setPosts((prev) => {
-        const existingIds = new Set(prev.map((p) => p.id));
+        const base = reset ? [] : prev;
+        const existingIds = new Set(base.map((p) => p.id));
         const filtered = data.filter((p) => !existingIds.has(p.id));
-        return [...prev, ...filtered];
+        return [...base, ...filtered];
       });
 
-      setPage((prev) => prev + 1);
+      setPage(pageToFetch + 1);
     } catch (err) {
       console.error("Feed fetch error:", err);
     } finally {
-      setLoading(false);
+      if (gen === fetchGenRef.current) {
+        setLoading(false);
+      }
     }
-  }, [category, page, loading, hasMore]);
+  }, [category, i18n.language]);
 
   useEffect(() => {
+    fetchGenRef.current += 1;
     setPosts([]);
     setPage(0);
     setHasMore(true);
-  }, [category]);
-
-  useEffect(() => {
-    fetchPosts();
-  }, [category]);
+    fetchPosts(0, true);
+  }, [category, i18n.language, fetchPosts]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchPosts();
+        if (entries[0].isIntersecting && !loading && hasMore) {
+          fetchPosts(page, false);
         }
       },
       { threshold: 0.2 }
@@ -80,7 +86,7 @@ export default function Feed({ category, onAskAI }) {
     if (loader.current) observer.observe(loader.current);
 
     return () => observer.disconnect();
-  }, [fetchPosts]);
+  }, [fetchPosts, loading, hasMore, page]);
 
   return (
     <div className="flex flex-col gap-4 stagger">

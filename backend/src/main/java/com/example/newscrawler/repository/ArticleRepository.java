@@ -13,6 +13,8 @@ import com.example.newscrawler.entity.Article;
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
     List<Article> findByEndpointId(Long endpointId);
 
+    long countByEndpointId(Long endpointId);
+
     boolean existsByUrl(String url);
 
     boolean existsByUrlAndIdNot(String url, Long id);
@@ -22,4 +24,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 
     @Query("SELECT r.name FROM Article a JOIN a.endpoint e JOIN e.root r WHERE a.id = :articleId")
     Optional<String> findRootNameByArticleId(@Param("articleId") Long articleId);
+
+    @Query("SELECT a.id, a.url FROM Article a WHERE a.id IN :ids")
+    List<Object[]> findUrlsByIds(@Param("ids") List<Long> ids);
+
+    @Query("SELECT a.id, a.text FROM Article a WHERE a.id IN :ids")
+    List<Object[]> findTextsByIds(@Param("ids") List<Long> ids);
 }

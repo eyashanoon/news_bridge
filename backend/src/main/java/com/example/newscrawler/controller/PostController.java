@@ -84,6 +84,22 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
+    /**
+     * Get recent posts by tags, limited to `limit` results and sorted by most recent first.
+     * Used by the AI assistant service for context-aware RAG.
+     */
+    @GetMapping("/by-tags/recent")
+    public ResponseEntity<List<PostByTagResponse>> getRecentPostsByTags(
+            @RequestParam List<String> tags,
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        if (tags == null || tags.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<PostByTagResponse> posts = postService.findRecentPostsByTags(tags, limit);
+        return ResponseEntity.ok(posts);
+    }
+
 /*
     @PutMapping("/{id}/react")
     public ResponseEntity<?> reactToPost(

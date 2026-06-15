@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface TopicPostRepository extends JpaRepository<TopicPost, Long> {
     List<TopicPost> findByTopicIdOrderByCreatedAtDesc(Long topicId);
+    List<TopicPost> findByAuthorEmailOrderByCreatedAtDesc(String authorEmail);
     int countByTopicId(Long topicId);
 
     /** Sum of likes across all posts for a given topic */
@@ -33,4 +34,16 @@ public interface TopicPostRepository extends JpaRepository<TopicPost, Long> {
     /** Sum of likes on posts created since a given timestamp for a topic */
     @Query("SELECT COALESCE(SUM(tp.likes), 0) FROM TopicPost tp WHERE tp.topic.id = :topicId AND tp.createdAt >= :since")
     int sumLikesSinceByTopicId(@Param("topicId") Long topicId, @Param("since") LocalDateTime since);
+
+    @Query("SELECT tp.authorEmail, COUNT(tp) FROM TopicPost tp WHERE tp.authorEmail IS NOT NULL GROUP BY tp.authorEmail")
+    List<Object[]> countByAuthorEmail();
+
+    @Query("""
+        SELECT FUNCTION('DATE', tp.createdAt), COUNT(tp)
+        FROM TopicPost tp
+        WHERE tp.createdAt >= :since
+        GROUP BY FUNCTION('DATE', tp.createdAt)
+        ORDER BY FUNCTION('DATE', tp.createdAt)
+        """)
+    List<Object[]> countPostsPerDaySince(@Param("since") LocalDateTime since);
 }

@@ -35,9 +35,9 @@ export default function SiteLayout() {
     if (isRegistered) {
       return (
         <nav className="app-nav">
-          <Link to="/">Dashboard Home</Link>
-          <Link to="/dashboard/notifications" className="nav-badge-link">Notifications</Link>
-          <Link to="/apply-editor" className="nav-action-link">Apply to be an Editor</Link>
+          <Link to="/">{t("dashboardHome")}</Link>
+          <Link to="/dashboard/notifications" className="nav-badge-link">{t("notifications")}</Link>
+          <Link to="/apply-editor" className="nav-action-link">{t("applyEditor")}</Link>
         </nav>
       );
     }
@@ -46,7 +46,6 @@ export default function SiteLayout() {
       return (
         <nav className="app-nav">
           <Link to="/">{t("editorDashboard")}</Link>
-          <Link to="/editor/workspace">{t("workspace")}</Link>
           <Link to="/editor/profile">{t("profileInfo")}</Link>
         </nav>
       );
@@ -93,7 +92,7 @@ export default function SiteLayout() {
             </div>
           ) : (
             <div className="auth-user">
-              <Link to="/profile" className="profile-link-btn">👤 Profile</Link>
+              <Link to="/profile" className="profile-link-btn">👤 {t("profileInfo")}</Link>
               <span className="session-badge">{session?.type}</span>
               <button onClick={handleLogout} className="btn-logout">{t("signOut")}</button>
             </div>

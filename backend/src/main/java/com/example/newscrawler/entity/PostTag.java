@@ -12,6 +12,7 @@ public class PostTag {
     private Long id;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @Column(nullable = false)
