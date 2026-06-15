@@ -1,11 +1,3 @@
-# News Bridge — Complete Project Documentation
-
-> **Generated:** June 14, 2026  
-> **Repository:** `news_bridge`  
-> **Purpose:** Distributed news aggregation, enrichment, personalization, and AI-assisted consumption platform
-
----
-
 ## Table of Contents
 
 1. [Executive Summary](#1-executive-summary)
