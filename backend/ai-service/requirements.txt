@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-requests
-numpy
-faiss-cpu
-pydantic
-apscheduler
