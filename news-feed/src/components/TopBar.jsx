@@ -1,7 +1,6 @@
 // TopBar.jsx
 import { useState, useEffect } from 'react';
-import { apiFetch } from '../utils/apiFetch';
-import { getUserId } from '../utils/userId';
+import { saveUserLocation, loadUserLocationFromServer, COMMON_CITIES, reverseGeocode } from '../utils/locationUtils';
 
 const gradientMap = {
   General: "from-gray-600 to-gray-400",
@@ -19,34 +18,24 @@ export default function TopBar({ category, onLocationChange }) {
   const [locationMenuOpen, setLocationMenuOpen] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
 
-  const cities = [
-    { id: 'gaza', name: 'Gaza City', lat: 31.5017, lon: 34.4668 },
-    { id: 'khanyounis', name: 'Khan Younis', lat: 31.3453, lon: 34.3091 },
-    { id: 'rafah', name: 'Rafah', lat: 31.2919, lon: 34.2435 },
-    { id: 'north_gaza', name: 'North Gaza', lat: 31.5667, lon: 34.5333 },
-    { id: 'whole_gaza', name: 'All Gaza Strip', lat: 31.4167, lon: 34.4000 },
-  ];
-
   const detectUserLocation = () => {
     setDetectingLocation(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
-          const userLoc = {
-            name: 'Detected Location',
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-            auto: true
-          };
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const name = await reverseGeocode(lat, lon);
+          const userLoc = { name, lat, lon, auto: true };
           setLocation(userLoc);
           await saveUserLocation(userLoc);
           onLocationChange?.(userLoc);
           setDetectingLocation(false);
         },
-        () => {
-          setDetectingLocation(false);
-        }
+        () => setDetectingLocation(false)
       );
+    } else {
+      setDetectingLocation(false);
     }
   };
 
@@ -57,31 +46,11 @@ export default function TopBar({ category, onLocationChange }) {
     setLocationMenuOpen(false);
   };
 
-  const saveUserLocation = async (loc) => {
-    try {
-      await apiFetch(`/api/user/${getUserId()}/location`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loc)
-      });
-    } catch (e) {
-      console.error('Failed to save location', e);
-    }
-  };
-
   useEffect(() => {
-    // Load saved location on mount
-    const saved = localStorage.getItem('user_location');
-    if (saved) {
-      setLocation(JSON.parse(saved));
-    }
+    loadUserLocationFromServer().then((loc) => {
+      if (loc) setLocation(loc);
+    });
   }, []);
-
-  useEffect(() => {
-    if (location) {
-      localStorage.setItem('user_location', JSON.stringify(location));
-    }
-  }, [location]);
 
   return (
     <div className={`w-full h-14 text-white flex items-center justify-between px-6 shadow bg-gradient-to-r ${gradientMap[category] || gradientMap.General}`}>
@@ -110,7 +79,7 @@ export default function TopBar({ category, onLocationChange }) {
               </button>
               
               <div className="p-1">
-                {cities.map(city => (
+                {COMMON_CITIES.map(city => (
                   <button
                     key={city.id}
                     onClick={() => selectCity(city)}

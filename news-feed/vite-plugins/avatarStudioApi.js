@@ -19,11 +19,16 @@ import decode from "audio-decode";
 const execFileP = promisify(execFile);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Rhubarb must sit next to its res/ folder (full Windows release, not exe-only).
-const RHUBARB_CANDIDATES = [
-  path.resolve(__dirname, "../tools/Rhubarb-Lip-Sync-1.14.0-Windows/rhubarb.exe"),
-  path.resolve(__dirname, "../../avatar/tools/rhubarb.exe"),
-];
+// Rhubarb must sit next to its res/ folder (full release, not exe-only).
+// Supports both Windows (.exe) and Linux (no extension) binaries.
+const RHUBARB_CANDIDATES = (() => {
+  const linux = path.resolve(__dirname, "../tools/Rhubarb-Lip-Sync-1.14.0-Linux/rhubarb");
+  const windows = path.resolve(__dirname, "../tools/Rhubarb-Lip-Sync-1.14.0-Windows/rhubarb.exe");
+  const legacy = path.resolve(__dirname, "../../avatar/tools/rhubarb.exe");
+  return process.platform === "win32"
+    ? [windows, linux, legacy]
+    : [linux, windows, legacy];
+})();
 
 const AVATAR_API_PATHS = new Set([
   "/api/tts-edge",
@@ -231,9 +236,64 @@ async function handleAzureTts(res) {
   res.end(JSON.stringify({ error: "Azure key not configured" }));
 }
 
+// ── Built-in text-to-cues (fallback when Rhubarb is unavailable) ──
+// Same approach as avatar/server.js — estimates timing from word count
+// and maps letters → visemes. Works on any platform without Rhubarb.
+
+const LETTER_VISEME = {};
+'aeiou'.split('').forEach(l => LETTER_VISEME[l] = 'E');
+'bfmp'.split('').forEach(l => LETTER_VISEME[l] = 'B');
+'w'.split('').forEach(l => LETTER_VISEME[l] = 'G');
+'fv'.split('').forEach(l => LETTER_VISEME[l] = 'F');
+'lntd'.split('').forEach(l => LETTER_VISEME[l] = 'H');
+'sz'.split('').forEach(l => LETTER_VISEME[l] = 'C');
+'c'.split('').forEach(l => LETTER_VISEME[l] = 'D');
+'kg'.split('').forEach(l => LETTER_VISEME[l] = 'G');
+'r'.split('').forEach(l => LETTER_VISEME[l] = 'D');
+'j'.split('').forEach(l => LETTER_VISEME[l] = 'C');
+'y'.split('').forEach(l => LETTER_VISEME[l] = 'E');
+'h'.split('').forEach(l => LETTER_VISEME[l] = 'H');
+'x'.split('').forEach(l => LETTER_VISEME[l] = 'X');
+
+function getLetterViseme(ch) {
+  return LETTER_VISEME[ch.toLowerCase()] ?? null;
+}
+
+function textToCues(text) {
+  const avgWpm     = 140;
+  const charsPerSec = (avgWpm * 5) / 60;
+  const totalChars = text.length;
+  const duration   = totalChars / charsPerSec;
+  const cueLen     = Math.max(0.05, duration / Math.max(1, totalChars));
+
+  const cues = [];
+  let offset = 0;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const viseme = getLetterViseme(ch);
+    if (viseme) {
+      const start = offset;
+      const end   = start + cueLen;
+      cues.push({ start, end, value: viseme });
+    }
+    offset += cueLen;
+  }
+
+  if (cues.length > 0) {
+    const firstStart = cues[0].start;
+    if (firstStart > 0.01) {
+      cues.unshift({ start: 0, end: firstStart, value: 'X' });
+    }
+    const last = cues[cues.length - 1];
+    cues.push({ start: last.end, end: last.end + 0.1, value: 'X' });
+  }
+
+  return { mouthCues: cues, metadata: { duration } };
+}
+
 async function handleRhubarb(req, searchParams, res) {
   const text = searchParams.get("text") ?? "";
-  const contentType = req.headers["content-type"] ?? "";
   const audioBytes = await readBody(req);
   if (!audioBytes.length) {
     res.statusCode = 400;
@@ -242,39 +302,42 @@ async function handleRhubarb(req, searchParams, res) {
     return;
   }
   const rhubarbExe = resolveRhubarbExe();
-  if (!existsSync(rhubarbExe)) {
-    res.statusCode = 500;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ error: `Rhubarb not found at ${rhubarbExe}` }));
-    return;
+
+  // Try Rhubarb if available (Windows), otherwise use built-in text-to-cues (Linux)
+  if (existsSync(rhubarbExe)) {
+    const id = crypto.randomUUID();
+    const wavPath = path.join(os.tmpdir(), `avatar-rhubarb-${id}.wav`);
+    const dialogPath = path.join(os.tmpdir(), `avatar-rhubarb-${id}.txt`);
+    try {
+      const wavBytes = await toWavBytes(audioBytes, req.headers["content-type"] ?? "");
+      await fs.writeFile(wavPath, wavBytes);
+      await fs.writeFile(dialogPath, text, "utf8");
+      const { stdout } = await execFileP(
+        rhubarbExe,
+        ["--recognizer", "phonetic", "--exportFormat", "json", "--extendedShapes", "GH",
+          "--dialogFile", dialogPath, wavPath],
+        { timeout: 60_000, maxBuffer: 10 * 1024 * 1024, cwd: path.dirname(rhubarbExe) }
+      );
+      const json = JSON.parse(stdout);
+      if (!json?.mouthCues?.length) throw new Error("Rhubarb returned no mouth cues");
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.end(stdout);
+      return;
+    } catch (err) {
+      console.error("[avatar-studio-api] /api/rhubarb (rhubarb failed, falling back to text-to-cues):", err.message ?? err);
+    } finally {
+      await fs.unlink(wavPath).catch(() => {});
+      await fs.unlink(dialogPath).catch(() => {});
+    }
   }
-  const id = crypto.randomUUID();
-  const wavPath = path.join(os.tmpdir(), `avatar-rhubarb-${id}.wav`);
-  const dialogPath = path.join(os.tmpdir(), `avatar-rhubarb-${id}.txt`);
-  try {
-    const wavBytes = await toWavBytes(audioBytes, contentType);
-    await fs.writeFile(wavPath, wavBytes);
-    await fs.writeFile(dialogPath, text, "utf8");
-    const { stdout } = await execFileP(
-      rhubarbExe,
-      ["--recognizer", "phonetic", "--exportFormat", "json", "--extendedShapes", "GH",
-        "--dialogFile", dialogPath, wavPath],
-      { timeout: 60_000, maxBuffer: 10 * 1024 * 1024, cwd: path.dirname(rhubarbExe) }
-    );
-    const json = JSON.parse(stdout);
-    if (!json?.mouthCues?.length) throw new Error("Rhubarb returned no mouth cues");
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json");
-    res.end(stdout);
-  } catch (err) {
-    console.error("[avatar-studio-api] /api/rhubarb:", err.message ?? err);
-    res.statusCode = 500;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ error: err.message ?? "Rhubarb failed" }));
-  } finally {
-    await fs.unlink(wavPath).catch(() => {});
-    await fs.unlink(dialogPath).catch(() => {});
-  }
+
+  // Fallback: built-in text-to-cues (works on any platform)
+  console.log("[avatar-studio-api] /api/rhubarb: using built-in text-to-cues");
+  const result = textToCues(text);
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(result));
 }
 
 export function avatarStudioApi() {

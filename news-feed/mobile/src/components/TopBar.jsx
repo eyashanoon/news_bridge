@@ -1,18 +1,21 @@
-import { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
+import { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Modal, I18nManager } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSession } from "../context/SessionContext";
 import { useTheme } from "../context/ThemeContext";
 import { dark as dc, th } from "../utils/darkColors";
 import { useTranslation } from "react-i18next";
+import { LocationPickerModal } from "./LocationPicker";
+import { loadStoredLocation } from "../utils/locationUtils";
 
 function SettingsModal({ visible, onClose, navigation }) {
   const { darkMode, toggleDarkMode } = useTheme();
   const { session, logout } = useSession();
   const { t, i18n } = useTranslation();
-  const switchLang = () => {
+  const switchLang = async () => {
+    const { switchLanguage } = await import("../i18n/i18n");
     const newLang = i18n.language === "en" ? "ar" : "en";
-    i18n.changeLanguage(newLang);
+    switchLanguage(newLang);
   };
 
   const handleLogout = async () => {
@@ -60,10 +63,18 @@ function SettingsModal({ visible, onClose, navigation }) {
 
 export default function TopBar({ navigation }) {
   const [settingsVisible, setSettingsVisible] = useState(false);
+  const [locationVisible, setLocationVisible] = useState(false);
+  const [locationName, setLocationName] = useState(null);
   const { session } = useSession();
   const { setMenuOpen, darkMode } = useTheme();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    loadStoredLocation().then((loc) => {
+      if (loc?.name) setLocationName(loc.name);
+    });
+  }, [locationVisible]);
 
   const isLimited = session?.type === "PRIMITIVE" || !session?.type;
   const isRegistered = session?.type === "REGISTERED";
@@ -82,7 +93,20 @@ export default function TopBar({ navigation }) {
             <Text style={[styles.logo, { color: th(darkMode, dc.text, "#0b1a2b") }]}>{t("appName")}</Text>
           </View>
 
-          {/* User Type Badge - tap to open profile if signed in, or login if guest */}
+          {/* Location */}
+          <TouchableOpacity
+            onPress={() => setLocationVisible(true)}
+            style={[styles.locationBtn, { backgroundColor: th(darkMode, dc.subtle, "#f1f5f9") }]}
+          >
+            <Text style={styles.locationIcon}>📍</Text>
+            {locationName ? (
+              <Text style={[styles.locationLabel, { color: th(darkMode, dc.textSecondary, "#334155") }]} numberOfLines={1}>
+                {locationName}
+              </Text>
+            ) : null}
+          </TouchableOpacity>
+
+          {/* User Type Badge */}
           <TouchableOpacity onPress={() => navigation?.navigate(isLimited ? "Auth" : "Profile")} style={[styles.badge, { backgroundColor: isEditor ? "#059669" : "#2563eb" }]}>
             <Text style={styles.badgeText}>{userTypeLabel}</Text>
           </TouchableOpacity>
@@ -138,6 +162,18 @@ const styles = StyleSheet.create({
     color: "#0b1a2b",
     letterSpacing: -0.02,
   },
+  locationBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    maxWidth: 110,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: "#f1f5f9",
+  },
+  locationIcon: { fontSize: 14 },
+  locationLabel: { fontSize: 11, fontWeight: "600", flexShrink: 1 },
   badge: {
     paddingHorizontal: 10,
     paddingVertical: 4,

@@ -6,7 +6,9 @@ import com.example.newscrawler.entity.RegisteredUser;
 import com.example.newscrawler.repository.AppUserRepository;
 import com.example.newscrawler.repository.PrimitiveUserRepository;
 import com.example.newscrawler.repository.RegisteredUserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,31 +47,25 @@ public class AppUserService {
     }
     
     public AppUser getUserById(String publicId) {
+        return requireUser(publicId);
+    }
+
+    public AppUser requireUser(String publicId) {
         try {
             Long id = Long.parseLong(publicId);
             return appUserRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Invalid User ID format");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid user ID format");
         }
     }
     
     public AppUser getOrCreateUser(String publicId) {
-        // If the publicId is the default anonymous string, create/reuse a primitive user
         if ("android-app-anonymous".equals(publicId) || "anonymous".equals(publicId)) {
             PrimitiveUser newUser = new PrimitiveUser();
             return primitiveUserRepository.save(newUser);
         }
-        
-        try {
-            Long id = Long.parseLong(publicId);
-            return appUserRepository.findById(id)
-                    .orElseGet(() -> {
-                        PrimitiveUser newUser = new PrimitiveUser();
-                        return primitiveUserRepository.save(newUser);
-                    });
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("Invalid User ID format");
-        }
+
+        return requireUser(publicId);
     }
 }

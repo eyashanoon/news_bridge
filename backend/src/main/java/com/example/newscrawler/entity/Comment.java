@@ -29,7 +29,7 @@ public class Comment {
     @JoinColumn(name = "parent_comment_id")
     private Comment parentComment;
 
-    @Column(name = "attachment_url", columnDefinition = "TEXT")
+    @Column(name = "attachment_url", columnDefinition = "LONGTEXT")
     private String attachmentUrl;
 
     @Column(name = "attachment_type")

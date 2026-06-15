@@ -1,5 +1,7 @@
 package com.example.newscrawler.dto;
 
+import com.example.newscrawler.entity.ReactionType;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,7 @@ public class TopicPostResponse {
     public List<String> tags;
     public int likes;
     public int dislikes;
+    public ReactionType userReaction;
     public String author;
     public Long authorId;
     public String authorEmail;

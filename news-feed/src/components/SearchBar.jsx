@@ -61,6 +61,29 @@ export default function SearchBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Ensure filters panel and results dropdown are mutually exclusive:
+  // opening one will close the other to prevent overlap.
+  const toggleFilters = () => {
+    setFiltersVisible((prev) => {
+      const next = !prev;
+      if (next) setShowPanel(false);
+      return next;
+    });
+  };
+
+  // Open the results dropdown while closing the filters panel.
+  const openResults = () => {
+    setFiltersVisible(false);
+    setShowPanel(true);
+  };
+
+  // Close both panels.
+  const closeAll = () => {
+    setShowPanel(false);
+    setFiltersVisible(false);
+  };
+
+
   // Debounced search
   const performSearch = useCallback(async (q, filters) => {
     if (!q || q.trim().length < 1) {
@@ -83,6 +106,8 @@ export default function SearchBar() {
         limit: 8,
       });
       setResults(Array.isArray(res) ? res : []);
+      // Open results and ensure filters panel is closed.
+      setFiltersVisible(false);
       setShowPanel(true);
     } catch (err) {
       console.error("Search error:", err);
@@ -135,6 +160,8 @@ export default function SearchBar() {
 
   const handleFocus = () => {
     if (hasSearched && results.length > 0) {
+      // Re-opening results on focus: close filters to avoid overlap.
+      setFiltersVisible(false);
       setShowPanel(true);
     }
   };
@@ -212,7 +239,7 @@ export default function SearchBar() {
         )}
         <button
           className={`search-bar-filter-toggle ${hasActiveFilters ? "has-filters" : ""}`}
-          onClick={() => setFiltersVisible((prev) => !prev)}
+          onClick={toggleFilters}
           title={t("advancedFilters")}
           aria-label={t("advancedFilters")}
         >

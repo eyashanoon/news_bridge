@@ -5,12 +5,13 @@ import { useTranslation } from "react-i18next";
 
 export default function GuestSignupPrompt({ visible, action, onClose, onGoToLogin }) {
   const { darkMode } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.language === "ar";
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={onClose}>
         <View style={[styles.modal, { backgroundColor: th(darkMode, dc.surface, "#fff") }]} onStartShouldSetResponder={() => true}>
-          <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+          <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { right: isRtl ? undefined : 14, left: isRtl ? 14 : undefined }]}>
             <Text style={[styles.closeText, { color: th(darkMode, dc.muted, "#6e869a") }]}>✕</Text>
           </TouchableOpacity>
           <Text style={styles.icon}>🔒</Text>

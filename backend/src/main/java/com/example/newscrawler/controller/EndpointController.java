@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.newscrawler.dto.CreateEndpointRequest;
+import com.example.newscrawler.dto.EndpointAnalyticsResponse;
 import com.example.newscrawler.dto.EndpointResponse;
 import com.example.newscrawler.dto.UpdateRecordStatusRequest;
 import com.example.newscrawler.service.EndpointService;
@@ -46,6 +47,11 @@ public class EndpointController {
             @RequestParam(required = false) String status
     ) {
         return endpointService.findByRoot(rootId, search, status);
+    }
+
+    @GetMapping("/analytics")
+    public EndpointAnalyticsResponse analytics(@RequestParam(required = false) Long rootId) {
+        return endpointService.getAnalytics(rootId);
     }
 
     @GetMapping("/{id}")

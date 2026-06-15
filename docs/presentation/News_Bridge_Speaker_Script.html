@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#003B71" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>News Bridge — Speaker Script</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue: #003B71;
+      --gold: #C5A572;
+      --teal: #0E7490;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --accent-light: #E0F2FE;
+      --gold-light: #F5EDE0;
+      --transition-bg: #F0FDFA;
+      --transition-border: #99F6E4;
+      --header-h: 56px;
+      --nav-h: 52px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-top: env(safe-area-inset-top, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1.125rem;
+      line-height: 1.65;
+      padding-top: calc(var(--header-h) + var(--safe-top));
+      padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 1rem);
+    }
+
+    /* ── Sticky top bar ── */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--blue);
+      color: #fff;
+      padding: calc(0.65rem + var(--safe-top)) 1rem 0.65rem;
+      box-shadow: 0 4px 20px rgba(0,59,113,0.2);
+    }
+
+    .top-bar h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .top-bar .sub {
+      font-size: 0.8rem;
+      opacity: 0.85;
+      margin-top: 0.15rem;
+    }
+
+    /* ── Slide jump chips ── */
+    .jump-nav {
+      display: flex;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding: 0.65rem 1rem;
+      background: var(--card);
+      border-bottom: 1px solid #E2E8F0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .jump-nav::-webkit-scrollbar { display: none; }
+
+    .jump-nav a {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2.4rem;
+      height: 2.4rem;
+      border-radius: 999px;
+      background: var(--accent-light);
+      color: var(--teal);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 2px solid transparent;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .jump-nav a.active {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .jump-nav a:active { transform: scale(0.95); }
+
+    /* ── Intro card ── */
+    .intro {
+      margin: 1rem;
+      padding: 1.25rem;
+      background: linear-gradient(135deg, var(--accent-light), var(--gold-light));
+      border-radius: 14px;
+      border-left: 4px solid var(--teal);
+      font-size: 1rem;
+    }
+
+    .intro p { margin-bottom: 0.5rem; }
+    .intro p:last-child { margin-bottom: 0; }
+
+    /* ── Slide sections ── */
+    main { padding: 0 1rem; max-width: 640px; margin: 0 auto; }
+
+    .slide-block {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.35rem 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 20px rgba(0,59,113,0.06);
+      border: 1px solid rgba(0,59,113,0.06);
+      scroll-margin-top: calc(var(--header-h) + 52px + var(--safe-top));
+    }
+
+    .slide-block:target {
+      border-color: var(--teal);
+      box-shadow: 0 4px 24px rgba(14,116,144,0.15);
+    }
+
+    .slide-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--accent-light);
+    }
+
+    .slide-num-badge {
+      flex-shrink: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 12px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide-title-wrap { flex: 1; min-width: 0; }
+
+    .slide-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      color: var(--blue);
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .slide-time {
+      flex-shrink: 0;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--teal);
+      background: var(--accent-light);
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      align-self: flex-start;
+    }
+
+    .script-body p {
+      margin-bottom: 1rem;
+      font-size: 1.125rem;
+      line-height: 1.7;
+    }
+
+    .script-body p:last-of-type { margin-bottom: 0; }
+
+    .script-body strong {
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .transition {
+      margin-top: 1.15rem;
+      padding: 0.9rem 1rem;
+      background: var(--transition-bg);
+      border-left: 4px solid var(--teal);
+      border-radius: 0 10px 10px 0;
+      font-size: 1rem;
+      color: #0F766E;
+      font-style: italic;
+      line-height: 1.55;
+    }
+
+    .transition::before {
+      content: '→ ';
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    /* ── Timing summary ── */
+    .summary {
+      margin: 1.5rem 0 2rem;
+      background: var(--card);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,59,113,0.06);
+    }
+
+    .summary h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.2rem;
+      color: var(--blue);
+      padding: 1rem 1.25rem;
+      background: var(--accent-light);
+    }
+
+    .summary table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .summary th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .summary td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .summary tr:last-child td { border-bottom: none; font-weight: 700; background: var(--gold-light); }
+    .summary tr:nth-child(even) td { background: #F8FAFC; }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem calc(0.6rem + var(--safe-bottom));
+      background: var(--card);
+      border-top: 1px solid #E2E8F0;
+      box-shadow: 0 -4px 20px rgba(0,59,113,0.08);
+    }
+
+    .bottom-nav button {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .bottom-nav button:active { transform: scale(0.98); }
+
+    .btn-prev {
+      background: #E2E8F0;
+      color: var(--text);
+    }
+
+    .btn-next {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .btn-prev:disabled, .btn-next:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .progress-label {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted);
+      min-width: 3.5rem;
+      justify-content: center;
+    }
+
+    @media (min-width: 480px) {
+      body { font-size: 1.2rem; }
+      .script-body p { font-size: 1.2rem; }
+      .slide-title { font-size: 1.35rem; }
+      main { padding: 0 1.5rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="top-bar">
+  <h1>News Bridge — Speaker Script</h1>
+  <p class="sub">~12 min · 22 slides · scroll or use Prev / Next</p>
+</header>
+
+<nav class="jump-nav" id="jumpNav" aria-label="Jump to slide"></nav>
+
+<div class="intro">
+  <p><strong>Pace:</strong> Conversational — not rushed.</p>
+  <p><strong>Tip:</strong> Read the green transition line, then swipe to the next slide.</p>
+</div>
+
+<main id="main">
+
+  <article class="slide-block" id="slide-1" data-slide="1">
+    <div class="slide-head">
+      <div class="slide-num-badge">1</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Title</h2></div>
+      <span class="slide-time">~25s</span>
+    </div>
+    <div class="script-body">
+      <p>Good [morning/afternoon]. My name is [your name], and today I'll present <strong>News Bridge</strong> — our graduation project from the Faculty of Engineering and Information Technology at An-Najah National University.</p>
+      <p>News Bridge is an AI-driven platform that collects news from multiple sources, enriches it with machine learning, and delivers a personalized feed to users — in both Arabic and English.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-2" data-slide="2">
+    <div class="slide-head">
+      <div class="slide-num-badge">2</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Agenda</h2></div>
+      <span class="slide-time">~30s</span>
+    </div>
+    <div class="script-body">
+      <p>Here's how the presentation is organized.</p>
+      <p>We'll start with the problem and the technology behind the system, then look at the three ways news enters the platform. After that, we'll walk through the main website pipeline step by step — that's the core of the project. We'll briefly cover Telegram and editor workflows, then the extra features, results, and limitations.</p>
+      <p class="transition">This gives you a map of everything we'll cover before diving in.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-3" data-slide="3">
+    <div class="slide-head">
+      <div class="slide-num-badge">3</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Project Overview</h2></div>
+      <span class="slide-time">~40s</span>
+    </div>
+    <div class="script-body">
+      <p>So what is News Bridge in practice?</p>
+      <p>It's a full news platform — not just a scraper or a feed app. A <strong>Java Spring Boot</strong> backend holds all the data and security. <strong>Python services</strong> handle crawling, NLP, and AI. Users interact through a <strong>web app</strong>, an <strong>admin dashboard</strong>, and a <strong>mobile app</strong>.</p>
+      <p>News comes from three places: crawled websites, Telegram channels, and posts written by approved editors. Everything supports <strong>Arabic and English</strong> end to end.</p>
+      <p>The system is substantial — dozens of API controllers, over fifty database entities, five ML components, and seven news categories.</p>
+      <p class="transition">That sets the scope. The natural question is: why build something this complex?</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-4" data-slide="4">
+    <div class="slide-head">
+      <div class="slide-num-badge">4</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">The Challenge</h2></div>
+      <span class="slide-time">~40s</span>
+    </div>
+    <div class="script-body">
+      <p>Existing news apps leave several gaps.</p>
+      <p>Websites all look different, so simple scrapers break easily. It's hard to know which URLs are article listings versus single articles. Arabic and English need different NLP treatment. Users rarely set detailed preferences, so the system has to learn from behavior. Keyword search can't answer questions like "what's happening in Gaza?" And in many regions, <strong>Telegram</strong> is as important as traditional news sites.</p>
+      <p>News Bridge tries to address all of these in one integrated pipeline — not as separate tools.</p>
+      <p class="transition">To do that, we needed a specific technical setup — which brings us to the stack.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-5" data-slide="5">
+    <div class="slide-head">
+      <div class="slide-num-badge">5</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Technical Background</h2></div>
+      <span class="slide-time">~45s</span>
+    </div>
+    <div class="script-body">
+      <p>The architecture follows a <strong>hub-and-spoke</strong> pattern.</p>
+      <p>React web apps, a mobile app, and a 3D avatar sit on the client side. Everything talks to <strong>Spring Boot</strong> on port 8080 — that's the central API and database layer. Around it, <strong>Python microservices</strong> do the heavy work: site crawling on 8000, endpoint discovery on 8004, Telegram on 8200, and the AI assistant on 9000.</p>
+      <p>For machine learning we use PyTorch and HuggingFace — page classification, content extraction, categorization, tagging, and vector search with FAISS and Ollama.</p>
+      <p class="transition">With that foundation in place, let's see where the news actually comes from.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-6" data-slide="6">
+    <div class="slide-head">
+      <div class="slide-num-badge">6</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Three News Sources</h2></div>
+      <span class="slide-time">~35s</span>
+    </div>
+    <div class="script-body">
+      <p>There are three distinct content tracks.</p>
+      <p><strong>First</strong>, web articles — crawled from registered news domains, run through the full ML pipeline, and shown in the main category feed.</p>
+      <p><strong>Second</strong>, Telegram — channel messages pulled via Telethon, with a web fallback, in a separate personalized Telegram feed.</p>
+      <p><strong>Third</strong>, editor content — live updates on news events and curated topic posts, with an admin approval workflow.</p>
+      <p>All three converge on the same backend and database, then reach users through web, mobile, and admin tools.</p>
+      <p class="transition">The richest pipeline is the website track — let's look at that overview before going step by step.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-7" data-slide="7">
+    <div class="slide-head">
+      <div class="slide-num-badge">7</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Website Pipeline Overview</h2></div>
+      <span class="slide-time">~35s</span>
+    </div>
+    <div class="script-body">
+      <p>The website pipeline has six stages.</p>
+      <p>An admin <strong>registers a root</strong> — a news domain. The system <strong>discovers listing endpoints</strong>, then <strong>crawls</strong> them for new articles. Posts are <strong>classified and tagged</strong>, ranked into a <strong>personalized feed</strong>, and user <strong>feedback</strong> updates future recommendations.</p>
+      <p>Enrichment runs every ten seconds; the page classifier reaches about <strong>89% macro-F1</strong> accuracy. The whole flow turns a newly registered site into feed-ready posts in minutes, not manual copy-paste.</p>
+      <p class="transition">It starts with the admin registering a source — step one.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-8" data-slide="8">
+    <div class="slide-head">
+      <div class="slide-num-badge">8</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Accepting Roots</h2></div>
+      <span class="slide-time">~28s</span>
+    </div>
+    <div class="script-body">
+      <p>Step one is <strong>accepting roots</strong>.</p>
+      <p>An admin adds a news domain — name and base URL — through the admin dashboard. That creates a <strong>Root</strong> record in the database. Optionally, we run trust checks using sources like Wayback, Wikidata, and MBFC.</p>
+      <p>Every article we crawl later traces back to one of these approved domains. Nothing enters the system without admin consent.</p>
+      <p class="transition">Once a root exists, we need to find the right pages to crawl — that's endpoint discovery.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-9" data-slide="9">
+    <div class="slide-head">
+      <div class="slide-num-badge">9</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Discovering Endpoints</h2></div>
+      <span class="slide-time">~28s</span>
+    </div>
+    <div class="script-body">
+      <p>Step two: <strong>discovering endpoints</strong>.</p>
+      <p>The admin triggers discovery. A Python service BFS-crawls the domain and uses an <strong>XLM-RoBERTa</strong> classifier to find <strong>listing pages</strong> — the index pages that link to many articles, not individual stories.</p>
+      <p>The admin reviews the results and imports the chosen URLs. Our classifier was trained on about <strong>2,400 labeled pages</strong> from <strong>201 domains</strong>, with roughly <strong>89% macro-F1</strong> — good enough to scale discovery without hand-picking every URL.</p>
+      <p class="transition">With endpoints in place, the crawler can run continuously.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-10" data-slide="10">
+    <div class="slide-head">
+      <div class="slide-num-badge">10</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Crawling Articles</h2></div>
+      <span class="slide-time">~32s</span>
+    </div>
+    <div class="script-body">
+      <p>Step three is <strong>crawling</strong>.</p>
+      <p>The site crawler picks endpoints by priority — never-crawled sites go first. It fetches listing pages, extracts links, and skips URLs it's already seen. Each candidate is classified: is it an article? If yes, a deep-learning extractor pulls out title, text, and images.</p>
+      <p>New articles are sent to the backend as <strong>Article</strong> and <strong>Post</strong> records. For difficult sites we fall back from lightweight HTTP fetching to <strong>Playwright</strong> when JavaScript rendering is required.</p>
+      <p class="transition">Raw posts still need labels and tags before they appear meaningfully in the feed.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-11" data-slide="11">
+    <div class="slide-head">
+      <div class="slide-num-badge">11</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Post-Processing</h2></div>
+      <span class="slide-time">~28s</span>
+    </div>
+    <div class="script-body">
+      <p>Step four: <strong>post-processing</strong>.</p>
+      <p>Every ten seconds, a background job classifies unlabeled posts into one of <strong>seven categories</strong> and detects language. Then a tagging step runs <strong>NER</strong> — BERT for English, CAMeL-BERT for Arabic — plus <strong>YAKE</strong> keyword extraction.</p>
+      <p>Arabic text is normalized first. Once enriched, posts become eligible for personalized ranking and for the AI vector index.</p>
+      <p class="transition">Enriched posts then need to reach the right user — that's delivery and feedback.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-12" data-slide="12">
+    <div class="slide-head">
+      <div class="slide-num-badge">12</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Preferences, Delivery &amp; Feedback</h2></div>
+      <span class="slide-time">~32s</span>
+    </div>
+    <div class="script-body">
+      <p>Step five ties it together: <strong>preferences, delivery, and feedback</strong>.</p>
+      <p>The feed API scores posts using tag affinity at <strong>45%</strong>, category at <strong>25%</strong>, recency at <strong>20%</strong>, and popularity at <strong>10%</strong>. User preferences are stored as tag weights that update from views, clicks, time on post, and likes or dislikes.</p>
+      <p>The model is <strong>tag-centric</strong> on purpose — it's easier to explain why a story appeared than with a black-box recommender.</p>
+      <p class="transition">That's the full website path. Two other sources feed the platform in parallel.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-13" data-slide="13">
+    <div class="slide-head">
+      <div class="slide-num-badge">13</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Telegram Pipeline</h2></div>
+      <span class="slide-time">~30s</span>
+    </div>
+    <div class="script-body">
+      <p>The <strong>Telegram pipeline</strong> follows a similar spirit but simpler ingestion.</p>
+      <p>Channels are registered in the admin panel. A dedicated crawler on port 8200 pulls messages via <strong>Telethon</strong>, with a web-scraper fallback when the API is restricted. Posts bulk-import into the backend.</p>
+      <p>Users get a separate Telegram feed — For You, By Channel, and Discover — because Telegram content is structurally different from full web articles.</p>
+      <p class="transition">The third source adds a human editorial layer.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-14" data-slide="14">
+    <div class="slide-head">
+      <div class="slide-num-badge">14</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Editor Posting Pipeline</h2></div>
+      <span class="slide-time">~28s</span>
+    </div>
+    <div class="script-body">
+      <p><strong>Editor posting</strong> is workflow-driven.</p>
+      <p>A user applies to become an editor; an admin approves them. Admins create <strong>news events</strong>, which can link to trending topics. Editors request permission, then publish <strong>live news updates</strong> or <strong>topic posts</strong> after approval.</p>
+      <p>This gives the platform curated, event-driven coverage alongside automated crawling.</p>
+      <p class="transition">Beyond these three pipelines, the platform includes several supporting features.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-15" data-slide="15">
+    <div class="slide-head">
+      <div class="slide-num-badge">15</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Additional Features</h2></div>
+      <span class="slide-time">~32s</span>
+    </div>
+    <div class="script-body">
+      <p>News Bridge also includes an <strong>admin dashboard</strong> for sources, crawlers, and users; a <strong>mobile app</strong> built with Expo; <strong>comments and reactions</strong>; <strong>saved posts</strong>; <strong>source verification</strong> against external trust databases; <strong>location-aware ranking</strong>; full <strong>Arabic and English</strong> support with RTL; and a <strong>service manager</strong> desktop app to orchestrate all microservices during development.</p>
+      <p>These aren't the headline pipelines, but they're what makes the system usable day to day.</p>
+      <p class="transition">Two features deserve a closer look: the AI assistant and the news brief with the 3D presenter.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-16" data-slide="16">
+    <div class="slide-head">
+      <div class="slide-num-badge">16</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">RAG AI Assistant</h2></div>
+      <span class="slide-time">~38s</span>
+    </div>
+    <div class="script-body">
+      <p>The <strong>AI assistant</strong> on port 9000 is a RAG system — retrieval-augmented generation.</p>
+      <p>Posts are chunked, embedded, and stored in a <strong>FAISS</strong> index. When a user asks a question, we retrieve the most relevant chunks and pass them to a local <strong>Ollama</strong> LLM. The answer includes references to source posts.</p>
+      <p>It also supports <strong>translation</strong> between Arabic and English and on-demand vector ingestion. A scheduler refreshes the index every fifteen minutes. Everything runs locally — no mandatory cloud API — which matters given our hardware constraints.</p>
+      <p class="transition">One output of that AI layer is the personalized news brief — which the avatar can then narrate.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-17" data-slide="17">
+    <div class="slide-head">
+      <div class="slide-num-badge">17</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">News Brief &amp; 3D Presenter</h2></div>
+      <span class="slide-time">~38s</span>
+    </div>
+    <div class="script-body">
+      <p>The <strong>news brief</strong> calls the same AI service to score recent posts against user preferences and generate a short personalized summary. It appears in the main feed; if the LLM is unavailable, we fall back to a simple headline list.</p>
+      <p>The <strong>3D presenter</strong> takes that same brief. In the avatar studio, each story is read aloud with <strong>text-to-speech</strong>, lip-synced via <strong>Rhubarb</strong>, and rendered in <strong>Three.js</strong> — with the title and summary shown on a screen inside the scene.</p>
+      <p>It's a step toward accessible, audiovisual news — not just scrolling text.</p>
+      <p class="transition">With the system built, we evaluated how well the key components perform.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-18" data-slide="18">
+    <div class="slide-head">
+      <div class="slide-num-badge">18</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Evaluation Results</h2></div>
+      <span class="slide-time">~35s</span>
+    </div>
+    <div class="script-body">
+      <p>On <strong>evaluation</strong>, the page classifier reached about <strong>89% macro-F1</strong>. The category classifier shows high confidence on held-out data. Tag extraction performs well on named entities. Integration tests passed end to end — from registering a root, through discovery and crawl, to a labeled post appearing in the feed with working RAG Q&amp;A.</p>
+      <p>So the pipeline doesn't just work in isolation — the pieces connect in practice.</p>
+      <p class="transition">That said, building it taught us as much about limits as about successes.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-19" data-slide="19">
+    <div class="slide-head">
+      <div class="slide-num-badge">19</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Discussion</h2></div>
+      <span class="slide-time">~32s</span>
+    </div>
+    <div class="script-body">
+      <p>A few takeaways from the discussion.</p>
+      <p>The <strong>microservice split</strong> — Java for data and security, Python for ML — kept concerns separated and made iteration easier. <strong>ML-guided endpoint discovery</strong> scaled across hundreds of domains without manual URL hunting. <strong>Tag-based personalization</strong> gives interpretable ranking. A <strong>local AI stack</strong> is viable if you manage freshness carefully. And combining <strong>Telegram plus editors</strong> with automated crawling covers sources a crawler alone would miss.</p>
+      <p class="transition">Honest evaluation also means acknowledging what held us back.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-20" data-slide="20">
+    <div class="slide-head">
+      <div class="slide-num-badge">20</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Constraints &amp; Limitations</h2></div>
+      <span class="slide-time">~38s</span>
+    </div>
+    <div class="script-body">
+      <p>We worked under real <strong>resource limits</strong>.</p>
+      <p>Development machines had <strong>limited GPU memory</strong>, so we couldn't train large models or run many ML services at once. <strong>No cloud GPU budget</strong> meant relying on <strong>small quantized Ollama models</strong> — good enough for a demo, but weaker than cloud LLMs for summaries and Q&amp;A. <strong>CPU inference</strong> made enrichment and RAG noticeably slow. Labeling was <strong>manual and capped</strong> at around 2,400 pages. Avatar and TTS quality suffered without a dedicated GPU server.</p>
+      <p>We're a <strong>small team</strong>, sources are <strong>admin-registered only</strong>, Telegram has <strong>API restrictions</strong>, and Playwright is <strong>RAM-heavy</strong> on low-spec hardware. There's no production scaling or 24/7 ops budget.</p>
+      <p class="transition">Despite those limits, the project still demonstrates a coherent end-to-end system.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-21" data-slide="21">
+    <div class="slide-head">
+      <div class="slide-num-badge">21</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Conclusions &amp; Future Work</h2></div>
+      <span class="slide-time">~35s</span>
+    </div>
+    <div class="script-body">
+      <p>In conclusion, News Bridge shows that a <strong>modular pipeline</strong> can take news from registration to personalized delivery with modern NLP throughout. The <strong>page classifier</strong> makes endpoint discovery practical at scale. <strong>Tag-centric feeds</strong> keep recommendations explainable. <strong>Local RAG</strong> works without cloud lock-in. And the <strong>brief plus avatar</strong> connects AI summarization to how people actually consume news.</p>
+      <p>Future work — if resources allow — includes full <strong>geo-ranking</strong> in the backend, a <strong>production TTS service</strong>, bridging <strong>Telegram into the main feed</strong>, and <strong>mobile avatar</strong> support.</p>
+      <p class="transition">That wraps up the presentation.</p>
+    </div>
+  </article>
+
+  <article class="slide-block" id="slide-22" data-slide="22">
+    <div class="slide-head">
+      <div class="slide-num-badge">22</div>
+      <div class="slide-title-wrap"><h2 class="slide-title">Thank You</h2></div>
+      <span class="slide-time">~15s</span>
+    </div>
+    <div class="script-body">
+      <p>Thank you for your time. I'm happy to take your questions.</p>
+    </div>
+  </article>
+
+  <section class="summary">
+    <h2>Timing Summary</h2>
+    <table>
+      <thead><tr><th>Slides</th><th>Section</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr><td>1–2</td><td>Opening &amp; agenda</td><td>0:55</td></tr>
+        <tr><td>3–4</td><td>Overview &amp; challenge</td><td>1:20</td></tr>
+        <tr><td>5–6</td><td>Tech &amp; sources</td><td>1:20</td></tr>
+        <tr><td>7–12</td><td>Website pipeline</td><td>3:08</td></tr>
+        <tr><td>13–14</td><td>Telegram &amp; editor</td><td>0:58</td></tr>
+        <tr><td>15–17</td><td>Features &amp; AI</td><td>1:48</td></tr>
+        <tr><td>18–20</td><td>Results, discussion, constraints</td><td>1:45</td></tr>
+        <tr><td>21–22</td><td>Conclusion &amp; close</td><td>0:50</td></tr>
+        <tr><td colspan="2">Total</td><td>~12:00</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<nav class="bottom-nav" aria-label="Slide navigation">
+  <button type="button" class="btn-prev" id="btnPrev" disabled aria-label="Previous slide">← Prev</button>
+  <span class="progress-label" id="progressLabel">1 / 22</span>
+  <button type="button" class="btn-next" id="btnNext" aria-label="Next slide">Next →</button>
+</nav>
+
+<script>
+  const TOTAL = 22;
+  const jumpNav = document.getElementById('jumpNav');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const progressLabel = document.getElementById('progressLabel');
+  const blocks = document.querySelectorAll('.slide-block');
+
+  let currentSlide = 1;
+  let programmaticNav = false;
+  let navTimer = null;
+
+  for (let i = 1; i <= TOTAL; i++) {
+    const a = document.createElement('a');
+    a.href = `#slide-${i}`;
+    a.textContent = i;
+    a.dataset.slide = i;
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      scrollToSlide(i);
+    });
+    jumpNav.appendChild(a);
+  }
+
+  function scrollToSlide(n) {
+    n = Math.max(1, Math.min(TOTAL, n));
+    const el = document.getElementById(`slide-${n}`);
+    if (!el) return;
+
+    programmaticNav = true;
+    clearTimeout(navTimer);
+
+    currentSlide = n;
+    updateUI();
+
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Keep observer suppressed until smooth scroll finishes
+    navTimer = setTimeout(() => { programmaticNav = false; }, 900);
+  }
+
+  function updateUI() {
+    progressLabel.textContent = `${currentSlide} / ${TOTAL}`;
+    btnPrev.disabled = currentSlide <= 1;
+    btnNext.disabled = currentSlide >= TOTAL;
+    jumpNav.querySelectorAll('a').forEach(a => {
+      a.classList.toggle('active', Number(a.dataset.slide) === currentSlide);
+    });
+    const activeChip = jumpNav.querySelector(`a[data-slide="${currentSlide}"]`);
+    if (activeChip) activeChip.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  }
+
+  btnPrev.addEventListener('click', () => scrollToSlide(currentSlide - 1));
+  btnNext.addEventListener('click', () => scrollToSlide(currentSlide + 1));
+
+  const observer = new IntersectionObserver((entries) => {
+    if (programmaticNav) return;
+
+    let best = null;
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (!best || entry.intersectionRatio > best.intersectionRatio) {
+          best = entry;
+        }
+      }
+    });
+
+    if (best) {
+      const n = Number(best.target.dataset.slide);
+      if (n !== currentSlide) {
+        currentSlide = n;
+        updateUI();
+      }
+    }
+  }, { threshold: [0, 0.2, 0.4, 0.6, 0.8], rootMargin: '-120px 0px -40% 0px' });
+
+  blocks.forEach(block => observer.observe(block));
+
+  updateUI();
+</script>
+
+</body>
+</html>

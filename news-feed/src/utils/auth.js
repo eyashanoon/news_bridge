@@ -36,11 +36,22 @@ function getCookieToken() {
 }
 
 export function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(TOKEN_KEY) || getCookieToken();
 }
 
 export function getUserId() {
-  return localStorage.getItem(USER_ID_KEY);
+  const stored = localStorage.getItem(USER_ID_KEY);
+  if (stored) return stored;
+
+  const token = getToken();
+  if (!token) return null;
+
+  const decoded = decodeJwt(token);
+  if (decoded?.sub) {
+    localStorage.setItem(USER_ID_KEY, decoded.sub);
+    return decoded.sub;
+  }
+  return null;
 }
 
 export function getUserRoles() {
@@ -56,6 +67,7 @@ export function logout() {
   localStorage.removeItem(USER_ID_KEY);
   localStorage.removeItem(USER_TYPE_KEY);
   localStorage.removeItem(ROLES_KEY);
+  document.cookie = `${TOKEN_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`;
 }
 
 // Sync cookie token to localStorage if available (prefer registered/editor tokens over primitive)

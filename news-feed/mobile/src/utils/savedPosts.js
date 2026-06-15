@@ -1,14 +1,47 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apiFetch } from "./apiFetch";
-import { ensureUserInitialized, getToken } from "./auth";
+import { ensureUserInitialized } from "./auth";
 import { getUserId } from "./userId";
-import { API_CONFIG } from "../api/config";
 
 const SAVED_POSTS_BASE_KEY = "newsbridge_saved_posts";
 const COLLECTIONS_BASE_KEY = "newsbridge_collections";
 
 async function getSavedPostsKey() { return `${SAVED_POSTS_BASE_KEY}_${await getUserId()}`; }
 async function getCollectionsKey() { return `${COLLECTIONS_BASE_KEY}_${await getUserId()}`; }
+
+function enrichPost(p) {
+  return {
+    ...p,
+    savedAt: p.savedAt || Date.now(),
+    collections: p.collections || [],
+    note: p.note || "",
+  };
+}
+
+async function persistSavedPosts(posts) {
+  await AsyncStorage.setItem(await getSavedPostsKey(), JSON.stringify(posts));
+}
+
+async function persistCollections(collections) {
+  await AsyncStorage.setItem(await getCollectionsKey(), JSON.stringify(collections));
+}
+
+async function syncSavedPostMetadata(postId, { note, collections } = {}) {
+  const userId = await getUserId();
+  const body = {};
+  if (note !== undefined) body.note = note;
+  if (collections !== undefined) body.collections = collections;
+  if (Object.keys(body).length === 0) return;
+
+  try {
+    await apiFetch(`/api/user/${userId}/saved-posts/${postId}`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    });
+  } catch (err) {
+    console.warn("Failed to sync saved post metadata:", err);
+  }
+}
 
 // ─── Saved Posts ────────────────────────────────────────────
 
@@ -17,7 +50,7 @@ export async function savePost(post) {
   const userId = await getUserId();
 
   try {
-    await apiFetch(`${API_CONFIG.baseURL}/api/posts/${post.id}/save?userId=${userId}`, { method: "POST" });
+    await apiFetch(`/api/posts/${post.id}/save?userId=${userId}`, { method: "POST" });
   } catch (err) {
     console.warn("Backend save failed, saving locally:", err);
   }
@@ -25,8 +58,8 @@ export async function savePost(post) {
   const saved = await getLocalSavedPosts();
   const exists = saved.some((p) => p.id === post.id);
   if (!exists) {
-    saved.unshift({ ...post, savedAt: Date.now(), collections: [], note: "" });
-    await AsyncStorage.setItem(await getSavedPostsKey(), JSON.stringify(saved));
+    saved.unshift(enrichPost({ ...post, savedAt: Date.now() }));
+    await persistSavedPosts(saved);
   }
 }
 
@@ -35,13 +68,13 @@ export async function unsavePost(postId) {
   const userId = await getUserId();
 
   try {
-    await apiFetch(`${API_CONFIG.baseURL}/api/posts/${postId}/unsave?userId=${userId}`, { method: "POST" });
+    await apiFetch(`/api/posts/${postId}/unsave?userId=${userId}`, { method: "POST" });
   } catch (err) {
     console.warn("Backend unsave failed, removing locally:", err);
   }
 
   const saved = (await getLocalSavedPosts()).filter((p) => p.id !== postId);
-  await AsyncStorage.setItem(await getSavedPostsKey(), JSON.stringify(saved));
+  await persistSavedPosts(saved);
 }
 
 export async function isPostSaved(postId) {
@@ -61,28 +94,39 @@ export async function getLocalSavedPosts() {
   }
 }
 
+export async function fetchCollectionsFromBackend() {
+  await ensureUserInitialized();
+  const userId = await getUserId();
+  try {
+    const res = await apiFetch(`/api/user/${userId}/saved-collections`);
+    if (res.ok) {
+      const data = await res.json();
+      const collections = Array.isArray(data) ? data : [];
+      await persistCollections(collections);
+      return collections;
+    }
+  } catch (err) {
+    console.warn("Failed to fetch collections from backend:", err);
+  }
+  return getCollections();
+}
+
 export async function fetchSavedPostsFromBackend() {
   await ensureUserInitialized();
   const userId = await getUserId();
   try {
-    const res = await apiFetch(`${API_CONFIG.baseURL}/api/user/${userId}/saved-posts`);
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        const enriched = data.map((p) => ({
-          ...p,
-          savedAt: p.savedAt || Date.now(),
-          collections: p.collections || [],
-          note: p.note || "",
-        }));
-        await AsyncStorage.setItem(await getSavedPostsKey(), JSON.stringify(enriched));
-        return enriched;
-      }
+    const postsRes = await apiFetch(`/api/user/${userId}/saved-posts`);
+    await fetchCollectionsFromBackend();
+    if (postsRes.ok) {
+      const data = await postsRes.json();
+      const enriched = (Array.isArray(data) ? data : []).map(enrichPost);
+      await persistSavedPosts(enriched);
+      return enriched;
     }
   } catch (err) {
     console.warn("Failed to fetch saved posts from backend:", err);
   }
-  return await getLocalSavedPosts();
+  return getLocalSavedPosts();
 }
 
 // ─── Collections (Folders) ─────────────────────────────────
@@ -100,7 +144,7 @@ export async function getCollections() {
 }
 
 export async function createCollection(name, icon = "📁") {
-  const collections = await getCollections();
+  const userId = await getUserId();
   const newCol = {
     id: `col_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
     name,
@@ -108,27 +152,57 @@ export async function createCollection(name, icon = "📁") {
     createdAt: Date.now(),
     postCount: 0,
   };
+
+  try {
+    await apiFetch(`/api/user/${userId}/saved-collections`, {
+      method: "POST",
+      body: JSON.stringify(newCol),
+    });
+  } catch (err) {
+    console.warn("Failed to create collection on backend:", err);
+  }
+
+  const collections = await getCollections();
   collections.push(newCol);
-  await AsyncStorage.setItem(await getCollectionsKey(), JSON.stringify(collections));
+  await persistCollections(collections);
   return newCol;
 }
 
 export async function deleteCollection(collectionId) {
+  const userId = await getUserId();
+  try {
+    await apiFetch(`/api/user/${userId}/saved-collections/${encodeURIComponent(collectionId)}`, {
+      method: "DELETE",
+    });
+  } catch (err) {
+    console.warn("Failed to delete collection on backend:", err);
+  }
+
   const collections = (await getCollections()).filter((c) => c.id !== collectionId);
-  await AsyncStorage.setItem(await getCollectionsKey(), JSON.stringify(collections));
+  await persistCollections(collections);
 
   const saved = (await getLocalSavedPosts()).map((p) => ({
     ...p,
     collections: (p.collections || []).filter((cId) => cId !== collectionId),
   }));
-  await AsyncStorage.setItem(await getSavedPostsKey(), JSON.stringify(saved));
+  await persistSavedPosts(saved);
 }
 
 export async function renameCollection(collectionId, newName) {
+  const userId = await getUserId();
+  try {
+    await apiFetch(`/api/user/${userId}/saved-collections/${encodeURIComponent(collectionId)}`, {
+      method: "PUT",
+      body: JSON.stringify({ name: newName }),
+    });
+  } catch (err) {
+    console.warn("Failed to rename collection on backend:", err);
+  }
+
   const collections = (await getCollections()).map((c) =>
     c.id === collectionId ? { ...c, name: newName } : c
   );
-  await AsyncStorage.setItem(await getCollectionsKey(), JSON.stringify(collections));
+  await persistCollections(collections);
 }
 
 export async function addPostToCollection(postId, collectionId) {
@@ -138,7 +212,12 @@ export async function addPostToCollection(postId, collectionId) {
     if (cols.includes(collectionId)) return p;
     return { ...p, collections: [...cols, collectionId] };
   });
-  await AsyncStorage.setItem(await getSavedPostsKey(), JSON.stringify(saved));
+  await persistSavedPosts(saved);
+
+  const post = saved.find((p) => p.id === postId);
+  if (post) {
+    await syncSavedPostMetadata(postId, { collections: post.collections || [] });
+  }
   await updateCollectionCounts();
 }
 
@@ -147,7 +226,12 @@ export async function removePostFromCollection(postId, collectionId) {
     if (p.id !== postId) return p;
     return { ...p, collections: (p.collections || []).filter((c) => c !== collectionId) };
   });
-  await AsyncStorage.setItem(await getSavedPostsKey(), JSON.stringify(saved));
+  await persistSavedPosts(saved);
+
+  const post = saved.find((p) => p.id === postId);
+  if (post) {
+    await syncSavedPostMetadata(postId, { collections: post.collections || [] });
+  }
   await updateCollectionCounts();
 }
 
@@ -157,7 +241,7 @@ async function updateCollectionCounts() {
     ...c,
     postCount: saved.filter((p) => (p.collections || []).includes(c.id)).length,
   }));
-  await AsyncStorage.setItem(await getCollectionsKey(), JSON.stringify(collections));
+  await persistCollections(collections);
 }
 
 // ─── Notes ──────────────────────────────────────────────────
@@ -172,7 +256,8 @@ export async function setNote(postId, note) {
   const saved = (await getLocalSavedPosts()).map((p) =>
     p.id === postId ? { ...p, note } : p
   );
-  await AsyncStorage.setItem(await getSavedPostsKey(), JSON.stringify(saved));
+  await persistSavedPosts(saved);
+  await syncSavedPostMetadata(postId, { note });
 }
 
 // ─── Sync collections count ────────────────────────────────

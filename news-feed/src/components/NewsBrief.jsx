@@ -2,8 +2,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { aiFetch } from "../utils/aiFetch";
+import { apiFetch } from "../utils/apiFetch";
 import { useTheme } from "../context/ThemeContext";
 import { getUserId } from "../utils/userId";
+import { getPostById } from "../api/searchApi";
+import PostModal from "./PostModal";
+
+const MAX_SUMMARY_LENGTH = 200;
 
 export default function NewsBrief({ onRefresh }) {
   const [loading, setLoading] = useState(false);
@@ -11,6 +16,7 @@ export default function NewsBrief({ onRefresh }) {
   const [error, setError] = useState(null);
   const [posts, setPosts] = useState([]);
   const [expanded, setExpanded] = useState(false);
+  const [briefPostModal, setBriefPostModal] = useState(null);
   const { darkMode } = useTheme();
   const { t, i18n } = useTranslation();
   const loadingRef = useRef(false);
@@ -29,9 +35,10 @@ export default function NewsBrief({ onRefresh }) {
   // Fetch on mount and every time langVersion increments
   useEffect(() => {
     let cancelled = false;
+    let retries = 0;
 
     const fetchBrief = async () => {
-      if (loadingRef.current) return;
+      // Reset loadingRef briefly to handle React StrictMode double-mount
       loadingRef.current = true;
 
       try {
@@ -41,35 +48,67 @@ export default function NewsBrief({ onRefresh }) {
         const userId = getUserId() || "android-app-anonymous";
         const lang = i18n.language || "en";
 
-        const res = await aiFetch("/news-brief", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-User-Id": userId,
-            "X-Generate-Summary": "true",
-            "X-Language": lang,
-          },
+        const isArabic = lang === "ar" || lang?.startsWith("ar");
+
+        const buildFallbackBrief = (feedPosts) => {
+          if (!feedPosts.length) {
+            return isArabic
+              ? "لا توجد أخبار متاحة حالياً."
+              : "No stories available right now.";
+          }
+          const header = isArabic ? "**ملخص الأخبار**\n\n" : "**News Highlights**\n\n";
+          const lines = feedPosts
+            .slice(0, 5)
+            .map((p) => `• ${p.title || p.text?.slice(0, 100) || "Story"}`);
+          return header + lines.join("\n");
+        };
+
+        const mapFeedPost = (post, idx) => ({
+          postId: post.id,
+          id: post.id,
+          title: post.title,
+          text: post.text,
+          label: post.label,
+          articleCreatedAt: post.articleCreatedAt,
+          imageUrls: post.imageUrls || [],
+          score: Math.max(0.3, 1 - idx * 0.05),
+          components: { recency: 0.8, importance: 0.7, preference: 0.5 },
         });
 
-        if (cancelled) return;
-
-        if (!res.ok) {
-          throw new Error(`News brief request failed: ${res.status}`);
+        let data = null;
+        try {
+          const res = await aiFetch("/news-brief", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-User-Id": userId,
+              "X-Generate-Summary": "true",
+              "X-Language": lang,
+            },
+          });
+          if (res.ok) {
+            data = await res.json();
+          }
+        } catch {
+          // AI service unavailable — fall back below
         }
 
-        const data = await res.json();
+        if (!data || data.status !== "SUCCESS") {
+          const fallbackRes = await apiFetch("/api/feed/brief?limit=10");
+          if (!fallbackRes.ok) {
+            throw new Error(`News brief request failed: ${fallbackRes.status}`);
+          }
+          const feedPosts = await fallbackRes.json();
+          if (cancelled) return;
+          setBrief(buildFallbackBrief(feedPosts));
+          setPosts(feedPosts.map(mapFeedPost));
+          return;
+        }
 
         if (cancelled) return;
 
-        if (data.status === "SUCCESS") {
-          setBrief(data.brief || t("newsBriefNoSummary", "No summary generated."));
-          setPosts(data.posts || []);
-        } else {
-          setBrief(
-            data.message || t("newsBriefUnavailable", "No news brief available right now.")
-          );
-          setPosts([]);
-        }
+        setBrief(data.brief || t("newsBriefNoSummary", "No summary generated."));
+        setPosts(data.posts || []);
       } catch (err) {
         if (cancelled) return;
         console.error("News brief fetch error:", err);
@@ -233,31 +272,72 @@ export default function NewsBrief({ onRefresh }) {
               <h4 className="brief-posts-title">
                 {isArabic ? "القصص في هذا الموجز" : "Stories in this brief"}
               </h4>
-              {posts.map((post, idx) => (
+              {posts.map((post, idx) => {
+                const summaryText = post.text || post.content || "";
+                const truncated = summaryText.length > MAX_SUMMARY_LENGTH
+                  ? summaryText.slice(0, MAX_SUMMARY_LENGTH) + "…"
+                  : summaryText;
+                return (
                 <div key={post.postId || idx} className="brief-post-item">
                   <div className="brief-post-rank">#{idx + 1}</div>
                   <div className="brief-post-info">
-                    <div className="brief-post-title">
+                    {/* Clickable title — opens post detail modal */}
+                    <div
+                      className="brief-post-title brief-post-title-link"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const postId = post.postId || post.id;
+                        if (postId) {
+                          getPostById(postId).then((fullPost) => {
+                            if (fullPost) setBriefPostModal(fullPost);
+                          });
+                        }
+                      }}
+                    >
                       {post.title || (isArabic ? "قصة بدون عنوان" : "Untitled Story")}
                     </div>
+                    {/* Meta info (category + time + score) */}
                     <div className="brief-post-meta">
                       <span className="brief-post-label">{post.label}</span>
                       <span className="brief-post-time">
                         {formatTime(post.articleCreatedAt)}
                       </span>
-                      <span className="brief-post-score">
+                    </div>
+                    {/* Summary text */}
+                    {truncated && (
+                      <div className="brief-post-summary">{truncated}</div>
+                    )}
+                    {/* Images (up to 3) */}
+                    {post.imageUrls && post.imageUrls.length > 0 && (
+                      <div className="brief-post-images">
+                        {post.imageUrls.slice(0, 3).map((url, i) => (
+                          <div key={i} className="brief-post-image-wrapper">
+                            <img
+                              src={url}
+                              alt={`${post.title || "Story"} image ${i + 1}`}
+                              className="brief-post-image"
+                              loading="lazy"
+                              onError={(e) => { e.target.style.display = "none"; }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {/* References section */}
+                    <div className="brief-post-refs">
+                      <span className="brief-ref-label">{isArabic ? "المراجع" : "References"}:</span>
+                      <span className="brief-ref-score">
                         {isArabic ? "النتيجة" : "Score"}: {post.score?.toFixed(2)}
                       </span>
-                    </div>
-                    <div className="brief-post-components">
-                      <span>R:{post.components?.recency?.toFixed(2)}</span>
-                      <span>I:{post.components?.importance?.toFixed(2)}</span>
-                      <span>P:{post.components?.preference?.toFixed(2)}</span>
+                      <span className="brief-ref-recency">R:{post.components?.recency?.toFixed(2)}</span>
+                      <span className="brief-ref-importance">I:{post.components?.importance?.toFixed(2)}</span>
+                      <span className="brief-ref-preference">P:{post.components?.preference?.toFixed(2)}</span>
                     </div>
                     {scoreBar(post.score)}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -271,6 +351,13 @@ export default function NewsBrief({ onRefresh }) {
             </div>
           )}
         </div>
+      )}
+      {/* Post detail modal */}
+      {briefPostModal && (
+        <PostModal
+          post={briefPostModal}
+          onClose={() => setBriefPostModal(null)}
+        />
       )}
     </div>
   );

@@ -4,20 +4,21 @@ import asyncio
 import collections
 import logging
 import threading
-from datetime import datetime, timezone, timedelta
+import time
+from datetime import datetime
 from threading import Lock
 from typing import Optional
 
-from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 import telegram_client
 from backend_client import BackendClient
-from scraper import scrape_channel, search_channels
+from channel_scheduler import ChannelScheduler
+from crawler_service import ChannelCrawlService
+from scraper import search_channels
 from settings import settings
 
-# ─── Log buffer ──────────────────────────────────────────────────────────────
 _LOG_MAX = 500
 _log_buffer: collections.deque[dict] = collections.deque(maxlen=_LOG_MAX)
 _log_lock = Lock()
@@ -40,15 +41,7 @@ logging.getLogger("telegram_crawler").addHandler(_handler)
 logging.getLogger("telegram_crawler").setLevel(logging.DEBUG)
 logger = logging.getLogger("telegram_crawler")
 
-# ─── Mutable interval ────────────────────────────────────────────────────────
-_interval_minutes: int = settings.crawl_interval_minutes
-_interval_lock = Lock()
-
-# ─── App + state ─────────────────────────────────────────────────────────────
-app = FastAPI(title="Telegram Crawler Server", version="1.0.0")
-_lock = Lock()
-_last_run: dict | None = None
-_run_status: dict = {"running": False}
+app = FastAPI(title="Telegram Crawler Server", version="2.0.0")
 
 backend = BackendClient(
     base_url=settings.backend_base_url,
@@ -57,214 +50,100 @@ backend = BackendClient(
     timeout=settings.request_timeout_seconds,
 )
 
-scheduler = BackgroundScheduler(timezone="UTC")
+crawl_service = ChannelCrawlService(backend, log_fn=_push_log)
+
+_scheduler = ChannelScheduler(
+    service=crawl_service,
+    backend=backend,
+    num_workers=settings.num_workers,
+    score_alpha=settings.score_alpha,
+    staleness_weight=settings.staleness_weight,
+    min_cooldown_seconds=settings.min_cooldown_seconds,
+    log_fn=_push_log,
+)
+
+_reload_stop = threading.Event()
+_reload_thread: threading.Thread | None = None
+
+_last_run: dict | None = None
+_scheduler_started = False
 
 
-def _get_scheduler_status() -> dict:
-    global _interval_minutes
-    job = scheduler.get_job("telegram-crawl-cycle") if scheduler.running else None
-    is_paused = job is None or job.next_run_time is None
-    next_run = None if is_paused else job.next_run_time.isoformat()
-    with _interval_lock:
-        interval = _interval_minutes
-    return {
-        "schedulerRunning": scheduler.running,
-        "paused": is_paused,
-        "intervalMinutes": interval,
-        "nextRunAt": next_run,
-    }
-
-
-def _run_cycle() -> None:
-    global _last_run, _run_status
-    if _lock.locked():
-        return
-    with _lock:
-        started = datetime.utcnow().isoformat()
-        _last_run = {"startedAt": started, "status": "running"}
-        _run_status = {"running": True}
-        _push_log("INFO", f"=== Telegram crawl cycle started at {started} ===")
-
-        total_channels = 0
-        total_scraped = 0
-        total_created = 0
-        total_skipped = 0
-        total_errors = 0
-
-        try:
-            channels = backend.get_active_channels()
-            total_channels = len(channels)
-            _push_log("INFO", f"Found {total_channels} active Telegram channel(s)")
-
-            for ch in channels:
-                username = ch.get("channelUsername", "")
-                channel_id = ch.get("id")
-                last_crawled = ch.get("lastCrawledAt")
-                _push_log("INFO", f"Scraping @{username} (id={channel_id}) — MTProto ready: {telegram_client.is_ready()}")
-
-                # Determine the time cutoff for this channel:
-                # - If previously crawled, use lastCrawledAt
-                # - If never crawled, use 3 minutes ago
-                since_dt = None
-                if last_crawled:
-                    try:
-                        since_dt = datetime.fromisoformat(
-                            last_crawled.replace("Z", "+00:00")
-                        ).astimezone(timezone.utc)
-                        _push_log("INFO", f"  Fetching posts since {since_dt.isoformat()}")
-                    except Exception:
-                        since_dt = datetime.now(timezone.utc) - timedelta(minutes=3)
-                else:
-                    since_dt = datetime.now(timezone.utc) - timedelta(minutes=3)
-                    _push_log("INFO", f"  First crawl — fetching posts from last 3 minutes")
-
-                # ── Try MTProto API first; fall back to web scraping ──────────
-                # Always fetch the last 100 posts — the backend deduplicates
-                # by telegramMessageId so only truly new posts are inserted.
-                posts = telegram_client.fetch_posts(
-                    username,
-                    since=None,
-                    limit=settings.max_posts_per_channel,
-                )
-                if posts is None:
-                    # MTProto not available — use web scraper (time-filtered)
-                    _push_log("INFO", f"  Using web scraper for @{username}")
-                    posts = scrape_channel(
-                        username,
-                        max_posts=settings.max_posts_per_channel,
-                        timeout=settings.request_timeout_seconds,
-                        since=since_dt,
-                    )
-                else:
-                    _push_log("INFO", f"  Using MTProto API for @{username} — fetched {len(posts)} posts (dedup by backend)")
-
-                total_scraped += len(posts)
-
-                if not posts:
-                    _push_log("WARN", f"No posts scraped from @{username}")
-                    continue
-
-                # Attach channelId
-                for p in posts:
-                    p["channelId"] = channel_id
-
-                try:
-                    result = backend.bulk_create_posts(posts)
-                    created = result.get("created", 0)
-                    skipped = result.get("skipped", 0)
-                    errors = result.get("errors", [])
-                    total_created += created
-                    total_skipped += skipped
-                    total_errors += len(errors)
-                    _push_log("INFO",
-                              f"@{username}: {created} created, {skipped} skipped, {len(errors)} errors")
-                    for err in errors[:5]:
-                        _push_log("WARN", f"  {err}")
-                except Exception as ex:
-                    total_errors += 1
-                    _push_log("ERROR", f"Failed to push posts for @{username}: {ex}")
-
-            finished = datetime.utcnow().isoformat()
-            _last_run = {
-                "status": "success",
-                "startedAt": started,
-                "finishedAt": finished,
-                "channelsProcessed": total_channels,
-                "postsScraped": total_scraped,
-                "postsCreated": total_created,
-                "postsSkipped": total_skipped,
-                "errors": total_errors,
-            }
-            _push_log("INFO",
-                       f"=== Cycle finished: {total_created} created, "
-                       f"{total_skipped} skipped, {total_errors} errors ===")
-
-        except Exception as ex:
-            _last_run = {
-                "status": "failed",
-                "startedAt": started,
-                "finishedAt": datetime.utcnow().isoformat(),
-                "error": str(ex),
-            }
-            _push_log("ERROR", f"=== Cycle FAILED: {ex} ===")
-        finally:
-            _run_status = {"running": False}
-
-
-# ─── Lifecycle ────────────────────────────────────────────────────────────────
 @app.on_event("startup")
 async def on_startup() -> None:
-    _push_log("INFO", "Telegram crawler server started")
+    global _scheduler_started, _reload_thread
+    _push_log("INFO", "Telegram crawler server v2 started (worker-based scheduler)")
     telegram_client.init(
         settings.telegram_api_id,
         settings.telegram_api_hash,
         settings.telegram_session_path,
     )
-    scheduler.add_job(
-        _run_cycle,
-        "interval",
-        minutes=_interval_minutes,
-        id="telegram-crawl-cycle",
-        replace_existing=True,
-        max_instances=1,
-        coalesce=True,
+    _scheduler.load_channels()
+    _scheduler.start()
+    _scheduler_started = True
+
+    def _periodic_reload() -> None:
+        while not _reload_stop.wait(settings.channel_reload_seconds):
+            try:
+                _scheduler.reload_channels()
+            except Exception as ex:
+                _push_log("WARN", f"Periodic channel reload failed: {ex}")
+
+    _reload_thread = threading.Thread(target=_periodic_reload, daemon=True, name="tg-reload")
+    _reload_thread.start()
+    _push_log(
+        "INFO",
+        f"Cooldown={settings.min_cooldown_seconds}s | "
+        f"workers={settings.num_workers} | reload every {settings.channel_reload_seconds}s",
     )
-    scheduler.start()
 
 
 @app.on_event("shutdown")
 async def on_shutdown() -> None:
+    _reload_stop.set()
+    _scheduler.stop()
     telegram_client.close()
-    if scheduler.running:
-        scheduler.shutdown(wait=False)
 
 
-# ─── Health / Status ─────────────────────────────────────────────────────────
 @app.get("/health")
 def health() -> dict:
+    status = _scheduler.get_status()
     return {
         "ok": True,
-        **_get_scheduler_status(),
-        "crawlRunning": _run_status["running"],
+        "schedulerRunning": _scheduler_started and not status.get("stopped"),
+        "paused": status.get("paused", False),
+        "numWorkers": settings.num_workers,
         "backendBaseUrl": settings.backend_base_url,
         "telegramApiReady": telegram_client.is_ready(),
+        "minCooldownSeconds": settings.min_cooldown_seconds,
+        "numWorkers": settings.num_workers,
+        **status,
     }
 
 
 @app.post("/run-now")
 def run_now() -> dict:
-    if _lock.locked():
-        raise HTTPException(status_code=409, detail="Crawl already in progress")
-    t = threading.Thread(target=_run_cycle, daemon=True)
-    t.start()
-    return {"ok": True, "message": "Telegram crawl cycle started in background"}
+    count = _scheduler.trigger_run_now()
+    return {"ok": True, "message": f"Triggered crawl for {count} channel(s)"}
 
 
 @app.get("/last-run")
 def last_run() -> dict:
-    return _last_run or {"status": "never-run"}
+    return _last_run or {"status": "continuous-scheduler"}
 
 
 @app.get("/search")
 async def search(q: str = "") -> dict:
-    """Search for Telegram channels and groups by name, topic, or username.
-
-    Uses the Telegram MTProto API when configured (any language, any type).
-    Falls back to web scraping when API credentials are not set.
-    """
-    _push_log("INFO", f"[search] received q={repr(q)} (len={len(q)})")
+    _push_log("INFO", f"[search] q={repr(q)}")
     if not q or len(q.strip()) < 2:
         return {"results": []}
     q = q.strip()
 
-    # ── Telegram API — fast, complete, works in every language ───────────────
     if telegram_client.is_ready():
         results = await telegram_client.search(q)
         if results:
             return {"results": results}
-        # API returned nothing (edge case) — fall through to web scraping
 
-    # ── Web-scraping fallback ─────────────────────────────────────────────────
     try:
         results = await asyncio.to_thread(
             search_channels, q, settings.request_timeout_seconds
@@ -278,37 +157,39 @@ async def search(q: str = "") -> dict:
 @app.get("/control/status")
 def scheduler_status() -> dict:
     return {
-        **_get_scheduler_status(),
-        "crawlRunning": _run_status["running"],
-        "lastRun": _last_run or {"status": "never-run"},
+        "schedulerRunning": _scheduler_started,
+        **_scheduler.get_status(),
+        "lastRun": _last_run or {"status": "continuous-scheduler"},
     }
 
 
 @app.post("/control/start")
 def start_scheduler() -> dict:
-    if not scheduler.running:
-        raise HTTPException(status_code=503, detail="Scheduler not initialized")
-    try:
-        scheduler.resume_job("telegram-crawl-cycle")
-        _push_log("INFO", "Scheduler resumed by admin")
-    except Exception as ex:
-        raise HTTPException(status_code=500, detail=str(ex))
-    return {"ok": True, "message": "Scheduler started", **_get_scheduler_status()}
+    _scheduler.resume()
+    _push_log("INFO", "Scheduler resumed by admin")
+    return {"ok": True, "message": "Scheduler started", **_scheduler.get_status()}
 
 
 @app.post("/control/stop")
 def stop_scheduler() -> dict:
-    if not scheduler.running:
-        raise HTTPException(status_code=503, detail="Scheduler not initialized")
-    try:
-        scheduler.pause_job("telegram-crawl-cycle")
-        _push_log("INFO", "Scheduler paused by admin")
-    except Exception as ex:
-        raise HTTPException(status_code=500, detail=str(ex))
-    return {"ok": True, "message": "Scheduler stopped", **_get_scheduler_status()}
+    _scheduler.pause()
+    _push_log("INFO", "Scheduler paused by admin")
+    return {"ok": True, "message": "Scheduler stopped", **_scheduler.get_status()}
 
 
-# ─── Logs ─────────────────────────────────────────────────────────────────────
+@app.post("/control/restart")
+def restart_scheduler() -> dict:
+    _scheduler.restart()
+    _push_log("INFO", "Scheduler restarted by admin")
+    return {"ok": True, "message": "Scheduler restarted", **_scheduler.get_status()}
+
+
+@app.post("/control/reload")
+def reload_channels() -> dict:
+    _scheduler.reload_channels()
+    return {"ok": True, **_scheduler.get_status()}
+
+
 @app.get("/logs")
 def get_logs(since: Optional[str] = None, limit: int = 200) -> dict:
     with _log_lock:
@@ -325,21 +206,32 @@ def clear_logs() -> dict:
     return {"ok": True}
 
 
-# ─── Interval ─────────────────────────────────────────────────────────────────
 class IntervalRequest(BaseModel):
     minutes: int
 
 
+class StalenessRequest(BaseModel):
+    weight: float
+
+
 @app.post("/control/interval")
 def set_interval(body: IntervalRequest) -> dict:
-    global _interval_minutes
+    """Set minimum cooldown between crawls of the same channel (minutes)."""
     if body.minutes < 1 or body.minutes > 1440:
         raise HTTPException(status_code=400, detail="Interval must be 1–1440 minutes")
-    with _interval_lock:
-        _interval_minutes = body.minutes
-    if scheduler.running:
-        job = scheduler.get_job("telegram-crawl-cycle")
-        if job:
-            scheduler.reschedule_job("telegram-crawl-cycle", trigger="interval", minutes=body.minutes)
-    _push_log("INFO", f"Crawl interval changed to {body.minutes} minute(s)")
-    return {"ok": True, "intervalMinutes": body.minutes, **_get_scheduler_status()}
+    _scheduler._min_cooldown = float(body.minutes * 60)
+    _scheduler._staleness_weight = body.minutes / 10.0
+    _push_log("INFO", f"Min channel cooldown set to {body.minutes} minute(s)")
+    return {
+        "ok": True,
+        "minCooldownSeconds": _scheduler._min_cooldown,
+        "stalenessWeight": _scheduler._staleness_weight,
+    }
+
+
+@app.post("/control/staleness")
+def set_staleness(body: StalenessRequest) -> dict:
+    if body.weight < 0.1 or body.weight > 20.0:
+        raise HTTPException(status_code=400, detail="Weight must be 0.1–20.0")
+    _scheduler._staleness_weight = body.weight
+    return {"ok": True, "stalenessWeight": body.weight}

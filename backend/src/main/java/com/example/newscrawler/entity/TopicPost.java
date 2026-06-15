@@ -39,7 +39,7 @@ public class TopicPost {
     @Column(columnDefinition = "TEXT")
     private String authorProfilePicture;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String mediaUrl;
 
     private String mediaType; // "image", "video", or null for text-only

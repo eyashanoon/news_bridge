@@ -28,7 +28,7 @@ DB_USER = os.getenv("DB_USERNAME", "news_user")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "news_pass")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "3307")
-DB_NAME = os.getenv("DB_NAME", "news_crawler_new")
+DB_NAME = os.getenv("DB_NAME", "news_crawler")
 DB_URL = os.getenv(
     "DB_URL",
     f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
@@ -72,9 +72,16 @@ def normalize_arabic(text: str) -> str:
 
 def detect_language(text: str) -> str:
     try:
-        return "ar" if detect(text).startswith("ar") else "en"
+        code = detect(text)
+        if not code:
+            return ""
+        if code.startswith("ar"):
+            return "ar"
+        if code.startswith("en"):
+            return "en"
+        return code[:2] if len(code) >= 2 else code
     except Exception:
-        return "en"
+        return ""
 
 
 def _load_classifier() -> None:
@@ -243,10 +250,11 @@ def _score_tags(text: str, entities: list[str], keywords: list[tuple[str, float]
 
 
 def _ensure_post_tags_table() -> None:
+    """Ensure tags land in PostTags — same table the Java API reads (PostTag entity)."""
     with engine.begin() as conn:
         conn.execute(text(
             """
-            CREATE TABLE IF NOT EXISTS post_tags (
+            CREATE TABLE IF NOT EXISTS PostTags (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 post_id BIGINT NOT NULL,
                 tag VARCHAR(255) NOT NULL,
@@ -255,6 +263,17 @@ def _ensure_post_tags_table() -> None:
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             """
         ))
+        # Migrate legacy rows written to lowercase post_tags (Linux is case-sensitive)
+        for legacy_table in ("post_tags", "posts_tags"):
+            try:
+                conn.execute(text(
+                    f"""
+                    INSERT IGNORE INTO PostTags (post_id, tag)
+                    SELECT post_id, tag FROM {legacy_table}
+                    """
+                ))
+            except SQLAlchemyError:
+                pass
 
 
 def process_pending_posts() -> dict[str, int]:
@@ -320,7 +339,7 @@ def process_pending_posts() -> dict[str, int]:
                         tag = tag_result["tag"]
                         try:
                             conn.execute(
-                                text("INSERT IGNORE INTO post_tags (post_id, tag) VALUES (:post_id, :tag)"),
+                                text("INSERT IGNORE INTO PostTags (post_id, tag) VALUES (:post_id, :tag)"),
                                 {"post_id": post_id, "tag": tag},
                             )
                             tag_count += 1

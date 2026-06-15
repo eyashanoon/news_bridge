@@ -32,6 +32,7 @@ Usage
   }
 """
 
+import logging
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -47,6 +48,8 @@ from config import DEVICE, CHECKPOINT_DIR, ID2LABEL, NUM_LABELS, MAX_SEQ_LEN
 from features import extract_numerical_features, build_text_input
 from model import PageClassifier
 
+logger = logging.getLogger(__name__)
+
 
 class Predictor:
     """
@@ -57,7 +60,7 @@ class Predictor:
     train.py as a convenience).
     """
 
-    def __init__(self, checkpoint_dir: str | Path = CHECKPOINT_DIR):
+    def __init__(self, checkpoint_dir: str | Path = CHECKPOINT_DIR, device=None):
         checkpoint_dir = Path(checkpoint_dir)
         ckpt_path      = checkpoint_dir / "best_model.pt"
         tok_path       = checkpoint_dir / "tokenizer"
@@ -68,25 +71,37 @@ class Predictor:
                 "Run  python train.py  first."
             )
 
-        print(f"Loading model from {ckpt_path} ...")
-        ckpt = torch.load(ckpt_path, map_location=DEVICE)
-
-        # Tokenizer
+        self.device = device or DEVICE
         self.tokenizer = AutoTokenizer.from_pretrained(str(tok_path))
+        try:
+            self._load_checkpoint(ckpt_path)
+        except torch.cuda.OutOfMemoryError:
+            if self.device.type != "cuda":
+                raise
+            torch.cuda.empty_cache()
+            logger.warning(
+                "CUDA OOM while loading page classifier; retrying on CPU"
+            )
+            self.device = torch.device("cpu")
+            self._load_checkpoint(ckpt_path)
 
-        # Model
-        self.model = PageClassifier().to(DEVICE)
+    def _load_checkpoint(self, ckpt_path: Path) -> None:
+        print(f"Loading model from {ckpt_path} on {self.device} ...")
+        ckpt = torch.load(ckpt_path, map_location=self.device)
+
+        self.model = PageClassifier().to(self.device)
         self.model.load_state_dict(ckpt["model_state"])
         self.model.eval()
 
-        # Scaler (embedded in checkpoint)
-        self._scaler       = StandardScaler()
+        self._scaler = StandardScaler()
         self._scaler.mean_ = np.array(ckpt["scaler_mean"])
         self._scaler.scale_ = np.array(ckpt["scaler_scale"])
         self._scaler.n_features_in_ = len(self._scaler.mean_)
 
-        print(f"Model ready (checkpoint epoch {ckpt['epoch']}, "
-              f"val macro-F1 = {ckpt['val_f1']:.4f})")
+        print(
+            f"Model ready on {self.device} (checkpoint epoch {ckpt['epoch']}, "
+            f"val macro-F1 = {ckpt['val_f1']:.4f})"
+        )
 
     # ── Internal helpers ──────────────────────────────────────────────────────
 
@@ -103,9 +118,9 @@ class Predictor:
         raw_feat = extract_numerical_features(record).reshape(1, -1)
         feat     = self._scaler.transform(raw_feat).flatten().astype(np.float32)
         return {
-            "input_ids":      enc["input_ids"].to(DEVICE),
-            "attention_mask": enc["attention_mask"].to(DEVICE),
-            "features":       torch.tensor(feat, dtype=torch.float32).unsqueeze(0).to(DEVICE),
+            "input_ids":      enc["input_ids"].to(self.device),
+            "attention_mask": enc["attention_mask"].to(self.device),
+            "features":       torch.tensor(feat, dtype=torch.float32).unsqueeze(0).to(self.device),
         }
 
     def _logits_to_result(self, logits: torch.Tensor) -> dict:
@@ -128,12 +143,27 @@ class Predictor:
         The 'html' field is ignored; all signals come from pre-extracted fields.
         """
         inputs = self._encode(record)
-        with torch.no_grad():
-            logits = self.model(
-                inputs["input_ids"],
-                inputs["attention_mask"],
-                inputs["features"],
-            )
+        try:
+            with torch.no_grad():
+                logits = self.model(
+                    inputs["input_ids"],
+                    inputs["attention_mask"],
+                    inputs["features"],
+                )
+        except torch.cuda.OutOfMemoryError:
+            if self.device.type != "cuda":
+                raise
+            torch.cuda.empty_cache()
+            logger.warning("CUDA OOM during inference; moving page classifier to CPU")
+            self.device = torch.device("cpu")
+            self.model = self.model.to(self.device)
+            inputs = self._encode(record)
+            with torch.no_grad():
+                logits = self.model(
+                    inputs["input_ids"],
+                    inputs["attention_mask"],
+                    inputs["features"],
+                )
         return self._logits_to_result(logits)
 
     def predict_raw(
@@ -187,9 +217,9 @@ class Predictor:
         all_results = []
         with torch.no_grad():
             for batch in loader:
-                ids   = batch["input_ids"].to(DEVICE)
-                mask  = batch["attention_mask"].to(DEVICE)
-                feats = batch["features"].to(DEVICE)
+                ids   = batch["input_ids"].to(self.device)
+                mask  = batch["attention_mask"].to(self.device)
+                feats = batch["features"].to(self.device)
                 logits = self.model(ids, mask, feats)
                 probs  = F.softmax(logits, dim=-1).cpu()
                 for row in probs:

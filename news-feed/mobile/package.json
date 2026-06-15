@@ -14,8 +14,11 @@
     "expo": "~56.0.8",
     "expo-font": "~56.0.5",
     "expo-image-picker": "~56.0.15",
+    "expo-linking": "~56.0.14",
+    "expo-location": "~56.0.17",
     "expo-splash-screen": "~56.0.10",
     "expo-status-bar": "~56.0.4",
+    "franc-min": "^6.2.0",
     "i18next": "^26.3.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -25,7 +28,8 @@
     "react-native-reanimated": "4.3.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "4.25.2",
-    "react-native-web": "^0.21.2"
+    "react-native-web": "^0.21.2",
+    "react-native-webview": "13.16.1"
   },
   "scripts": {
     "start": "expo start",

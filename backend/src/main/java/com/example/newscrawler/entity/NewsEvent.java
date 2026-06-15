@@ -26,6 +26,22 @@ public class NewsEvent {
     private CategoryField field;
 
     /**
+     * Comma-separated list of all field IDs assigned to this event.
+     * Used when creating the corresponding topic to preserve multiple fields.
+     */
+    @Column(name = "field_ids", columnDefinition = "TEXT")
+    private String fieldIds;
+
+    /**
+     * Foreign key to the trending-topics entry that was auto-created
+     * from this event. Used to reliably clean up the associated topic
+     * (and its posts) when the event is deleted, without relying on a
+     * fragile title match.
+     */
+    @Column(name = "topic_id")
+    private Long topicId;
+
+    /**
      * DRAFT         — admin-only visible
      * EDITOR_VISIBLE — visible to editors of this field (can request publish rights)
      * PUBLIC        — visible to all users (readers can view live news)
@@ -57,6 +73,12 @@ public class NewsEvent {
 
     public CategoryField getField() { return field; }
     public void setField(CategoryField field) { this.field = field; }
+
+    public String getFieldIds() { return fieldIds; }
+    public void setFieldIds(String fieldIds) { this.fieldIds = fieldIds; }
+
+    public Long getTopicId() { return topicId; }
+    public void setTopicId(Long topicId) { this.topicId = topicId; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

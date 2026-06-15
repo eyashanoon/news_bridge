@@ -5,11 +5,9 @@
  *
  * Responsibilities
  * ────────────────
- * 1. Encode a Web Audio AudioBuffer → 16-bit PCM WAV bytes
- *    (Rhubarb only accepts .wav / .ogg, not MP3).
- * 2. POST the WAV to the Vite server-side Rhubarb plugin
+ * 1. POST TTS audio (MP3 or WAV) to the Vite server-side Rhubarb plugin
  *    at /api/rhubarb and parse its JSON response.
- * 3. Requires /api/rhubarb (Vite plugin + rhubarb.exe + res/). No energy fallback.
+ * 2. Requires /api/rhubarb (Vite plugin + rhubarb binary + res/). No energy fallback.
  *    See news-feed/public/avatar-studio/CHANGES.md
  *
  * Exports

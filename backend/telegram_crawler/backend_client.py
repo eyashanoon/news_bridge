@@ -47,3 +47,12 @@ class BackendClient:
         resp = self._request("POST", "/api/telegram/posts/bulk", json={"posts": posts})
         resp.raise_for_status()
         return resp.json()
+
+    def update_crawl_stats(self, channel_id: int, posts_created: int, avg_view_count: float = 0.0) -> dict[str, Any]:
+        resp = self._request(
+            "PATCH",
+            f"/api/telegram/channels/{channel_id}/crawl-stats",
+            json={"postsCreated": posts_created, "avgViewCount": avg_view_count},
+        )
+        resp.raise_for_status()
+        return resp.json()

@@ -62,6 +62,11 @@ let _rightScreenCanvas = null;
 let _rightScreenCtx    = null;
 let _rightScreenTex    = null;
 
+// ── Left-screen canvas state (for news brief images) ───────
+let _leftScreenCanvas = null;
+let _leftScreenCtx    = null;
+let _leftScreenTex    = null;
+
 // ── Module-level references ─────────────────────────────────
 let renderer, scene, camera, controls, clock;
 let morphMesh = null;          // The mesh that owns the morph targets
@@ -76,10 +81,16 @@ MORPH_NAMES.forEach(n => { currentInfluences[n] = 0; targetInfluences[n] = 0; })
 currentInfluences['X'] = 1;
 targetInfluences['X']  = 1;
 
+// ── Detect portrait / mobile orientation ─────────────────────
+function isPortrait() {
+  return window.innerHeight > window.innerWidth;
+}
+
 // ── Public: initialise the scene ───────────────────────────
 export function initScene(container) {
   const w = window.innerWidth;
   const h = window.innerHeight;
+  const portrait = isPortrait();
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -95,15 +106,20 @@ export function initScene(container) {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x08080f);
 
-  // Camera – wide enough to show the full character (head to toe)
+  // Camera – responsive to orientation
+  // Portrait (mobile): wider FOV + far back to fit all screens + presenter
+  // Landscape (desktop): standard framing
+  const baseFov = portrait ? 60 : 40;
+  const camDist = portrait ? 12.0 : 5.5;
+  const camY    = portrait ? 1.5 : 1.0;
   camera = new THREE.PerspectiveCamera(
-    40,
+    baseFov,
     w / h,
     0.1,
     100
   );
-  camera.position.set(0, 1.0, 5.5);
-  camera.lookAt(0, 1.0, 0);
+  camera.position.set(0, camY, camDist);
+  camera.lookAt(0, camY, 0);
 
   // ── Lighting ───────────────────────────────────────────
   // Strong ambient so no part of the model falls into full black
@@ -132,7 +148,7 @@ export function initScene(container) {
 
   // Orbit controls (disabled during recording – purely for dev)
   controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 1.0, 0);
+  controls.target.set(0, camY, 0);
   controls.enablePan = false;
   controls.minDistance = 2;
   controls.maxDistance = 10;
@@ -217,8 +233,7 @@ function buildStudio() {
   const darkMetal = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, roughness: 0.45, metalness: 0.80 });
 
   // ── News desk ───────────────────────────────────────────────
-  // TABLE_Y = jacket-pocket height (~48 % of 2.2-unit character)
-  const TABLE_Y  = 1.05;
+  const TABLE_Y  = 1.13;
   const TABLE_Z  = 0.58;   // centre z — close to character with small gap
   const TABLE_W  = 2.85;
   const TABLE_D  = 0.80;
@@ -322,14 +337,15 @@ function buildStudio() {
   modBox.position.set(0, panelH / 2, NEAR_Z - 0.06);
   scene.add(modBox);
 
-  // ── Three curved screens ─────────────────────────────────────────
-  // Arc of radius SCR_RAD; side screens at ±SCR_ANG degrees.
-  // Each group is rotated so the screen faces the origin.
-  const SCR_RAD = 3.20;   // larger radius → screens spread apart
-  const SCR_ANG = 52;     // wider angle → no overlap
-  const SCR_Y   = 1.88;
-  const SCR_W   = 2.50;
-  const SCR_H   = 1.41;   // ~16:9
+  // ── Three curved screens — responsive to orientation ──────────
+  // Portrait: screens are narrower and closer together
+  // Landscape: wider spread
+  const inPortrait = isPortrait();
+  const SCR_RAD = inPortrait ? 2.40 : 3.20;
+  const SCR_ANG = inPortrait ? 40 : 52;
+  const SCR_Y   = inPortrait ? 1.50 : 1.88;
+  const SCR_W   = inPortrait ? 1.80 : 2.50;
+  const SCR_H   = inPortrait ? 1.01 : 1.41;
 
   function makeScreenGroup(texObj, angleDeg) {
     const ang = angleDeg * Math.PI / 180;
@@ -408,33 +424,16 @@ function buildStudio() {
     return { tex };
   }
 
-  // Left: image placeholder
+  // Left: image placeholder — uses module-level canvas for dynamic updates
   function makeLeftTex() {
-    const c = document.createElement('canvas'); c.width = 1024; c.height = 576;
-    const t = c.getContext('2d');
-    const bg = t.createLinearGradient(0,0,0,576);
-    bg.addColorStop(0,'#030312'); bg.addColorStop(1,'#05051c');
-    t.fillStyle = bg; t.fillRect(0,0,1024,576);
-    t.strokeStyle = 'rgba(55,50,160,0.15)'; t.lineWidth = 1;
-    for (let x=0;x<1024;x+=64){t.beginPath();t.moveTo(x,0);t.lineTo(x,576);t.stroke();}
-    for (let y=0;y<576;y+=64){t.beginPath();t.moveTo(0,y);t.lineTo(1024,y);t.stroke();}
-    const hdr = t.createLinearGradient(0,0,1024,0);
-    hdr.addColorStop(0,'rgba(30,25,180,0)'); hdr.addColorStop(0.5,'rgba(55,45,220,0.88)'); hdr.addColorStop(1,'rgba(30,25,180,0)');
-    t.fillStyle = hdr; t.fillRect(0,0,1024,72);
-    t.fillStyle='#ffffff'; t.textAlign='center'; t.font='bold 30px sans-serif'; t.fillText('FEATURED IMAGE',512,46);
-    t.strokeStyle='rgba(120,100,255,0.65)'; t.lineWidth=2;
-    t.beginPath(); t.moveTo(80,78); t.lineTo(944,78); t.stroke();
-    t.strokeStyle='rgba(110,100,230,0.42)'; t.lineWidth=3;
-    t.strokeRect(172,95,680,378);
-    // Photo icon
-    t.strokeStyle='rgba(115,105,235,0.55)'; t.lineWidth=3;
-    t.beginPath();
-    t.moveTo(252,430);t.lineTo(422,215);t.lineTo(548,322);t.lineTo(642,232);t.lineTo(772,430);
-    t.closePath(); t.stroke();
-    t.beginPath(); t.arc(690,170,36,0,Math.PI*2); t.stroke();
-    t.fillStyle='rgba(140,130,255,0.50)'; t.font='24px sans-serif'; t.fillText('— image will appear here —',512,528);
-    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
-    return { tex };
+    // Create module-level left screen canvas so it can be updated later
+    _leftScreenCanvas = document.createElement('canvas');
+    _leftScreenCanvas.width = 1024; _leftScreenCanvas.height = 576;
+    _leftScreenCtx = _leftScreenCanvas.getContext('2d');
+    clearLeftScreen();
+    _leftScreenTex = new THREE.CanvasTexture(_leftScreenCanvas);
+    _leftScreenTex.colorSpace = THREE.SRGBColorSpace;
+    return { tex: _leftScreenTex };
   }
 
   // Right: speech text (module-level canvas so updateScreenText can update it)
@@ -483,23 +482,27 @@ export function loadCharacter(url, onReady, onError) {
       model.scale.setScalar(scale);
       model.position.sub(centre.multiplyScalar(scale));
       model.position.y += size.y * scale * 0.5; // align lowest model point with ground
-      const savedPosY = parseFloat(localStorage.getItem('avatar-character-position-y'));
-      if (!Number.isNaN(savedPosY)) {
-        model.position.y = savedPosY;
-      }
+      // Restore full 3D position from localStorage (x, y, z)
+      try {
+        const saved = JSON.parse(localStorage.getItem('avatar-character-position'));
+        if (saved && typeof saved.x === 'number') {
+          model.position.x = saved.x;
+          model.position.y = saved.y;
+          model.position.z = saved.z;
+        }
+      } catch {}
 
       // Re-centre camera to look at vertical midpoint of the model
       // so the whole body is framed properly.
       const midY = size.y * scale * 0.5;
-      camera.position.set(0, midY, 5.5);
+      const portrait = isPortrait();
+      const camDist = portrait ? 12.0 : 5.5;
+      camera.position.set(0, midY, camDist);
       camera.lookAt(0, midY, 0);
       controls.target.set(0, midY, 0);
       controls.update();
 
       // Face the character toward the camera (+Z).
-      // Standard GLB = Y-up, standing upright. A -X rotation tips the model flat
-      // (which is what caused the face-down T-pose bug).  Instead we rotate 180°
-      // on Y so the character stands upright and looks at the camera.
       model.rotation.y = Math.PI;
 
       scene.add(model);
@@ -569,7 +572,7 @@ export function loadCharacter(url, onReady, onError) {
   );
 }
 
-// ── Public: raise / lower the loaded character model ───────
+// ── Public: move the loaded character model in 3D ───────
 export function raiseCharacter(amount = 0.05) {
   if (!characterRoot) return;
   characterRoot.position.y += amount;
@@ -580,9 +583,30 @@ export function lowerCharacter(amount = 0.05) {
   characterRoot.position.y = Math.max(0, characterRoot.position.y - amount);
 }
 
+export function moveCharacterLeft(amount = 0.05) {
+  if (!characterRoot) return;
+  characterRoot.position.x -= amount;
+}
+
+export function moveCharacterRight(amount = 0.05) {
+  if (!characterRoot) return;
+  characterRoot.position.x += amount;
+}
+
+export function moveCharacterForward(amount = 0.05) {
+  if (!characterRoot) return;
+  characterRoot.position.z += amount;
+}
+
+export function moveCharacterBack(amount = 0.05) {
+  if (!characterRoot) return;
+  characterRoot.position.z -= amount;
+}
+
 export function saveCharacterPosition() {
   if (!characterRoot) return;
-  localStorage.setItem('avatar-character-position-y', characterRoot.position.y.toString());
+  const pos = characterRoot.position;
+  localStorage.setItem('avatar-character-position', JSON.stringify({ x: pos.x, y: pos.y, z: pos.z }));
 }
 
 // ── Public: set the target mouth shape ─────────────────────
@@ -619,17 +643,8 @@ function renderLoop() {
 }
 
 // ── Private: smooth morph application via dual-speed lerp ───
-//
-// Two speeds so phonemes snap in immediately (no perceived lag)
-// while the mouth eases back to rest softly (no abrupt closing).
-//
-//   LERP_OPEN  = 60 → t₉₅ ≈ 50ms   — shape reaches target quickly
-//   LERP_CLOSE = 22 → t₉₅ ≈ 136ms  — mouth closes gently
 const LERP_OPEN  = 60;
 const LERP_CLOSE = 22;
-
-// Cartoonish exaggeration: active shape pushes slightly past 1.0.
-// Three.js allows influences > 1 for over-driven blend shapes.
 const INFLUENCE_MULTIPLIER = 1.2;
 
 function applyLerpedMorphs(delta) {
@@ -639,20 +654,15 @@ function applyLerpedMorphs(delta) {
     const idx = morphMesh.morphTargetDictionary[name];
     if (idx === undefined) return;
 
-    // Use the fast speed when moving toward the target (opening/changing),
-    // and the slow speed when moving away from it (closing/fading out).
     const opening = targetInfluences[name] > currentInfluences[name];
     const speed   = opening ? LERP_OPEN : LERP_CLOSE;
 
-    // Frame-rate independent lerp: 1 - e^(-speed * dt)
     currentInfluences[name] = THREE.MathUtils.lerp(
       currentInfluences[name],
       targetInfluences[name],
       1 - Math.exp(-speed * delta)
     );
 
-    // Apply exaggeration multiplier only to speech shapes A-H.
-    // 'X' (closed-mouth) must never be over-driven — write it as-is.
     const isSpeechShape = name !== 'X' && name !== 'Basis';
     const applied = (isSpeechShape && currentInfluences[name] > 0.001)
       ? currentInfluences[name] * INFLUENCE_MULTIPLIER
@@ -661,10 +671,6 @@ function applyLerpedMorphs(delta) {
   });
 }
 
-// ── Public: hard-zero all shapes except the incoming one ────
-// Called on every shape change to prevent mushy overlap between
-// successive mouth positions. The new shape still lerps in;
-// all outgoing shapes snap to 0 immediately.
 export function forceResetNonActive(activeShapeName) {
   MORPH_NAMES.forEach(name => {
     if (name !== activeShapeName) {
@@ -674,27 +680,37 @@ export function forceResetNonActive(activeShapeName) {
   });
 }
 
-// ── Private: handle window resize ───────────────────────────
 function onResize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
+  const portrait = window.innerHeight > window.innerWidth;
+
+  // Adjust camera FOV and distance for portrait
+  camera.fov = portrait ? 60 : 40;
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   renderer.setSize(w, h);
+
+  // If not in static camera mode, adjust camera position for orientation
+  if (!_staticCameraActive) {
+    const midY = 1.0;
+    const dist = portrait ? 12.0 : 5.5;
+    camera.position.set(0, midY, dist);
+    controls.target.set(0, midY, 0);
+    controls.update();
+  }
 }
 
-// ── Public: expose the WebGL canvas for MediaRecorder capture ─
 export function getCanvas() { return renderer.domElement; }
+
 // ── Private: smooth bone pose lerp + wave oscillation ────────
 function _applyBonePose(delta) {
   const now = performance.now();
 
-  // Per-part animation progress (null = no animation running for that part)
   const tL = _poseAnimL ? Math.min(1, (now - _poseAnimL.startTime) / _poseAnimL.durationMs) : null;
   const tR = _poseAnimR ? Math.min(1, (now - _poseAnimR.startTime) / _poseAnimR.durationMs) : null;
   const tH = _poseAnimH ? Math.min(1, (now - _poseAnimH.startTime) / _poseAnimH.durationMs) : null;
 
-  // Wave still writes to boneTarget so normal lerp picks it up
   if (_waveActive) {
     _waveTime += delta;
     const fore = 'DEF-forearm' + _waveSide;
@@ -708,7 +724,6 @@ function _applyBonePose(delta) {
     const bone = boneMap[name];
     if (!bone) continue;
 
-    // Which animation slot (if any) governs this bone?
     let anim = null, t = null;
     if      (BONES_SET_L.has(name) && tL !== null) { anim = _poseAnimL; t = tL; }
     else if (BONES_SET_R.has(name) && tR !== null) { anim = _poseAnimR; t = tR; }
@@ -735,44 +750,34 @@ function _applyBonePose(delta) {
     }
   }
 
-  // Fire completion callbacks
   if (tL >= 1) { const cb = _poseAnimL.onComplete; _poseAnimL = null; if (cb) cb(); }
   if (tR >= 1) { const cb = _poseAnimR.onComplete; _poseAnimR = null; if (cb) cb(); }
   if (tH >= 1) { const cb = _poseAnimH.onComplete; _poseAnimH = null; if (cb) cb(); }
 }
 
 // ── Public: named pose / animation exports ───────────────────
-
-/** Turn head left (from viewer’s perspective). */
 export function headTurnLeft() {
   const n = 'DEF-spine006';
   if (!boneTarget[n]) return;
   boneTarget[n].y = boneRest[n].y + 0.55;
 }
 
-/** Turn head right (from viewer's perspective). */
 export function headTurnRight() {
   const n = 'DEF-spine006';
   if (!boneTarget[n]) return;
   boneTarget[n].y = boneRest[n].y - 0.55;
 }
 
-/** Return head to forward position. */
 export function headCenter() {
   const n = 'DEF-spine006';
   if (!boneRest[n]) return;
   boneTarget[n] = { ...boneRest[n] };
 }
 
-/**
- * Raise one arm outward and up.
- * @param {'L'|'R'} side
- */
 export function raiseArm(side) {
   setArmPose(side, { up: 0.93 });
 }
 
-/** Return both arms (and fingers) to idle / rest position and stop any wave. */
 export function armsIdle() {
   stopWave();
   for (const name of ANIM_BONES) {
@@ -782,10 +787,6 @@ export function armsIdle() {
   }
 }
 
-/**
- * Raise one arm and start a hand-wave oscillation on the forearm.
- * @param {'L'|'R'} side
- */
 export function startWave(side = 'R') {
   const arm  = 'DEF-upper_arm' + side;
   const fore = 'DEF-forearm'   + side;
@@ -799,7 +800,6 @@ export function startWave(side = 'R') {
   if (boneRest[fore]) boneTarget[fore] = { ...boneRest[fore] };
 }
 
-/** Stop the current wave animation and lower the forearm back to rest. */
 export function stopWave() {
   if (!_waveActive) return;
   _waveActive = false;
@@ -810,15 +810,10 @@ export function stopWave() {
 // ── Pose Studio engine ───────────────────────────────────────
 function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
 
-// Three independent timed-animation slots (one per body part)
-let _poseAnimL = null; // left arm + hand + fingers
-let _poseAnimR = null; // right arm + hand + fingers
-let _poseAnimH = null; // head
+let _poseAnimL = null;
+let _poseAnimR = null;
+let _poseAnimH = null;
 
-/**
- * Nudge a single bone's target rotation by delta radians on one axis.
- * Cancels only the animation slot that owns this bone.
- */
 export function tweakJoint(boneName, axis, delta) {
   if (!boneTarget[boneName]) return;
   if      (BONES_SET_L.has(boneName)) _poseAnimL = null;
@@ -827,7 +822,6 @@ export function tweakJoint(boneName, axis, delta) {
   boneTarget[boneName][axis] = (boneTarget[boneName][axis] || 0) + delta;
 }
 
-/** Reset a single bone's target rotation to its captured rest. */
 export function resetJoint(boneName) {
   if (!boneRest[boneName] || !boneTarget[boneName]) return;
   if      (BONES_SET_L.has(boneName)) _poseAnimL = null;
@@ -836,10 +830,6 @@ export function resetJoint(boneName) {
   boneTarget[boneName] = { ...boneRest[boneName] };
 }
 
-/**
- * Snapshot the current boneTarget for all animation bones.
- * @returns {{ [boneName]: {x,y,z} }}
- */
 export function captureCurrentPose() {
   const snap = {};
   for (const name of ANIM_BONES) {
@@ -848,13 +838,8 @@ export function captureCurrentPose() {
   return snap;
 }
 
-/**
- * Apply a saved pose by updating boneTarget.
- * The normal BONE_LERP smoothly drives bones to the new pose.
- */
 export function applyPose(poseData) {
   stopWave();
-  // Only clear the animation slot that owns bones being set
   for (const name of Object.keys(poseData)) {
     if      (BONES_SET_L.has(name)) _poseAnimL = null;
     else if (BONES_SET_R.has(name)) _poseAnimR = null;
@@ -865,11 +850,6 @@ export function applyPose(poseData) {
   }
 }
 
-/**
- * Smoothly animate from fromPose to toPose over durationMs.
- * Uses ease-in-out. Instantly snaps to fromPose, then drives to toPose.
- */
-/** Animate all bones across all three parts simultaneously (backward-compat). */
 export function animatePose(fromPose, toPose, durationMs = 1500, onComplete = null) {
   stopWave();
   animatePartPose('L', fromPose, toPose, durationMs, null);
@@ -877,14 +857,12 @@ export function animatePose(fromPose, toPose, durationMs = 1500, onComplete = nu
   animatePartPose('H', fromPose, toPose, durationMs, onComplete);
 }
 
-/** Stop all three part animations simultaneously (backward-compat). */
 export function stopPoseAnim() {
   stopPartPoseAnim('L');
   stopPartPoseAnim('R');
   stopPartPoseAnim('H');
 }
 
-/** Capture only the specified subset of bones from boneTarget. */
 export function capturePartialPose(boneNames) {
   const snap = {};
   for (const name of boneNames) {
@@ -893,10 +871,6 @@ export function capturePartialPose(boneNames) {
   return snap;
 }
 
-/**
- * Smoothly animate one part (L / R / H) from fromPose to toPose.
- * The other two parts are unaffected.
- */
 export function animatePartPose(part, fromPose, toPose, durationMs = 1500, onComplete = null) {
   const bones = part === 'L' ? BONES_L : part === 'R' ? BONES_R : BONES_H;
   const from = {}, to = {};
@@ -905,7 +879,6 @@ export function animatePartPose(part, fromPose, toPose, durationMs = 1500, onCom
     from[name] = fromPose[name] ? { ...fromPose[name] } : (rest ? { ...rest } : null);
     to[name]   = toPose[name]   ? { ...toPose[name]   } : (rest ? { ...rest } : null);
   }
-  // Snap immediately to fromPose for this part
   for (const name of bones) {
     const f = from[name];
     if (!f || !boneMap[name]) continue;
@@ -919,7 +892,6 @@ export function animatePartPose(part, fromPose, toPose, durationMs = 1500, onCom
   else                   _poseAnimH = slot;
 }
 
-/** Freeze one part's animation and hold current position. */
 export function stopPartPoseAnim(part) {
   let slot;
   if (part === 'L')      { slot = _poseAnimL; _poseAnimL = null; }
@@ -932,30 +904,10 @@ export function stopPartPoseAnim(part) {
   }
 }
 
-/**
- * Set one arm's pose via individual joint angles (additive on top of rest).
- *
- * @param {'L'|'R'} side
- * @param {object}  opts
- * @param {number}  [opts.up]          0–1   shoulder raise (0=rest, 1=fully raised)
- * @param {number}  [opts.forward]    -1–1   arm swing forward(+)/back(-)
- * @param {number}  [opts.elbowBend]   0–1   elbow flex (0=straight, 1=fully bent ~120°)
- * @param {number}  [opts.wristFlex]  -1–1   wrist flex/extend (+1=back, -1=palm forward)
- * @param {number}  [opts.wristTwist] -1–1   wrist supination/pronation
- */
 export function setArmPose(side, opts = {}) {
-  const {
-    up         = 0,
-    forward    = 0,
-    elbowBend  = 0,
-    wristFlex  = 0,
-    wristTwist = 0,
-  } = opts;
-
-  stopWave();   // manual pose overrides wave
-
+  const { up = 0, forward = 0, elbowBend = 0, wristFlex = 0, wristTwist = 0 } = opts;
+  stopWave();
   const dir = side === 'L' ? 1 : -1;
-
   const arm = 'DEF-upper_arm' + side;
   if (boneRest[arm]) {
     boneTarget[arm] = {
@@ -964,7 +916,6 @@ export function setArmPose(side, opts = {}) {
       z: boneRest[arm].z + dir * up * 1.45,
     };
   }
-
   const fore = 'DEF-forearm' + side;
   if (boneRest[fore]) {
     boneTarget[fore] = {
@@ -973,7 +924,6 @@ export function setArmPose(side, opts = {}) {
       z: boneRest[fore].z,
     };
   }
-
   const hand = 'DEF-hand' + side;
   if (boneRest[hand]) {
     boneTarget[hand] = {
@@ -984,24 +934,10 @@ export function setArmPose(side, opts = {}) {
   }
 }
 
-/**
- * Curl the fingers of one hand.
- *
- * @param {'L'|'R'} side
- * @param {object}  opts  – each 0 (open) … 1 (fully closed fist)
- * @param {number}  [opts.thumb]
- * @param {number}  [opts.index]
- * @param {number}  [opts.middle]
- * @param {number}  [opts.ring]
- * @param {number}  [opts.pinky]
- */
 export function setFingers(side, opts = {}) {
   const { thumb = 0, index = 0, middle = 0, ring = 0, pinky = 0 } = opts;
-
-  // Max curl per segment [proximal, intermediate, distal] in radians
-  const CURL  = [0.65, 1.35, 1.2];  // index/middle/ring/pinky
-  const THUMB = [0.5,  0.9,  0.7];  // thumb is shorter-ranged
-
+  const CURL  = [0.65, 1.35, 1.2];
+  const THUMB = [0.5,  0.9,  0.7];
   const apply = (prefix, amount, maxCurl) => {
     for (let seg = 1; seg <= 3; seg++) {
       const name = prefix + '0' + seg + side;
@@ -1014,10 +950,291 @@ export function setFingers(side, opts = {}) {
       }
     }
   };
-
   apply('DEF-thumb',    thumb,  THUMB);
   apply('DEF-f_index',  index,  CURL);
   apply('DEF-f_middle', middle, CURL);
   apply('DEF-f_ring',   ring,   CURL);
   apply('DEF-f_pinky',  pinky,  CURL);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// News Brief Extensions
+// ═══════════════════════════════════════════════════════════════
+
+// ── Public: update right screen with title + scrolling summary ─
+// The title stays fixed at top in bold. The summary scrolls based on
+// progress (0..1) so the currently-spoken portion is visible.
+// Optional titleIndex/titleTotal show a "Title N of M" progress footer.
+export function updateScreenTextNewsBrief(title, summary, progress = 0, titleIndex = 0, titleTotal = 0) {
+  if (!_rightScreenCtx || !_rightScreenTex) return;
+  _drawRightScreenNewsBrief(title, summary, progress, titleIndex, titleTotal);
+  _rightScreenTex.needsUpdate = true;
+}
+
+function _drawRightScreenNewsBrief(title, summary, progress, titleIndex, titleTotal) {
+  const ctx = _rightScreenCtx;
+  const W = _rightScreenCanvas.width;
+  const H = _rightScreenCanvas.height;
+
+  // Background
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#030312'); bg.addColorStop(1, '#06061e');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(60,55,180,0.13)'; ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 64) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 64) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Header bar
+  const hdr = ctx.createLinearGradient(0, 0, W, 0);
+  hdr.addColorStop(0,'rgba(30,25,180,0)'); hdr.addColorStop(0.5,'rgba(55,45,220,0.88)'); hdr.addColorStop(1,'rgba(30,25,180,0)');
+  ctx.fillStyle = hdr; ctx.fillRect(0, 0, W, 72);
+  ctx.textAlign = 'center'; ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 30px sans-serif'; ctx.fillText('NOW SAYING', W / 2, 46);
+  ctx.strokeStyle = 'rgba(120,100,255,0.65)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(80, 78); ctx.lineTo(W - 80, 78); ctx.stroke();
+
+  // Progress footer bar (shows when reading multiple titles)
+  if (titleTotal > 0) {
+    const fBarY = H - 36;
+    const fBarH = 28;
+    const fBarW = W - 160;
+    const fBarX = 80;
+
+    // Background track
+    ctx.fillStyle = 'rgba(55,45,220,0.15)';
+    ctx.beginPath(); ctx.roundRect(fBarX, fBarY, fBarW, fBarH, 14);
+    ctx.fill();
+
+    // Progress fill
+    const fillFrac = titleIndex / titleTotal;
+    if (fillFrac > 0) {
+      ctx.fillStyle = 'rgba(74,74,255,0.5)';
+      ctx.beginPath();
+      const fillW = Math.max(fBarH, fillFrac * fBarW);
+      ctx.roundRect(fBarX, fBarY, fillW, fBarH, 14);
+      ctx.fill();
+    }
+
+    // Text overlay
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText(`📍 Title ${titleIndex} of ${titleTotal}`, W / 2, fBarY + 19);
+  }
+
+  if (!title && !summary) {
+    ctx.fillStyle = 'rgba(120,115,200,0.45)'; ctx.textAlign = 'center';
+    ctx.font = '26px sans-serif'; ctx.fillText('— speech will appear here —', W / 2, 300);
+    return;
+  }
+
+  // ── Title (always visible, bold, large) ─────────────────────
+  const titleY = 130;
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 38px sans-serif';
+
+  // Word-wrap title
+  const maxW = W - 80;
+  const titleWords = (title || '').split(' ');
+  let titleLine = '', titleLines = [];
+  for (const word of titleWords) {
+    const test = titleLine ? titleLine + ' ' + word : word;
+    if (ctx.measureText(test).width > maxW && titleLine) {
+      titleLines.push(titleLine);
+      titleLine = word;
+    } else titleLine = test;
+  }
+  if (titleLine) titleLines.push(titleLine);
+
+  // Draw title lines
+  let ty = titleY;
+  for (const l of titleLines) {
+    ctx.fillText(l, W / 2, ty);
+    ty += 48;
+  }
+
+  // Separator line after title
+  const sepY = ty + 8;
+  ctx.strokeStyle = 'rgba(120,100,255,0.35)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(120, sepY); ctx.lineTo(W - 120, sepY); ctx.stroke();
+
+  // ── Summary (progress-based scrolling) ────────────────────
+  if (!summary) return;
+
+  ctx.fillStyle = '#c8c8f0';
+  ctx.font = '30px sans-serif';
+
+  // Word-wrap the entire summary to know total height
+  const summaryWords = summary.split(' ');
+  let si = 0, summaryLines = [];
+  for (const word of summaryWords) {
+    const test = summaryLines[si] ? summaryLines[si] + ' ' + word : word;
+    if (ctx.measureText(test).width > maxW && summaryLines[si]) {
+      si++;
+      summaryLines[si] = word;
+    } else {
+      if (!summaryLines[si]) summaryLines[si] = '';
+      summaryLines[si] = summaryLines[si] ? summaryLines[si] + ' ' + word : word;
+    }
+  }
+
+  const totalLines = summaryLines.length;
+  const lineH = 44;
+  const availableH = H - sepY - 20; // space from separator to bottom
+  const visibleLines = Math.max(1, Math.floor(availableH / lineH));
+  const maxScrollStart = Math.max(0, totalLines - visibleLines);
+
+  // Progress determines which line is at the top of the visible window
+  const scrollLine = Math.round(progress * maxScrollStart);
+
+  // Draw visible lines
+  let sy = sepY + 16;
+  for (let i = scrollLine; i < Math.min(totalLines, scrollLine + visibleLines); i++) {
+    ctx.fillText(summaryLines[i], W / 2, sy);
+    sy += lineH;
+  }
+
+  // Scroll progress bar (thin indicator on the right edge)
+  if (totalLines > visibleLines) {
+    const barX = W - 14;
+    const barH = availableH;
+    const barTop = sepY + 10;
+    const thumbH = Math.max(20, barH * (visibleLines / totalLines));
+    const thumbPos = barTop + (barH - thumbH) * progress;
+
+    ctx.fillStyle = 'rgba(55,45,220,0.2)';
+    ctx.fillRect(barX, barTop, 6, barH);
+    ctx.fillStyle = 'rgba(80,70,255,0.5)';
+    ctx.fillRect(barX, thumbPos, 6, thumbH);
+  }
+}
+
+// ── Public: set an image on the left screen ───────────────────
+export function setLeftScreenImage(imageUrl) {
+  if (!_leftScreenCtx || !_leftScreenTex) return;
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const W = _leftScreenCanvas.width;
+    const H = _leftScreenCanvas.height;
+    // Draw a dark background first
+    _leftScreenCtx.fillStyle = '#05051c';
+    _leftScreenCtx.fillRect(0, 0, W, H);
+    // Calculate aspect-ratio fit
+    const scale = Math.min(W / img.width, H / img.height);
+    const iw = img.width * scale;
+    const ih = img.height * scale;
+    const ix = (W - iw) / 2;
+    const iy = (H - ih) / 2;
+    // Draw rounded-rect clip
+    _leftScreenCtx.save();
+    _leftScreenCtx.beginPath();
+    _leftScreenCtx.roundRect(12, 12, W - 24, H - 24, 8);
+    _leftScreenCtx.clip();
+    _leftScreenCtx.drawImage(img, ix, iy, iw, ih);
+    _leftScreenCtx.restore();
+    // Header overlay
+    _leftScreenCtx.fillStyle = 'rgba(55,45,220,0.80)';
+    _leftScreenCtx.fillRect(0, 0, W, 72);
+    _leftScreenCtx.textAlign = 'center';
+    _leftScreenCtx.fillStyle = '#ffffff';
+    _leftScreenCtx.font = 'bold 30px sans-serif';
+    _leftScreenCtx.fillText('FEATURED IMAGE', W / 2, 46);
+    _leftScreenTex.needsUpdate = true;
+  };
+  img.onerror = () => {
+    clearLeftScreen();
+  };
+  img.src = imageUrl;
+}
+
+// ── Public: clear the left screen ─────────────────────────────
+export function clearLeftScreen() {
+  if (!_leftScreenCtx || !_leftScreenTex) return;
+  const W = _leftScreenCanvas.width;
+  const H = _leftScreenCanvas.height;
+  const bg = _leftScreenCtx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#030312'); bg.addColorStop(1, '#05051c');
+  _leftScreenCtx.fillStyle = bg; _leftScreenCtx.fillRect(0, 0, W, H);
+  _leftScreenCtx.strokeStyle = 'rgba(55,50,160,0.15)'; _leftScreenCtx.lineWidth = 1;
+  for (let x = 0; x < W; x += 64) { _leftScreenCtx.beginPath(); _leftScreenCtx.moveTo(x,0); _leftScreenCtx.lineTo(x,H); _leftScreenCtx.stroke(); }
+  for (let y = 0; y < H; y += 64) { _leftScreenCtx.beginPath(); _leftScreenCtx.moveTo(0,y); _leftScreenCtx.lineTo(W,y); _leftScreenCtx.stroke(); }
+  const hdr = _leftScreenCtx.createLinearGradient(0, 0, W, 0);
+  hdr.addColorStop(0, 'rgba(30,25,180,0)'); hdr.addColorStop(0.5, 'rgba(55,45,220,0.88)'); hdr.addColorStop(1, 'rgba(30,25,180,0)');
+  _leftScreenCtx.fillStyle = hdr; _leftScreenCtx.fillRect(0, 0, W, 72);
+  _leftScreenCtx.fillStyle = '#ffffff'; _leftScreenCtx.textAlign = 'center'; _leftScreenCtx.font = 'bold 30px sans-serif';
+  _leftScreenCtx.fillText('FEATURED IMAGE', W / 2, 46);
+  _leftScreenCtx.strokeStyle = 'rgba(120,100,255,0.65)'; _leftScreenCtx.lineWidth = 2;
+  _leftScreenCtx.beginPath(); _leftScreenCtx.moveTo(80, 78); _leftScreenCtx.lineTo(W - 80, 78); _leftScreenCtx.stroke();
+  _leftScreenCtx.fillStyle = 'rgba(140,130,255,0.50)'; _leftScreenCtx.font = '24px sans-serif';
+  _leftScreenCtx.textAlign = 'center';
+  _leftScreenCtx.fillText('— no image —', W / 2, H / 2 + 20);
+  _leftScreenTex.needsUpdate = true;
+}
+
+// ── Public: set static camera for news presentation ───────────
+let _savedCameraPos = null;
+let _savedTarget = null;
+let _staticCameraActive = false;
+
+export function setStaticCamera() {
+  if (_staticCameraActive) return;
+  _savedCameraPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+  _savedTarget = { x: controls.target.x, y: controls.target.y, z: controls.target.z };
+  // Static camera — responsive to orientation, wide FOV + far back for mobile
+  const portrait = isPortrait();
+  const camY = portrait ? 1.8 : 1.6;
+  const camZ = portrait ? 10.0 : 4.5;
+  camera.position.set(0, camY, camZ);
+  camera.lookAt(0, portrait ? 1.2 : 1.1, 0);
+  controls.target.set(0, portrait ? 1.2 : 1.1, 0);
+  controls.update();
+  _staticCameraActive = true;
+}
+
+export function resetCamera() {
+  if (!_staticCameraActive) return;
+  if (_savedCameraPos) {
+    camera.position.set(_savedCameraPos.x, _savedCameraPos.y, _savedCameraPos.z);
+  }
+  if (_savedTarget) {
+    controls.target.set(_savedTarget.x, _savedTarget.y, _savedTarget.z);
+  }
+  controls.update();
+  _staticCameraActive = false;
+  _savedCameraPos = null;
+  _savedTarget = null;
+}
+
+export function disableOrbitControls() {
+  if (controls) controls.enabled = false;
+}
+
+export function enableOrbitControls() {
+  if (controls) controls.enabled = true;
+}
+
+// ── Left-screen slideshow ─────────────────────────────────────
+export function setLeftScreenSlideshow(imageUrls, intervalMs = 1000) {
+  stopLeftScreenSlideshow();
+  if (!imageUrls || imageUrls.length === 0) {
+    clearLeftScreen();
+    return;
+  }
+  let idx = 0;
+  setLeftScreenImage(imageUrls[0]);
+  window.__slideshowTimer = setInterval(() => {
+    idx = (idx + 1) % imageUrls.length;
+    setLeftScreenImage(imageUrls[idx]);
+  }, intervalMs);
+}
+
+export function stopLeftScreenSlideshow() {
+  if (window.__slideshowTimer) {
+    clearInterval(window.__slideshowTimer);
+    window.__slideshowTimer = null;
+  }
 }

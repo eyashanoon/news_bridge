@@ -1,25 +1,46 @@
-import requests
+"""Embedding generation via Ollama's nomic-embed-text model.
+
+Produces 768-dimensional L2-normalized embeddings.
+Inner product of normalized vectors equals cosine similarity.
+"""
+
+import httpx
 import numpy as np
-from config import OLLAMA_URL, EMBEDDING_MODEL
+from typing import List
 
-def embed(text: str) -> np.ndarray:
-    url = f"{OLLAMA_URL}/api/embeddings"
+from config import settings
 
-    res = requests.post(url, json={
-        "model": EMBEDDING_MODEL,
-        "prompt": text
-    })
 
-    res.raise_for_status()
-    data = res.json()
+class Embedder:
+    """Generates normalized embeddings using Ollama's embedding API."""
 
-    embedding = data.get("embedding") or data.get("embeddings")[0]
+    def __init__(self) -> None:
+        self.base_url = settings.ollama_base_url
+        self.model = settings.embedder_model
+        self.dim = settings.vector_dim
 
-    vec = np.array(embedding, dtype=np.float32)
+    def embed(self, text: str) -> np.ndarray:
+        """Embed a single text string into a normalized vector."""
+        resp = httpx.post(
+            f"{self.base_url}/api/embeddings",
+            json={"model": self.model, "prompt": text},
+            timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        vec = np.array(data["embedding"], dtype=np.float32)
+        # L2-normalize so inner product == cosine similarity
+        norm = np.linalg.norm(vec)
+        if norm > 0:
+            vec = vec / norm
+        return vec
 
-    # normalize for cosine similarity
-    norm = np.linalg.norm(vec)
-    if norm > 0:
-        vec = vec / norm
+    def embed_batch(self, texts: List[str]) -> np.ndarray:
+        """Embed multiple texts; returns shape (n, dim).
 
-    return vec
+        Uses sequential calls since Ollama does not natively batch.
+        """
+        vectors = []
+        for t in texts:
+            vectors.append(self.embed(t))
+        return np.array(vectors, dtype=np.float32)

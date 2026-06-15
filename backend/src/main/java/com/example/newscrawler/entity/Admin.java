@@ -11,9 +11,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,6 +43,19 @@ public class Admin {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Set<UserRole> roles = new HashSet<>();
+
+    @Column(nullable = false)
+    private Instant createdAt;
+
+    @Column
+    private Instant lastActivityAt;
+
+    @PrePersist
+    void onCreate() {
+        if (createdAt == null) {
+            createdAt = Instant.now();
+        }
+    }
 
     public Long getId() {
         return id;
@@ -86,5 +99,21 @@ public class Admin {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Instant getLastActivityAt() {
+        return lastActivityAt;
+    }
+
+    public void setLastActivityAt(Instant lastActivityAt) {
+        this.lastActivityAt = lastActivityAt;
     }
 }

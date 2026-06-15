@@ -1,94 +1,130 @@
-# ../backend/ai-assistant-service/rag/ingest.py
+"""Ingestion pipeline: fetches post content, chunks, embeds, and stores."""
 
-from core.embedder import embed
-from ingestion.processor import merge_paragraphs, chunk_text
-from ingestion.fetcher import fetch_post_content
-from datetime import datetime, timezone
-def parse_timestamp(ts):
-    """
-    Parse backend timestamp (e.g., ISO string or numeric)
-    You may need to adjust depending on format.
-    """
-    try:
-        return datetime.fromisoformat(ts).replace(tzinfo=timezone.utc)
-    except:
+import logging
+from typing import List, Dict, Optional
+
+from config import settings
+from core.embedder import Embedder
+from rag.store import VectorStore
+from logic.backend_client import BackendClient
+
+logger = logging.getLogger(__name__)
+
+
+class Ingester:
+    """Handles chunking and ingestion of posts into the vector store."""
+
+    def __init__(
+        self,
+        vector_store: VectorStore,
+        embedder: Embedder,
+        backend_client: BackendClient,
+    ) -> None:
+        self.store = vector_store
+        self.embedder = embedder
+        self.backend = backend_client
+        self.chunk_size = settings.chunk_size
+        self.chunk_overlap = settings.chunk_overlap
+
+    # ------------------------------------------------------------------
+    # Chunking
+    # ------------------------------------------------------------------
+
+    def _chunk_text(self, text: str) -> List[str]:
+        """Split text into overlapping chunks of ~chunk_size characters."""
+        if not text:
+            return []
+
+        chunks = []
+        start = 0
+        while start < len(text):
+            end = start + self.chunk_size
+            chunk = text[start:end]
+            if chunk:
+                chunks.append(chunk)
+            start += self.chunk_size - self.chunk_overlap
+            if start >= len(text):
+                break
+        return chunks
+
+    # ------------------------------------------------------------------
+    # Single-post ingestion
+    # ------------------------------------------------------------------
+
+    async def ingest_post(self, post_id: int) -> bool:
+        """Fetch a post, chunk it, embed, and add to the vector store.
+
+        Returns True if ingestion succeeded, False otherwise.
+        """
         try:
-            return datetime.fromtimestamp(float(ts))
-        except:
-            return None
+            content = await self.backend.get_post_content(post_id)
+            if not content or not content.get("content"):
+                logger.warning("Post %d has no content, skipping", post_id)
+                return False
 
-def _extract_first_line(text: str, max_chars: int = 80) -> str:
-    """Extract first meaningful line from text as a pseudo-title."""
-    for line in text.split("\n"):
-        stripped = line.strip()
-        if len(stripped) > 10:
-            return stripped[:max_chars]
-    return text[:max_chars]
+            title = content.get("title", "")
+            body = content.get("content", "")
+            merged = f"{title}\n\n{body}" if title else body
 
-def ingest_post(store, post_id: int, title: str = ""):
-    content = fetch_post_content(post_id)
-    text = merge_paragraphs(content)
+            chunks = self._chunk_text(merged)
+            if not chunks:
+                return False
 
-    if not text.strip():
-        return 0
+            # Embed all chunks
+            vectors = self.embedder.embed_batch(chunks)
 
-    # Use provided title, or derive one from first line of content
-    if not title:
-        title = _extract_first_line(text)
+            # Fetch post metadata for articleUrl (from FeedPostDTO)
+            meta = await self.backend.get_post_by_id(post_id)
+            article_url = (meta.get("articleUrl") or "") if meta else ""
 
-    prefix = f"[Title: {title}]\n\n" if title else ""
-    full_text = prefix + text
+            # Build metadata for each chunk
+            meta_list = []
+            for chunk in chunks:
+                meta_list.append({
+                    "postId": str(post_id),
+                    "title": title,
+                    "articleUrl": article_url,
+                    "text": chunk,
+                })
 
-    chunks = chunk_text(full_text, size=250, overlap=50)
-    added = 0
+            self.store.add(vectors, meta_list)
+            logger.info(
+                "Ingested post %d (%d chunks, %d total vectors, url: %s)",
+                post_id, len(chunks), self.store.size, article_url,
+            )
+            return True
 
-    for chunk in chunks:
-        vec = embed(chunk)
-        store.add(vec, {
-            "postId": post_id,
-            "text": chunk,
-            "title": title
-        })
-        added += 1
+        except Exception as e:
+            logger.error("Failed to ingest post %d: %s", post_id, e)
+            return False
 
-    return added
+    # ------------------------------------------------------------------
+    # Bulk ingestion of recent posts
+    # ------------------------------------------------------------------
 
-def ingest_posts(store, posts: list[dict], ingested_set: set, max_posts=10, recent_days=None):
-    """
-    Ingest up to max_posts most recent posts.
-    Optionally filter by recent_days (days old).
-    Each post dict should have: postId, and optionally: title, timestamp.
-    """
-    now = datetime.now(timezone.utc)
-    candidates = []
+    async def ingest_recent_posts(self, hours: int = 24) -> int:
+        """Fetch recent posts from the backend and ingest unseen ones.
 
-    for p in posts:
-        pid = p.get("postId")
-        if pid in ingested_set:
-            continue
+        Args:
+            hours: look-back window in hours.
 
-        ts = parse_timestamp(p.get("timestamp"))
-        if ts is None:
-            ts = now
+        Returns:
+            Number of newly ingested posts.
+        """
+        existing_ids = self.store.get_post_ids()
+        posts = await self.backend.get_recent_posts(hours=hours)
+        count = 0
 
-        if recent_days is not None:
-            age_days = (now - ts).days
-            if age_days > recent_days:
+        for post in posts:
+            pid = post.get("id")
+            if not pid:
                 continue
+            pid_str = str(pid)
+            if pid_str in existing_ids:
+                continue
+            if await self.ingest_post(pid):
+                count += 1
+                existing_ids.add(pid_str)
 
-        candidates.append((ts, pid, p.get("title", "")))
-
-    # Sort by timestamp descending (newest first)
-    candidates.sort(key=lambda x: x[0], reverse=True)
-
-    # Limit number of posts to ingest
-    to_ingest = candidates[:max_posts]
-
-    total_chunks = 0
-    for ts, pid, title in to_ingest:
-        chunks_added = ingest_post(store, pid, title=title)
-        if chunks_added > 0:
-            ingested_set.add(pid)
-            total_chunks += chunks_added
-
-    return total_chunks
+        logger.info("Bulk ingestion complete: %d new posts", count)
+        return count

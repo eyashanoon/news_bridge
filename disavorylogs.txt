@@ -1,0 +1,1853 @@
+Endpoint Discovery — BBC News
+https://bbc.com · Job 329cdabe…runs in background
+
+Running
+Clear session
+Discovery Log
+Job started: 329cdabe-d382-4a11-9224-9c3ce203c329
+Starting discovery for https://bbc.com/ (max_depth=2)
+Fetch stack Python: /usr/bin/python
+Fetch stack ready (curl_cffi + Playwright).
+Page classifier model ready.
+[BFS depth=0] Processing node: https://bbc.com/
+  -> 254 same-domain links extracted
+  -> 253 new URLs in 24 pattern groups
+    [probe] https://bbc.com/news  (pattern: https://bbc.com/{slug})
+    [pattern learned] 'https://bbc.com/{slug}' -> listing_article
+    [ok] [representative] Added (depth=1): https://bbc.com/news
+    [ok] Added (depth=1): https://bbc.com/business
+    [ok] Added (depth=1): https://bbc.com/technology
+    [ok] Added (depth=1): https://bbc.com/health
+    [ok] Added (depth=1): https://bbc.com/culture
+    [ok] Added (depth=1): https://bbc.com/arts
+    [ok] Added (depth=1): https://bbc.com/travel
+    [ok] Added (depth=1): https://bbc.com/future-planet
+    [ok] Added (depth=1): https://bbc.com/sport
+    [ok] Added (depth=1): https://bbc.com/audio
+    [ok] Added (depth=1): https://bbc.com/live
+    [ok] Added (depth=1): https://bbc.com/home
+    [probe] https://www.bbc.com/news  (pattern: https://www.bbc.com/{slug})
+    [pattern learned] 'https://www.bbc.com/{slug}' -> listing_article
+    [ok] [representative] Added (depth=1): https://www.bbc.com/news
+    [ok] Added (depth=1): https://www.bbc.com/weather
+    [ok] Added (depth=1): https://www.bbc.com/audio
+    [ok] Added (depth=1): https://www.bbc.com/business
+    [ok] Added (depth=1): https://www.bbc.com/technology
+    [ok] Added (depth=1): https://www.bbc.com/sport
+    [ok] Added (depth=1): https://www.bbc.com/health
+    [ok] Added (depth=1): https://www.bbc.com/culture
+    [ok] Added (depth=1): https://www.bbc.com/travel
+    [ok] Added (depth=1): https://www.bbc.com/arts
+    [ok] Added (depth=1): https://www.bbc.com/future-planet
+    [ok] Added (depth=1): https://www.bbc.com/portuguese
+    [ok] Added (depth=1): https://www.bbc.com/mundo
+    [ok] Added (depth=1): https://www.bbc.com/burmese
+    [ok] Added (depth=1): https://www.bbc.com/indonesia
+    [ok] Added (depth=1): https://www.bbc.com/thai
+    [ok] Added (depth=1): https://www.bbc.com/vietnamese
+    [ok] Added (depth=1): https://www.bbc.com/azeri
+    [ok] Added (depth=1): https://www.bbc.com/kyrgyz
+    [ok] Added (depth=1): https://www.bbc.com/polska
+    [ok] Added (depth=1): https://www.bbc.com/russian
+    [ok] Added (depth=1): https://www.bbc.com/ukrainian
+    [ok] Added (depth=1): https://www.bbc.com/uzbek
+    [ok] Added (depth=1): https://www.bbc.com/arabic
+    [ok] Added (depth=1): https://www.bbc.com/persian
+    [ok] Added (depth=1): https://www.bbc.com/turkce
+    [ok] Added (depth=1): https://www.bbc.com/bengali
+    [ok] Added (depth=1): https://www.bbc.com/dari
+    [ok] Added (depth=1): https://www.bbc.com/gujarati
+    [ok] Added (depth=1): https://www.bbc.com/hindi
+    [ok] Added (depth=1): https://www.bbc.com/marathi
+    [ok] Added (depth=1): https://www.bbc.com/nepali
+    [ok] Added (depth=1): https://www.bbc.com/sinhala
+    [ok] Added (depth=1): https://www.bbc.com/punjabi
+    [ok] Added (depth=1): https://www.bbc.com/afaanoromoo
+    [ok] Added (depth=1): https://www.bbc.com/amharic
+    [ok] Added (depth=1): https://www.bbc.com/afrique
+    [ok] Added (depth=1): https://www.bbc.com/hausa
+    [ok] Added (depth=1): https://www.bbc.com/naidheachdan
+    [ok] Added (depth=1): https://www.bbc.com/japanese
+    [ok] Added (depth=1): https://www.bbc.com/pidgin
+    [ok] Added (depth=1): https://www.bbc.com/somali
+    [ok] Added (depth=1): https://www.bbc.com/swahili
+    [ok] Added (depth=1): https://www.bbc.com/tamil
+    [ok] Added (depth=1): https://www.bbc.com/telugu
+    [ok] Added (depth=1): https://www.bbc.com/tigrinya
+    [ok] Added (depth=1): https://www.bbc.com/urdu
+    [ok] Added (depth=1): https://www.bbc.com/yoruba
+    [probe] https://session.bbc.com/session?ptrt=%5B%27https%3A%2F%2Fwww.bbc.com%2F%27%5D&userOrigin=%5B%27BBCS_BBC%27%5D  (pattern: https://session.bbc.com/{slug})
+    [probe] https://help.bbc.com/hc  (pattern: https://help.bbc.com/{slug})
+    [pattern learned] 'https://help.bbc.com/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://bbc.com/sport/football/world-cup  (pattern: https://bbc.com/{slug}/{slug}/{slug})
+    [pattern learned] 'https://bbc.com/{slug}/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=1): https://bbc.com/sport/football/world-cup
+    [ok] Added (depth=1): https://bbc.com/travel/destinations/africa
+    [ok] Added (depth=1): https://bbc.com/travel/destinations/antarctica
+    [ok] Added (depth=1): https://bbc.com/travel/destinations/asia
+    [ok] Added (depth=1): https://bbc.com/travel/destinations/caribbean
+    [ok] Added (depth=1): https://bbc.com/travel/destinations/central-america
+    [ok] Added (depth=1): https://bbc.com/travel/destinations/europe
+    [ok] Added (depth=1): https://bbc.com/travel/destinations/middle-east
+    [ok] Added (depth=1): https://bbc.com/travel/destinations/north-america
+    [probe] https://bbc.com/news/videos/clyrvrde160o  (pattern: https://bbc.com/news/{slug}/{id})
+    [pattern learned] 'https://bbc.com/news/{slug}/{id}' -> other
+    [group-skip]  11 members skipped
+    [probe] https://bbc.com/news/world/asia  (pattern: https://bbc.com/news/{slug}/{slug})
+    [pattern learned] 'https://bbc.com/news/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=1): https://bbc.com/news/world/asia
+    [ok] Added (depth=1): https://bbc.com/news/scotland/scotland_politics
+    [ok] Added (depth=1): https://bbc.com/news/wales/wales_politics
+    [ok] Added (depth=1): https://bbc.com/news/world/africa
+    [ok] Added (depth=1): https://bbc.com/news/world/australia
+    [ok] Added (depth=1): https://bbc.com/news/world/europe
+    [ok] Added (depth=1): https://bbc.com/news/world/latin_america
+    [ok] Added (depth=1): https://bbc.com/news/world/middle_east
+    [probe] https://bbc.com/audio/play/p0nr8m0v  (pattern: https://bbc.com/{slug}/{slug}/{id})
+    [pattern learned] 'https://bbc.com/{slug}/{slug}/{id}' -> other
+    [group-skip]  43 members skipped
+    [probe] https://www.bbc.com/news/live/cly7nr3jzv5t  (pattern: https://www.bbc.com/news/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/news/{slug}/{id}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://bbc.com/news/articles/cy73dr081p8o  (pattern: https://bbc.com/news/articles/{id})
+    [pattern learned] 'https://bbc.com/news/articles/{id}' -> content_article
+    [group-skip]  27 members skipped
+    [probe] https://www.bbc.com/audio/category/sport  (pattern: https://www.bbc.com/{slug}/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/{slug}/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=1): https://www.bbc.com/audio/category/sport
+    [ok] Added (depth=1): https://www.bbc.com/sport/football/world-cup
+    [ok] Added (depth=1): https://www.bbc.com/culture/tags/in-history
+    [probe] https://www.bbc.com/usingthebbc/cookies/how-can-i-change-my-bbc-cookie-settings  (pattern: https://www.bbc.com/{slug}/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other
+    [group-skip]  1 members skipped
+    [probe] https://bbc.com/news/uk  (pattern: https://bbc.com/{slug}/{slug})
+    [pattern learned] 'https://bbc.com/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=1): https://bbc.com/news/uk
+    [ok] Added (depth=1): https://bbc.com/news/us-canada
+    [ok] Added (depth=1): https://bbc.com/news/politics
+    [ok] Added (depth=1): https://bbc.com/news/england
+    [ok] Added (depth=1): https://bbc.com/news/northern_ireland
+    [ok] Added (depth=1): https://bbc.com/news/scotland
+    [ok] Added (depth=1): https://bbc.com/news/wales
+    [ok] Added (depth=1): https://bbc.com/news/in_pictures
+    [ok] Added (depth=1): https://bbc.com/news/bbcindepth
+    [ok] Added (depth=1): https://bbc.com/news/bbcverify
+    [ok] Added (depth=1): https://bbc.com/technology/artificial-intelligence
+    [ok] Added (depth=1): https://bbc.com/technology/intelligence-revolution
+    [ok] Added (depth=1): https://bbc.com/technology/ai-v-the-mind
+    [ok] Added (depth=1): https://bbc.com/technology/tech-now
+    [ok] Added (depth=1): https://bbc.com/culture/film-tv
+    [ok] Added (depth=1): https://bbc.com/culture/music
+    [ok] Added (depth=1): https://bbc.com/culture/art
+    [ok] Added (depth=1): https://bbc.com/culture/style
+    [ok] Added (depth=1): https://bbc.com/culture/books
+    [ok] Added (depth=1): https://bbc.com/culture/entertainment-news
+    [ok] Added (depth=1): https://bbc.com/travel/destinations
+    [ok] Added (depth=1): https://bbc.com/travel/adventures
+    [ok] Added (depth=1): https://bbc.com/innovation/science
+    [ok] Added (depth=1): https://bbc.com/future-planet/solutions
+    [ok] Added (depth=1): https://bbc.com/future-planet/sustainable-business
+    [ok] Added (depth=1): https://bbc.com/future-planet/green-living
+    [ok] Added (depth=1): https://bbc.com/live/news
+    [ok] Added (depth=1): https://bbc.com/live/sport
+    [probe] https://bbc.com/travel/worlds-table  (pattern: https://bbc.com/{slug}/{id})
+    [pattern learned] 'https://bbc.com/{slug}/{id}' -> listing_article
+    [ok] [representative] Added (depth=1): https://bbc.com/travel/worlds-table
+    [ok] Added (depth=1): https://bbc.com/business/world-of-business
+    [ok] Added (depth=1): https://bbc.com/business/technology-of-business
+    [ok] Added (depth=1): https://bbc.com/travel/cultural-experiences
+    [ok] Added (depth=1): https://bbc.com/future-planet/natural-wonders
+    [probe] https://www.bbc.com/news/world  (pattern: https://www.bbc.com/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=1): https://www.bbc.com/news/world
+    [ok] Added (depth=1): https://www.bbc.com/news/us-canada
+    [ok] Added (depth=1): https://www.bbc.com/serbian/lat
+    [probe] https://www.bbc.com/travel/worlds-table  (pattern: https://www.bbc.com/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/{slug}/{id}' -> listing_article
+    [ok] [representative] Added (depth=1): https://www.bbc.com/travel/worlds-table
+    [probe] https://bbc.com/news/world/asia/china  (pattern: https://bbc.com/{slug}/{slug}/{slug}/{slug})
+    [pattern learned] 'https://bbc.com/{slug}/{slug}/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=1): https://bbc.com/news/world/asia/china
+    [ok] Added (depth=1): https://bbc.com/news/world/asia/india
+    [probe] https://www.bbc.com/sport/football/live/cvg4wnxpppnt  (pattern: https://www.bbc.com/sport/football/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/sport/football/{slug}/{id}' -> listing_article
+    [ok] [representative] Added (depth=1): https://www.bbc.com/sport/football/live/cvg4wnxpppnt
+    [probe] https://bbc.com/sport/football/articles/cgl34ne0g3eo  (pattern: https://bbc.com/sport/football/articles/{id})
+    [pattern learned] 'https://bbc.com/sport/football/articles/{id}' -> content_article
+    [group-skip]  4 members skipped
+    [probe] https://bbc.com/sport/american-football/articles/cly927klgkvo  (pattern: https://bbc.com/sport/{id}/articles/{id})
+    [pattern learned] 'https://bbc.com/sport/{id}/articles/{id}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://bbc.com/sport/cricket/articles/c05yz53d1zgo  (pattern: https://bbc.com/sport/{slug}/articles/{id})
+    [pattern learned] 'https://bbc.com/sport/{slug}/articles/{id}' -> content_article
+    [group-skip]  2 members skipped
+    [probe] https://bbc.com/reel/video/p0nq37t3/watch  (pattern: https://bbc.com/reel/video/{id}/watch)
+    [pattern learned] 'https://bbc.com/reel/video/{id}/watch' -> other
+    [group-skip]  6 members skipped
+    [probe] https://www.bbc.com/  (pattern: https://www.bbc.com/)
+    [pattern learned] 'https://www.bbc.com/' -> listing_article
+    [ok] [representative] Added (depth=1): https://www.bbc.com/
+    [probe] https://shop.bbc.com/  (pattern: https://shop.bbc.com/)
+    [pattern learned] 'https://shop.bbc.com/' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://bbc.com/news
+  -> 176 same-domain links extracted
+  -> 15 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (11 skipped)
+    [cached-skip] 'https://www.bbc.com/news/{slug}/{id}' -> content_article  (3 skipped)
+    [probe] https://cloud.email.bbc.com/bbcnewsignup2?at_bbc_team=%5B%27studios%27%5D&at_campaign=%5B%27newsbriefing%27%5D&at_campaign_type=%5B%27owned%27%5D&at_format=%5B%27Module%27%5D&at_link_origin=%5B%27intlfront%27%5D&at_medium=%5B%27display%27%5D&at_objective=%5B%27acquisition%27%5D&at_ptr_name=%5B%27bbc.comhp%27%5D&at_ptr_type=%5B%27%27%5D  (pattern: https://cloud.email.bbc.com/{id})
+    [pattern learned] 'https://cloud.email.bbc.com/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://bbc.com/business
+  -> 199 same-domain links extracted
+  -> 57 new URLs in 11 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (14 skipped)
+    [probe] https://www.bbc.com/audio/category/business  (pattern: https://www.bbc.com/audio/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/audio/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/audio/category/business
+    [probe] https://bbc.com/audio/play/w3ct98s0  (pattern: https://bbc.com/audio/play/{id})
+    [pattern learned] 'https://bbc.com/audio/play/{id}' -> other
+    [group-skip]  8 members skipped
+    [cached-skip] 'https://www.bbc.com/news/{slug}/{id}' -> content_article  (1 skipped)
+    [cached-skip] 'https://bbc.com/news/{slug}/{id}' -> other  (1 skipped)
+    [probe] https://bbc.com/worklife/article/20260520-how-social-media-ceased-to-be-social  (pattern: https://bbc.com/{slug}/article/{id})
+    [pattern learned] 'https://bbc.com/{slug}/article/{id}' -> content_article
+    [group-skip]  8 members skipped
+    [probe] https://www.bbc.com/business/world-of-business  (pattern: https://www.bbc.com/business/{id})
+    [pattern learned] 'https://www.bbc.com/business/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/business/world-of-business
+    [ok] Added (depth=2): https://www.bbc.com/business/technology-of-business
+    [probe] https://www.bbc.com/business/opening-bell  (pattern: https://www.bbc.com/business/opening-bell)
+    [pattern learned] 'https://www.bbc.com/business/opening-bell' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/video/bbc-maestro  (pattern: https://www.bbc.com/video/bbc-maestro)
+    [pattern learned] 'https://www.bbc.com/video/bbc-maestro' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/newsletters?at_bbc_team=%5B%27studios%27%5D&at_campaign=%5B%27wob%27%5D&at_campaign_type=%5B%27owned%27%5D&at_format=%5B%27Module%27%5D&at_link_origin=%5B%27homepage%27%5D&at_medium=%5B%27emails%27%5D&at_objective=%5B%27acquisition%27%5D&at_ptr_name=%5B%27bbc.com%27%5D&at_ptr_type=%5B%27%27%5D&worldofbusiness=%5B%27%27%5D  (pattern: https://www.bbc.com/newsletters)
+    [pattern learned] 'https://www.bbc.com/newsletters' -> other
+    [group-skip]  0 members skipped
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (17 skipped)
+[BFS depth=1] Processing node: https://bbc.com/technology
+  -> 160 same-domain links extracted
+  -> 21 new URLs in 3 pattern groups
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (1 skipped)
+    [cached-skip] 'https://bbc.com/{slug}/{slug}/{id}' -> other  (4 skipped)
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (16 skipped)
+[BFS depth=1] Processing node: https://bbc.com/health
+  -> 192 same-domain links extracted
+  -> 54 new URLs in 5 pattern groups
+    [probe] https://bbc.com/future/article/20260529-what-causes-brain-freeze  (pattern: https://bbc.com/future/article/{id})
+    [pattern learned] 'https://bbc.com/future/article/{id}' -> content_article
+    [group-skip]  28 members skipped
+    [cached-skip] 'https://bbc.com/{slug}/{slug}/{id}' -> other  (15 skipped)
+    [cached-skip] 'https://bbc.com/{slug}/article/{id}' -> content_article  (3 skipped)
+    [cached-skip] 'https://www.bbc.com/newsletters' -> other  (1 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (6 skipped)
+[BFS depth=1] Processing node: https://bbc.com/culture
+  -> 200 same-domain links extracted
+  -> 59 new URLs in 8 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (14 skipped)
+    [probe] https://www.bbc.com/audio/brand/b006qnmr  (pattern: https://www.bbc.com/audio/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/audio/{slug}/{id}' -> other
+    [group-skip]  0 members skipped
+    [cached-skip] 'https://bbc.com/audio/play/{id}' -> other  (10 skipped)
+    [probe] https://bbc.com/culture/article/20260609-disclosure-day-review  (pattern: https://bbc.com/culture/article/{id})
+    [pattern learned] 'https://bbc.com/culture/article/{id}' -> content_article
+    [group-skip]  9 members skipped
+    [cached-skip] 'https://bbc.com/news/{slug}/{id}' -> other  (2 skipped)
+    [probe] https://www.bbc.com/culture/watch-list  (pattern: https://www.bbc.com/culture/watch-list)
+    [pattern learned] 'https://www.bbc.com/culture/watch-list' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/arts/arts-in-motion  (pattern: https://www.bbc.com/arts/arts-in-motion)
+    [pattern learned] 'https://www.bbc.com/arts/arts-in-motion' -> other
+    [group-skip]  0 members skipped
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (20 skipped)
+[BFS depth=1] Processing node: https://bbc.com/arts
+  -> 169 same-domain links extracted
+  -> 26 new URLs in 6 pattern groups
+    [cached-skip] 'https://bbc.com/{slug}/article/{id}' -> content_article  (4 skipped)
+    [probe] https://www.bbc.com/culture/tags/art-history  (pattern: https://www.bbc.com/culture/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/culture/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/culture/tags/art-history
+    [cached-skip] 'https://bbc.com/culture/article/{id}' -> content_article  (9 skipped)
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (8 skipped)
+    [cached-skip] 'https://www.bbc.com/arts/arts-in-motion' -> other  (1 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (3 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel
+  -> 197 same-domain links extracted
+  -> 52 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (21 skipped)
+    [probe] https://bbc.com/travel/article/20251209-the-20-best-places-to-travel-in-2026  (pattern: https://bbc.com/travel/article/{id})
+    [pattern learned] 'https://bbc.com/travel/article/{id}' -> content_article
+    [group-skip]  27 members skipped
+    [cached-skip] 'https://bbc.com/{slug}/{slug}/{id}' -> other  (3 skipped)
+[BFS depth=1] Processing node: https://bbc.com/future-planet
+  -> 164 same-domain links extracted
+  -> 24 new URLs in 4 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (13 skipped)
+    [cached-skip] 'https://bbc.com/{slug}/{slug}/{id}' -> other  (4 skipped)
+    [probe] https://bbc.com/news/videos/c8e8zzw30zyo  (pattern: https://bbc.com/news/videos/{id})
+    [pattern learned] 'https://bbc.com/news/videos/{id}' -> other
+    [group-skip]  5 members skipped
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (1 skipped)
+[BFS depth=1] Processing node: https://bbc.com/sport
+  -> 145 same-domain links extracted
+  -> 118 new URLs in 24 pattern groups
+    [known-listing] 'https://www.bbc.com/' - testing 1 members individually
+    [ok] Added (depth=2): https://www.bbc.com
+    [probe] https://account.bbc.com/account?lang=%5B%27en-GB%27%5D&ptrt=%5B%27https%3A%2F%2Fwww.bbc.com%2Fsport%27%5D&userOrigin=%5B%27SPORT_GNL%27%5D  (pattern: https://account.bbc.com/account)
+    [probe] https://www.bbc.com/live  (pattern: https://www.bbc.com/live)
+    [pattern learned] 'https://www.bbc.com/live' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/live
+    [probe] https://www.bbc.com/search?d=%5B%27SPORT_GNL%27%5D  (pattern: https://www.bbc.com/search)
+    [pattern learned] 'https://www.bbc.com/search' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/search?d=%5B%27SPORT_GNL%27%5D
+    [cached-skip] 'https://cloud.email.bbc.com/{id}' -> other  (1 skipped)
+    [probe] https://www.bbc.com/advertisingcontact  (pattern: https://www.bbc.com/{id})
+    [pattern learned] 'https://www.bbc.com/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://bbc.com/sport/golf  (pattern: https://bbc.com/sport/{slug})
+    [pattern learned] 'https://bbc.com/sport/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://bbc.com/sport/golf
+    [ok] Added (depth=2): https://bbc.com/sport/all-sports
+    [ok] Added (depth=2): https://bbc.com/sport/football
+    [ok] Added (depth=2): https://bbc.com/sport/cricket
+    [ok] Added (depth=2): https://bbc.com/sport/rugby-union
+    [ok] Added (depth=2): https://bbc.com/sport/tennis
+    [ok] Added (depth=2): https://bbc.com/sport/cycling
+    [ok] Added (depth=2): https://bbc.com/sport/athletics
+    [ok] Added (depth=2): https://bbc.com/sport/basketball
+    [ok] Added (depth=2): https://bbc.com/sport/boxing
+    [ok] Added (depth=2): https://bbc.com/sport/darts
+    [ok] Added (depth=2): https://bbc.com/sport/gymnastics
+    [ok] Added (depth=2): https://bbc.com/sport/mixed-martial-arts
+    [ok] Added (depth=2): https://bbc.com/sport/motorsport
+    [ok] Added (depth=2): https://bbc.com/sport/netball
+    [ok] Added (depth=2): https://bbc.com/sport/olympics
+    [ok] Added (depth=2): https://bbc.com/sport/rugby-league
+    [ok] Added (depth=2): https://bbc.com/sport/snooker
+    [ok] Added (depth=2): https://bbc.com/sport/swimming
+    [ok] Added (depth=2): https://bbc.com/sport/england
+    [ok] Added (depth=2): https://bbc.com/sport/scotland
+    [ok] Added (depth=2): https://bbc.com/sport/wales
+    [ok] Added (depth=2): https://bbc.com/sport/northern-ireland
+    [ok] Added (depth=2): https://bbc.com/sport/sailing
+    [probe] https://bbc.com/sport/formula1  (pattern: https://bbc.com/sport/{id})
+    [pattern learned] 'https://bbc.com/sport/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://bbc.com/sport/formula1
+    [ok] Added (depth=2): https://bbc.com/sport/american-football
+    [ok] Added (depth=2): https://bbc.com/sport/disability-sport
+    [ok] Added (depth=2): https://bbc.com/sport/horse-racing
+    [probe] https://bbc.com/sport/15890345  (pattern: https://bbc.com/sport/{num})
+    [pattern learned] 'https://bbc.com/sport/{num}' -> other
+    [group-skip]  1 members skipped
+    [known-listing] 'https://bbc.com/{slug}/{id}' - testing 1 members individually
+    [known-listing] 'https://bbc.com/{slug}/{slug}' - testing 1 members individually
+    [ok] Added (depth=2): https://bbc.com/news/world_radio_and_tv
+    [probe] https://bbc.com/sport/cricket/womens  (pattern: https://bbc.com/sport/{slug}/{slug})
+    [pattern learned] 'https://bbc.com/sport/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://bbc.com/sport/cricket/womens
+    [ok] Added (depth=2): https://bbc.com/sport/northern-ireland/gaelic-games
+    [ok] Added (depth=2): https://bbc.com/sport/football/premier-league
+    [ok] Added (depth=2): https://bbc.com/sport/football/womens
+    [ok] Added (depth=2): https://bbc.com/sport/football/european
+    [probe] https://bbc.com/sport/articles/cp9l5geg85do  (pattern: https://bbc.com/sport/articles/{id})
+    [pattern learned] 'https://bbc.com/sport/articles/{id}' -> other
+    [group-skip]  4 members skipped
+    [probe] https://bbc.com/sounds/play/p0nr8m0v  (pattern: https://bbc.com/sounds/play/{id})
+    [pattern learned] 'https://bbc.com/sounds/play/{id}' -> other
+    [group-skip]  5 members skipped
+    [probe] https://bbc.com/sounds/category/sport?sort=%5B%27popular%27%5D  (pattern: https://bbc.com/sounds/{slug}/{slug})
+    [pattern learned] 'https://bbc.com/sounds/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://bbc.com/sounds/category/sport?sort=%5B%27popular%27%5D
+    [probe] https://bbc.com/sport/football/world-cup/scores-fixtures/2026-06  (pattern: https://bbc.com/sport/football/world-cup/scores-fixtures/{date})
+    [pattern learned] 'https://bbc.com/sport/football/world-cup/scores-fixtures/{date}' -> other
+    [group-skip]  0 members skipped
+    [cached-skip] 'https://bbc.com/sport/football/articles/{id}' -> content_article  (17 skipped)
+    [probe] https://bbc.com/sport/football/live/cvg4wnxpppnt  (pattern: https://bbc.com/sport/football/{slug}/{id})
+    [pattern learned] 'https://bbc.com/sport/football/{slug}/{id}' -> other
+    [group-skip]  13 members skipped
+    [probe] https://bbc.com/sport/cricket/teams/england  (pattern: https://bbc.com/sport/{slug}/{slug}/{slug})
+    [pattern learned] 'https://bbc.com/sport/{slug}/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://bbc.com/sport/cricket/teams/england
+    [ok] Added (depth=2): https://bbc.com/sport/rugby-union/teams/england
+    [probe] https://bbc.com/sport/football/teams/celtic  (pattern: https://bbc.com/sport/football/{slug}/{slug})
+    [pattern learned] 'https://bbc.com/sport/football/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://bbc.com/sport/football/teams/celtic
+    [ok] Added (depth=2): https://bbc.com/sport/football/teams/sunderland
+    [cached-skip] 'https://bbc.com/sport/{slug}/articles/{id}' -> content_article  (15 skipped)
+    [probe] https://bbc.com/sport/boxing/videos/clypyd24eevo  (pattern: https://bbc.com/sport/{slug}/{slug}/{id})
+    [pattern learned] 'https://bbc.com/sport/{slug}/{slug}/{id}' -> other
+    [group-skip]  3 members skipped
+    [cached-skip] 'https://bbc.com/sport/{id}/articles/{id}' -> content_article  (2 skipped)
+    [probe] https://bbc.com/sport/extra/nsoic026oi/usa-94-the-world-cup-that-changed-everything  (pattern: https://bbc.com/sport/{slug}/{id}/{id})
+    [pattern learned] 'https://bbc.com/sport/{slug}/{id}/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://bbc.com/audio
+  -> 193 same-domain links extracted
+  -> 42 new URLs in 5 pattern groups
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (1 skipped)
+    [cached-skip] 'https://bbc.com/audio/play/{id}' -> other  (29 skipped)
+    [known-listing] 'https://www.bbc.com/audio/{slug}/{slug}' - testing 2 members individually
+    [probe] https://bbc.com/audio/schedules/bbc_world_service  (pattern: https://bbc.com/audio/{slug}/{id})
+    [pattern learned] 'https://bbc.com/audio/{slug}/{id}' -> other
+    [group-skip]  1 members skipped
+    [probe] https://bbc.com/audio/category/news  (pattern: https://bbc.com/audio/{slug}/{slug})
+    [pattern learned] 'https://bbc.com/audio/{slug}/{slug}' -> other
+    [group-skip]  7 members skipped
+[BFS depth=1] Processing node: https://bbc.com/live
+  -> 164 same-domain links extracted
+  -> 27 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/news/live/cx2xvn654jlt  (pattern: https://www.bbc.com/news/live/{id})
+    [pattern learned] 'https://www.bbc.com/news/live/{id}' -> content_article
+    [group-skip]  10 members skipped
+    [probe] https://www.bbc.com/sport/live/czx29gwxvr2t  (pattern: https://www.bbc.com/{slug}/live/{id})
+    [pattern learned] 'https://www.bbc.com/{slug}/live/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/sport/tennis/live/cm2pdvvqm6et  (pattern: https://www.bbc.com/sport/{slug}/live/{id})
+    [pattern learned] 'https://www.bbc.com/sport/{slug}/live/{id}' -> other
+    [group-skip]  5 members skipped
+    [probe] https://www.bbc.com/sport/football/live/c5yeyn44rejt  (pattern: https://www.bbc.com/sport/football/live/{id})
+    [pattern learned] 'https://www.bbc.com/sport/football/live/{id}' -> content_article
+    [group-skip]  8 members skipped
+[BFS depth=1] Processing node: https://bbc.com/home
+  -> 129 same-domain links extracted
+  -> 83 new URLs in 19 pattern groups
+    [probe] https://account.bbc.com/account?lang=%5B%27en-GB%27%5D&ptrt=%5B%27https%3A%2F%2Fwww.bbc.co.uk%2F%27%5D  (pattern: https://account.bbc.com/{slug})
+    [known-listing] 'https://www.bbc.com/{slug}' - testing 4 members individually
+    [ok] Added (depth=2): https://www.bbc.com/worklife
+    [ok] Added (depth=2): https://www.bbc.com/future
+    [ok] Added (depth=2): https://www.bbc.com/search?d=%5B%27HOMEPAGE_PS%27%5D
+    [known-listing] 'https://bbc.com/{slug}' - testing 10 members individually
+    [ok] Added (depth=2): https://bbc.com/food
+    [ok] Added (depth=2): https://bbc.com/weather
+    [ok] Added (depth=2): https://bbc.com/scotland
+    [ok] Added (depth=2): https://bbc.com/alba
+    [ok] Added (depth=2): https://bbc.com/wales
+    [ok] Added (depth=2): https://bbc.com/cymru
+    [ok] Added (depth=2): https://bbc.com/northernireland
+    [known-listing] 'https://www.bbc.com/{slug}/{slug}' - testing 3 members individually
+    [ok] Added (depth=2): https://www.bbc.com/future/earth
+    [ok] Added (depth=2): https://www.bbc.com/culture/music
+    [probe] https://bbc.com/news/health  (pattern: https://bbc.com/news/{slug})
+    [pattern learned] 'https://bbc.com/news/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://bbc.com/news/health
+    [ok] Added (depth=2): https://bbc.com/news/entertainment_and_arts
+    [ok] Added (depth=2): https://bbc.com/news/regions
+    [ok] Added (depth=2): https://bbc.com/news/technology
+    [ok] Added (depth=2): https://bbc.com/news/business
+    [known-listing] 'https://bbc.com/{slug}/{id}' - testing 3 members individually
+    [known-listing] 'https://bbc.com/{slug}/{slug}' - testing 1 members individually
+    [cached-skip] 'https://bbc.com/news/{slug}/{id}' -> other  (5 skipped)
+    [known-listing] 'https://bbc.com/news/{slug}/{slug}' - testing 8 members individually
+    [ok] Added (depth=2): https://bbc.com/news/england/tyne
+    [ok] Added (depth=2): https://bbc.com/news/england/south_yorkshire
+    [ok] Added (depth=2): https://bbc.com/news/england/manchester
+    [ok] Added (depth=2): https://bbc.com/news/england/nottingham
+    [ok] Added (depth=2): https://bbc.com/news/scotland/glasgow_and_west
+    [ok] Added (depth=2): https://bbc.com/news/england/oxford
+    [ok] Added (depth=2): https://bbc.com/news/england/cornwall
+    [ok] Added (depth=2): https://bbc.com/news/england/london
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (11 skipped)
+    [known-listing] 'https://bbc.com/{slug}/{slug}/{slug}' - testing 4 members individually
+    [ok] Added (depth=2): https://bbc.com/sport/football/scores-fixtures
+    [probe] https://bbc.com/mediacentre/2026/strictly-come-dancing-dani-dyer  (pattern: https://bbc.com/{slug}/{num}/{id})
+    [pattern learned] 'https://bbc.com/{slug}/{num}/{id}' -> other
+    [group-skip]  1 members skipped
+    [probe] https://bbc.com/bitesize/articles/z74wrmn  (pattern: https://bbc.com/{slug}/articles/{id})
+    [pattern learned] 'https://bbc.com/{slug}/articles/{id}' -> other
+    [group-skip]  5 members skipped
+    [cached-skip] 'https://bbc.com/{slug}/{slug}/{id}' -> other  (13 skipped)
+    [cached-skip] 'https://bbc.com/sport/football/{slug}/{id}' -> other  (1 skipped)
+    [probe] https://bbc.com/sport/football/live/c0myn4dwvzkt  (pattern: https://bbc.com/sport/football/live/{id})
+    [pattern learned] 'https://bbc.com/sport/football/live/{id}' -> other
+    [group-skip]  1 members skipped
+    [probe] https://bbc.com/programmes/articles/4G27S7NS1jLf0pzBCVpPrrS/sport-relief-2026  (pattern: https://bbc.com/programmes/articles/{id}/{id})
+    [pattern learned] 'https://bbc.com/programmes/articles/{id}/{id}' -> other
+    [group-skip]  1 members skipped
+    [probe] https://bbc.com/programmes/articles/3nDZXgD7Fz7lBGc3YSQV9jr/nine-ways-to-feel-less-lonely  (pattern: https://bbc.com/programmes/articles/{id}/{slug})
+    [pattern learned] 'https://bbc.com/programmes/articles/{id}/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://bbc.com/iplayer/episode/b007lc51/gavin-stacey-series-1-episode-1?at_audience_id=%5B%27SS%27%5D&at_bbc_team=%5B%27BBC%27%5D&at_brand=%5B%27b007nf70%27%5D&at_campaign=%5B%27Gavin_and_Stacey%27%5D&at_campaign_type=%5B%27owned%27%5D&at_format=%5B%27image%27%5D&at_link_title=%5B%27Gavin_and_Stacey%27%5D&at_medium=%5B%27display_ad%27%5D&at_mid=%5B%27p2S3vrmgeU%27%5D&at_objective=%5B%27consumption%27%5D&at_product=%5B%27iplayer%27%5D&at_ptr_name=%5B%27bbc%27%5D&at_ptr_type=%5B%27media%27%5D  (pattern: https://bbc.com/{slug}/{slug}/{id}/{id})
+    [pattern learned] 'https://bbc.com/{slug}/{slug}/{id}/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/news
+  -> 176 same-domain links extracted
+  -> 93 new URLs in 13 pattern groups
+    [probe] https://www.bbc.com/news/uk  (pattern: https://www.bbc.com/news/{slug})
+    [pattern learned] 'https://www.bbc.com/news/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/news/uk
+    [ok] Added (depth=2): https://www.bbc.com/news/in_pictures
+    [ok] Added (depth=2): https://www.bbc.com/news/bbcindepth
+    [ok] Added (depth=2): https://www.bbc.com/news/bbcverify
+    [ok] Added (depth=2): https://www.bbc.com/news/politics
+    [ok] Added (depth=2): https://www.bbc.com/news/england
+    [ok] Added (depth=2): https://www.bbc.com/news/northern_ireland
+    [ok] Added (depth=2): https://www.bbc.com/news/scotland
+    [ok] Added (depth=2): https://www.bbc.com/news/wales
+    [known-listing] 'https://www.bbc.com/{slug}/{slug}' - testing 19 members individually
+    [ok] Added (depth=2): https://www.bbc.com/technology/artificial-intelligence
+    [ok] Added (depth=2): https://www.bbc.com/technology/intelligence-revolution
+    [ok] Added (depth=2): https://www.bbc.com/technology/ai-v-the-mind
+    [ok] Added (depth=2): https://www.bbc.com/technology/tech-now
+    [ok] Added (depth=2): https://www.bbc.com/culture/film-tv
+    [ok] Added (depth=2): https://www.bbc.com/culture/art
+    [ok] Added (depth=2): https://www.bbc.com/culture/style
+    [ok] Added (depth=2): https://www.bbc.com/culture/books
+    [ok] Added (depth=2): https://www.bbc.com/culture/entertainment-news
+    [ok] Added (depth=2): https://www.bbc.com/travel/destinations
+    [ok] Added (depth=2): https://www.bbc.com/travel/adventures
+    [ok] Added (depth=2): https://www.bbc.com/innovation/science
+    [ok] Added (depth=2): https://www.bbc.com/future-planet/solutions
+    [ok] Added (depth=2): https://www.bbc.com/future-planet/sustainable-business
+    [ok] Added (depth=2): https://www.bbc.com/future-planet/green-living
+    [ok] Added (depth=2): https://www.bbc.com/live/news
+    [ok] Added (depth=2): https://www.bbc.com/live/sport
+    [known-listing] 'https://www.bbc.com/{slug}/{id}' - testing 3 members individually
+    [ok] Added (depth=2): https://www.bbc.com/travel/cultural-experiences
+    [ok] Added (depth=2): https://www.bbc.com/future-planet/natural-wonders
+    [probe] https://www.bbc.com/news/world/asia  (pattern: https://www.bbc.com/news/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/news/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/news/world/asia
+    [ok] Added (depth=2): https://www.bbc.com/news/world/africa
+    [ok] Added (depth=2): https://www.bbc.com/news/world/australia
+    [ok] Added (depth=2): https://www.bbc.com/news/world/europe
+    [ok] Added (depth=2): https://www.bbc.com/news/world/latin_america
+    [ok] Added (depth=2): https://www.bbc.com/news/world/middle_east
+    [ok] Added (depth=2): https://www.bbc.com/news/scotland/scotland_politics
+    [ok] Added (depth=2): https://www.bbc.com/news/wales/wales_politics
+    [cached-skip] 'https://www.bbc.com/news/{slug}/{id}' -> content_article  (6 skipped)
+    [known-listing] 'https://www.bbc.com/{slug}/{slug}/{slug}' - testing 8 members individually
+    [ok] Added (depth=2): https://www.bbc.com/travel/destinations/africa
+    [ok] Added (depth=2): https://www.bbc.com/travel/destinations/antarctica
+    [ok] Added (depth=2): https://www.bbc.com/travel/destinations/asia
+    [ok] Added (depth=2): https://www.bbc.com/travel/destinations/caribbean
+    [ok] Added (depth=2): https://www.bbc.com/travel/destinations/central-america
+    [ok] Added (depth=2): https://www.bbc.com/travel/destinations/europe
+    [ok] Added (depth=2): https://www.bbc.com/travel/destinations/middle-east
+    [ok] Added (depth=2): https://www.bbc.com/travel/destinations/north-america
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (2 skipped)
+    [probe] https://www.bbc.com/news/articles/c75ylx7g00xo  (pattern: https://www.bbc.com/news/articles/{id})
+    [pattern learned] 'https://www.bbc.com/news/articles/{id}' -> content_article
+    [group-skip]  27 members skipped
+    [probe] https://www.bbc.com/home  (pattern: https://www.bbc.com/home)
+    [pattern learned] 'https://www.bbc.com/home' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/home
+    [probe] https://www.bbc.com/undefined  (pattern: https://www.bbc.com/undefined)
+    [pattern learned] 'https://www.bbc.com/undefined' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/news/world/asia/china  (pattern: https://www.bbc.com/news/world/asia/{slug})
+    [pattern learned] 'https://www.bbc.com/news/world/asia/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/news/world/asia/china
+    [ok] Added (depth=2): https://www.bbc.com/news/world/asia/india
+    [probe] https://www.bbc.com/sport/football/articles/cgl34ne0g3eo  (pattern: https://www.bbc.com/sport/football/articles/{id})
+    [pattern learned] 'https://www.bbc.com/sport/football/articles/{id}' -> content_article
+    [group-skip]  2 members skipped
+    [probe] https://www.bbc.com/sport/sailing/articles/cr5j64pn3jyo  (pattern: https://www.bbc.com/sport/{slug}/articles/{id})
+    [pattern learned] 'https://www.bbc.com/sport/{slug}/articles/{id}' -> content_article
+    [group-skip]  2 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/weather
+  -> 41 same-domain links extracted
+  -> 23 new URLs in 8 pattern groups
+    [probe] https://account.bbc.com/account  (pattern: https://account.bbc.com/account)
+    [probe] https://www.bbc.com/weather/map  (pattern: https://www.bbc.com/weather/{slug})
+    [pattern learned] 'https://www.bbc.com/weather/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/weather/map
+    [ok] Added (depth=2): https://www.bbc.com/weather/search
+    [ok] Added (depth=2): https://www.bbc.com/weather/coast-and-sea
+    [probe] https://www.bbc.com/weather/611717  (pattern: https://www.bbc.com/weather/{num})
+    [pattern learned] 'https://www.bbc.com/weather/{num}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/weather/611717
+    [ok] Added (depth=2): https://www.bbc.com/weather/4887398
+    [ok] Added (depth=2): https://www.bbc.com/weather/2643743
+    [ok] Added (depth=2): https://www.bbc.com/weather/3621849
+    [ok] Added (depth=2): https://www.bbc.com/weather/2253354
+    [ok] Added (depth=2): https://www.bbc.com/weather/186301
+    [ok] Added (depth=2): https://www.bbc.com/weather/3469058
+    [ok] Added (depth=2): https://www.bbc.com/weather/3369157
+    [known-listing] 'https://www.bbc.com/{slug}/{id}' - testing 1 members individually
+    [ok] Added (depth=2): https://www.bbc.com/news/science_and_environment
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (2 skipped)
+    [probe] https://www.bbc.com/weather/articles/cn4rzgz24jxo  (pattern: https://www.bbc.com/weather/articles/{id})
+    [pattern learned] 'https://www.bbc.com/weather/articles/{id}' -> content_article
+    [group-skip]  3 members skipped
+    [probe] https://www.bbc.com/weather/videos/clyvynjvj7yo  (pattern: https://www.bbc.com/weather/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/weather/{slug}/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/weather/warnings/floods  (pattern: https://www.bbc.com/weather/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/weather/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/weather/warnings/floods
+    [ok] Added (depth=2): https://www.bbc.com/weather/warnings/weather
+[BFS depth=1] Processing node: https://www.bbc.com/audio
+  -> 189 same-domain links extracted
+  -> 53 new URLs in 3 pattern groups
+    [probe] https://www.bbc.com/audio/play/m002y10n  (pattern: https://www.bbc.com/audio/play/{id})
+    [pattern learned] 'https://www.bbc.com/audio/play/{id}' -> other
+    [group-skip]  46 members skipped
+    [cached-skip] 'https://www.bbc.com/audio/{slug}/{id}' -> other  (2 skipped)
+    [known-listing] 'https://www.bbc.com/audio/{slug}/{slug}' - testing 4 members individually
+[BFS depth=1] Processing node: https://www.bbc.com/business
+  -> 194 same-domain links extracted
+  -> 54 new URLs in 4 pattern groups
+    [cached-skip] 'https://www.bbc.com/news/articles/{id}' -> content_article  (18 skipped)
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (18 skipped)
+    [cached-skip] 'https://www.bbc.com/news/{slug}/{id}' -> content_article  (1 skipped)
+    [probe] https://www.bbc.com/reel/video/p0nq0kjf/watch  (pattern: https://www.bbc.com/reel/video/{id}/watch)
+    [pattern learned] 'https://www.bbc.com/reel/video/{id}/watch' -> other
+    [group-skip]  16 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/technology
+  -> 159 same-domain links extracted
+  -> 22 new URLs in 3 pattern groups
+    [cached-skip] 'https://www.bbc.com/reel/video/{id}/watch' -> other  (2 skipped)
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (4 skipped)
+    [cached-skip] 'https://www.bbc.com/news/articles/{id}' -> content_article  (16 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/sport
+  -> 142 same-domain links extracted
+  -> 114 new URLs in 18 pattern groups
+    [probe] https://www.bbc.com/sport/golf  (pattern: https://www.bbc.com/sport/{slug})
+    [pattern learned] 'https://www.bbc.com/sport/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/sport/golf
+    [ok] Added (depth=2): https://www.bbc.com/sport/all-sports
+    [ok] Added (depth=2): https://www.bbc.com/sport/football
+    [ok] Added (depth=2): https://www.bbc.com/sport/cricket
+    [ok] Added (depth=2): https://www.bbc.com/sport/rugby-union
+    [ok] Added (depth=2): https://www.bbc.com/sport/tennis
+    [ok] Added (depth=2): https://www.bbc.com/sport/cycling
+    [ok] Added (depth=2): https://www.bbc.com/sport/athletics
+    [ok] Added (depth=2): https://www.bbc.com/sport/basketball
+    [ok] Added (depth=2): https://www.bbc.com/sport/boxing
+    [ok] Added (depth=2): https://www.bbc.com/sport/darts
+    [ok] Added (depth=2): https://www.bbc.com/sport/gymnastics
+    [ok] Added (depth=2): https://www.bbc.com/sport/mixed-martial-arts
+    [ok] Added (depth=2): https://www.bbc.com/sport/motorsport
+    [ok] Added (depth=2): https://www.bbc.com/sport/olympics
+    [ok] Added (depth=2): https://www.bbc.com/sport/rugby-league
+    [ok] Added (depth=2): https://www.bbc.com/sport/snooker
+    [ok] Added (depth=2): https://www.bbc.com/sport/swimming
+    [ok] Added (depth=2): https://www.bbc.com/sport/england
+    [ok] Added (depth=2): https://www.bbc.com/sport/scotland
+    [ok] Added (depth=2): https://www.bbc.com/sport/wales
+    [ok] Added (depth=2): https://www.bbc.com/sport/northern-ireland
+    [ok] Added (depth=2): https://www.bbc.com/sport/sailing
+    [probe] https://www.bbc.com/sport/formula1  (pattern: https://www.bbc.com/sport/{id})
+    [pattern learned] 'https://www.bbc.com/sport/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/sport/formula1
+    [ok] Added (depth=2): https://www.bbc.com/sport/american-football
+    [ok] Added (depth=2): https://www.bbc.com/sport/disability-sport
+    [ok] Added (depth=2): https://www.bbc.com/sport/horse-racing
+    [probe] https://www.bbc.com/sport/15890345  (pattern: https://www.bbc.com/sport/{num})
+    [pattern learned] 'https://www.bbc.com/sport/{num}' -> other
+    [group-skip]  1 members skipped
+    [known-listing] 'https://www.bbc.com/{slug}/{id}' - testing 1 members individually
+    [known-listing] 'https://www.bbc.com/{slug}/{slug}' - testing 1 members individually
+    [ok] Added (depth=2): https://www.bbc.com/news/world_radio_and_tv
+    [probe] https://www.bbc.com/sport/cricket/womens  (pattern: https://www.bbc.com/sport/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/sport/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/sport/cricket/womens
+    [ok] Added (depth=2): https://www.bbc.com/sport/northern-ireland/gaelic-games
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/premier-league
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/womens
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/european
+    [probe] https://www.bbc.com/sport/articles/cp9l5geg85do  (pattern: https://www.bbc.com/sport/articles/{id})
+    [pattern learned] 'https://www.bbc.com/sport/articles/{id}' -> other
+    [group-skip]  4 members skipped
+    [probe] https://www.bbc.com/sounds/play/p0nr8m0v  (pattern: https://www.bbc.com/sounds/play/{id})
+    [pattern learned] 'https://www.bbc.com/sounds/play/{id}' -> other
+    [group-skip]  5 members skipped
+    [probe] https://www.bbc.com/sounds/category/sport?sort=%5B%27popular%27%5D  (pattern: https://www.bbc.com/sounds/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/sounds/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/sounds/category/sport?sort=%5B%27popular%27%5D
+    [probe] https://www.bbc.com/sport/football/world-cup/scores-fixtures/2026-06  (pattern: https://www.bbc.com/sport/football/world-cup/scores-fixtures/{date})
+    [pattern learned] 'https://www.bbc.com/sport/football/world-cup/scores-fixtures/{date}' -> other
+    [group-skip]  0 members skipped
+    [cached-skip] 'https://www.bbc.com/sport/football/articles/{id}' -> content_article  (19 skipped)
+    [probe] https://www.bbc.com/sport/cricket/teams/england  (pattern: https://www.bbc.com/sport/{slug}/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/sport/{slug}/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/sport/cricket/teams/england
+    [ok] Added (depth=2): https://www.bbc.com/sport/rugby-union/teams/england
+    [known-listing] 'https://www.bbc.com/sport/football/{slug}/{id}' - testing 13 members individually
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/wolverhampton-wanderers
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/manchester-united
+    [probe] https://www.bbc.com/sport/football/teams/celtic  (pattern: https://www.bbc.com/sport/football/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/sport/football/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/sport/football/teams/celtic
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/sunderland
+    [probe] https://www.bbc.com/sport/formula1/articles/c4gyx07dg84o  (pattern: https://www.bbc.com/sport/{id}/articles/{id})
+    [pattern learned] 'https://www.bbc.com/sport/{id}/articles/{id}' -> content_article
+    [group-skip]  2 members skipped
+    [cached-skip] 'https://www.bbc.com/sport/{slug}/articles/{id}' -> content_article  (15 skipped)
+    [probe] https://www.bbc.com/sport/boxing/videos/clypyd24eevo  (pattern: https://www.bbc.com/sport/{slug}/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/sport/{slug}/{slug}/{id}' -> other
+    [group-skip]  3 members skipped
+    [probe] https://www.bbc.com/sport/extra/nsoic026oi/usa-94-the-world-cup-that-changed-everything  (pattern: https://www.bbc.com/sport/{slug}/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/sport/{slug}/{id}/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/health
+  -> 191 same-domain links extracted
+  -> 57 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/future/article/20260529-what-causes-brain-freeze  (pattern: https://www.bbc.com/future/article/{id})
+    [pattern learned] 'https://www.bbc.com/future/article/{id}' -> content_article
+    [group-skip]  32 members skipped
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (15 skipped)
+    [probe] https://www.bbc.com/worklife/article/20260211-the-business-of-not-ageing  (pattern: https://www.bbc.com/{slug}/article/{id})
+    [pattern learned] 'https://www.bbc.com/{slug}/article/{id}' -> content_article
+    [group-skip]  2 members skipped
+    [cached-skip] 'https://www.bbc.com/reel/video/{id}/watch' -> other  (6 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/culture
+  -> 198 same-domain links extracted
+  -> 62 new URLs in 6 pattern groups
+    [probe] https://www.bbc.com/culture/article/20260609-disclosure-day-review  (pattern: https://www.bbc.com/culture/article/{id})
+    [pattern learned] 'https://www.bbc.com/culture/article/{id}' -> content_article
+    [group-skip]  11 members skipped
+    [cached-skip] 'https://www.bbc.com/news/articles/{id}' -> content_article  (17 skipped)
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (10 skipped)
+    [cached-skip] 'https://www.bbc.com/news/{slug}/{id}' -> content_article  (2 skipped)
+    [cached-skip] 'https://www.bbc.com/{slug}/article/{id}' -> content_article  (1 skipped)
+    [cached-skip] 'https://www.bbc.com/reel/video/{id}/watch' -> other  (20 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/travel
+  -> 195 same-domain links extracted
+  -> 60 new URLs in 3 pattern groups
+    [probe] https://www.bbc.com/travel/article/20251209-the-20-best-places-to-travel-in-2026  (pattern: https://www.bbc.com/travel/article/{id})
+    [pattern learned] 'https://www.bbc.com/travel/article/{id}' -> content_article
+    [group-skip]  35 members skipped
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (3 skipped)
+    [cached-skip] 'https://www.bbc.com/reel/video/{id}/watch' -> other  (21 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/arts
+  -> 167 same-domain links extracted
+  -> 27 new URLs in 4 pattern groups
+    [cached-skip] 'https://www.bbc.com/culture/article/{id}' -> content_article  (12 skipped)
+    [cached-skip] 'https://www.bbc.com/{slug}/article/{id}' -> content_article  (4 skipped)
+    [cached-skip] 'https://www.bbc.com/news/articles/{id}' -> content_article  (8 skipped)
+    [cached-skip] 'https://www.bbc.com/reel/video/{id}/watch' -> other  (3 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/future-planet
+  -> 163 same-domain links extracted
+  -> 28 new URLs in 4 pattern groups
+    [cached-skip] 'https://www.bbc.com/news/articles/{id}' -> content_article  (13 skipped)
+    [cached-skip] 'https://www.bbc.com/future/article/{id}' -> content_article  (8 skipped)
+    [cached-skip] 'https://www.bbc.com/news/{slug}/{id}' -> content_article  (6 skipped)
+    [cached-skip] 'https://www.bbc.com/reel/video/{id}/watch' -> other  (1 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/portuguese
+  -> 89 same-domain links extracted
+  -> 86 new URLs in 6 pattern groups
+    [probe] https://www.bbc.com/ws/languages  (pattern: https://www.bbc.com/ws/languages)
+    [pattern learned] 'https://www.bbc.com/ws/languages' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/portuguese/institutional-50054434  (pattern: https://www.bbc.com/portuguese/{id})
+    [pattern learned] 'https://www.bbc.com/portuguese/{id}' -> content_article
+    [group-skip]  3 members skipped
+    [probe] https://www.bbc.com/portuguese/topics/c9y2j35dn2zt  (pattern: https://www.bbc.com/portuguese/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/portuguese/{slug}/{id}' -> other
+    [group-skip]  13 members skipped
+    [probe] https://www.bbc.com/portuguese/articles/cp9lzpnl88jo  (pattern: https://www.bbc.com/portuguese/articles/{id})
+    [pattern learned] 'https://www.bbc.com/portuguese/articles/{id}' -> content_article
+    [group-skip]  64 members skipped
+    [probe] https://www.bbc.com/portuguese/articles/clypyrjgjkro  (pattern: https://www.bbc.com/portuguese/articles/{slug})
+    [pattern learned] 'https://www.bbc.com/portuguese/articles/{slug}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/portuguese/extra/wiv0xis4uq/world-cup-2026-stadium-guide-bbc-brasil  (pattern: https://www.bbc.com/portuguese/extra/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/portuguese/extra/{id}/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/mundo
+  -> 78 same-domain links extracted
+  -> 74 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/mundo/send/u184973209  (pattern: https://www.bbc.com/mundo/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/mundo/{slug}/{id}' -> other
+    [group-skip]  13 members skipped
+    [probe] https://www.bbc.com/mundo/articles/c20y78xnzyko  (pattern: https://www.bbc.com/mundo/articles/{id})
+    [pattern learned] 'https://www.bbc.com/mundo/articles/{id}' -> content_article
+    [group-skip]  54 members skipped
+    [probe] https://www.bbc.com/mundo/extra/s3kqygpi2u/world-cup-2026-stadium-guide-bbc-mundo  (pattern: https://www.bbc.com/mundo/extra/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/mundo/extra/{id}/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/mundo/institucional-51359666  (pattern: https://www.bbc.com/mundo/{id})
+    [pattern learned] 'https://www.bbc.com/mundo/{id}' -> content_article
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/burmese
+  -> 76 same-domain links extracted
+  -> 72 new URLs in 6 pattern groups
+    [probe] https://www.bbc.com/burmese/live/cx2klzdneylt  (pattern: https://www.bbc.com/burmese/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/burmese/{slug}/{id}' -> other
+    [group-skip]  7 members skipped
+    [probe] https://www.bbc.com/burmese/articles/c20lzv2793eo  (pattern: https://www.bbc.com/burmese/articles/{id})
+    [pattern learned] 'https://www.bbc.com/burmese/articles/{id}' -> content_article
+    [group-skip]  56 members skipped
+    [probe] https://www.bbc.com/burmese/articles/clyppeljrxqo  (pattern: https://www.bbc.com/burmese/articles/{slug})
+    [pattern learned] 'https://www.bbc.com/burmese/articles/{slug}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/burmese/bbc_burmese_radio/programmes/p0340rnm  (pattern: https://www.bbc.com/burmese/{id}/programmes/{id})
+    [pattern learned] 'https://www.bbc.com/burmese/{id}/programmes/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/burmese/bbc_burmese_tv/tv_programmes/w13xttn3?limit=%5B%274%27%5D  (pattern: https://www.bbc.com/burmese/bbc_burmese_tv/tv_programmes/{id})
+    [pattern learned] 'https://www.bbc.com/burmese/bbc_burmese_tv/tv_programmes/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/burmese/institutional-43548528  (pattern: https://www.bbc.com/burmese/{id})
+    [pattern learned] 'https://www.bbc.com/burmese/{id}' -> other
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/indonesia
+  -> 65 same-domain links extracted
+  -> 62 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/indonesia/topics/c5xr94j7n3xt  (pattern: https://www.bbc.com/indonesia/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/indonesia/{slug}/{id}' -> other
+    [group-skip]  11 members skipped
+    [probe] https://www.bbc.com/indonesia/articles/cqj10e80xg5o  (pattern: https://www.bbc.com/indonesia/articles/{id})
+    [pattern learned] 'https://www.bbc.com/indonesia/articles/{id}' -> content_article
+    [group-skip]  44 members skipped
+    [probe] https://www.bbc.com/indonesia/institutional-49283175  (pattern: https://www.bbc.com/indonesia/{id})
+    [pattern learned] 'https://www.bbc.com/indonesia/{id}' -> other
+    [group-skip]  3 members skipped
+    [probe] https://www.bbc.com/indonesia/institutional/2011/02/000001_links  (pattern: https://www.bbc.com/indonesia/institutional/{num}/{num}/{id})
+    [pattern learned] 'https://www.bbc.com/indonesia/institutional/{num}/{num}/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/thai
+  -> 70 same-domain links extracted
+  -> 66 new URLs in 5 pattern groups
+    [probe] https://www.bbc.com/thai/topics/c5ljd3jng4nt  (pattern: https://www.bbc.com/thai/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/thai/{slug}/{id}' -> other
+    [group-skip]  6 members skipped
+    [probe] https://www.bbc.com/thai/popular/read  (pattern: https://www.bbc.com/thai/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/thai/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/thai/popular/read
+    [probe] https://www.bbc.com/thai/articles/cz6vlx17wjno  (pattern: https://www.bbc.com/thai/articles/{id})
+    [pattern learned] 'https://www.bbc.com/thai/articles/{id}' -> content_article
+    [group-skip]  52 members skipped
+    [probe] https://www.bbc.com/thai/articles/cgrpnrwwjwqo  (pattern: https://www.bbc.com/thai/articles/{slug})
+    [pattern learned] 'https://www.bbc.com/thai/articles/{slug}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/thai/institutional-49281839  (pattern: https://www.bbc.com/thai/{id})
+    [pattern learned] 'https://www.bbc.com/thai/{id}' -> other
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/vietnamese
+  -> 108 same-domain links extracted
+  -> 104 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/vietnamese/topics/cl29j0ekkvdt  (pattern: https://www.bbc.com/vietnamese/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/vietnamese/{slug}/{id}' -> other
+    [group-skip]  6 members skipped
+    [probe] https://www.bbc.com/vietnamese/articles/c4gym7x3kmpo  (pattern: https://www.bbc.com/vietnamese/articles/{id})
+    [pattern learned] 'https://www.bbc.com/vietnamese/articles/{id}' -> content_article
+    [group-skip]  91 members skipped
+    [cached-skip] 'https://www.bbc.com/ws/languages' -> other  (1 skipped)
+    [probe] https://www.bbc.com/vietnamese/institutional-49283563  (pattern: https://www.bbc.com/vietnamese/{id})
+    [pattern learned] 'https://www.bbc.com/vietnamese/{id}' -> content_article
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/azeri
+  -> 30 same-domain links extracted
+  -> 26 new URLs in 3 pattern groups
+    [probe] https://www.bbc.com/azeri/topics/c7p1e34qkl4t  (pattern: https://www.bbc.com/azeri/topics/{id})
+    [pattern learned] 'https://www.bbc.com/azeri/topics/{id}' -> other
+    [group-skip]  5 members skipped
+    [probe] https://www.bbc.com/azeri/articles/cx2w7lplxvyo  (pattern: https://www.bbc.com/azeri/articles/{id})
+    [pattern learned] 'https://www.bbc.com/azeri/articles/{id}' -> content_article
+    [group-skip]  15 members skipped
+    [probe] https://www.bbc.com/azeri/institutional-49283479  (pattern: https://www.bbc.com/azeri/{id})
+    [pattern learned] 'https://www.bbc.com/azeri/{id}' -> other
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/kyrgyz
+  -> 43 same-domain links extracted
+  -> 39 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/kyrgyz/bbc_kyrgyz_tv/tv_programmes/w13xttqx?limit=%5B%274%27%5D  (pattern: https://www.bbc.com/kyrgyz/bbc_kyrgyz_tv/tv_programmes/{id})
+    [pattern learned] 'https://www.bbc.com/kyrgyz/bbc_kyrgyz_tv/tv_programmes/{id}' -> other
+    [group-skip]  1 members skipped
+    [probe] https://www.bbc.com/kyrgyz/topics/cz74kjpyk07t  (pattern: https://www.bbc.com/kyrgyz/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/kyrgyz/{slug}/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/kyrgyz/topics/cz74kjpyk07t
+    [ok] Added (depth=2): https://www.bbc.com/kyrgyz/topics/ck2l9z012nkt
+    [probe] https://www.bbc.com/kyrgyz/articles/c7vye66e28no  (pattern: https://www.bbc.com/kyrgyz/articles/{id})
+    [pattern learned] 'https://www.bbc.com/kyrgyz/articles/{id}' -> content_article
+    [group-skip]  29 members skipped
+    [probe] https://www.bbc.com/kyrgyz/institutional-49677275  (pattern: https://www.bbc.com/kyrgyz/{id})
+    [pattern learned] 'https://www.bbc.com/kyrgyz/{id}' -> other
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/polska
+  -> 42 same-domain links extracted
+  -> 38 new URLs in 2 pattern groups
+    [probe] https://www.bbc.com/polska/send/u203797512  (pattern: https://www.bbc.com/polska/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/polska/{slug}/{id}' -> other
+    [group-skip]  6 members skipped
+    [probe] https://www.bbc.com/polska/articles/c5yzw3en57vo  (pattern: https://www.bbc.com/polska/articles/{id})
+    [pattern learned] 'https://www.bbc.com/polska/articles/{id}' -> content_article
+    [group-skip]  30 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/russian
+  -> 60 same-domain links extracted
+  -> 56 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/russian/send/u168281705  (pattern: https://www.bbc.com/russian/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/russian/{slug}/{id}' -> other
+    [group-skip]  8 members skipped
+    [probe] https://www.bbc.com/russian/articles/cx2jpkwq4djo  (pattern: https://www.bbc.com/russian/articles/{id})
+    [pattern learned] 'https://www.bbc.com/russian/articles/{id}' -> content_article
+    [group-skip]  37 members skipped
+    [probe] https://www.bbc.com/russian/podcasts/p076qqzl/p0nrbzxy  (pattern: https://www.bbc.com/russian/podcasts/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/russian/podcasts/{id}/{id}' -> other
+    [group-skip]  3 members skipped
+    [probe] https://www.bbc.com/russian/institutional-55301322  (pattern: https://www.bbc.com/russian/{id})
+    [pattern learned] 'https://www.bbc.com/russian/{id}' -> other
+    [group-skip]  4 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/ukrainian
+  -> 48 same-domain links extracted
+  -> 44 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/ukrainian/topics/c44vmzqkzqqt  (pattern: https://www.bbc.com/ukrainian/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/ukrainian/{slug}/{id}' -> other
+    [group-skip]  4 members skipped
+    [probe] https://www.bbc.com/ukrainian/articles/cx2d8w3972zo  (pattern: https://www.bbc.com/ukrainian/articles/{id})
+    [pattern learned] 'https://www.bbc.com/ukrainian/articles/{id}' -> content_article
+    [group-skip]  34 members skipped
+    [cached-skip] 'https://www.bbc.com/ws/languages' -> other  (1 skipped)
+    [probe] https://www.bbc.com/ukrainian/institutional-50170368  (pattern: https://www.bbc.com/ukrainian/{id})
+    [pattern learned] 'https://www.bbc.com/ukrainian/{id}' -> content_article
+    [group-skip]  2 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/uzbek
+  -> 65 same-domain links extracted
+  -> 60 new URLs in 5 pattern groups
+    [probe] https://www.bbc.com/uzbek/cyr  (pattern: https://www.bbc.com/uzbek/{slug})
+    [pattern learned] 'https://www.bbc.com/uzbek/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/uzbek/cyr
+    [ok] Added (depth=2): https://www.bbc.com/uzbek/lat
+    [probe] https://www.bbc.com/uzbek/uzbekistan-47838092  (pattern: https://www.bbc.com/uzbek/{id})
+    [pattern learned] 'https://www.bbc.com/uzbek/{id}' -> content_article
+    [group-skip]  6 members skipped
+    [probe] https://www.bbc.com/uzbek/topics/c8y949r98pgt/cyr  (pattern: https://www.bbc.com/uzbek/{slug}/{id}/cyr)
+    [pattern learned] 'https://www.bbc.com/uzbek/{slug}/{id}/cyr' -> other
+    [group-skip]  6 members skipped
+    [probe] https://www.bbc.com/uzbek/articles/c33ye3pvemdo/cyr  (pattern: https://www.bbc.com/uzbek/articles/{id}/cyr)
+    [pattern learned] 'https://www.bbc.com/uzbek/articles/{id}/cyr' -> content_article
+    [group-skip]  42 members skipped
+    [probe] https://www.bbc.com/uzbek/topics/cqm6qnememet  (pattern: https://www.bbc.com/uzbek/topics/{id})
+    [pattern learned] 'https://www.bbc.com/uzbek/topics/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/arabic
+  -> 78 same-domain links extracted
+  -> 74 new URLs in 7 pattern groups
+    [probe] https://www.bbc.com/arabic/watch/bbc_arabic_tv/live  (pattern: https://www.bbc.com/arabic/watch/bbc_arabic_tv/live)
+    [pattern learned] 'https://www.bbc.com/arabic/watch/bbc_arabic_tv/live' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/arabic/bbc_arabic_radio/programmes/w13xtw2g  (pattern: https://www.bbc.com/arabic/bbc_arabic_radio/programmes/{id})
+    [pattern learned] 'https://www.bbc.com/arabic/bbc_arabic_radio/programmes/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/arabic/live/c1eyl7v88jwt  (pattern: https://www.bbc.com/arabic/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/arabic/{slug}/{id}' -> content_article
+    [group-skip]  14 members skipped
+    [probe] https://www.bbc.com/arabic/articles/cg4gwvqpeqdo  (pattern: https://www.bbc.com/arabic/articles/{id})
+    [pattern learned] 'https://www.bbc.com/arabic/articles/{id}' -> content_article
+    [group-skip]  50 members skipped
+    [probe] https://www.bbc.com/arabic/topics/crgyknwdlwnt  (pattern: https://www.bbc.com/arabic/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/arabic/{slug}/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/arabic/access-to-news  (pattern: https://www.bbc.com/arabic/access-to-news)
+    [pattern learned] 'https://www.bbc.com/arabic/access-to-news' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/arabic/institutional-49283069  (pattern: https://www.bbc.com/arabic/{id})
+    [pattern learned] 'https://www.bbc.com/arabic/{id}' -> content_article
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/persian
+  -> 61 same-domain links extracted
+  -> 57 new URLs in 6 pattern groups
+    [probe] https://www.bbc.com/persian/watch/bbc_persian_tv/live  (pattern: https://www.bbc.com/persian/watch/{id}/live)
+    [pattern learned] 'https://www.bbc.com/persian/watch/{id}/live' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/persian/send/u209231908  (pattern: https://www.bbc.com/persian/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/persian/{slug}/{id}' -> other
+    [group-skip]  13 members skipped
+    [probe] https://www.bbc.com/persian/topics/ckdxnwvwwjnt  (pattern: https://www.bbc.com/persian/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/persian/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/persian/topics/ckdxnwvwwjnt
+    [probe] https://www.bbc.com/persian/articles/c86dznw2qplo  (pattern: https://www.bbc.com/persian/articles/{id})
+    [pattern learned] 'https://www.bbc.com/persian/articles/{id}' -> content_article
+    [group-skip]  35 members skipped
+    [cached-skip] 'https://www.bbc.com/ws/languages' -> other  (1 skipped)
+    [probe] https://www.bbc.com/persian/institutional-49283091  (pattern: https://www.bbc.com/persian/{id})
+    [pattern learned] 'https://www.bbc.com/persian/{id}' -> content_article
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/turkce
+  -> 80 same-domain links extracted
+  -> 76 new URLs in 5 pattern groups
+    [probe] https://www.bbc.com/turkce/topics/ceq17090840t  (pattern: https://www.bbc.com/turkce/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/turkce/{slug}/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/turkce/topics/ceq17090840t
+    [ok] Added (depth=2): https://www.bbc.com/turkce/topics/ckdxn2xk95gt
+    [ok] Added (depth=2): https://www.bbc.com/turkce/topics/cdr56v5k19zt
+    [ok] Added (depth=2): https://www.bbc.com/turkce/topics/cmn3xd0epypt
+    [ok] Added (depth=2): https://www.bbc.com/turkce/topics/cg726y2k82dt
+    [ok] Added (depth=2): https://www.bbc.com/turkce/topics/c7zp5gpnp38t
+    [ok] Added (depth=2): https://www.bbc.com/turkce/topics/cnq68n6wgzdt
+    [ok] Added (depth=2): https://www.bbc.com/turkce/topics/c404v74nk56t
+    [ok] Added (depth=2): https://www.bbc.com/turkce/topics/c2dwqnwkvnqt
+    [ok] Added (depth=2): https://www.bbc.com/turkce/topics/c2dwqngp3p8t
+    [ok] Added (depth=2): https://www.bbc.com/turkce/topics/c340qx04vwwt
+    [probe] https://www.bbc.com/turkce/articles/c0ky8kvd1j0o  (pattern: https://www.bbc.com/turkce/articles/{id})
+    [pattern learned] 'https://www.bbc.com/turkce/articles/{id}' -> content_article
+    [group-skip]  59 members skipped
+    [probe] https://www.bbc.com/turkce/extra/zup2hn8k46/world-cup-2026-stadium-guide-bbc-turkish  (pattern: https://www.bbc.com/turkce/extra/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/turkce/extra/{id}/{id}' -> other
+    [group-skip]  0 members skipped
+    [cached-skip] 'https://www.bbc.com/ws/languages' -> other  (1 skipped)
+    [probe] https://www.bbc.com/turkce/kurumsal-50221017  (pattern: https://www.bbc.com/turkce/{id})
+    [pattern learned] 'https://www.bbc.com/turkce/{id}' -> content_article
+    [group-skip]  2 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/bengali
+  -> 63 same-domain links extracted
+  -> 59 new URLs in 5 pattern groups
+    [probe] https://www.bbc.com/bengali/live/clyej44yvpjt  (pattern: https://www.bbc.com/bengali/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/bengali/{slug}/{id}' -> other
+    [group-skip]  12 members skipped
+    [probe] https://www.bbc.com/bengali/popular/read  (pattern: https://www.bbc.com/bengali/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/bengali/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/bengali/popular/read
+    [probe] https://www.bbc.com/bengali/articles/cp8r78xdjkjo  (pattern: https://www.bbc.com/bengali/articles/{id})
+    [pattern learned] 'https://www.bbc.com/bengali/articles/{id}' -> content_article
+    [group-skip]  39 members skipped
+    [probe] https://www.bbc.com/bengali/articles/ckgpjvlxjklo  (pattern: https://www.bbc.com/bengali/articles/{slug})
+    [pattern learned] 'https://www.bbc.com/bengali/articles/{slug}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/bengali/institutional-50409861  (pattern: https://www.bbc.com/bengali/{id})
+    [pattern learned] 'https://www.bbc.com/bengali/{id}' -> other
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/dari
+  -> 53 same-domain links extracted
+  -> 48 new URLs in 6 pattern groups
+    [probe] https://www.bbc.com/dari/watch/bbc_afghan_tv/live  (pattern: https://www.bbc.com/dari/watch/bbc_afghan_tv/live)
+    [pattern learned] 'https://www.bbc.com/dari/watch/bbc_afghan_tv/live' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/dari/bbc_dari_radio/programmes/p0340v11  (pattern: https://www.bbc.com/dari/bbc_dari_radio/programmes/{id})
+    [pattern learned] 'https://www.bbc.com/dari/bbc_dari_radio/programmes/{id}' -> other
+    [group-skip]  3 members skipped
+    [probe] https://www.bbc.com/dari/bbc_dari_radio/liveradio  (pattern: https://www.bbc.com/dari/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/dari/{slug}/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/dari/send/u214757345  (pattern: https://www.bbc.com/dari/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/dari/{slug}/{id}' -> other
+    [group-skip]  9 members skipped
+    [probe] https://www.bbc.com/dari/articles/c3wye67qvxzo  (pattern: https://www.bbc.com/dari/articles/{id})
+    [pattern learned] 'https://www.bbc.com/dari/articles/{id}' -> content_article
+    [group-skip]  30 members skipped
+    [known-listing] 'https://www.bbc.com/{slug}/{slug}/{slug}' - testing 1 members individually
+[BFS depth=1] Processing node: https://www.bbc.com/gujarati
+  -> 67 same-domain links extracted
+  -> 63 new URLs in 6 pattern groups
+    [probe] https://www.bbc.com/gujarati/podcasts/w13xtw3r  (pattern: https://www.bbc.com/gujarati/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/gujarati/{slug}/{id}' -> other
+    [group-skip]  10 members skipped
+    [probe] https://www.bbc.com/gujarati/popular/read  (pattern: https://www.bbc.com/gujarati/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/gujarati/{slug}/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/gujarati/articles/cgjx73561pwo  (pattern: https://www.bbc.com/gujarati/articles/{id})
+    [pattern learned] 'https://www.bbc.com/gujarati/articles/{id}' -> content_article
+    [group-skip]  47 members skipped
+    [probe] https://www.bbc.com/gujarati/institutional-50409883  (pattern: https://www.bbc.com/gujarati/{id})
+    [pattern learned] 'https://www.bbc.com/gujarati/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/terms  (pattern: https://www.bbc.com/terms)
+    [pattern learned] 'https://www.bbc.com/terms' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/aboutthebbc  (pattern: https://www.bbc.com/aboutthebbc)
+    [pattern learned] 'https://www.bbc.com/aboutthebbc' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/hindi
+  -> 88 same-domain links extracted
+  -> 84 new URLs in 7 pattern groups
+    [probe] https://www.bbc.com/hindi/live/cg537lgmlz0t  (pattern: https://www.bbc.com/hindi/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/hindi/{slug}/{id}' -> content_article
+    [group-skip]  15 members skipped
+    [probe] https://www.bbc.com/hindi/articles/c621wllkq91o  (pattern: https://www.bbc.com/hindi/articles/{id})
+    [pattern learned] 'https://www.bbc.com/hindi/articles/{id}' -> content_article
+    [group-skip]  58 members skipped
+    [probe] https://www.bbc.com/hindi/watch/bbc_hindi_tv/live  (pattern: https://www.bbc.com/hindi/watch/bbc_hindi_tv/live)
+    [pattern learned] 'https://www.bbc.com/hindi/watch/bbc_hindi_tv/live' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/hindi/watch/bbc_hindi_tv/live
+    [probe] https://www.bbc.com/hindi/bbc_hindi_tv/tv_programmes/w13xttlw  (pattern: https://www.bbc.com/hindi/bbc_hindi_tv/tv_programmes/{id})
+    [pattern learned] 'https://www.bbc.com/hindi/bbc_hindi_tv/tv_programmes/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/hindi/bbc_hindi_tv/tv_programmes/w13xttlw
+    [probe] https://session.bbc.com/session?context=%5B%27international%27%5D&lang=%5B%27hi-IN%27%5D&skipAgeBracketScreen=%5B%27true%27%5D&userOrigin=%5B%27WS_NEWS_HINDI%27%5D  (pattern: https://session.bbc.com/session)
+    [probe] https://www.bbc.com/programmes/p05525mc  (pattern: https://www.bbc.com/programmes/{id})
+    [pattern learned] 'https://www.bbc.com/programmes/{id}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/hindi/institutional-50223932  (pattern: https://www.bbc.com/hindi/{id})
+    [pattern learned] 'https://www.bbc.com/hindi/{id}' -> other
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/marathi
+  -> 69 same-domain links extracted
+  -> 64 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/marathi/podcasts/p09431p4  (pattern: https://www.bbc.com/marathi/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/marathi/{slug}/{id}' -> content_article
+    [group-skip]  7 members skipped
+    [probe] https://www.bbc.com/marathi/popular/read  (pattern: https://www.bbc.com/marathi/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/marathi/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/marathi/popular/read
+    [probe] https://www.bbc.com/marathi/articles/cy497ne2xk0o  (pattern: https://www.bbc.com/marathi/articles/{id})
+    [pattern learned] 'https://www.bbc.com/marathi/articles/{id}' -> content_article
+    [group-skip]  53 members skipped
+    [probe] https://www.bbc.com/marathi/institutional-50418391  (pattern: https://www.bbc.com/marathi/{id})
+    [pattern learned] 'https://www.bbc.com/marathi/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/nepali
+  -> 46 same-domain links extracted
+  -> 42 new URLs in 5 pattern groups
+    [probe] https://www.bbc.com/nepali/topics/cw9kv027nwnt  (pattern: https://www.bbc.com/nepali/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/nepali/{slug}/{id}' -> other
+    [group-skip]  5 members skipped
+    [probe] https://www.bbc.com/nepali/articles/c621wg6ywg3o  (pattern: https://www.bbc.com/nepali/articles/{id})
+    [pattern learned] 'https://www.bbc.com/nepali/articles/{id}' -> content_article
+    [group-skip]  29 members skipped
+    [probe] https://www.bbc.com/nepali/bbc_nepali_radio/programmes/p0340xzv  (pattern: https://www.bbc.com/nepali/{id}/programmes/{id})
+    [pattern learned] 'https://www.bbc.com/nepali/{id}/programmes/{id}' -> other
+    [group-skip]  0 members skipped
+    [cached-skip] 'https://www.bbc.com/ws/languages' -> other  (1 skipped)
+    [probe] https://www.bbc.com/nepali/institutional-50318130  (pattern: https://www.bbc.com/nepali/{id})
+    [pattern learned] 'https://www.bbc.com/nepali/{id}' -> other
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/sinhala
+  -> 49 same-domain links extracted
+  -> 45 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/sinhala/topics/crldzm9n2lnt  (pattern: https://www.bbc.com/sinhala/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/sinhala/{slug}/{id}' -> other
+    [group-skip]  4 members skipped
+    [probe] https://www.bbc.com/sinhala/articles/c9q2lzz904wo  (pattern: https://www.bbc.com/sinhala/articles/{id})
+    [pattern learned] 'https://www.bbc.com/sinhala/articles/{id}' -> content_article
+    [group-skip]  34 members skipped
+    [probe] https://www.bbc.com/sinhala.lite  (pattern: https://www.bbc.com/sinhala.lite)
+    [pattern learned] 'https://www.bbc.com/sinhala.lite' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/sinhala.lite
+    [probe] https://www.bbc.com/sinhala/sri-lanka-61440050  (pattern: https://www.bbc.com/sinhala/{id})
+    [pattern learned] 'https://www.bbc.com/sinhala/{id}' -> content_article
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/punjabi
+  -> 62 same-domain links extracted
+  -> 57 new URLs in 5 pattern groups
+    [probe] https://www.bbc.com/punjabi/topics/cx12qmz6jm4t  (pattern: https://www.bbc.com/punjabi/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/punjabi/{slug}/{id}' -> other
+    [group-skip]  4 members skipped
+    [probe] https://www.bbc.com/punjabi/popular/read  (pattern: https://www.bbc.com/punjabi/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/punjabi/{slug}/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/punjabi/articles/crlwne39dg3o  (pattern: https://www.bbc.com/punjabi/articles/{id})
+    [pattern learned] 'https://www.bbc.com/punjabi/articles/{id}' -> content_article
+    [group-skip]  47 members skipped
+    [probe] https://www.bbc.com/punjabi/articles/cvglxvxmxmmo  (pattern: https://www.bbc.com/punjabi/articles/{slug})
+    [pattern learned] 'https://www.bbc.com/punjabi/articles/{slug}' -> content_article
+    [group-skip]  1 members skipped
+    [probe] https://www.bbc.com/punjabi/institutional-49282853  (pattern: https://www.bbc.com/punjabi/{id})
+    [pattern learned] 'https://www.bbc.com/punjabi/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/afaanoromoo
+  -> 94 same-domain links extracted
+  -> 88 new URLs in 9 pattern groups
+    [probe] https://www.bbc.com/afaanoromoo/live/cwydg7zged3t  (pattern: https://www.bbc.com/afaanoromoo/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/afaanoromoo/{slug}/{id}' -> content_article
+    [group-skip]  8 members skipped
+    [probe] https://www.bbc.com/afaanoromoo/popular/read  (pattern: https://www.bbc.com/afaanoromoo/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/afaanoromoo/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/afaanoromoo/popular/read
+    [probe] https://www.bbc.com/afaanoromoo/articles/ckg8920r775o  (pattern: https://www.bbc.com/afaanoromoo/articles/{id})
+    [pattern learned] 'https://www.bbc.com/afaanoromoo/articles/{id}' -> content_article
+    [group-skip]  71 members skipped
+    [probe] https://www.bbc.com/afaanoromoo/articles/cqjprpewwxno  (pattern: https://www.bbc.com/afaanoromoo/articles/{slug})
+    [pattern learned] 'https://www.bbc.com/afaanoromoo/articles/{slug}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/afaanoromoo/bbc_afaanoromoo_radio/programmes/w13xttnw  (pattern: https://www.bbc.com/afaanoromoo/bbc_afaanoromoo_radio/programmes/{id})
+    [pattern learned] 'https://www.bbc.com/afaanoromoo/bbc_afaanoromoo_radio/programmes/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/afaanoromoo/extra/danctlt3u5/africa_prisoners_ukraine_afaan_oromoo  (pattern: https://www.bbc.com/afaanoromoo/extra/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/afaanoromoo/extra/{id}/{id}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/afaanoromoo.lite  (pattern: https://www.bbc.com/afaanoromoo.lite)
+    [pattern learned] 'https://www.bbc.com/afaanoromoo.lite' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/afaanoromoo.lite
+    [probe] https://www.bbc.com/afaanoromoo/institutional-49281861  (pattern: https://www.bbc.com/afaanoromoo/{id})
+    [pattern learned] 'https://www.bbc.com/afaanoromoo/{id}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/usingthebbc/terms  (pattern: https://www.bbc.com/usingthebbc/terms)
+    [pattern learned] 'https://www.bbc.com/usingthebbc/terms' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/amharic
+  -> 111 same-domain links extracted
+  -> 104 new URLs in 6 pattern groups
+    [probe] https://www.bbc.com/amharic/live/cvgm36p904nt  (pattern: https://www.bbc.com/amharic/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/amharic/{slug}/{id}' -> content_article
+    [group-skip]  10 members skipped
+    [probe] https://www.bbc.com/amharic/articles/c5yzry1rgn1o  (pattern: https://www.bbc.com/amharic/articles/{id})
+    [pattern learned] 'https://www.bbc.com/amharic/articles/{id}' -> content_article
+    [group-skip]  88 members skipped
+    [probe] https://www.bbc.com/amharic/articles/cgrpzxyrpqgo  (pattern: https://www.bbc.com/amharic/articles/{slug})
+    [pattern learned] 'https://www.bbc.com/amharic/articles/{slug}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/amharic/bbc_amharic_radio/programmes/w13xttnt  (pattern: https://www.bbc.com/amharic/bbc_amharic_radio/programmes/{id})
+    [pattern learned] 'https://www.bbc.com/amharic/bbc_amharic_radio/programmes/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/amharic.lite  (pattern: https://www.bbc.com/amharic.lite)
+    [pattern learned] 'https://www.bbc.com/amharic.lite' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/amharic.lite
+    [probe] https://www.bbc.com/amharic/institutional-49283133  (pattern: https://www.bbc.com/amharic/{id})
+    [pattern learned] 'https://www.bbc.com/amharic/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/afrique
+  -> 91 same-domain links extracted
+  -> 87 new URLs in 10 pattern groups
+    [probe] https://www.bbc.com/afrique/topics/cz4vn9gyd6rt  (pattern: https://www.bbc.com/afrique/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/afrique/{slug}/{id}' -> other
+    [group-skip]  7 members skipped
+    [probe] https://www.bbc.com/afrique/bbc_afrique_radio/liveradio  (pattern: https://www.bbc.com/afrique/{id}/{slug})
+    [pattern learned] 'https://www.bbc.com/afrique/{id}/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/afrique/articles/c70y480geeeo  (pattern: https://www.bbc.com/afrique/articles/{id})
+    [pattern learned] 'https://www.bbc.com/afrique/articles/{id}' -> content_article
+    [group-skip]  58 members skipped
+    [probe] https://www.bbc.com/afrique/bbc_afrique_radio/w3ct8zcn  (pattern: https://www.bbc.com/afrique/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/afrique/{id}/{id}' -> other
+    [group-skip]  3 members skipped
+    [probe] https://www.bbc.com/afrique/topics  (pattern: https://www.bbc.com/afrique/{slug})
+    [pattern learned] 'https://www.bbc.com/afrique/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/afrique/topics
+    [probe] https://www.bbc.com/afrique/institutionelles-49580308  (pattern: https://www.bbc.com/afrique/{id})
+    [pattern learned] 'https://www.bbc.com/afrique/{id}' -> other
+    [group-skip]  4 members skipped
+    [known-listing] 'https://www.bbc.com/{slug}/{slug}' - testing 1 members individually
+    [probe] https://www.bbc.com/afrique.lite  (pattern: https://www.bbc.com/afrique.lite)
+    [pattern learned] 'https://www.bbc.com/afrique.lite' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/afrique.lite
+    [probe] https://www.bbc.com/afrique/extra/uelbvocdqx/africa_prisoners_ukraine_afrique  (pattern: https://www.bbc.com/afrique/{slug}/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/afrique/{slug}/{slug}/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/afrique/bbc_afrique_radio/programmes/p030s6dq  (pattern: https://www.bbc.com/afrique/{id}/programmes/{id})
+    [pattern learned] 'https://www.bbc.com/afrique/{id}/programmes/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/afrique/bbc_afrique_radio/programmes/p030s6dq
+[BFS depth=1] Processing node: https://www.bbc.com/hausa
+  -> 65 same-domain links extracted
+  -> 61 new URLs in 7 pattern groups
+    [probe] https://www.bbc.com/hausa/live/cql1rld0py3t  (pattern: https://www.bbc.com/hausa/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/hausa/{slug}/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/hausa/live/cql1rld0py3t
+    [ok] Added (depth=2): https://www.bbc.com/hausa/topics/cyvgjjjq4eyt
+    [ok] Added (depth=2): https://www.bbc.com/hausa/topics/cz74kjgv220t
+    [ok] Added (depth=2): https://www.bbc.com/hausa/topics/cg726kz37wdt
+    [ok] Added (depth=2): https://www.bbc.com/hausa/topics/cnl7wd77wj2t
+    [ok] Added (depth=2): https://www.bbc.com/hausa/live/cp8r1epdvlet
+    [ok] Added (depth=2): https://www.bbc.com/hausa/live/c8jwdgzwxy7t
+    [probe] https://www.bbc.com/hausa/bbc_hausa_radio/liveradio  (pattern: https://www.bbc.com/hausa/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/hausa/{slug}/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/hausa/articles/cd6eqgle692o  (pattern: https://www.bbc.com/hausa/articles/{id})
+    [pattern learned] 'https://www.bbc.com/hausa/articles/{id}' -> content_article
+    [group-skip]  38 members skipped
+    [probe] https://www.bbc.com/hausa/topics  (pattern: https://www.bbc.com/hausa/{slug})
+    [pattern learned] 'https://www.bbc.com/hausa/{slug}' -> other
+    [group-skip]  0 members skipped
+    [known-listing] 'https://www.bbc.com/{slug}/{slug}' - testing 1 members individually
+    [probe] https://www.bbc.com/hausa/game-da-mu-49283501  (pattern: https://www.bbc.com/hausa/{id})
+    [pattern learned] 'https://www.bbc.com/hausa/{id}' -> content_article
+    [group-skip]  3 members skipped
+    [probe] https://www.bbc.com/hausa.lite  (pattern: https://www.bbc.com/hausa.lite)
+    [pattern learned] 'https://www.bbc.com/hausa.lite' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/hausa.lite
+[BFS depth=1] Processing node: https://www.bbc.com/naidheachdan
+  -> 67 same-domain links extracted
+  -> 46 new URLs in 8 pattern groups
+    [probe] https://account.bbc.com/account?lang=%5B%27gd-GB%27%5D&ptrt=%5B%27https%3A%2F%2Fwww.bbc.com%2Fnaidheachdan%27%5D  (pattern: https://account.bbc.com/{slug})
+    [known-listing] 'https://www.bbc.com/{slug}' - testing 1 members individually
+    [ok] Added (depth=2): https://www.bbc.com/search?d=%5B%27NEWS_LANGUAGES_GNL%27%5D
+    [probe] https://www.bbc.com/naidheachdan?page=%5B%271%27%5D  (pattern: https://www.bbc.com/naidheachdan)
+    [pattern learned] 'https://www.bbc.com/naidheachdan' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/naidheachdan?page=%5B%271%27%5D
+    [ok] Added (depth=2): https://www.bbc.com/naidheachdan?page=%5B%272%27%5D
+    [ok] Added (depth=2): https://www.bbc.com/naidheachdan?page=%5B%273%27%5D
+    [ok] Added (depth=2): https://www.bbc.com/naidheachdan?page=%5B%274%27%5D
+    [ok] Added (depth=2): https://www.bbc.com/naidheachdan?page=%5B%275%27%5D
+    [ok] Added (depth=2): https://www.bbc.com/naidheachdan?page=%5B%276%27%5D
+    [ok] Added (depth=2): https://www.bbc.com/naidheachdan?page=%5B%2742%27%5D
+    [probe] https://www.bbc.com/naidheachdan/spors  (pattern: https://www.bbc.com/naidheachdan/spors)
+    [pattern learned] 'https://www.bbc.com/naidheachdan/spors' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/naidheachdan/spors
+    [probe] https://www.bbc.com/naidheachdan/67087310  (pattern: https://www.bbc.com/naidheachdan/{num})
+    [pattern learned] 'https://www.bbc.com/naidheachdan/{num}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/naidheachdan/sgeulachdan/c0qy0e4zpjko  (pattern: https://www.bbc.com/naidheachdan/sgeulachdan/{id})
+    [pattern learned] 'https://www.bbc.com/naidheachdan/sgeulachdan/{id}' -> content_article
+    [group-skip]  21 members skipped
+    [probe] https://www.bbc.com/naidheachdan/bhidio/c20y5re51plo  (pattern: https://www.bbc.com/naidheachdan/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/naidheachdan/{slug}/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/naidheachdan/bhidio/c20y5re51plo
+    [ok] Added (depth=2): https://www.bbc.com/naidheachdan/bhidio/c862q4v8w5go
+    [ok] Added (depth=2): https://www.bbc.com/naidheachdan/bhidio/ckg8nxpz7d2o
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (7 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/japanese
+  -> 61 same-domain links extracted
+  -> 58 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/japanese/topics/c132079wln0t  (pattern: https://www.bbc.com/japanese/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/japanese/{slug}/{id}' -> other
+    [group-skip]  8 members skipped
+    [probe] https://www.bbc.com/japanese/articles/cr47l9qw7xno  (pattern: https://www.bbc.com/japanese/articles/{id})
+    [pattern learned] 'https://www.bbc.com/japanese/articles/{id}' -> content_article
+    [group-skip]  43 members skipped
+    [probe] https://www.bbc.com/japanese/60631515  (pattern: https://www.bbc.com/japanese/{num})
+    [pattern learned] 'https://www.bbc.com/japanese/{num}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/japanese/60631515
+    [probe] https://www.bbc.com/japanese/help-49677253  (pattern: https://www.bbc.com/japanese/{id})
+    [pattern learned] 'https://www.bbc.com/japanese/{id}' -> other
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/pidgin
+  -> 50 same-domain links extracted
+  -> 43 new URLs in 5 pattern groups
+    [probe] https://www.bbc.com/pidgin/topics/c3l19z3k1ert  (pattern: https://www.bbc.com/pidgin/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/pidgin/{slug}/{id}' -> other
+    [group-skip]  7 members skipped
+    [probe] https://www.bbc.com/pidgin/popular/read  (pattern: https://www.bbc.com/pidgin/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/pidgin/{slug}/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/pidgin/articles/clyexnrll4jo  (pattern: https://www.bbc.com/pidgin/articles/{id})
+    [pattern learned] 'https://www.bbc.com/pidgin/articles/{id}' -> content_article
+    [group-skip]  30 members skipped
+    [probe] https://www.bbc.com/pidgin/extra/k2kcjn0j0i/africa_prisoners_ukraine_pidgin  (pattern: https://www.bbc.com/pidgin/extra/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/pidgin/extra/{id}/{id}' -> other
+    [group-skip]  1 members skipped
+    [probe] https://www.bbc.com/pidgin/institutional-48528766  (pattern: https://www.bbc.com/pidgin/{id})
+    [pattern learned] 'https://www.bbc.com/pidgin/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/somali
+  -> 83 same-domain links extracted
+  -> 79 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/somali/live/c33yeyrrg7xt  (pattern: https://www.bbc.com/somali/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/somali/{slug}/{id}' -> content_article
+    [group-skip]  10 members skipped
+    [probe] https://www.bbc.com/somali/articles/c0qy0dv14ldo  (pattern: https://www.bbc.com/somali/articles/{id})
+    [pattern learned] 'https://www.bbc.com/somali/articles/{id}' -> content_article
+    [group-skip]  62 members skipped
+    [probe] https://www.bbc.com/somali/bbc_somali_radio/liveradio  (pattern: https://www.bbc.com/somali/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/somali/{slug}/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/somali/hayadeed-49283375  (pattern: https://www.bbc.com/somali/{id})
+    [pattern learned] 'https://www.bbc.com/somali/{id}' -> other
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/swahili
+  -> 58 same-domain links extracted
+  -> 54 new URLs in 8 pattern groups
+    [probe] https://www.bbc.com/swahili/live/c23y8x31n2jt  (pattern: https://www.bbc.com/swahili/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/swahili/{slug}/{id}' -> content_article
+    [group-skip]  7 members skipped
+    [probe] https://www.bbc.com/swahili/topics/ckdxndddjkxt  (pattern: https://www.bbc.com/swahili/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/swahili/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/swahili/topics/ckdxndddjkxt
+    [probe] https://www.bbc.com/swahili/articles/cvgzy0jzge7o  (pattern: https://www.bbc.com/swahili/articles/{id})
+    [pattern learned] 'https://www.bbc.com/swahili/articles/{id}' -> content_article
+    [group-skip]  33 members skipped
+    [probe] https://www.bbc.com/swahili/bbc_swahili_radio/w1730n0d539szw9  (pattern: https://www.bbc.com/swahili/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/swahili/{id}/{id}' -> other
+    [group-skip]  2 members skipped
+    [probe] https://www.bbc.com/swahili.lite  (pattern: https://www.bbc.com/swahili.lite)
+    [pattern learned] 'https://www.bbc.com/swahili.lite' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/swahili.lite
+    [probe] https://www.bbc.com/swahili/bbc_swahili_tv/tv_programmes/w13xtvrs  (pattern: https://www.bbc.com/swahili/bbc_swahili_tv/tv_programmes/{id})
+    [pattern learned] 'https://www.bbc.com/swahili/bbc_swahili_tv/tv_programmes/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/swahili/habari-57627752  (pattern: https://www.bbc.com/swahili/{id})
+    [pattern learned] 'https://www.bbc.com/swahili/{id}' -> content_article
+    [group-skip]  4 members skipped
+    [probe] https://www.bbc.com/swahili/58223179  (pattern: https://www.bbc.com/swahili/{num})
+    [pattern learned] 'https://www.bbc.com/swahili/{num}' -> content_article
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/tamil
+  -> 89 same-domain links extracted
+  -> 85 new URLs in 6 pattern groups
+    [probe] https://www.bbc.com/tamil/podcasts/p0l97701  (pattern: https://www.bbc.com/tamil/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/tamil/{slug}/{id}' -> other
+    [group-skip]  11 members skipped
+    [probe] https://www.bbc.com/tamil/topics/cxnyknvykxjt  (pattern: https://www.bbc.com/tamil/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/tamil/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/tamil/topics/cxnyknvykxjt
+    [probe] https://www.bbc.com/tamil/articles/c1kye3ym1nwo  (pattern: https://www.bbc.com/tamil/articles/{id})
+    [pattern learned] 'https://www.bbc.com/tamil/articles/{id}' -> content_article
+    [group-skip]  66 members skipped
+    [probe] https://www.bbc.com/tamil/articles/clyenrzydvyo  (pattern: https://www.bbc.com/tamil/articles/{slug})
+    [pattern learned] 'https://www.bbc.com/tamil/articles/{slug}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/tamil/bbc_tamil_tv/tv_programmes/w13xttmy?limit=%5B%274%27%5D  (pattern: https://www.bbc.com/tamil/bbc_tamil_tv/tv_programmes/{id})
+    [pattern learned] 'https://www.bbc.com/tamil/bbc_tamil_tv/tv_programmes/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/tamil/institutional-50288575  (pattern: https://www.bbc.com/tamil/{id})
+    [pattern learned] 'https://www.bbc.com/tamil/{id}' -> content_article
+    [group-skip]  2 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/telugu
+  -> 60 same-domain links extracted
+  -> 54 new URLs in 6 pattern groups
+    [probe] https://www.bbc.com/telugu/topics/cl29j0e3e2dt  (pattern: https://www.bbc.com/telugu/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/telugu/{slug}/{id}' -> other
+    [group-skip]  5 members skipped
+    [probe] https://www.bbc.com/telugu/popular/read  (pattern: https://www.bbc.com/telugu/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/telugu/{slug}/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/telugu/popular/read
+    [probe] https://www.bbc.com/telugu/articles/ced49705ypno  (pattern: https://www.bbc.com/telugu/articles/{id})
+    [pattern learned] 'https://www.bbc.com/telugu/articles/{id}' -> content_article
+    [group-skip]  42 members skipped
+    [probe] https://www.bbc.com/telugu/articles/crkvdpzdkgjo  (pattern: https://www.bbc.com/telugu/articles/{slug})
+    [pattern learned] 'https://www.bbc.com/telugu/articles/{slug}' -> content_article
+    [group-skip]  1 members skipped
+    [probe] https://www.bbc.com/telugu/bbc_telugu_tv/tv_programmes/w13xttld  (pattern: https://www.bbc.com/telugu/bbc_telugu_tv/tv_programmes/{id})
+    [pattern learned] 'https://www.bbc.com/telugu/bbc_telugu_tv/tv_programmes/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/telugu/bbc_telugu_tv/tv_programmes/w13xttld
+    [probe] https://www.bbc.com/telugu/institutional-50420343  (pattern: https://www.bbc.com/telugu/{id})
+    [pattern learned] 'https://www.bbc.com/telugu/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/tigrinya
+  -> 81 same-domain links extracted
+  -> 74 new URLs in 8 pattern groups
+    [probe] https://www.bbc.com/tigrinya/live/ckgpqvyvjnrt  (pattern: https://www.bbc.com/tigrinya/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/tigrinya/{slug}/{id}' -> content_article
+    [group-skip]  7 members skipped
+    [probe] https://www.bbc.com/tigrinya/popular/read  (pattern: https://www.bbc.com/tigrinya/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/tigrinya/{slug}/{slug}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/tigrinya/articles/cwy0xg95g4zo  (pattern: https://www.bbc.com/tigrinya/articles/{id})
+    [pattern learned] 'https://www.bbc.com/tigrinya/articles/{id}' -> content_article
+    [group-skip]  58 members skipped
+    [probe] https://www.bbc.com/tigrinya/articles/cqjwqvznqqxo  (pattern: https://www.bbc.com/tigrinya/articles/{slug})
+    [pattern learned] 'https://www.bbc.com/tigrinya/articles/{slug}' -> content_article
+    [group-skip]  1 members skipped
+    [probe] https://www.bbc.com/tigrinya/bbc_tigrinya_radio/programmes/w13xttny  (pattern: https://www.bbc.com/tigrinya/{id}/programmes/{id})
+    [pattern learned] 'https://www.bbc.com/tigrinya/{id}/programmes/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/tigrinya/extra/xyqnvoio5b/africa_prisoners_ukraine_tigrinya  (pattern: https://www.bbc.com/tigrinya/extra/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/tigrinya/extra/{id}/{id}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/tigrinya.lite  (pattern: https://www.bbc.com/tigrinya.lite)
+    [pattern learned] 'https://www.bbc.com/tigrinya.lite' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/tigrinya.lite
+    [probe] https://www.bbc.com/tigrinya/institutional-49283259  (pattern: https://www.bbc.com/tigrinya/{id})
+    [pattern learned] 'https://www.bbc.com/tigrinya/{id}' -> content_article
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/urdu
+  -> 63 same-domain links extracted
+  -> 59 new URLs in 5 pattern groups
+    [probe] https://www.bbc.com/urdu/live/c0myz91g4gmt  (pattern: https://www.bbc.com/urdu/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/urdu/{slug}/{id}' -> content_article
+    [group-skip]  8 members skipped
+    [probe] https://www.bbc.com/urdu/articles/c14ylvvm50ro  (pattern: https://www.bbc.com/urdu/articles/{id})
+    [pattern learned] 'https://www.bbc.com/urdu/articles/{id}' -> content_article
+    [group-skip]  43 members skipped
+    [probe] https://www.bbc.com/urdu/bbc_urdu_tv/tv_programmes/w13xtwg6  (pattern: https://www.bbc.com/urdu/bbc_urdu_tv/tv_programmes/{id})
+    [pattern learned] 'https://www.bbc.com/urdu/bbc_urdu_tv/tv_programmes/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/urdu.lite  (pattern: https://www.bbc.com/urdu.lite)
+    [pattern learned] 'https://www.bbc.com/urdu.lite' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/urdu.lite
+    [probe] https://www.bbc.com/urdu/institutional-49282935  (pattern: https://www.bbc.com/urdu/{id})
+    [pattern learned] 'https://www.bbc.com/urdu/{id}' -> other
+    [group-skip]  3 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/yoruba
+  -> 74 same-domain links extracted
+  -> 67 new URLs in 5 pattern groups
+    [probe] https://www.bbc.com/yoruba/topics/ck5rznlk6k3t  (pattern: https://www.bbc.com/yoruba/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/yoruba/{slug}/{id}' -> other
+    [group-skip]  3 members skipped
+    [probe] https://www.bbc.com/yoruba/popular/read  (pattern: https://www.bbc.com/yoruba/{slug}/{slug})
+    [pattern learned] 'https://www.bbc.com/yoruba/{slug}/{slug}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/yoruba/articles/c5yzgpd5l7qo  (pattern: https://www.bbc.com/yoruba/articles/{id})
+    [pattern learned] 'https://www.bbc.com/yoruba/articles/{id}' -> content_article
+    [group-skip]  59 members skipped
+    [probe] https://www.bbc.com/yoruba/extra/9ewf0kujw5/africa_prisoners_ukraine_yoruba  (pattern: https://www.bbc.com/yoruba/extra/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/yoruba/extra/{id}/{id}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/yoruba/institutional-48528718  (pattern: https://www.bbc.com/yoruba/{id})
+    [pattern learned] 'https://www.bbc.com/yoruba/{id}' -> content_article
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://bbc.com/sport/football/world-cup
+  -> 190 same-domain links extracted
+  -> 39 new URLs in 14 pattern groups
+    [cached-skip] 'https://bbc.com/{slug}/{slug}/{id}' -> other  (2 skipped)
+    [cached-skip] 'https://bbc.com/{slug}/article/{id}' -> content_article  (1 skipped)
+    [cached-skip] 'https://bbc.com/audio/play/{id}' -> other  (6 skipped)
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (4 skipped)
+    [cached-skip] 'https://bbc.com/sport/football/articles/{id}' -> content_article  (6 skipped)
+    [known-listing] 'https://www.bbc.com/sport/football/{slug}/{slug}' - testing 1 members individually
+    [cached-skip] 'https://www.bbc.com/sport/{slug}/{id}/{id}' -> other  (1 skipped)
+    [probe] https://bbc.com/sport/football/videos/cr7x58n80nzo  (pattern: https://bbc.com/sport/football/videos/{id})
+    [pattern learned] 'https://bbc.com/sport/football/videos/{id}' -> other
+    [group-skip]  10 members skipped
+    [probe] https://bbc.com/reel/video/p0nr3f4y/watch  (pattern: https://bbc.com/{slug}/{slug}/{id}/{slug})
+    [pattern learned] 'https://bbc.com/{slug}/{slug}/{id}/{slug}' -> other
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/sport/football/videos/clyve32e7l3o  (pattern: https://www.bbc.com/sport/football/videos/{id})
+    [pattern learned] 'https://www.bbc.com/sport/football/videos/{id}' -> other
+    [group-skip]  0 members skipped
+    [cached-skip] 'https://www.bbc.com/sport/football/articles/{id}' -> content_article  (2 skipped)
+    [probe] https://www.bbc.com/video/football-in-10-years  (pattern: https://www.bbc.com/video/{id})
+    [pattern learned] 'https://www.bbc.com/video/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/video/football-in-10-years
+    [probe] https://bbc.com/video/football-in-10-years?id=%5B%27c87wg8nnwrjo%27%5D  (pattern: https://bbc.com/video/{id})
+    [pattern learned] 'https://bbc.com/video/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://bbc.com/video/football-in-10-years?id=%5B%27c87wg8nnwrjo%27%5D
+    [cached-skip] 'https://www.bbc.com/newsletters' -> other  (1 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/destinations/africa
+  -> 152 same-domain links extracted
+  -> 9 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (7 skipped)
+    [cached-skip] 'https://bbc.com/{slug}/article/{id}' -> content_article  (2 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/destinations/antarctica
+  -> 152 same-domain links extracted
+  -> 20 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (5 skipped)
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (15 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/destinations/asia
+  -> 152 same-domain links extracted
+  -> 20 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (20 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/destinations/caribbean
+  -> 152 same-domain links extracted
+  -> 20 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (20 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/destinations/central-america
+  -> 152 same-domain links extracted
+  -> 18 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (18 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/destinations/europe
+  -> 152 same-domain links extracted
+  -> 9 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (9 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/destinations/middle-east
+  -> 152 same-domain links extracted
+  -> 17 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (17 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/destinations/north-america
+  -> 152 same-domain links extracted
+  -> 13 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (13 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/world/asia
+  -> 149 same-domain links extracted
+  -> 9 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (9 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/scotland/scotland_politics
+  -> 149 same-domain links extracted
+  -> 14 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (14 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/wales/wales_politics
+  -> 144 same-domain links extracted
+  -> 11 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (11 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/world/africa
+  -> 165 same-domain links extracted
+  -> 32 new URLs in 5 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (17 skipped)
+    [cached-skip] 'https://bbc.com/news/{slug}/{id}' -> other  (5 skipped)
+    [cached-skip] 'https://bbc.com/sport/football/articles/{id}' -> content_article  (8 skipped)
+    [cached-skip] 'https://bbc.com/sport/football/{slug}/{id}' -> other  (1 skipped)
+    [known-listing] 'https://www.bbc.com/sport/football/{slug}/{id}' - testing 1 members individually
+[BFS depth=1] Processing node: https://bbc.com/news/world/australia
+  -> 152 same-domain links extracted
+  -> 19 new URLs in 4 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (13 skipped)
+    [cached-skip] 'https://bbc.com/news/{slug}/{id}' -> other  (4 skipped)
+    [probe] https://bbc.com/news/articles/cdxpxygqqdvo  (pattern: https://bbc.com/news/articles/{slug})
+    [pattern learned] 'https://bbc.com/news/articles/{slug}' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://bbc.com/sport/cricket/articles/cz6vw6yvvdjo  (pattern: https://bbc.com/sport/cricket/articles/{id})
+    [pattern learned] 'https://bbc.com/sport/cricket/articles/{id}' -> content_article
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://bbc.com/news/world/europe
+  -> 154 same-domain links extracted
+  -> 18 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (13 skipped)
+    [cached-skip] 'https://bbc.com/news/videos/{id}' -> other  (5 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/world/latin_america
+  -> 154 same-domain links extracted
+  -> 21 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (13 skipped)
+    [cached-skip] 'https://bbc.com/news/videos/{id}' -> other  (8 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/world/middle_east
+  -> 158 same-domain links extracted
+  -> 20 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (13 skipped)
+    [cached-skip] 'https://bbc.com/news/videos/{id}' -> other  (6 skipped)
+    [cached-skip] 'https://bbc.com/sport/football/articles/{id}' -> content_article  (1 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/audio/category/sport
+  -> 182 same-domain links extracted
+  -> 48 new URLs in 3 pattern groups
+    [cached-skip] 'https://www.bbc.com/audio/{slug}/{id}' -> other  (10 skipped)
+    [probe] https://www.bbc.com/audio/brand/p00j2pn5  (pattern: https://www.bbc.com/audio/brand/{id})
+    [pattern learned] 'https://www.bbc.com/audio/brand/{id}' -> other
+    [group-skip]  18 members skipped
+    [cached-skip] 'https://www.bbc.com/audio/play/{id}' -> other  (19 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/sport/football/world-cup
+  -> 189 same-domain links extracted
+  -> 33 new URLs in 7 pattern groups
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (4 skipped)
+    [cached-skip] 'https://www.bbc.com/{slug}/article/{id}' -> content_article  (1 skipped)
+    [cached-skip] 'https://www.bbc.com/audio/play/{id}' -> other  (6 skipped)
+    [cached-skip] 'https://www.bbc.com/travel/article/{id}' -> content_article  (4 skipped)
+    [cached-skip] 'https://www.bbc.com/sport/football/articles/{id}' -> content_article  (6 skipped)
+    [cached-skip] 'https://www.bbc.com/sport/football/videos/{id}' -> other  (11 skipped)
+    [probe] https://www.bbc.com/reel/video/p0nr3f4y/watch  (pattern: https://www.bbc.com/{slug}/{slug}/{id}/{slug})
+    [pattern learned] 'https://www.bbc.com/{slug}/{slug}/{id}/{slug}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/culture/tags/in-history
+  -> 141 same-domain links extracted
+  -> 4 new URLs in 1 pattern groups
+    [cached-skip] 'https://www.bbc.com/culture/article/{id}' -> content_article  (4 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/uk
+  -> 164 same-domain links extracted
+  -> 18 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (16 skipped)
+    [cached-skip] 'https://bbc.com/news/{slug}/{id}' -> other  (2 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/us-canada
+  -> 157 same-domain links extracted
+  -> 5 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (3 skipped)
+    [cached-skip] 'https://bbc.com/news/videos/{id}' -> other  (1 skipped)
+    [cached-skip] 'https://bbc.com/sport/football/articles/{id}' -> content_article  (1 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/politics
+  -> 160 same-domain links extracted
+  -> 20 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (18 skipped)
+    [cached-skip] 'https://bbc.com/news/{slug}/{id}' -> other  (2 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/england
+  -> 167 same-domain links extracted
+  -> 21 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (19 skipped)
+    [cached-skip] 'https://bbc.com/news/articles/{slug}' -> content_article  (1 skipped)
+    [probe] https://bbc.com/sport/rugby-union/articles/cvgd9x2xwnno  (pattern: https://bbc.com/sport/rugby-union/articles/{id})
+    [pattern learned] 'https://bbc.com/sport/rugby-union/articles/{id}' -> content_article
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://bbc.com/news/northern_ireland
+  -> 160 same-domain links extracted
+  -> 22 new URLs in 4 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (17 skipped)
+    [cached-skip] 'https://bbc.com/news/{slug}/{id}' -> other  (2 skipped)
+    [cached-skip] 'https://bbc.com/sport/football/articles/{id}' -> content_article  (2 skipped)
+    [probe] https://bbc.com/sport/boxing/articles/cdrp1zzp115o  (pattern: https://bbc.com/sport/boxing/articles/{id})
+    [pattern learned] 'https://bbc.com/sport/boxing/articles/{id}' -> content_article
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://bbc.com/news/scotland
+  -> 162 same-domain links extracted
+  -> 20 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (16 skipped)
+    [cached-skip] 'https://bbc.com/sport/football/articles/{id}' -> content_article  (3 skipped)
+    [cached-skip] 'https://bbc.com/sport/rugby-union/articles/{id}' -> content_article  (1 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/wales
+  -> 159 same-domain links extracted
+  -> 18 new URLs in 4 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (12 skipped)
+    [probe] https://www.bbc.com/cymrufyw/erthyglau/c74y8djgwnvo  (pattern: https://www.bbc.com/cymrufyw/erthyglau/{id})
+    [pattern learned] 'https://www.bbc.com/cymrufyw/erthyglau/{id}' -> content_article
+    [group-skip]  3 members skipped
+    [cached-skip] 'https://bbc.com/sport/football/articles/{id}' -> content_article  (1 skipped)
+    [cached-skip] 'https://bbc.com/sport/football/videos/{id}' -> other  (1 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/in_pictures
+  -> 157 same-domain links extracted
+  -> 23 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (22 skipped)
+    [cached-skip] 'https://www.bbc.com/{slug}/{slug}/{id}' -> other  (1 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/bbcindepth
+  -> 144 same-domain links extracted
+  -> 9 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (9 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/bbcverify
+  -> 179 same-domain links extracted
+  -> 42 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/news/videos/{id}' -> other  (26 skipped)
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (16 skipped)
+[BFS depth=1] Processing node: https://bbc.com/technology/artificial-intelligence
+  -> 146 same-domain links extracted
+  -> 9 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (1 skipped)
+    [cached-skip] 'https://bbc.com/future/article/{id}' -> content_article  (2 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (6 skipped)
+[BFS depth=1] Processing node: https://bbc.com/technology/intelligence-revolution
+  -> 141 same-domain links extracted
+  -> 7 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/future/article/{id}' -> content_article  (7 skipped)
+[BFS depth=1] Processing node: https://bbc.com/technology/ai-v-the-mind
+  -> 137 same-domain links extracted
+  -> 2 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/future/article/{id}' -> content_article  (2 skipped)
+[BFS depth=1] Processing node: https://bbc.com/technology/tech-now
+  -> 148 same-domain links extracted
+  -> 14 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (14 skipped)
+[BFS depth=1] Processing node: https://bbc.com/culture/film-tv
+  -> 168 same-domain links extracted
+  -> 24 new URLs in 5 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (14 skipped)
+    [cached-skip] 'https://bbc.com/news/{slug}/{id}' -> other  (1 skipped)
+    [known-listing] 'https://www.bbc.com/{slug}/{slug}/{slug}' - testing 1 members individually
+    [cached-skip] 'https://bbc.com/{slug}/{slug}/{id}' -> other  (2 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (6 skipped)
+[BFS depth=1] Processing node: https://bbc.com/culture/music
+  -> 165 same-domain links extracted
+  -> 22 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (11 skipped)
+    [cached-skip] 'https://bbc.com/{slug}/article/{id}' -> content_article  (5 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (6 skipped)
+[BFS depth=1] Processing node: https://bbc.com/culture/art
+  -> 160 same-domain links extracted
+  -> 13 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/culture/article/{id}' -> content_article  (2 skipped)
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (6 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (5 skipped)
+[BFS depth=1] Processing node: https://bbc.com/culture/style
+  -> 154 same-domain links extracted
+  -> 19 new URLs in 4 pattern groups
+    [probe] https://www.bbc.com/culture/tags/the-changing-room  (pattern: https://www.bbc.com/culture/{slug}/{id})
+    [pattern learned] 'https://www.bbc.com/culture/{slug}/{id}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/culture/tags/the-changing-room
+    [probe] https://bbc.com/culture/article/20250618-why-gen-z-is-so-nostalgic-about-indie-sleaze  (pattern: https://bbc.com/culture/{slug}/{id})
+    [pattern learned] 'https://bbc.com/culture/{slug}/{id}' -> content_article
+    [group-skip]  3 members skipped
+    [cached-skip] 'https://bbc.com/news/{slug}/{id}' -> other  (1 skipped)
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (13 skipped)
+[BFS depth=1] Processing node: https://bbc.com/culture/books
+  -> 143 same-domain links extracted
+  -> 9 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (3 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (6 skipped)
+[BFS depth=1] Processing node: https://bbc.com/culture/entertainment-news
+  -> 153 same-domain links extracted
+  -> 3 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (2 skipped)
+    [cached-skip] 'https://bbc.com/news/videos/{id}' -> other  (1 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/destinations
+  -> 142 same-domain links extracted
+  -> 2 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (2 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/adventures
+  -> 168 same-domain links extracted
+  -> 16 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (9 skipped)
+    [cached-skip] 'https://bbc.com/{slug}/article/{id}' -> content_article  (1 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (6 skipped)
+[BFS depth=1] Processing node: https://bbc.com/innovation/science
+  -> 155 same-domain links extracted
+  -> 15 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/future/article/{id}' -> content_article  (10 skipped)
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (5 skipped)
+[BFS depth=1] Processing node: https://bbc.com/future-planet/solutions
+  -> 149 same-domain links extracted
+  -> 10 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (2 skipped)
+    [cached-skip] 'https://bbc.com/future/article/{id}' -> content_article  (1 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (7 skipped)
+[BFS depth=1] Processing node: https://bbc.com/future-planet/sustainable-business
+  -> 147 same-domain links extracted
+  -> 8 new URLs in 3 pattern groups
+    [probe] https://bbc.com/worklife/article/20240417-formula-e-the-worlds-fastest-electric-vehicles-could-spark-widespread-innovation  (pattern: https://bbc.com/worklife/article/{id})
+    [pattern learned] 'https://bbc.com/worklife/article/{id}' -> content_article
+    [group-skip]  0 members skipped
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (3 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (4 skipped)
+[BFS depth=1] Processing node: https://bbc.com/future-planet/green-living
+  -> 152 same-domain links extracted
+  -> 15 new URLs in 5 pattern groups
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (7 skipped)
+    [cached-skip] 'https://bbc.com/culture/article/{id}' -> content_article  (2 skipped)
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (4 skipped)
+    [cached-skip] 'https://bbc.com/{slug}/article/{id}' -> content_article  (1 skipped)
+    [probe] https://bbc.com/news/science-environment-58171814  (pattern: https://bbc.com/news/{id})
+    [pattern learned] 'https://bbc.com/news/{id}' -> content_article
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://bbc.com/live/news
+  -> 147 same-domain links extracted
+  -> 0 new URLs in 0 pattern groups
+[BFS depth=1] Processing node: https://bbc.com/live/sport
+  -> 150 same-domain links extracted
+  -> 1 new URLs in 1 pattern groups
+    [probe] https://www.bbc.com/sport/tennis/live/cvgz5nvvx07t  (pattern: https://www.bbc.com/sport/tennis/live/{id})
+    [pattern learned] 'https://www.bbc.com/sport/tennis/live/{id}' -> other
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://bbc.com/travel/worlds-table
+  -> 162 same-domain links extracted
+  -> 20 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (20 skipped)
+[BFS depth=1] Processing node: https://bbc.com/business/world-of-business
+  -> 143 same-domain links extracted
+  -> 8 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (7 skipped)
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (1 skipped)
+[BFS depth=1] Processing node: https://bbc.com/business/technology-of-business
+  -> 149 same-domain links extracted
+  -> 13 new URLs in 1 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (13 skipped)
+[BFS depth=1] Processing node: https://bbc.com/travel/cultural-experiences
+  -> 153 same-domain links extracted
+  -> 10 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (5 skipped)
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (5 skipped)
+[BFS depth=1] Processing node: https://bbc.com/future-planet/natural-wonders
+  -> 143 same-domain links extracted
+  -> 7 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/travel/article/{id}' -> content_article  (1 skipped)
+    [cached-skip] 'https://bbc.com/reel/video/{id}/watch' -> other  (6 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/news/world
+  -> 160 same-domain links extracted
+  -> 8 new URLs in 2 pattern groups
+    [cached-skip] 'https://www.bbc.com/news/articles/{id}' -> content_article  (6 skipped)
+    [probe] https://www.bbc.com/news/videos/cx2k5nq51lgo  (pattern: https://www.bbc.com/news/videos/{id})
+    [pattern learned] 'https://www.bbc.com/news/videos/{id}' -> other
+    [group-skip]  1 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/news/us-canada
+  -> 156 same-domain links extracted
+  -> 10 new URLs in 3 pattern groups
+    [cached-skip] 'https://www.bbc.com/news/articles/{id}' -> content_article  (6 skipped)
+    [cached-skip] 'https://www.bbc.com/news/videos/{id}' -> other  (3 skipped)
+    [cached-skip] 'https://www.bbc.com/sport/football/articles/{id}' -> content_article  (1 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/serbian/lat
+  -> 63 same-domain links extracted
+  -> 57 new URLs in 7 pattern groups
+    [probe] https://www.bbc.com/serbian/cyr  (pattern: https://www.bbc.com/serbian/cyr)
+    [pattern learned] 'https://www.bbc.com/serbian/cyr' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/serbian/cyr
+    [probe] https://www.bbc.com/serbian/topics/c44vyp5g049t/lat  (pattern: https://www.bbc.com/serbian/{slug}/{id}/lat)
+    [pattern learned] 'https://www.bbc.com/serbian/{slug}/{id}/lat' -> other
+    [group-skip]  6 members skipped
+    [probe] https://www.bbc.com/serbian/popular/read/lat  (pattern: https://www.bbc.com/serbian/{slug}/{slug}/lat)
+    [pattern learned] 'https://www.bbc.com/serbian/{slug}/{slug}/lat' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/serbian/popular/read/lat
+    [probe] https://www.bbc.com/serbian/articles/c74ylrge3kwo/lat  (pattern: https://www.bbc.com/serbian/articles/{id}/lat)
+    [pattern learned] 'https://www.bbc.com/serbian/articles/{id}/lat' -> content_article
+    [group-skip]  43 members skipped
+    [probe] https://www.bbc.com/serbian/articles/cpvpxzmdkvlo/lat  (pattern: https://www.bbc.com/serbian/articles/{slug}/lat)
+    [pattern learned] 'https://www.bbc.com/serbian/articles/{slug}/lat' -> content_article
+    [group-skip]  0 members skipped
+    [probe] https://www.bbc.com/serbian/lat/extra/i6c5d73dnq/zrtve-pada-nadstresnice  (pattern: https://www.bbc.com/serbian/lat/extra/{id}/{id})
+    [pattern learned] 'https://www.bbc.com/serbian/lat/extra/{id}/{id}' -> other
+    [group-skip]  1 members skipped
+    [probe] https://www.bbc.com/serbian/lat/institutional-50173730  (pattern: https://www.bbc.com/serbian/lat/{id})
+    [pattern learned] 'https://www.bbc.com/serbian/lat/{id}' -> content_article
+    [group-skip]  0 members skipped
+[BFS depth=1] Processing node: https://www.bbc.com/travel/worlds-table
+  -> 161 same-domain links extracted
+  -> 26 new URLs in 2 pattern groups
+    [cached-skip] 'https://www.bbc.com/travel/article/{id}' -> content_article  (20 skipped)
+    [cached-skip] 'https://www.bbc.com/reel/video/{id}/watch' -> other  (6 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/world/asia/china
+  -> 147 same-domain links extracted
+  -> 12 new URLs in 2 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (9 skipped)
+    [cached-skip] 'https://bbc.com/news/videos/{id}' -> other  (3 skipped)
+[BFS depth=1] Processing node: https://bbc.com/news/world/asia/india
+  -> 151 same-domain links extracted
+  -> 10 new URLs in 3 pattern groups
+    [cached-skip] 'https://bbc.com/news/articles/{id}' -> content_article  (3 skipped)
+    [cached-skip] 'https://bbc.com/news/videos/{id}' -> other  (5 skipped)
+    [cached-skip] 'https://bbc.com/sport/cricket/articles/{id}' -> content_article  (2 skipped)
+[BFS depth=1] Processing node: https://www.bbc.com/sport/football/live/cvg4wnxpppnt
+  -> 113 same-domain links extracted
+  -> 58 new URLs in 6 pattern groups
+    [probe] https://account.bbc.com/account?lang=%5B%27en-GB%27%5D&ptrt=%5B%27https%3A%2F%2Fwww.bbc.com%2Fsport%2Ffootball%2Flive%2Fcvg4wnxpppnt%27%5D&userOrigin=%5B%27SPORT_GNL%27%5D  (pattern: https://account.bbc.com/account)
+    [known-listing] 'https://www.bbc.com/sport/football/{slug}/{slug}' - testing 2 members individually
+    [cached-skip] 'https://www.bbc.com/sport/{slug}/{id}/{id}' -> other  (1 skipped)
+    [known-listing] 'https://www.bbc.com/sport/football/{slug}/{id}' - testing 8 members individually
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/predictor/mwc2026
+    [probe] https://www.bbc.com/sport/football/teams/usa  (pattern: https://www.bbc.com/sport/football/teams/{slug})
+    [pattern learned] 'https://www.bbc.com/sport/football/teams/{slug}' -> listing_article
+    [ok] [representative] Added (depth=2): https://www.bbc.com/sport/football/teams/usa
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/mexico
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/south-korea
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/czech-republic
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/canada
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/qatar
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/brazil
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/morocco
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/haiti
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/paraguay
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/australia
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/turkey
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/germany
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/curacao
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/ivory-coast
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/ecuador
+    [ok] Added (depth=2): https://www.bbc.com/sport/football/teams/netherlands

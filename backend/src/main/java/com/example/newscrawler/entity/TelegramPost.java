@@ -41,6 +41,9 @@ public class TelegramPost {
     @Column(nullable = false)
     private boolean edited = false;
 
+    @Column(name = "tags_extracted", nullable = false)
+    private boolean tagsExtracted = false;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant collectedAt;
@@ -73,6 +76,9 @@ public class TelegramPost {
 
     public boolean isEdited() { return edited; }
     public void setEdited(boolean edited) { this.edited = edited; }
+
+    public boolean isTagsExtracted() { return tagsExtracted; }
+    public void setTagsExtracted(boolean tagsExtracted) { this.tagsExtracted = tagsExtracted; }
 
     public Instant getCollectedAt() { return collectedAt; }
 }

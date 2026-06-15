@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>News Bridge — Graduation Project Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue: #003B71;
+      --gold: #C5A572;
+      --teal: #0E7490;
+      --bg: #F8FAFC;
+      --bg-warm: #FDF8F3;
+      --card: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --accent-light: #E0F2FE;
+      --gold-light: #F5EDE0;
+      --shadow: 0 8px 32px rgba(0, 59, 113, 0.08);
+      --shadow-lg: 0 20px 60px rgba(0, 59, 113, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .deck { width: 100vw; height: 100vh; position: relative; }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      padding: 2rem 3rem 4rem;
+      background: var(--bg);
+      overflow: hidden;
+      animation: fadeIn 0.45s ease;
+      font-size: 1.125rem;
+    }
+
+    .slide.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide::before {
+      content: '';
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(14,116,144,0.07) 0%, transparent 70%);
+      top: -120px;
+      right: -80px;
+      pointer-events: none;
+    }
+
+    .slide::after {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(197,165,114,0.1) 0%, transparent 70%);
+      bottom: -80px;
+      left: -60px;
+      pointer-events: none;
+    }
+
+    .slide-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    .slide-tag {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      background: var(--accent-light);
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+    }
+
+    .slide-num { font-size: 0.95rem; color: var(--muted); font-weight: 500; }
+
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+      color: var(--blue);
+      line-height: 1.15;
+      position: relative;
+      z-index: 2;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
+      color: var(--blue);
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    h2 .accent { color: var(--teal); }
+
+    h3.sub-heading {
+      font-size: 1.2rem;
+      color: var(--blue);
+      margin: 0.5rem 0 0.75rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 1.35rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+      font-weight: 400;
+      line-height: 1.5;
+      position: relative;
+      z-index: 2;
+    }
+
+    .gold-line {
+      width: 80px;
+      height: 5px;
+      background: linear-gradient(90deg, var(--gold), var(--teal));
+      border-radius: 2px;
+      margin: 0.6rem 0 1rem;
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    .lead {
+      font-size: 1.15rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 1rem;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      gap: 2rem;
+      align-items: stretch;
+      position: relative;
+      z-index: 2;
+      min-height: 0;
+    }
+
+    .slide-body.col { flex-direction: column; justify-content: center; }
+    .slide-body.full .content { max-width: 100%; }
+    .slide-body.center-content .content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+
+    .visual {
+      flex: 0 0 34%;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow-lg);
+      min-height: 280px;
+      align-self: stretch;
+    }
+
+    .visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .visual .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,59,113,0.55) 0%, rgba(14,116,144,0.35) 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 1.25rem;
+    }
+
+    .overlay span {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+
+    ul, ol {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      font-size: 1.15rem;
+      line-height: 1.55;
+    }
+
+    li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--teal);
+      margin-top: 0.55rem;
+    }
+
+    code {
+      font-size: 0.95em;
+      background: #E2E8F0;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-family: ui-monospace, monospace;
+    }
+
+    ol { counter-reset: item; }
+    ol li::before {
+      content: counter(item);
+      counter-increment: item;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.1rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.15rem;
+    }
+
+    .card-grid.agenda { grid-template-columns: repeat(4, 1fr); }
+    .card-grid.features { grid-template-columns: repeat(4, 1fr); }
+    .card-grid.sources { grid-template-columns: repeat(3, 1fr); }
+
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 1.35rem 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,59,113,0.06);
+      transition: transform 0.2s;
+    }
+
+    .card:hover { transform: translateY(-2px); }
+    .card .icon { font-size: 2rem; margin-bottom: 0.65rem; }
+    .card h3 { font-size: 1.1rem; font-weight: 700; color: var(--blue); margin-bottom: 0.5rem; }
+    .card p { font-size: 1rem; color: var(--muted); line-height: 1.45; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1.05rem;
+      background: var(--card);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    th { background: var(--blue); color: #fff; padding: 0.85rem 1.1rem; text-align: left; font-weight: 600; }
+    td { padding: 0.75rem 1.1rem; border-bottom: 1px solid #E2E8F0; }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #F8FAFC; }
+    .check { color: #16A34A; font-weight: 700; }
+
+    .stats { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-top: 0.75rem; }
+
+    .stat {
+      flex: 1;
+      min-width: 130px;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border-top: 4px solid var(--gold);
+    }
+
+    .stat .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--blue);
+      line-height: 1;
+    }
+
+    .stat .lbl { font-size: 0.95rem; color: var(--muted); margin-top: 0.5rem; font-weight: 500; }
+
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .pipe-step {
+      background: var(--card);
+      border: 2px solid var(--teal);
+      border-radius: 10px;
+      padding: 0.75rem 1.1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--blue);
+      box-shadow: var(--shadow);
+    }
+
+    .pipe-arrow { color: var(--gold); font-size: 1.4rem; font-weight: 700; }
+
+    .pipeline.vertical {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.35rem;
+    }
+
+    .pipeline.vertical .pipe-arrow { text-align: center; line-height: 1; }
+
+    .slide.title-slide {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(160deg, #FDF8F3 0%, #F0F7FF 50%, #F8FAFC 100%);
+    }
+
+    .title-slide .logo-ring {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 12px 40px rgba(0,59,113,0.25);
+      font-size: 2.5rem;
+    }
+
+    .title-slide h1 { font-size: clamp(2.8rem, 5vw, 4rem); }
+    .title-slide .meta { margin-top: 2rem; color: var(--muted); font-size: 1.15rem; line-height: 1.8; }
+    .title-slide .meta strong { color: var(--blue); }
+
+    .title-bg-img {
+      position: absolute;
+      inset: 0;
+      opacity: 0.12;
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+
+    .highlight-box {
+      background: linear-gradient(135deg, var(--accent-light), var(--gold-light));
+      border-radius: 14px;
+      padding: 1.35rem 1.75rem;
+      border-left: 5px solid var(--teal);
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    .highlight-box strong { color: var(--blue); }
+
+    .weight-bar {
+      display: flex;
+      height: 36px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0.75rem 0;
+      box-shadow: var(--shadow);
+    }
+
+    .weight-bar span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .w-tag  { background: var(--blue); flex: 45; }
+    .w-cat  { background: var(--teal); flex: 25; }
+    .w-rec  { background: var(--gold); flex: 20; color: var(--blue) !important; }
+    .w-pop  { background: #94A3B8; flex: 10; }
+
+    .nav {
+      position: fixed;
+      bottom: 1.25rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--card);
+      padding: 0.5rem 1.25rem;
+      border-radius: 999px;
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+      border: 1px solid rgba(0,59,113,0.08);
+    }
+
+    .nav button {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .nav button:hover { background: var(--teal); transform: scale(1.08); }
+    .nav button:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+    .nav .progress-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 600;
+      min-width: 52px;
+      text-align: center;
+    }
+
+    .progress-dots { display: flex; gap: 4px; max-width: 200px; overflow: hidden; }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #CBD5E1;
+      transition: background 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .dot.active { background: var(--teal); transform: scale(1.4); }
+
+    kbd {
+      background: #E2E8F0;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .end-slide .thanks { font-size: 1.6rem; color: var(--teal); margin-top: 1rem; font-weight: 500; }
+    .small-note { font-size: 0.95rem; color: var(--muted); margin-top: 0.75rem; font-style: italic; }
+
+    @media (max-width: 900px) {
+      .slide { padding: 1.5rem 1.5rem 5rem; font-size: 1rem; }
+      .slide-body { flex-direction: column; }
+      .visual { flex: none; height: 200px; }
+      .two-cols { grid-template-columns: 1fr; }
+      .card-grid.agenda, .card-grid.features { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media print {
+      @page { size: 1280px 720px; margin: 0; }
+      html, body {
+        overflow: visible !important;
+        height: auto !important;
+        width: 1280px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .nav { display: none !important; }
+      .deck { width: 1280px; height: auto; position: static; }
+      .slide {
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column;
+        inset: auto !important;
+        box-sizing: border-box;
+        width: 1280px !important;
+        height: 720px !important;
+        min-height: 720px !important;
+        max-height: 720px !important;
+        margin: 0 !important;
+        padding: 48px 56px 56px !important;
+        page-break-after: always;
+        page-break-inside: avoid;
+        break-after: page;
+        break-inside: avoid;
+        overflow: hidden;
+        animation: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+      }
+      .slide:last-child { page-break-after: auto; break-after: auto; }
+      .slide-body { flex: 1; min-height: 0; overflow: hidden; }
+      .visual { flex: 0 0 360px; min-height: 0; }
+      h1 { font-size: 3rem; }
+      h2 { font-size: 2.25rem; margin-bottom: 0.75rem; }
+      .subtitle { font-size: 1.2rem; }
+      li { font-size: 1.05rem; }
+      .card p { font-size: 0.95rem; }
+      table { font-size: 0.95rem; }
+      .card:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1: Title -->
+  <section class="slide title-slide active" data-slide="1">
+    <img class="title-bg-img" src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1600&q=80" alt="" />
+    <div style="position:relative;z-index:2;">
+      <div class="logo-ring">📰</div>
+      <p class="slide-tag" style="display:inline-block;margin-bottom:1rem;">An-Najah National University · FEIT</p>
+      <h1>News Bridge</h1>
+      <p class="subtitle">An AI-Driven Multilingual News Aggregation<br/>and Personalization Platform</p>
+      <div class="gold-line" style="margin:1.5rem auto;"></div>
+      <div class="meta">
+        <strong>Graduation Project Report</strong><br/>
+        Faculty of Engineering &amp; Information Technology<br/>
+        Department of Computer Engineering · June 2026
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2: Agenda -->
+  <section class="slide" data-slide="2">
+    <div class="slide-header">
+      <span class="slide-tag">Overview</span>
+      <span class="slide-num">02 / 22</span>
+    </div>
+    <h2>Presentation <span class="accent">Agenda</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <div class="card-grid agenda">
+          <div class="card"><div class="icon">🎯</div><h3>Introduction</h3><p>Project overview &amp; challenges</p></div>
+          <div class="card"><div class="icon">⚙️</div><h3>Technical Background</h3><p>Architecture, stack &amp; ML components</p></div>
+          <div class="card"><div class="icon">📡</div><h3>Three News Sources</h3><p>Web, Telegram &amp; editor content</p></div>
+          <div class="card"><div class="icon">🕷️</div><h3>Website Pipeline</h3><p>Roots → endpoints → crawl → feed</p></div>
+          <div class="card"><div class="icon">✈️</div><h3>Telegram Pipeline</h3><p>Channel crawling &amp; delivery</p></div>
+          <div class="card"><div class="icon">✍️</div><h3>Editor Pipeline</h3><p>Events, live news &amp; topic posts</p></div>
+          <div class="card"><div class="icon">✨</div><h3>Additional Features</h3><p>Platform capabilities, AI assistant &amp; avatar</p></div>
+          <div class="card"><div class="icon">📊</div><h3>Results &amp; Closing</h3><p>Evaluation, discussion &amp; future work</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: Project Overview -->
+  <section class="slide" data-slide="3">
+    <div class="slide-header">
+      <span class="slide-tag">Introduction</span>
+      <span class="slide-num">03 / 22</span>
+    </div>
+    <h2>Project <span class="accent">Overview</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body">
+      <div class="content">
+        <div class="highlight-box">
+          <strong>News Bridge</strong> is an AI-driven news aggregation and personalization platform that automates ingestion, enrichment, and delivery of multilingual news from <strong>web domains</strong>, <strong>Telegram channels</strong>, and <strong>editor-authored content</strong>.
+        </div>
+        <ul style="margin-top:1rem;">
+          <li>Java Spring Boot backend as authoritative data &amp; security layer</li>
+          <li>Python microservices for crawling, NLP &amp; RAG</li>
+          <li>React web apps + Expo mobile + Three.js 3D presenter</li>
+          <li>Arabic &amp; English support throughout the pipeline</li>
+        </ul>
+        <div class="stats" style="margin-top:1.25rem;">
+          <div class="stat"><div class="num">36</div><div class="lbl">REST Controllers</div></div>
+          <div class="stat"><div class="num">57+</div><div class="lbl">JPA Entities</div></div>
+          <div class="stat"><div class="num">5</div><div class="lbl">ML Components</div></div>
+          <div class="stat"><div class="num">7</div><div class="lbl">News Categories</div></div>
+        </div>
+      </div>
+      <div class="visual">
+        <img src="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=800&q=80" alt="News" />
+        <div class="overlay"><span>From crawl to personalized feed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: Challenges -->
+  <section class="slide" data-slide="4">
+    <div class="slide-header">
+      <span class="slide-tag">Problem Statement</span>
+      <span class="slide-num">04 / 22</span>
+    </div>
+    <h2>The <span class="accent">Challenge</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body">
+      <div class="content">
+        <p class="lead">Despite many news apps, integrated platforms still fail to solve:</p>
+        <div class="two-cols">
+          <ul>
+            <li><strong>Heterogeneous web structures</strong> — layouts change; rule-based scrapers break</li>
+            <li><strong>Endpoint discovery</strong> — which URLs are listings vs. articles?</li>
+            <li><strong>Multilingual enrichment</strong> — Arabic &amp; English need language-aware NLP</li>
+            <li><strong>Implicit personalization</strong> — users rarely configure detailed profiles</li>
+          </ul>
+          <ul>
+            <li><strong>Semantic discovery</strong> — keyword search can't answer natural-language questions</li>
+            <li><strong>Telegram channels</strong> — primary news source in many regions</li>
+            <li><strong>Engaging presentation</strong> — text-only feeds underutilize multimedia</li>
+          </ul>
+        </div>
+      </div>
+      <div class="visual">
+        <img src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80" alt="Information overload" />
+        <div class="overlay"><span>7 persistent problems addressed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: Technical Background -->
+  <section class="slide" data-slide="5">
+    <div class="slide-header">
+      <span class="slide-tag">Technology</span>
+      <span class="slide-num">05 / 22</span>
+    </div>
+    <h2>Technical <span class="accent">Background</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body col full">
+      <div class="pipeline" style="justify-content:center;margin-bottom:1.25rem;">
+        <div class="pipe-step">React 19 · Expo 56 · Three.js</div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step" style="background:var(--blue);color:#fff;border-color:var(--blue);">Spring Boot :8080 · JWT</div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step">Python/FastAPI Services</div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step">MySQL 8</div>
+      </div>
+      <div class="two-cols">
+        <div class="card-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="card"><h3>Backend</h3><p>Spring Boot 3.5, Java 17, JPA, MySQL</p></div>
+          <div class="card"><h3>ML / NLP</h3><p>PyTorch, HuggingFace, XLM-RoBERTa, BERT-NER</p></div>
+          <div class="card"><h3>Crawlers</h3><p>FastAPI, APScheduler, Telethon, Playwright</p></div>
+          <div class="card"><h3>Vector AI</h3><p>FAISS, Ollama nomic-embed-text (768d)</p></div>
+        </div>
+        <div>
+          <table style="margin-bottom:0.75rem;">
+            <thead><tr><th>Service</th><th>Port</th></tr></thead>
+            <tbody>
+              <tr><td>Site Crawler</td><td>8000</td></tr>
+              <tr><td>Endpoint Discovery</td><td>8004</td></tr>
+              <tr><td>Telegram Crawler</td><td>8200</td></tr>
+              <tr><td>AI Assistant</td><td>9000</td></tr>
+            </tbody>
+          </table>
+          <p class="small-note">5 ML components: page classifier, content extractor, category classifier, tag extractor, vector retrieval</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: Three News Sources -->
+  <section class="slide" data-slide="6">
+    <div class="slide-header">
+      <span class="slide-tag">Sources</span>
+      <span class="slide-num">06 / 22</span>
+    </div>
+    <h2>Three <span class="accent">News Sources</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <div class="card-grid sources">
+          <div class="card" style="border-top:4px solid var(--blue);">
+            <div class="icon">🌐</div>
+            <h3>Web Articles</h3>
+            <p>Crawled from registered news domains and discovered listing endpoints. Processed through the full ML pipeline into the main category feed.</p>
+          </div>
+          <div class="card" style="border-top:4px solid var(--teal);">
+            <div class="icon">✈️</div>
+            <h3>Telegram Channels</h3>
+            <p>Public channel messages ingested via Telethon MTProto with web-scraper fallback. Served in a dedicated personalized Telegram feed.</p>
+          </div>
+          <div class="card" style="border-top:4px solid var(--gold);">
+            <div class="icon">✍️</div>
+            <h3>Editor Content</h3>
+            <p>Human-written live news updates on events and curated topic posts. Editorial workflow with admin approval gates.</p>
+          </div>
+        </div>
+        <div class="highlight-box" style="margin-top:1.25rem;">
+          All three sources converge on the <strong>Spring Boot API hub</strong> and <strong>MySQL</strong> persistence layer, then surface through web, mobile, and admin clients.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7: Website Pipeline Overview -->
+  <section class="slide" data-slide="7">
+    <div class="slide-header">
+      <span class="slide-tag">Website Pipeline</span>
+      <span class="slide-num">07 / 22</span>
+    </div>
+    <h2>Website Pipeline <span class="accent">Overview</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body col">
+      <div class="pipeline" style="justify-content:center;">
+        <div class="pipe-step">Register Root</div><span class="pipe-arrow">→</span>
+        <div class="pipe-step">Discover Endpoints</div><span class="pipe-arrow">→</span>
+        <div class="pipe-step">Crawl Articles</div><span class="pipe-arrow">→</span>
+        <div class="pipe-step">Classify &amp; Tag</div><span class="pipe-arrow">→</span>
+        <div class="pipe-step">Personalized Feed</div><span class="pipe-arrow">→</span>
+        <div class="pipe-step">User Feedback</div>
+      </div>
+      <div class="two-cols" style="margin-top:1rem;">
+        <div class="highlight-box">News is treated as a <strong>continuous pipeline</strong>, not a static document collection — from admin source onboarding to feed presentation in minutes.</div>
+        <div class="stats">
+          <div class="stat"><div class="num">10s</div><div class="lbl">Enrichment cycle</div></div>
+          <div class="stat"><div class="num">500ms</div><div class="lbl">Crawl politeness</div></div>
+          <div class="stat"><div class="num">~89%</div><div class="lbl">Page classifier F1</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8: Step 1 — Accepting Roots -->
+  <section class="slide" data-slide="8">
+    <div class="slide-header">
+      <span class="slide-tag">Website Pipeline · Step 1</span>
+      <span class="slide-num">08 / 22</span>
+    </div>
+    <h2>Accepting <span class="accent">Roots</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <div class="two-cols">
+          <ul>
+            <li>Admin registers a news <strong>domain</strong> (name + base URL) via <code>POST /roots</code></li>
+            <li>Creates a <strong>Root</strong> entity in MySQL with status <code>ACTIVE</code></li>
+            <li>Optional <strong>trust verification</strong> via Wayback, Wikidata, MBFC, and NewsGuard</li>
+          </ul>
+          <ul>
+            <li>Admin UI lists, edits, and triggers endpoint discovery from registered roots</li>
+            <li>Every crawled article traces back to an administratively approved news domain</li>
+          </ul>
+        </div>
+        <div class="highlight-box" style="margin-top:1.25rem;">
+          <strong>Roots are the entry point</strong> — the first step in onboarding a new news website into the platform.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 9: Step 2 — Discovering Endpoints -->
+  <section class="slide" data-slide="9">
+    <div class="slide-header">
+      <span class="slide-tag">Website Pipeline · Step 2</span>
+      <span class="slide-num">09 / 22</span>
+    </div>
+    <h2>Discovering <span class="accent">Endpoints</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <div class="two-cols">
+          <ul>
+            <li>Admin triggers <code>POST /roots/{id}/discover</code> → Python service on port <strong>8004</strong></li>
+            <li><strong>BFS crawl</strong> within the domain (depth 2) classifies each page with XLM-RoBERTa</li>
+            <li>Identifies <strong>listing URLs</strong> (article index pages) vs. individual articles</li>
+            <li>Admin reviews results and bulk-imports chosen URLs as <strong>Endpoints</strong></li>
+          </ul>
+          <div class="stats" style="flex-direction:column;margin-top:0;">
+            <div class="stat"><div class="num">~89%</div><div class="lbl">Macro-F1 accuracy</div></div>
+            <div class="stat"><div class="num">2,394</div><div class="lbl">Labeled training pages</div></div>
+            <div class="stat"><div class="num">201</div><div class="lbl">Domains in dataset</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10: Step 3 — Crawling Articles -->
+  <section class="slide" data-slide="10">
+    <div class="slide-header">
+      <span class="slide-tag">Website Pipeline · Step 3</span>
+      <span class="slide-num">10 / 22</span>
+    </div>
+    <h2>Crawling <span class="accent">Articles</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <div class="two-cols">
+          <ul>
+            <li><strong>Site Crawler</strong> (:8000) runs priority-scheduled workers on active endpoints</li>
+            <li>Fetches listing pages → extracts links → deduplicates via <code>cache_endpoints</code> table</li>
+            <li>Page classifier filters article URLs → deep-learning extractor produces structured blocks</li>
+          </ul>
+          <ul>
+            <li>New articles submitted via <code>POST /articles</code> → creates <strong>Article + Post</strong> records</li>
+            <li>Fetch stack: <strong>curl_cffi</strong> browser impersonation → <strong>Playwright</strong> fallback for JS sites</li>
+            <li>Never-crawled endpoints get highest priority in the worker queue</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 11: Step 4 — Post-Processing -->
+  <section class="slide" data-slide="11">
+    <div class="slide-header">
+      <span class="slide-tag">Website Pipeline · Step 4</span>
+      <span class="slide-num">11 / 22</span>
+    </div>
+    <h2>Post-<span class="accent">Processing</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <p class="lead">APScheduler job runs every <strong>10 seconds</strong> inside the crawler process:</p>
+        <div class="card-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="card" style="border-top:4px solid var(--blue);">
+            <h3>Classification</h3>
+            <p>Posts with no label → assigned to 1 of 7 categories (Politics, Sports, Tech, etc.) + language detection via langdetect</p>
+          </div>
+          <div class="card" style="border-top:4px solid var(--teal);">
+            <h3>Tag Extraction</h3>
+            <p>Hybrid NER (BERT + CAMeL-BERT for Arabic) + YAKE keywords → stored in PostTags table</p>
+          </div>
+        </div>
+        <div class="highlight-box" style="margin-top:1.25rem;">
+          Arabic text is normalized before NLP. Enriched posts become eligible for personalized feed ranking and AI vector indexing.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 12: Step 5 — Preferences, Delivery & Feedback -->
+  <section class="slide" data-slide="12">
+    <div class="slide-header">
+      <span class="slide-tag">Website Pipeline · Step 5</span>
+      <span class="slide-num">12 / 22</span>
+    </div>
+    <h2>Preferences, Delivery &amp; <span class="accent">Feedback</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <p class="lead"><strong>Feed delivery</strong> — <code>GET /api/feed</code> scores candidates server-side:</p>
+        <div class="weight-bar">
+          <span class="w-tag">Tags 45%</span>
+          <span class="w-cat">Category 25%</span>
+          <span class="w-rec">Recency 20%</span>
+          <span class="w-pop">Pop 10%</span>
+        </div>
+        <div class="two-cols" style="margin-top:1.25rem;">
+          <ul>
+            <li><strong>Preferences</strong> — <code>UserPreference</code> stores per-user tag weights updated from behavior</li>
+            <li>Time-on-post and geo coordinates provide additional ranking signals</li>
+          </ul>
+          <ul>
+            <li><strong>View</strong> (+0.2 category, +0.15/tag)</li>
+            <li><strong>Click</strong> (+1.0 category, +1.5/tag)</li>
+            <li><strong>Like / Dislike</strong> (±3.0 category, ±3.5/tag)</li>
+          </ul>
+        </div>
+        <p class="small-note">Tag-centric model prioritizes interpretability over opaque collaborative filtering</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 13: Telegram Pipeline -->
+  <section class="slide" data-slide="13">
+    <div class="slide-header">
+      <span class="slide-tag">Telegram Pipeline</span>
+      <span class="slide-num">13 / 22</span>
+    </div>
+    <h2>Telegram <span class="accent">Pipeline</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body">
+      <div class="content">
+        <div class="pipeline" style="margin-bottom:1rem;">
+          <div class="pipe-step">Register Channel</div><span class="pipe-arrow">→</span>
+          <div class="pipe-step">Priority Crawl</div><span class="pipe-arrow">→</span>
+          <div class="pipe-step">Bulk Ingest</div><span class="pipe-arrow">→</span>
+          <div class="pipe-step">Telegram Feed</div>
+        </div>
+        <ul>
+          <li>FastAPI service on port <strong>8200</strong> with priority-scheduled channel workers</li>
+          <li><strong>Telethon</strong> MTProto for message fetch; web-scraper fallback on <code>t.me/s/</code></li>
+          <li>Posts bulk-written to Spring Boot via <code>POST /api/telegram/posts/bulk</code></li>
+          <li>Separate personalized feed: <strong>For You</strong> · <strong>By Channel</strong> · <strong>Discover</strong></li>
+        </ul>
+        <div class="highlight-box" style="margin-top:1rem;">Telegram is a primary news channel in many regions — News Bridge ingests, scores &amp; recommends alongside web articles.</div>
+      </div>
+      <div class="visual">
+        <img src="https://images.unsplash.com/photo-1611606063065-ee7949f0787a?w=800&q=80" alt="Messaging" />
+        <div class="overlay"><span>Telethon + web fallback</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 14: Editor Posting Pipeline -->
+  <section class="slide" data-slide="14">
+    <div class="slide-header">
+      <span class="slide-tag">Editor Pipeline</span>
+      <span class="slide-num">14 / 22</span>
+    </div>
+    <h2>Editor <span class="accent">Posting Pipeline</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body">
+      <div class="content">
+        <div class="pipeline" style="margin-bottom:1rem;">
+          <div class="pipe-step">Apply</div><span class="pipe-arrow">→</span>
+          <div class="pipe-step">Admin Approve</div><span class="pipe-arrow">→</span>
+          <div class="pipe-step">Create Event</div><span class="pipe-arrow">→</span>
+          <div class="pipe-step">Publish</div>
+        </div>
+        <ul>
+          <li>Users apply to become editors; admin approves and assigns roles</li>
+          <li>Admin creates a <strong>NewsEvent</strong> — auto-links a trending <strong>Topic</strong></li>
+          <li>Editor requests publish permission → admin approves → publishes <strong>live news</strong> updates</li>
+          <li>Separate track: editor requests topic assignment → creates curated <strong>topic posts</strong></li>
+        </ul>
+        <div class="highlight-box" style="margin-top:1rem;">Editorial workflow adds human-curated, event-driven news alongside automated crawling.</div>
+      </div>
+      <div class="visual">
+        <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80" alt="Editorial" />
+        <div class="overlay"><span>Events · live news · topics</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 15: Additional Features Overview -->
+  <section class="slide" data-slide="15">
+    <div class="slide-header">
+      <span class="slide-tag">Features</span>
+      <span class="slide-num">15 / 22</span>
+    </div>
+    <h2>Additional <span class="accent">Features</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <div class="card-grid features">
+          <div class="card"><div class="icon">🖥️</div><h3>Admin Dashboard</h3><p>Source/crawler/user/editor management &amp; analytics</p></div>
+          <div class="card"><div class="icon">📲</div><h3>Mobile App</h3><p>Expo 56 cross-platform consumer experience</p></div>
+          <div class="card"><div class="icon">💬</div><h3>Comments &amp; Reactions</h3><p>Threaded comments, votes, like/dislike on posts</p></div>
+          <div class="card"><div class="icon">🔖</div><h3>Saved Posts</h3><p>Server-side saved post collections</p></div>
+          <div class="card"><div class="icon">✅</div><h3>Source Verification</h3><p>MBFC, NewsGuard, Wayback, Wikidata trust checks</p></div>
+          <div class="card"><div class="icon">📍</div><h3>Location Ranking</h3><p>Geo coordinates influence feed ordering</p></div>
+          <div class="card"><div class="icon">🌍</div><h3>Multilingual</h3><p>i18next EN/AR, RTL layout, language-aware NLP</p></div>
+          <div class="card"><div class="icon">🔧</div><h3>Service Manager</h3><p>Electron desktop orchestration for development</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 16: RAG AI Assistant -->
+  <section class="slide" data-slide="16">
+    <div class="slide-header">
+      <span class="slide-tag">AI Assistant</span>
+      <span class="slide-num">16 / 22</span>
+    </div>
+    <h2>RAG <span class="accent">AI Assistant</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <div class="pipeline" style="justify-content:center;margin-bottom:1.25rem;">
+          <div class="pipe-step">Ingest Posts</div><span class="pipe-arrow">→</span>
+          <div class="pipe-step">Embed 768d</div><span class="pipe-arrow">→</span>
+          <div class="pipe-step">FAISS Index</div><span class="pipe-arrow">→</span>
+          <div class="pipe-step">Retrieve top-k</div><span class="pipe-arrow">→</span>
+          <div class="pipe-step">Ollama LLM</div>
+        </div>
+        <div class="card-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="card"><h3>Q&amp;A Chat</h3><p>Conversational queries via ChatWidget with source post references</p></div>
+          <div class="card"><h3>Translation</h3><p>Arabic ↔ English content translation via LLM</p></div>
+          <div class="card"><h3>Vector Search</h3><p>On-demand post ingestion &amp; semantic retrieval</p></div>
+        </div>
+        <div class="highlight-box" style="margin-top:1.25rem;">
+          Port <strong>9000</strong> · Local Ollama — no mandatory cloud APIs · Auto-ingest scheduler refreshes index every <strong>15 min</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 17: News Brief + Avatar -->
+  <section class="slide" data-slide="17">
+    <div class="slide-header">
+      <span class="slide-tag">News Brief</span>
+      <span class="slide-num">17 / 22</span>
+    </div>
+    <h2>News Brief &amp; <span class="accent">3D Presenter</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content two-cols">
+        <div>
+          <h3 class="sub-heading">News Brief Generation</h3>
+          <ul>
+            <li><code>POST /news-brief</code> scores recent FAISS-indexed posts by user tag preferences</li>
+            <li>LLM generates a personalized summary; headline-list fallback if Ollama is unavailable</li>
+            <li>Displayed in the main feed via the <strong>NewsBrief</strong> component</li>
+          </ul>
+          <h3 class="sub-heading">Avatar Narration</h3>
+          <ul>
+            <li>Avatar Studio "News Brief" tab fetches the same brief</li>
+            <li>Each story: Edge TTS → Rhubarb visemes → Three.js lip-sync</li>
+            <li>Title &amp; summary rendered on the in-scene 3D screen canvas</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pipeline vertical">
+            <div class="pipe-step" style="text-align:center;">News Brief API</div>
+            <span class="pipe-arrow">↓</span>
+            <div class="pipe-step" style="text-align:center;">Edge TTS</div>
+            <span class="pipe-arrow">↓</span>
+            <div class="pipe-step" style="text-align:center;">Rhubarb Lip-Sync</div>
+            <span class="pipe-arrow">↓</span>
+            <div class="pipe-step" style="text-align:center;">Three.js Avatar → User</div>
+          </div>
+          <div class="highlight-box" style="margin-top:1.25rem;">Audiovisual news delivery — accessible presentation beyond text-only feeds.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 18: Results -->
+  <section class="slide" data-slide="18">
+    <div class="slide-header">
+      <span class="slide-tag">Results</span>
+      <span class="slide-num">18 / 22</span>
+    </div>
+    <h2>Evaluation <span class="accent">Results</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body col">
+      <table>
+        <thead><tr><th>Component</th><th>Key Metric</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Page Classifier</td><td><strong>~89% macro-F1</strong></td><td>2,394 pages, 201 domains</td></tr>
+          <tr><td>Content Extractor</td><td>Per-class P/R/F1</td><td>Hard-negative mining for OTHER class</td></tr>
+          <tr><td>Category Classifier</td><td>~0.97 confidence</td><td>Unified Arabic + English model</td></tr>
+          <tr><td>Tag Extraction</td><td>Entity score ~0.9+</td><td>NER outranks YAKE for named entities</td></tr>
+          <tr><td>Integration</td><td>All scenarios pass</td><td>Root→Feed, Telegram, Avatar</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box" style="margin-top:0.75rem;">
+        <strong>End-to-end scenario:</strong> Admin creates root → 8 listings discovered → 6 new articles → Politics + 7 tags → appears in personalized feed → RAG Q&amp;A works
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 19: Discussion -->
+  <section class="slide" data-slide="19">
+    <div class="slide-header">
+      <span class="slide-tag">Discussion</span>
+      <span class="slide-num">19 / 22</span>
+    </div>
+    <h2><span class="accent">Discussion</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <div class="card-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="card"><div class="icon">🏗️</div><h3>Modular Architecture</h3><p>Microservices effectively combine web engineering &amp; modern NLP with clear separation of concerns</p></div>
+          <div class="card"><div class="icon">🔍</div><h3>ML-Guided Discovery</h3><p>Multimodal page classifier enables scalable listing discovery across 201 domains</p></div>
+          <div class="card"><div class="icon">⚖️</div><h3>Interpretable Ranking</h3><p>Tag-centric personalization delivers auditable feed scoring users can understand</p></div>
+          <div class="card"><div class="icon">🤖</div><h3>Local AI Stack</h3><p>FAISS + Ollama RAG viable without mandatory cloud APIs — with active freshness management</p></div>
+          <div class="card"><div class="icon">📡</div><h3>Multi-Channel Ingestion</h3><p>Telegram + editor workflows complement automated web crawling with human/alternative sources</p></div>
+          <div class="card"><div class="icon">📚</div><h3>Key Lessons</h3><p>Data quality = model quality · Pattern grouping matters as much as ML accuracy · Interpretability builds trust</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 20: Constraints -->
+  <section class="slide" data-slide="20">
+    <div class="slide-header">
+      <span class="slide-tag">Constraints</span>
+      <span class="slide-num">20 / 22</span>
+    </div>
+    <h2>Constraints &amp; <span class="accent">Limitations</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body full col">
+      <div class="content">
+        <div class="two-cols">
+          <div>
+            <h3 class="sub-heading">Resource &amp; Hardware Limits</h3>
+            <ul>
+              <li><strong>Limited GPU VRAM</strong> on development machines — restricts batch sizes, training runs, and concurrent ML services</li>
+              <li><strong>Modest RAM &amp; CPU</strong> — typically only one heavy Python service (crawler, classifier, or AI assistant) runs comfortably at a time</li>
+              <li><strong>No cloud GPU budget</strong> — entire stack targets local/demo deployment on a single workstation or laptop</li>
+              <li><strong>Long inference times</strong> on CPU — post enrichment, embedding, and RAG queries are noticeably slower than a production GPU setup</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="sub-heading">AI &amp; Model Compromises</h3>
+            <ul>
+              <li><strong>Small local LLMs</strong> via Ollama (quantized) — weaker summarization, Q&amp;A, and translation vs. large cloud models</li>
+              <li><strong>No from-scratch LLM training</strong> — RAG and classifiers depend on pre-trained checkpoints and limited labeled data</li>
+              <li><strong>Manual labeling bottleneck</strong> — page classifier dataset capped at ~2,400 pages due to time and team size</li>
+              <li><strong>Avatar &amp; TTS quality</strong> constrained by offline tooling and lack of a dedicated GPU inference server</li>
+            </ul>
+          </div>
+        </div>
+        <div class="highlight-box" style="margin-top:1.25rem;">
+          <strong>Other practical limits:</strong> small graduation team · administratively registered sources only (not open-web scale) · Telegram API/session restrictions · Playwright fallback is RAM-heavy on low-spec hardware · no horizontal scaling or 24/7 ops budget
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 21: Conclusions -->
+  <section class="slide" data-slide="21">
+    <div class="slide-header">
+      <span class="slide-tag">Conclusion</span>
+      <span class="slide-num">21 / 22</span>
+    </div>
+    <h2>Conclusions &amp; <span class="accent">Future Work</span></h2>
+    <div class="gold-line"></div>
+    <div class="slide-body">
+      <div class="content">
+        <ul>
+          <li>Modular microservice architecture effectively combines web engineering &amp; modern NLP</li>
+          <li>Multimodal page classifier enables scalable listing discovery across 201 domains</li>
+          <li>Tag-centric personalization delivers interpretable feed ranking</li>
+          <li>Local RAG with FAISS + Ollama — AI without mandatory cloud APIs</li>
+          <li>News brief + 3D avatar bridge AI summarization with audiovisual delivery</li>
+        </ul>
+        <div class="highlight-box" style="margin-top:1rem;">
+          <strong>High priority future work:</strong> Geographic feed backend · Production TTS/Rhubarb microservice · Telegram-to-Posts bridge · Mobile avatar integration
+        </div>
+      </div>
+      <div class="visual">
+        <img src="https://images.unsplash.com/photo-1451187583691-694902087a72?w=800&q=80" alt="Technology horizon" />
+        <div class="overlay"><span>Production-oriented roadmap</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 22: Thank You -->
+  <section class="slide title-slide end-slide" data-slide="22">
+    <img class="title-bg-img" src="https://images.unsplash.com/photo-1419242902214-272b4f066559?w=1600&q=80" alt="" />
+    <div style="position:relative;z-index:2;">
+      <div class="logo-ring">📰</div>
+      <h1 style="font-size:clamp(2rem,4vw,2.8rem);">Thank You</h1>
+      <p class="thanks">Questions?</p>
+      <div class="gold-line" style="margin:1.5rem auto;"></div>
+      <p style="font-size:0.95rem;color:var(--muted);">News Bridge · An-Najah National University · June 2026</p>
+      <p class="small-note" style="margin-top:1rem;">Navigate with <kbd>←</kbd> <kbd>→</kbd> · Press <kbd>F</kbd> for fullscreen</p>
+    </div>
+  </section>
+
+</div>
+
+<nav class="nav" aria-label="Slide navigation">
+  <button id="prev" title="Previous (←)" disabled>‹</button>
+  <div class="progress-dots" id="dots"></div>
+  <span class="progress-text" id="counter">1 / 22</span>
+  <button id="next" title="Next (→)">›</button>
+</nav>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const counter = document.getElementById('counter');
+  const dotsContainer = document.getElementById('dots');
+
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('span');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.title = `Slide ${i + 1}`;
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  }
+
+  const dots = dotsContainer.querySelectorAll('.dot');
+
+  function goTo(n) {
+    if (n < 0 || n >= total) return;
+    slides[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    counter.textContent = `${current + 1} / ${total}`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    if (dots[current]) dots[current].scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'Home') goTo(0);
+    if (e.key === 'End') goTo(total - 1);
+    if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
+  });
+</script>
+
+</body>
+</html>

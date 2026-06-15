@@ -78,6 +78,34 @@ _SITEMAP_NON_LISTING_SEGMENTS = {
     "watch-live", "sky-news-profiles",
 }
 
+# Listing decision uses only page_classifier listing_article probability.
+LISTING_CONFIDENCE_THRESHOLD = 0.85
+
+
+def classify_for_discovery(primary: dict) -> dict:
+    """
+    Treat a page as listing when listing_article probability exceeds the threshold.
+
+    Uses raw page_classifier output only — no classification_policy or backup model.
+    """
+    probs = primary.get("probabilities") or {}
+    listing_conf = float(probs.get("listing_article", 0.0) or 0.0)
+
+    if listing_conf > LISTING_CONFIDENCE_THRESHOLD:
+        return {
+            "label": "listing_article",
+            "confidence": round(listing_conf, 4),
+            "probabilities": probs,
+            "listing_confidence": round(listing_conf, 4),
+        }
+
+    return {
+        "label": primary.get("label", "other"),
+        "confidence": round(float(primary.get("confidence", 0.0) or 0.0), 4),
+        "probabilities": probs,
+        "listing_confidence": round(listing_conf, 4),
+    }
+
 
 # ── URL Utilities ──────────────────────────────────────────────────────────────
 
@@ -520,6 +548,7 @@ class CacheEntry:
     classification:        Optional[str]   = None   # "content_article" | "listing_article" | "other"
     confidence:            Optional[float] = None
     added_to_tree:         bool            = False
+    tree_depth:            Optional[int]   = None   # BFS depth when added to listing tree
     rejection_reason:      Optional[str]   = None
     first_discovered_from: Optional[str]   = None
     processed:             bool            = False
@@ -535,6 +564,7 @@ class CacheEntry:
             "classification":        self.classification,
             "confidence":            self.confidence,
             "added_to_tree":         self.added_to_tree,
+            "tree_depth":            self.tree_depth,
             "rejection_reason":      self.rejection_reason,
             "first_discovered_from": self.first_discovered_from,
             "processed":             self.processed,
@@ -734,8 +764,6 @@ class ListingDiscoverer:
 
     def _classify(self, url: str, soup: BeautifulSoup) -> dict:
         """Run the page classifier on a fetched page and return its result dict."""
-        from page_classifier.classification_policy import classify_with_policy
-
         feats = extract_page_features(soup, url)
         primary = self._predictor.predict_raw(
             title               = feats["title"],
@@ -750,12 +778,7 @@ class ListingDiscoverer:
             text_length         = feats["text_length"],
             image_count         = feats["image_count"],
         )
-        return classify_with_policy(
-            primary,
-            url=url,
-            title=feats["title"],
-            text=feats["text"],
-        )
+        return classify_for_discovery(primary)
 
     # ── Cache helpers ──────────────────────────────────────────────────────────
 
@@ -768,6 +791,11 @@ class ListingDiscoverer:
         )
         self._cache[url] = entry
         return entry
+
+    def _mark_tree_member(self, entry: CacheEntry, tree_depth: int) -> None:
+        """Record that *entry* is a confirmed listing node at BFS *tree_depth*."""
+        entry.added_to_tree = True
+        entry.tree_depth = tree_depth
 
     # ── BFS ───────────────────────────────────────────────────────────────────
 
@@ -819,7 +847,7 @@ class ListingDiscoverer:
                         entry.confidence = conf
                         entry.processed = True
                         if label == "listing_article":
-                            entry.added_to_tree = True
+                            self._mark_tree_member(entry, depth)
                             self._log(
                                 f"  [sitemap-infer] CDN-blocked URL inferred as "
                                 f"listing from sitemap structure: {url}"
@@ -869,7 +897,7 @@ class ListingDiscoverer:
                     continue
 
                 if depth > 0 and result["label"] == "listing_article":
-                    node_entry.added_to_tree = True
+                    self._mark_tree_member(node_entry, depth)
 
             # ── Stop expanding at max depth ───────────────────────────────────
             if depth >= self.max_depth:
@@ -983,7 +1011,7 @@ class ListingDiscoverer:
                         cand_node = TreeNode(url=candidate, depth=depth + 1)
                         node.children.append(cand_node)
                         self._tree_urls.add(candidate)
-                        cand_entry.added_to_tree = True
+                        self._mark_tree_member(cand_entry, depth + 1)
                         self._log(f"    [ok] [representative] Added (depth={depth + 1}): {candidate}")
                         if depth + 1 < self.max_depth:
                             queue.append((cand_node, depth + 1))
@@ -1032,7 +1060,7 @@ class ListingDiscoverer:
                     child_node = TreeNode(url=child_url, depth=depth + 1)
                     node.children.append(child_node)
                     self._tree_urls.add(child_url)
-                    entry.added_to_tree = True
+                    self._mark_tree_member(entry, depth + 1)
                     self._log(f"    [ok] Added (depth={depth + 1}): {child_url}")
                     if depth + 1 < self.max_depth:
                         queue.append((child_node, depth + 1))

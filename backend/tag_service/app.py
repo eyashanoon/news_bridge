@@ -100,18 +100,25 @@ def score_tags(text_str, entities, keywords, lang):
 
 # --- DATABASE SYNC ---
 def init_db():
-    """Creates the posts_tags table if it doesn't exist."""
+    """Ensure tags land in PostTags — same table the Java API reads."""
     with engine.connect() as conn:
         conn.execute(text("""
-            CREATE TABLE IF NOT EXISTS posts_tags (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                post_id INT NOT NULL,
-                tag VARCHAR(255),
-                score FLOAT,
-                tag_type VARCHAR(50),
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
+            CREATE TABLE IF NOT EXISTS PostTags (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                post_id BIGINT NOT NULL,
+                tag VARCHAR(255) NOT NULL,
+                UNIQUE KEY idx_post_tag (post_id, tag),
+                FOREIGN KEY (post_id) REFERENCES posts(id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """))
+        for legacy_table in ("post_tags", "posts_tags"):
+            try:
+                conn.execute(text(f"""
+                    INSERT IGNORE INTO PostTags (post_id, tag)
+                    SELECT post_id, tag FROM {legacy_table}
+                """))
+            except Exception:
+                pass
         conn.commit()
 
 def process_pending_posts():
@@ -139,11 +146,11 @@ def process_pending_posts():
                 keywords = extract_keywords(text_clean, lang)
                 final_tags = score_tags(text_clean, entities, keywords, lang)
 
-                # 2. Insert into posts_tags
+                # 2. Insert into PostTags (Java feed/search reads this table)
                 for t in final_tags:
                     conn.execute(
-                        text("INSERT INTO posts_tags (post_id, tag, score, tag_type) VALUES (:pid, :tag, :score, :type)"),
-                        {"pid": post_id, "tag": t["tag"], "score": t["score"], "type": t["type"]}
+                        text("INSERT IGNORE INTO PostTags (post_id, tag) VALUES (:pid, :tag)"),
+                        {"pid": post_id, "tag": t["tag"]},
                     )
 
                 # 3. Update original post status

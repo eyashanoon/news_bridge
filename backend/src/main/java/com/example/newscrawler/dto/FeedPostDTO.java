@@ -10,6 +10,8 @@ public class FeedPostDTO {
     public String text;
     public String label;
     public String lang;
+    /** Content-detected language (may differ from stored lang when metadata is wrong). */
+    public String detectedLang;
     public String title;
     public long likes;
     public long dislikes;
@@ -20,17 +22,20 @@ public class FeedPostDTO {
     public Instant articleCreatedAt;
     public Long telegramPostId;
     public List<String> tags;
+    public List<String> imageUrls;
 
-    public FeedPostDTO(Long id, String text, String label, String lang, String title,
+    public FeedPostDTO(Long id, String text, String label, String lang, String detectedLang, String title,
                        long likes, long dislikes,
                        ReactionType userReaction,
                        List<String> tags, int numImages, Long articleId,
-                       String articleUrl, Instant articleCreatedAt, Long telegramPostId) {
+                       String articleUrl, Instant articleCreatedAt, Long telegramPostId,
+                       List<String> imageUrls) {
 
         this.id = id;
         this.text = text;
         this.label = label;
         this.lang = lang;
+        this.detectedLang = detectedLang;
         this.title = title;
         this.likes = likes;
         this.dislikes = dislikes;
@@ -41,5 +46,6 @@ public class FeedPostDTO {
         this.articleUrl = articleUrl;
         this.articleCreatedAt = articleCreatedAt;
         this.telegramPostId = telegramPostId;
+        this.imageUrls = imageUrls;
     }
 }

@@ -43,7 +43,8 @@ export default function EventDetailPage() {
   const [event, setEvent] = useState(null);
   const [requests, setRequests] = useState([]);
   const [posts, setPosts] = useState([]);
-  const [activeTab, setActiveTab] = useState("posts"); // posts | requests | settings
+  const [editors, setEditors] = useState([]); // topic editor assignments
+  const [activeTab, setActiveTab] = useState("posts"); // posts | requests | editors | settings
   const [error, setError] = useState("");
   const [editForm, setEditForm] = useState(null); // null = not editing
   const [fields, setFields] = useState([]);
@@ -58,20 +59,162 @@ export default function EventDetailPage() {
   }, [id, session?.token]);
 
   const loadRequests = useCallback(() => {
-    api.get(`/api/events/${id}/publish-requests`, cfg)
-      .then((r) => setRequests(r.data))
-      .catch(console.error);
+    // Load both the legacy event-scoped publish requests and the
+    // newer topic-scoped editor assignments, so the admin sees
+    // every application regardless of which API the editor used.
+    const legacy = api.get(`/api/events/${id}/publish-requests`, cfg)
+      .then((r) => Array.isArray(r.data) ? r.data : [])
+      .catch(() => []);
+
+    // Look up the topic ID linked to this event, then load assignments
+    // from the topic system. This is the system the new editor flow uses.
+    // Same title-fallback strategy as loadPosts (handles events that
+    // predate the topicId FK column).
+    const eventMeta = api.get(`/api/events/${id}`, cfg)
+      .then((r) => r.data || null)
+      .catch(() => null);
+
+    const topicAssignments = eventMeta.then((ev) => {
+      const fetchById = (tid) => api.get(`/api/topics/${tid}/editors`, cfg)
+        .then((r) => Array.isArray(r.data) ? r.data : [])
+        .catch(() => []);
+      if (ev && ev.topicId) return fetchById(ev.topicId);
+      if (ev && ev.title) {
+        return api.get(`/api/topics`, cfg)
+          .then((r) => {
+            const all = Array.isArray(r.data) ? r.data : [];
+            const match = all.find((t) => t.title === ev.title);
+            return match ? fetchById(match.id) : [];
+          })
+          .catch(() => []);
+      }
+      return [];
+    }).catch(() => []);
+
+    Promise.all([legacy, topicAssignments]).then(([legacyReqs, topicReqs]) => {
+      // Normalize each topic assignment to look like a publish request row
+      // so the existing UI can render both lists uniformly.
+      const topicAsRequests = topicReqs
+        .filter((a) => a && a.status === "REQUESTED")
+        .map((a) => ({
+          id: `topic-${a.id}`,
+          eventId: id,
+          eventTitle: a.topicTitle,
+          editorId: a.editorId,
+          editorEmail: a.editorEmail,
+          editorName: a.editorName,
+          status: a.status,
+          requestedAt: a.createdAt,
+          reviewedAt: null,
+          reviewedByEmail: null,
+          // Bookkeeping for the approve/reject handlers below
+          // The backend approve/reject endpoints expect editorId (not assignment row id)
+          _topicEditorId: a.editorId,
+          _topicId: a.topicId,
+        }));
+      setRequests([...legacyReqs, ...topicAsRequests]);
+    }).catch(console.error);
+  }, [id, session?.token]);
+
+  const loadEditors = useCallback(() => {
+    // Load all topic editor assignments for this event (REQUESTED, APPROVED, ASSIGNED, etc.)
+    // so the admin can see who is currently assigned to post on this topic.
+    const eventMeta = api.get(`/api/events/${id}`, cfg)
+      .then((r) => r.data || null)
+      .catch(() => null);
+
+    const topicEditors = eventMeta.then((ev) => {
+      const fetchById = (tid) => api.get(`/api/topics/${tid}/editors`, cfg)
+        .then((r) => Array.isArray(r.data) ? r.data : [])
+        .catch(() => []);
+      if (ev && ev.topicId) return fetchById(ev.topicId);
+      if (ev && ev.title) {
+        return api.get(`/api/topics`, cfg)
+          .then((r) => {
+            const all = Array.isArray(r.data) ? r.data : [];
+            const match = all.find((t) => t.title === ev.title);
+            return match ? fetchById(match.id) : [];
+          })
+          .catch(() => []);
+      }
+      return [];
+    }).catch(() => []);
+
+    topicEditors
+      .then((list) => setEditors(list))
+      .catch(() => setEditors([]));
   }, [id, session?.token]);
 
   const loadPosts = useCallback(() => {
-    api.get(`/api/live-news`, { ...cfg, params: { eventId: id } })
-      .then((r) => setPosts(r.data))
-      .catch(console.error);
+    // Fetch both the legacy live-news posts and the newer topic-scoped
+    // posts (so the count and the list reflect every post the editor
+    // made, regardless of which pipeline they used).
+    const legacy = api.get(`/api/live-news`, { ...cfg, params: { eventId: id } })
+      .then((r) => Array.isArray(r.data) ? r.data : [])
+      .catch(() => []);
+
+    // Look up the topic ID linked to this event, then load posts from
+    // the topic system. The new editor flow writes here.
+    const eventMeta = api.get(`/api/events/${id}`, cfg)
+      .then((r) => r.data || null)
+      .catch(() => null);
+
+    // Resolve a topicId either from the event's FK (preferred) or by
+    // matching the event title against the topics table (fallback for
+    // events created before the topicId column was added). Either way
+    // we end up with the right topic and its posts.
+    const topicPosts = eventMeta.then((ev) => {
+      if (ev && ev.topicId) {
+        return api.get(`/api/topics/${ev.topicId}/posts`, cfg)
+          .then((r) => Array.isArray(r.data) ? r.data : [])
+          .catch(() => []);
+      }
+      if (ev && ev.title) {
+        // Fallback: find a topic with the same title. The old createTopicFromEvent
+        // matched topics to events by title, so the title is a reliable link for
+        // events that predate the topicId FK column.
+        return api.get(`/api/topics`, cfg)
+          .then((r) => {
+            const all = Array.isArray(r.data) ? r.data : [];
+            const match = all.find((t) => t.title === ev.title);
+            if (!match) return [];
+            return api.get(`/api/topics/${match.id}/posts`, cfg)
+              .then((r2) => Array.isArray(r2.data) ? r2.data : [])
+              .catch(() => []);
+          })
+          .catch(() => []);
+      }
+      return [];
+    }).catch(() => []);
+
+    Promise.all([legacy, topicPosts]).then(([livePosts, tpPosts]) => {
+      // Normalize each topic post to look like a live-news post row so
+      // the existing UI renders both lists uniformly.
+      const topicAsPosts = tpPosts.map((p) => ({
+        // The page reads p.id, p.headline, p.content, p.authorEmail,
+        // p.authorName, p.authorAvatar, p.publishedAt, p.updatedAt.
+        id: `topic-${p.id}`,
+        _isTopicPost: true,
+        _topicPostId: p.id,
+        eventId: id,
+        headline: p.title || "",
+        content: p.text || "",
+        authorEmail: p.authorEmail,
+        authorName: p.author,
+        authorAvatar: p.authorProfilePicture,
+        mediaUrl: p.mediaUrl,
+        mediaType: p.mediaType,
+        publishedAt: p.createdAt,
+        updatedAt: p.createdAt,
+      }));
+      setPosts([...livePosts, ...topicAsPosts]);
+    }).catch(console.error);
   }, [id, session?.token]);
 
   useEffect(() => {
     loadEvent();
     loadRequests();
+    loadEditors();
     loadPosts();
     api.get("/api/fields", cfg).then((r) => setFields(r.data)).catch(console.error);
   }, [id]);
@@ -96,33 +239,54 @@ export default function EventDetailPage() {
     }
   };
 
-  const handleReviewRequest = async (reqId, approve) => {
+  const handleReviewRequest = async (req, approve) => {
     const label = approve ? "approve" : "reject";
     const ok = await ask(`Are you sure you want to ${label} this publish request?`, approve ? "Approve Request" : "Reject Request");
     if (!ok) return;
     try {
-      await api.put(`/api/events/publish-requests/${reqId}/${approve ? "approve" : "reject"}`, {}, cfg);
+      // If this row came from the new topic system, use the topic endpoints.
+      if (req && typeof req.id === "string" && req.id.startsWith("topic-")) {
+        const editorId = req._topicEditorId;
+        const topicId = req._topicId;
+        await api.post(`/api/topics/${topicId}/${approve ? "approve" : "reject"}/${editorId}`, {}, cfg);
+      } else {
+        // Legacy event-scoped publish request
+        await api.put(`/api/events/publish-requests/${req.id}/${approve ? "approve" : "reject"}`, {}, cfg);
+      }
       loadRequests();
     } catch (err) {
       setError(err.response?.data?.message || "Failed");
     }
   };
 
-  const handleDeletePost = async (postId) => {
+  const handleDeletePost = async (post) => {
     const ok = await ask("Delete this live news post permanently?", "Delete Post");
     if (!ok) return;
     try {
-      await api.delete(`/api/live-news/${postId}`, cfg);
+      if (post && post._isTopicPost) {
+        // Newer topic-scoped post — use the topic admin endpoint
+        await api.delete(`/api/topics/${event.topicId}/posts/${post._topicPostId}`, cfg);
+      } else {
+        // Legacy event-scoped post
+        await api.delete(`/api/live-news/${post.id}`, cfg);
+      }
       loadPosts();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to delete post");
     }
   };
 
-  const handleUpdatePost = async (e, postId) => {
+  const handleUpdatePost = async (e, post) => {
     e.preventDefault();
     try {
-      await api.put(`/api/live-news/${postId}`, editingPost, cfg);
+      if (post && post._isTopicPost) {
+        // Newer topic-scoped post — the topic update endpoint only takes
+        // content/text, not headline/title, so for now just skip edit on
+        // topic posts (or extend the backend DTO if headline-edit is needed).
+        setError("Editing topic-post text from the admin UI is not yet supported. Use the topic detail API.");
+      } else {
+        await api.put(`/api/live-news/${post.id}`, editingPost, cfg);
+      }
       setEditingPost(null);
       loadPosts();
     } catch (err) {
@@ -138,7 +302,7 @@ export default function EventDetailPage() {
   if (!event) {
     return (
       <div className="event-detail-page">
-        <button className="event-back-btn" onClick={() => nav("/admin/events")}>← Back to Events</button>
+        <button className="event-back-btn" onClick={() => nav("/admin/topics")}>← Back to Events</button>
         {error ? <div className="admin-error">{error}</div> : <p>Loading event...</p>}
       </div>
     );
@@ -147,7 +311,7 @@ export default function EventDetailPage() {
   return (
     <div className="event-detail-page">
       {/* ── Header ────────────────────────────────────────────────────────── */}
-      <button className="event-back-btn" onClick={() => nav("/admin/events")}>
+      <button className="event-back-btn" onClick={() => nav("/admin/topics")}>
         ← Back to Events
       </button>
 
@@ -155,7 +319,25 @@ export default function EventDetailPage() {
 
       <div className="event-detail-hero">
         <div className="event-detail-hero-left">
-          <div className="event-detail-field-badge">{event.field?.name || "No Field"}</div>
+          <div className="event-detail-field-badges">
+            {(() => {
+              // Resolve every assigned field (from event.fieldIds) to its
+              // name in fields so the hero shows the full set, not just
+              // the single primary field. Fall back to event.field if
+              // fieldIds is empty.
+              const assigned = (event.fieldIds && event.fieldIds.length > 0
+                ? event.fieldIds
+                    .map((fid) => fields.find((f) => Number(f.id) === Number(fid)))
+                    .filter(Boolean)
+                : (event.field ? [event.field] : []));
+              if (assigned.length === 0) {
+                return <span className="event-detail-field-badge">No Field</span>;
+              }
+              return assigned.map((f) => (
+                <span key={f.id} className="event-detail-field-badge">{f.name}</span>
+              ));
+            })()}
+          </div>
           <h1 className="event-detail-title">{event.title}</h1>
           <p className="event-detail-desc">{event.description || "No description."}</p>
           <div className="event-detail-meta">
@@ -197,7 +379,17 @@ export default function EventDetailPage() {
           onClick={() => setActiveTab("requests")}
         >
           Publish Requests{" "}
-          <span className="tab-count pending">{requests.filter((r) => r.status === "PENDING").length}</span>
+          {/* Count both legacy "PENDING" and new topic-system "REQUESTED" */}
+          <span className="tab-count pending">
+            {requests.filter((r) => r.status === "PENDING" || r.status === "REQUESTED").length}
+          </span>
+        </button>
+        <button
+          className={`event-tab-btn${activeTab === "editors" ? " active" : ""}`}
+          onClick={() => setActiveTab("editors")}
+        >
+          Editors
+          <span className="tab-count">{editors.length}</span>
         </button>
         <button
           className={`event-tab-btn${activeTab === "settings" ? " active" : ""}`}
@@ -225,7 +417,7 @@ export default function EventDetailPage() {
               {filteredPosts.map((p) => (
                 <div key={p.id} className="live-post-card">
                   {editingPost?.id === p.id ? (
-                    <form onSubmit={(e) => handleUpdatePost(e, p.id)} className="live-post-edit-form">
+                    <form onSubmit={(e) => handleUpdatePost(e, p)} className="live-post-edit-form">
                       <input
                         value={editingPost.headline}
                         onChange={(e) => setEditingPost({ ...editingPost, headline: e.target.value })}
@@ -274,7 +466,7 @@ export default function EventDetailPage() {
                         >
                           Edit
                         </button>
-                        <button className="admin-btn small danger" onClick={() => handleDeletePost(p.id)}>
+                        <button className="admin-btn small danger" onClick={() => handleDeletePost(p)}>
                           Delete
                         </button>
                       </div>
@@ -308,12 +500,44 @@ export default function EventDetailPage() {
                   </div>
                   <div className="publish-req-right">
                     <span className={`publish-req-status ${req.status.toLowerCase()}`}>{req.status}</span>
-                    {req.status === "PENDING" && (
+                    {/* Both legacy "PENDING" and new topic-system "REQUESTED" assignments
+                        can still be approved/rejected from this page. */}
+                    {(req.status === "PENDING" || req.status === "REQUESTED") && (
                       <div className="publish-req-actions">
-                        <button className="admin-btn small primary" onClick={() => handleReviewRequest(req.id, true)}>Approve</button>
-                        <button className="admin-btn small danger" onClick={() => handleReviewRequest(req.id, false)}>Reject</button>
+                        <button className="admin-btn small primary" onClick={() => handleReviewRequest(req, true)}>Approve</button>
+                        <button className="admin-btn small danger" onClick={() => handleReviewRequest(req, false)}>Reject</button>
                       </div>
                     )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Tab: Editors ───────────────────────────────────────────────────── */}
+      {activeTab === "editors" && (
+        <div className="event-tab-content">
+          {editors.length === 0 ? (
+            <div className="event-empty-state"><p>No editors assigned to this topic yet.</p></div>
+          ) : (
+            <div className="publish-requests-list">
+              {editors.map((e) => (
+                <div key={e.id} className={`publish-req-card ${e.status.toLowerCase()}`}>
+                  <div className="publish-req-info">
+                    <div className="publish-req-editor">
+                      <strong>{e.editorName || e.editorEmail}</strong>
+                      <span className="publish-req-email">{e.editorEmail}</span>
+                    </div>
+                    <div className="publish-req-meta">
+                      Status: <strong>{e.status}</strong>
+                      {e.assignedBy && ` · by ${e.assignedBy}`}
+                      {e.createdAt && ` · ${new Date(e.createdAt).toLocaleString()}`}
+                    </div>
+                  </div>
+                  <div className="publish-req-right">
+                    <span className={`publish-req-status ${e.status.toLowerCase()}`}>{e.status}</span>
                   </div>
                 </div>
               ))}
@@ -328,7 +552,20 @@ export default function EventDetailPage() {
           {editForm === null ? (
             <div className="event-settings-view">
               <div className="event-settings-row"><label>Title</label><span>{event.title}</span></div>
-              <div className="event-settings-row"><label>Field</label><span>{event.field?.name || "—"}</span></div>
+              <div className="event-settings-row">
+                <label>Field{event.fieldIds && event.fieldIds.length > 1 ? "s" : ""}</label>
+                <span>
+                  {(() => {
+                    const assigned = (event.fieldIds && event.fieldIds.length > 0
+                      ? event.fieldIds
+                          .map((fid) => fields.find((f) => Number(f.id) === Number(fid)))
+                          .filter(Boolean)
+                      : (event.field ? [event.field] : []));
+                    if (assigned.length === 0) return "—";
+                    return assigned.map((f) => f.name).join(", ");
+                  })()}
+                </span>
+              </div>
               <div className="event-settings-row"><label>Status</label><span>{STATUS_LABELS[event.status]}</span></div>
               <div className="event-settings-row"><label>Description</label><span>{event.description || "—"}</span></div>
               <div className="event-settings-row"><label>Created by</label><span>{event.createdByEmail || "—"}</span></div>

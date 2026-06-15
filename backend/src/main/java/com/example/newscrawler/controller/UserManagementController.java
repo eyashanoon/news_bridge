@@ -1,6 +1,8 @@
 package com.example.newscrawler.controller;
 
 import com.example.newscrawler.dto.EditorUserResponse;
+import com.example.newscrawler.dto.FrontendUserListResponse;
+import com.example.newscrawler.dto.PagedResponse;
 import com.example.newscrawler.dto.RegisteredUserResponse;
 import com.example.newscrawler.dto.UpdateUserRolesRequest;
 import com.example.newscrawler.dto.UpdateUserStatusRequest;
@@ -13,6 +15,7 @@ import com.example.newscrawler.repository.AllowedRoleRepository;
 import com.example.newscrawler.repository.EditorAttachmentRepository;
 import com.example.newscrawler.repository.EditorUserRepository;
 import com.example.newscrawler.repository.RegisteredUserRepository;
+import com.example.newscrawler.service.UserManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,6 +42,55 @@ public class UserManagementController {
 
     @Autowired
     private EditorAttachmentRepository editorAttachmentRepository;
+
+    @Autowired
+    private UserManagementService userManagementService;
+
+    @GetMapping("/search/frontend-users")
+    @PreAuthorize("hasRole('MANAGE_USERS')")
+    public PagedResponse<FrontendUserListResponse> searchFrontendUsers(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String accountType,
+            @RequestParam(required = false) String roleType,
+            @RequestParam(required = false) String activityLevel,
+            @RequestParam(defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return userManagementService.searchFrontendUsersList(
+                search, status, accountType, roleType, activityLevel, sort, sortDir, page, size);
+    }
+
+    @GetMapping("/search/registered-users")
+    @PreAuthorize("hasRole('MANAGE_USERS')")
+    public PagedResponse<RegisteredUserResponse> searchRegisteredUsers(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String roleType,
+            @RequestParam(required = false) String activityLevel,
+            @RequestParam(defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return userManagementService.searchRegisteredUsers(
+                search, status, roleType, activityLevel, sort, sortDir, page, size);
+    }
+
+    @GetMapping("/search/editor-users")
+    @PreAuthorize("hasRole('MANAGE_USERS') or hasRole('VIEW_EDITOR_INFO')")
+    public PagedResponse<EditorUserResponse> searchEditorUsers(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String activityLevel,
+            @RequestParam(required = false) String roleLevel,
+            @RequestParam(defaultValue = "contributions") String sort,
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return userManagementService.searchEditorUsers(
+                search, status, activityLevel, roleLevel, sort, sortDir, page, size);
+    }
 
     @GetMapping("/registered-users")
     @PreAuthorize("hasRole('MANAGE_USERS')")
@@ -166,6 +218,7 @@ public class UserManagementController {
         EditorUserResponse r = new EditorUserResponse();
         r.id = u.getId();
         r.username = u.getUsername();
+        r.fullName = u.getFullName();
         r.email = u.getEmail();
         r.type = u.getType() != null ? u.getType().name() : "EDITOR";
         r.status = u.getStatus() != null ? u.getStatus().name() : null;

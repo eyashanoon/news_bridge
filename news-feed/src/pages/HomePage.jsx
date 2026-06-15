@@ -8,8 +8,8 @@ import TrendingTopics from "../components/TrendingTopics";
 import TopicDetails from "../components/TopicDetails";
 import ApplyEditorPage from "../pages/ApplyEditorPage";
 import SavedNews from "../components/SavedNews";
-import AvatarPage from "../components/AvatarPage";
 import NewsBrief from "../components/NewsBrief";
+import TelegramFeed from "../components/TelegramFeed";
 import PostModal from "../components/PostModal";
 import { getPostById } from "../api/searchApi";
 import { useTheme } from "../context/ThemeContext";
@@ -19,10 +19,10 @@ export default function HomePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { topicId, categoryName } = useParams();
+
   const [selectedPost, setSelectedPost] = useState(null);
   const [feedKey, setFeedKey] = useState(0);
   const [searchPostModal, setSearchPostModal] = useState(null);
-  const [avatarOpen, setAvatarOpen] = useState(false);
 
   // Map lowercase URL category slugs to proper category names
   const categorySlugToName = useMemo(() => ({
@@ -36,6 +36,15 @@ export default function HomePage() {
     religion: "Religion",
   }), []);
 
+  // Resolve category from URL immediately so Feed never flashes the wrong category on reload
+  const feedCategory = useMemo(() => {
+    if (categoryName) {
+      const resolved = categorySlugToName[categoryName.toLowerCase()];
+      if (resolved) return resolved;
+    }
+    return "General";
+  }, [categoryName, categorySlugToName]);
+
   // Derive activePage from the URL path
   const activePage = useMemo(() => {
     const path = location.pathname;
@@ -43,6 +52,7 @@ export default function HomePage() {
     if (path === "/news/trending") return "TRENDING";
     if (path === "/news/saved") return "SAVED";
     if (path === "/news/apply-editor") return "APPLY_EDITOR";
+    if (path === "/news/telegram") return "TELEGRAM";
     if (path.startsWith("/news/topics/")) return "TOPIC";
     if (path.startsWith("/news/category/")) return "HOME";
     return "HOME";
@@ -69,6 +79,7 @@ export default function HomePage() {
       TRENDING: "/news/trending",
       SAVED: "/news/saved",
       APPLY_EDITOR: "/news/apply-editor",
+      TELEGRAM: "/news/telegram",
     };
     navigate(routes[page] || "/news");
   }, [navigate]);
@@ -110,7 +121,7 @@ export default function HomePage() {
     }}>
       {activePage === "HOME" && (
         <CategoryBar
-          category={currentCategory}
+          category={feedCategory}
           setCategory={(cat) => {
             // Navigate to the category URL if different from current
             navigate(`/news/category/${cat.toLowerCase()}`);
@@ -124,16 +135,18 @@ export default function HomePage() {
             activePage={activePage} 
             setActivePage={setActivePage} 
             onLocationChange={handleLocationChange}
-            onOpenAvatar={() => setAvatarOpen(true)}
           />
         </div>
 
         <div className="home-feed">
-          {activePage === "HOME" && <Feed key={feedKey} category={currentCategory} onAskAI={setSelectedPost} />}
-          {activePage === "TRENDING" && <TrendingTopics />}
-          {activePage === "TOPIC" && topicId && <TopicDetails topicId={Number(topicId)} goBack={() => navigate("/news/trending")} />}
-          {activePage === "SAVED" && <SavedNews />}
-          {activePage === "APPLY_EDITOR" && <ApplyEditorPage />}
+          <div className="home-feed-inner">
+            {activePage === "HOME" && <Feed key={`${feedKey}-${feedCategory}`} category={feedCategory} onAskAI={setSelectedPost} />}
+            {activePage === "TRENDING" && <TrendingTopics />}
+            {activePage === "TOPIC" && topicId && <TopicDetails topicId={Number(topicId)} goBack={() => navigate("/news/trending")} />}
+            {activePage === "SAVED" && <SavedNews />}
+            {activePage === "TELEGRAM" && <TelegramFeed category="Telegram" />}
+            {activePage === "APPLY_EDITOR" && <ApplyEditorPage />}
+          </div>
         </div>
 
         <div className="home-right">
@@ -150,8 +163,6 @@ export default function HomePage() {
         />
       )}
 
-      {/* AI News Presenter modal */}
-      <AvatarPage open={avatarOpen} onClose={() => setAvatarOpen(false)} />
     </div>
   );
 }

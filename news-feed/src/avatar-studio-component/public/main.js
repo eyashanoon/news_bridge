@@ -8,7 +8,7 @@
  *   scene.js       – Three.js scene, bones, morph targets
  *   tts.js         – text-to-speech (Edge TTS)
  *   lipsync.js     – lip-sync animation driver
- *   rhubarb.js     – Rhubarb API call + WAV encoder + fallback
+ *   rhubarb.js     – Rhubarb phoneme analysis via /api/rhubarb
  *   gestures.js    – hand-gesture choreography
  *   pose-studio.js – Pose Studio UI (bones, poses, panels)
  *
@@ -34,9 +34,9 @@ import { playWithLipSync, setAudioDelay } from './lipsync.js';
 // playWithLipSync(blob, cues, durationSec, options) – plays audio + drives mouth
 // setAudioDelay(seconds) – how long to delay audio after animation starts (default 0.1 s)
 
-// ── Rhubarb (phoneme lip-sync + energy fallback) ──────────────
+// ── Rhubarb (phoneme lip-sync) ────────────────────────────────
 import { buildLipSyncCues } from './rhubarb.js';
-// buildLipSyncCues(decodedBuffer, text) → [{time, shape}]
+// buildLipSyncCues(audioBlob, text) → [{time, shape}] via Rhubarb (/api/rhubarb)
 
 // ── Gesture choreography ──────────────────────────────────────
 import { scheduleGestures, cancelGestures } from './gestures.js';
@@ -166,15 +166,15 @@ async function handleSpeak(text) {
       : await synthesise(text, { enhanced: false });
 
     // B. Decode audio once.
-    //    Decoding here gives us the exact duration and raw PCM for the energy fallback.
     //    The decoded buffer is passed to playWithLipSync so it does not decode again
     //    (double-decoding caused a visible mouth-start delay).
     const audioCtx      = new AudioContext();
     await audioCtx.resume(); // required on mobile/some browsers (context starts suspended)
     const decodedBuffer = await audioCtx.decodeAudioData(await audioBlob.arrayBuffer());
 
-    // C. Build lip-sync cues (Rhubarb phoneme analysis, or energy fallback).
-    const cues = await buildLipSyncCues(decodedBuffer, text);
+    // C. Rhubarb phoneme lip-sync (requires vite-plugins/avatarStudioApi.js in dev).
+    setStatus('Analyzing lip sync…');
+    const cues = await buildLipSyncCues(audioBlob, text);
     console.log('Lip-sync cues:', cues);
 
     setStatus(''); // clear "Synthesising" message before playback starts

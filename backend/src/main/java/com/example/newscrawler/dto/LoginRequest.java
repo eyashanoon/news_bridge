@@ -13,6 +13,9 @@ public class LoginRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
+    private String deviceFingerprint;
+    private String deviceLabel;
+
     // No-arg constructor needed for Jackson
     public LoginRequest() {}
 
@@ -26,6 +29,12 @@ public class LoginRequest {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public String getDeviceFingerprint() { return deviceFingerprint; }
+    public void setDeviceFingerprint(String deviceFingerprint) { this.deviceFingerprint = deviceFingerprint; }
+
+    public String getDeviceLabel() { return deviceLabel; }
+    public void setDeviceLabel(String deviceLabel) { this.deviceLabel = deviceLabel; }
 
     public boolean isEmail() {
         return username != null && username.contains("@");

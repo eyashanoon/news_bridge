@@ -29,7 +29,18 @@ export async function setToken(token) {
 }
 
 export async function getUserId() {
-  return AsyncStorage.getItem(USER_ID_KEY);
+  const stored = await AsyncStorage.getItem(USER_ID_KEY);
+  if (stored) return stored;
+
+  const token = await getToken();
+  if (!token) return null;
+
+  const decoded = decodeJwt(token);
+  if (decoded?.sub) {
+    await setUserId(decoded.sub);
+    return decoded.sub;
+  }
+  return null;
 }
 
 export async function setUserId(id) {
@@ -43,6 +54,15 @@ export async function getUserRoles() {
   } catch {
     return [];
   }
+}
+
+export async function getUserType() {
+  const token = await getToken();
+  if (token) {
+    const decoded = decodeJwt(token);
+    if (decoded?.type) return decoded.type;
+  }
+  return (await AsyncStorage.getItem(USER_TYPE_KEY)) || null;
 }
 
 export async function logout() {

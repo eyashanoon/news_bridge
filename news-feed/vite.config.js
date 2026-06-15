@@ -7,6 +7,8 @@ import { avatarStudioApi, avatarApiProxyBypass } from "./vite-plugins/avatarStud
 export default defineConfig({
   plugins: [react(), tailwindcss(), avatarStudioApi()],
   server: {
+    host: '0.0.0.0',
+    port: 5174,
     proxy: {
       // Java backend for news-feed APIs; avatar routes bypass via avatarApiProxyBypass
       "/api": {

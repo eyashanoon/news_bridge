@@ -2,34 +2,20 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch } from "../utils/apiFetch";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
-import { detectItemLanguage } from "../utils/languageUtils";
+import {
+  detectItemLanguage,
+  contentSampleFromBlocks,
+  normalizeLang,
+  getTranslationTargetLang,
+  getTranslateButtonLabel,
+  getLanguageDisplayLabel,
+} from "../utils/languageUtils";
+import { translateText } from "../utils/translateUtils";
 import { searchPosts } from "../api/searchApi";
 import { categoryTheme } from "../utils/categoryColors";
-import { AI_BASE_URL } from "../utils/aiFetch";
+
 const POST_PLACEHOLDER_IMG =
   "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE=";
-
-async function translateText(text, sourceLang, targetLang) {
-  if (!text || !text.trim()) return "";
-  try {
-    const res = await fetch(`${AI_BASE_URL}/translate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, source_lang: sourceLang, target_lang: targetLang }),
-    });
-    if (!res.ok) throw new Error(`Translation failed: ${res.status}`);
-    const data = await res.json();
-    const translated = (data.translatedText || "").trim();
-    if (!translated || /^(i can'?t|cannot|sorry|i'm sorry|i will not|cannot fulfill)/i.test(translated)) {
-      console.warn("Translation refused by LLM, showing original text");
-      return text;
-    }
-    return translated;
-  } catch (err) {
-    console.error("Translation error:", err.message);
-    return text;
-  }
-}
 
 function renderMedia(item, className = "") {
   if (item.mediaType === "video") {
@@ -104,9 +90,9 @@ export default function PostModal({ post, onClose }) {
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [relatedLoading, setRelatedLoading] = useState(false);
 
-  // Translation state
-  const postLang = detectItemLanguage(currentPost);
-  const needsTranslation = (lang === "ar" && postLang !== "ar") || (lang !== "ar" && postLang === "ar");
+  // Translation state — re-detect from loaded paragraph blocks when available
+  const postLang = detectItemLanguage(currentPost, contentSampleFromBlocks(content));
+  const needsTranslation = Boolean(postLang && postLang !== normalizeLang(lang));
   const [isTranslating, setIsTranslating] = useState(false);
   const [translatedTitle, setTranslatedTitle] = useState(currentPost._translatedTitle || null);
   const [translatedText, setTranslatedText] = useState(currentPost._translatedText || null);
@@ -235,14 +221,13 @@ export default function PostModal({ post, onClose }) {
     if (!needsTranslation) return;
     setIsTranslating(true);
     try {
-      const targetLang = lang === "ar" ? "ar" : "en";
-      const sourceLang = lang === "ar" ? "en" : "ar";
+      const targetLang = getTranslationTargetLang(lang);
       if (currentPost.title) {
-        const result = await translateText(currentPost.title, sourceLang, targetLang);
+        const result = await translateText(currentPost.title, postLang, targetLang);
         setTranslatedTitle(result || currentPost.title);
       }
       if (currentPost.text) {
-        const result = await translateText(currentPost.text, sourceLang, targetLang);
+        const result = await translateText(currentPost.text, postLang, targetLang);
         setTranslatedText(result || currentPost.text);
       }
       setShowTranslated(true);
@@ -339,7 +324,8 @@ export default function PostModal({ post, onClose }) {
           <div className="modal-body">
             <div ref={textPaneRef} className="modal-text-pane" style={{ textAlign: isArabic ? "right" : "left" }}>
               <div className="meta-row">
-                {currentPost.label ? t(`category_${currentPost.label}`, currentPost.label) : ""} {currentPost.lang ? `· ${currentPost.lang}` : ""}
+                {currentPost.label ? t(`category_${currentPost.label}`, currentPost.label) : ""}
+                {postLang ? ` · ${getLanguageDisplayLabel(postLang, t)}` : ""}
               </div>
 
               {/* Topic context for topic posts */}
@@ -365,24 +351,63 @@ export default function PostModal({ post, onClose }) {
                   {/* Author info for topic posts in modal — clickable to profile */}
                   {currentPost.authorName && (
                     <div
-                      className="flex items-center gap-2 mt-3 mb-3 pb-3 border-b border-gray-100 cursor-pointer hover:opacity-80"
+                      className="flex items-center gap-3 mt-3 mb-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all hover:bg-gray-50"
+                      style={{
+                        border: "1px solid rgba(0,0,0,0.06)",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                      }}
                       onClick={() => {
                         if (currentPost.authorId) {
                           window.open(`/profile/${currentPost.authorId}`, "_self");
                         }
                       }}
                     >
-                      {currentPost.authorAvatar && (
-                        <img
-                          src={currentPost.authorAvatar}
-                          alt={currentPost.authorName}
-                          className="w-9 h-9 rounded-full object-cover"
-                          onError={(e) => { e.target.style.display = "none"; }}
+                      <div className="relative flex-shrink-0">
+                        {currentPost.authorAvatar ? (
+                          <img
+                            src={currentPost.authorAvatar}
+                            alt={currentPost.authorName}
+                            className="w-11 h-11 rounded-full object-cover"
+                            style={{ border: "2px solid #3b82f6", boxShadow: "0 0 0 2px rgba(59,130,246,0.15)" }}
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.nextElementSibling.style.display = "flex";
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className="w-11 h-11 rounded-full items-center justify-center text-base font-bold"
+                          style={{
+                            display: currentPost.authorAvatar ? "none" : "flex",
+                            background: "linear-gradient(135deg, #3b82f6, #6366f1)",
+                            color: "#fff",
+                            boxShadow: "0 0 0 2px rgba(59,130,246,0.15)",
+                          }}
+                        >
+                          {(currentPost.authorName || "E")[0].toUpperCase()}
+                        </div>
+                        {/* Online dot indicator */}
+                        <div
+                          className="absolute rounded-full"
+                          style={{
+                            width: 10, height: 10, bottom: 0, right: 0,
+                            background: "#22c55e",
+                            border: "2px solid #fff",
+                            boxShadow: "0 0 0 1px rgba(34,197,94,0.3)",
+                          }}
                         />
-                      )}
-                      <div>
-                        <p className="text-sm font-semibold text-gray-800">{currentPost.authorName}</p>
-                        <p className="text-xs text-blue-500">View Profile →</p>
+                      </div>
+                      <div style={{ minWidth: 0 }}>
+                        <p className="text-sm font-semibold" style={{ color: "var(--text, #1f2937)", lineHeight: 1.3 }}>
+                          {currentPost.authorName}
+                        </p>
+                        <p
+                          className="text-xs font-medium"
+                          style={{ color: "#3b82f6", display: "flex", alignItems: "center", gap: 4, marginTop: 1 }}
+                        >
+                          {lang === "ar" ? "عرض الملف الشخصي" : "View Profile"}
+                          <span style={{ fontSize: 10, transition: "transform 0.15s" }}>→</span>
+                        </p>
                       </div>
                     </div>
                   )}
@@ -467,15 +492,32 @@ export default function PostModal({ post, onClose }) {
                     transition: "color var(--transition-fast)", padding: 0,
                   }}
                 >
-                  {isTranslating ? t("translating") : showTranslated ? t("viewOriginal") : (lang === "ar" ? t("translateToAr") : t("translateToEn"))}
+                  {isTranslating ? t("translating") : showTranslated ? t("viewOriginal") : getTranslateButtonLabel(lang, t)}
                 </button>
               )}
 
+              {currentPost.tags?.length > 0 && (
+                <div className="post-tags">
+                  {currentPost.tags.map((tag, idx) => (
+                    <span key={idx} className="post-tag">#{tag}</span>
+                  ))}
+                </div>
+              )}
+
               {/* Related Posts Section */}
-              <div className="related-posts-section">
-                <h3 className="related-posts-title">{t("relatedPosts")}</h3>
+              <section className="related-posts-section" aria-label={t("relatedPosts")}>
+                <div className="related-posts-header">
+                  <h3 className="related-posts-title">{t("relatedPosts")}</h3>
+                  {!relatedLoading && relatedPosts.length > 0 && (
+                    <span className="related-posts-count">{relatedPosts.length}</span>
+                  )}
+                </div>
                 {relatedLoading ? (
-                  <div className="related-posts-loading">{t("loading")}</div>
+                  <div className="related-posts-loading">
+                    <div className="related-post-skeleton" />
+                    <div className="related-post-skeleton" />
+                    <div className="related-post-skeleton" />
+                  </div>
                 ) : relatedPosts.length === 0 ? (
                   <div className="related-posts-empty">{t("noRelatedPosts")}</div>
                 ) : (
@@ -492,7 +534,7 @@ export default function PostModal({ post, onClose }) {
                     ))}
                   </div>
                 )}
-              </div>
+              </section>
             </div>
 
             {/* Right media panel */}
@@ -568,27 +610,35 @@ export default function PostModal({ post, onClose }) {
 function RelatedPostCard({ post, onClick, darkMode, lang, t }) {
   const theme = darkMode ? "dark" : "light";
   const postTheme = categoryTheme[post.label]?.[theme] || categoryTheme.General[theme];
+  const accent = postTheme?.accent || "var(--brand-500)";
 
   const publishedLabel = formatRelativeTime(post.articleCreatedAt, lang);
 
-  const truncate = (text, max = 80) => {
+  const truncate = (text, max = 96) => {
     if (!text) return "";
-    return text.length > max ? text.slice(0, max) + "..." : text;
+    return text.length > max ? `${text.slice(0, max)}…` : text;
   };
 
   const [media, setMedia] = useState(null);
+  const [mediaLoading, setMediaLoading] = useState(true);
 
   useEffect(() => {
-    if (!post.id) return;
+    if (!post.id) {
+      setMediaLoading(false);
+      return;
+    }
     let cancelled = false;
     const loadMedia = async () => {
+      setMediaLoading(true);
       try {
         const res = await apiFetch(`/api/posts/${post.id}/media`);
         if (!res.ok) return;
         const data = await res.json();
         if (!cancelled && Array.isArray(data)) setMedia(data);
-      } catch (err) {
+      } catch {
         // silently ignore
+      } finally {
+        if (!cancelled) setMediaLoading(false);
       }
     };
     loadMedia();
@@ -597,53 +647,54 @@ function RelatedPostCard({ post, onClick, darkMode, lang, t }) {
 
   const imageCount = media && Array.isArray(media) ? media.length : (post.numImages || 0);
   const showImages = imageCount > 0;
-  const imagesToShow = media && Array.isArray(media)
+  const imagesToShow = media && Array.isArray(media) && media.length > 0
     ? media.slice(0, 3)
-    : Array.from({ length: Math.min(imageCount, 3) }).map(() => ({ url: POST_PLACEHOLDER_IMG }));
+    : Array.from({ length: Math.min(imageCount, 3) }).map(() => ({ url: POST_PLACEHOLDER_IMG, mediaType: "image" }));
   const extraCount = Math.max(0, imageCount - 3);
+  const collageClass = imagesToShow.length === 1
+    ? "related-post-media--single"
+    : imagesToShow.length === 2
+      ? "related-post-media--duo"
+      : "related-post-media--trio";
 
   return (
-    <div className="related-post-card" onClick={onClick}>
-      <div
-        className="related-post-accent"
-        style={{ background: postTheme?.accent || "var(--brand-500)" }}
-      />
-      <div className="related-post-content">
-        <div className="related-post-title">{post.title || t("untitledPost")}</div>
-        <div className="related-post-preview">{truncate(post.text)}</div>
+    <article
+      className="related-post-card"
+      onClick={onClick}
+      style={{ "--related-accent": accent }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+    >
+      {showImages && (
+        <div className={`related-post-media ${collageClass}${mediaLoading ? " is-loading" : ""}`}>
+          {imagesToShow.map((item, idx) => {
+            const isVideo = item.mediaType === "video" || item.type === "video";
+            const showMoreOverlay = idx === 2 && extraCount > 0;
+            return (
+              <div key={`${post.id}-media-${idx}`} className="related-post-media-cell">
+                <img
+                  className="related-post-media-image"
+                  src={isVideo ? POST_PLACEHOLDER_IMG : (item.url || POST_PLACEHOLDER_IMG)}
+                  alt=""
+                  loading="lazy"
+                />
+                {isVideo && <span className="related-post-media-badge">Video</span>}
+                {showMoreOverlay && (
+                  <span className="related-post-media-more">+{extraCount}</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
-        {showImages && (
-          <div className="related-post-images">
-            {imagesToShow.map((item, idx) => {
-              if (idx === 2 && extraCount > 0) {
-                return (
-                  <div key={idx} className="related-post-image-wrapper" style={{ position: 'relative' }}>
-                    {item.type === 'video' ? (
-                      <img className="related-post-image" src={POST_PLACEHOLDER_IMG} alt="" />
-                    ) : (
-                      <img className="related-post-image" src={item.url} alt="" />
-                    )}
-                    <div style={{
-                      position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: '1.2rem', fontWeight: 800,
-                      fontFamily: 'var(--font-display)',
-                    }}>+{extraCount}</div>
-                  </div>
-                );
-              }
-              return (
-                <div key={idx} className="related-post-image-wrapper">
-                  {item.type === 'video' ? (
-                    <img className="related-post-image" src={POST_PLACEHOLDER_IMG} alt="" />
-                  ) : (
-                    <img className="related-post-image" src={item.url} alt="" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-
+      <div className="related-post-body">
         <div className="related-post-meta">
           {post.label && (
             <span
@@ -656,9 +707,17 @@ function RelatedPostCard({ post, onClick, darkMode, lang, t }) {
               {t(`category_${post.label}`, post.label)}
             </span>
           )}
-          <span className="related-post-time">{publishedLabel}</span>
+          {publishedLabel && <span className="related-post-time">{publishedLabel}</span>}
+        </div>
+
+        <h4 className="related-post-title">{post.title || t("untitledPost")}</h4>
+        {post.text && <p className="related-post-preview">{truncate(post.text)}</p>}
+
+        <div className="related-post-footer">
+          <span className="related-post-cta">{t("readMore", "Read more")}</span>
+          <span className="related-post-arrow" aria-hidden="true">→</span>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

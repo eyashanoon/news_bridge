@@ -50,7 +50,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, HttpUrl
 
 from listing_discoverer import (  # noqa: E402
+    LISTING_CONFIDENCE_THRESHOLD,
     ListingDiscoverer,
+    classify_for_discovery,
     extract_page_features,
     normalize_url,
     same_domain,
@@ -290,6 +292,7 @@ def _transform_result(raw: dict) -> dict:
             endpoints.append({
                 "url": entry["url"],
                 "parent": entry.get("first_discovered_from"),
+                "depth": entry.get("tree_depth"),
                 "confidence": entry.get("confidence"),
                 "classification": entry.get("classification"),
             })
@@ -660,14 +663,7 @@ def _assess_listing_endpoint(url: str, root_url: Optional[str] = None) -> dict:
         text_length=feats["text_length"],
         image_count=feats["image_count"],
     )
-    from page_classifier.classification_policy import classify_with_policy
-
-    clf = classify_with_policy(
-        primary,
-        url=norm_url,
-        title=feats["title"],
-        text=feats["text"],
-    )
+    clf = classify_for_discovery(primary)
 
     link_count = 0
     seen: set[str] = set()
@@ -688,8 +684,10 @@ def _assess_listing_endpoint(url: str, root_url: Optional[str] = None) -> dict:
     crawlable = False
 
     if label != "listing_article":
+        listing_conf = clf.get("listing_confidence", confidence)
+        pct = int(LISTING_CONFIDENCE_THRESHOLD * 100)
         reasons.append(
-            f"Page was classified as '{label}' (not an article listing page)."
+            f"Listing confidence {listing_conf:.1%} is below the {pct}% threshold."
         )
     elif link_count == 0:
         reasons.append(
@@ -710,6 +708,7 @@ def _assess_listing_endpoint(url: str, root_url: Optional[str] = None) -> dict:
         "reasons": reasons,
         "fetch_error": None,
         "probabilities": clf.get("probabilities"),
+        "listing_confidence": clf.get("listing_confidence"),
     }
 
 
@@ -717,7 +716,13 @@ def _assess_listing_endpoint(url: str, root_url: Optional[str] = None) -> dict:
 
 @app.get("/health", tags=["ops"])
 async def health() -> dict:
-    return {"status": "ok", "fetch": _fetch_stack_status(verify_launch=False)}
+    from page_classifier.config import DEVICE
+
+    return {
+        "status": "ok",
+        "fetch": _fetch_stack_status(verify_launch=False),
+        "classifier_device": str(DEVICE),
+    }
 
 
 @app.post("/discover/start", tags=["discovery"])

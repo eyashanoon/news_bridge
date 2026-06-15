@@ -54,6 +54,9 @@ public class Endpoint {
     @Column(name = "total_crawls", nullable = false)
     private int totalCrawls = 0;
 
+    @Column(length = 2000)
+    private String notes;
+
     public Long getId() {
         return id;
     }
@@ -112,5 +115,13 @@ public class Endpoint {
 
     public void setTotalCrawls(int totalCrawls) {
         this.totalCrawls = totalCrawls;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }

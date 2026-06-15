@@ -1,8 +1,13 @@
 """
 All hyperparameters, paths, and constants for the Page Classifier.
 """
-import torch
+import logging
+import os
 from pathlib import Path
+
+import torch
+
+logger = logging.getLogger(__name__)
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 # ROOT = listingdiscovery/ (two levels up from this file)
@@ -42,7 +47,40 @@ SCHEMA_TYPES = [
 OG_TYPES = ["article", "website"]
 
 # ── Hardware ─────────────────────────────────────────────────────────────────
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# PAGE_CLASSIFIER_DEVICE: auto (default) | cpu | cuda | cuda:0
+# PAGE_CLASSIFIER_MIN_CUDA_FREE_MB: min free VRAM for auto mode (default 1200)
+_MIN_CUDA_FREE_BYTES = (
+    int(os.environ.get("PAGE_CLASSIFIER_MIN_CUDA_FREE_MB", "1200")) * 1024 * 1024
+)
+
+
+def resolve_device() -> torch.device:
+    """Pick inference device; fall back to CPU when VRAM is too tight."""
+    override = os.environ.get("PAGE_CLASSIFIER_DEVICE", "auto").strip().lower()
+    if override == "cpu":
+        return torch.device("cpu")
+    if override.startswith("cuda"):
+        return torch.device(override)
+
+    if not torch.cuda.is_available():
+        return torch.device("cpu")
+
+    try:
+        free_bytes, _total = torch.cuda.mem_get_info(torch.cuda.current_device())
+        if free_bytes < _MIN_CUDA_FREE_BYTES:
+            logger.warning(
+                "CUDA has %.0f MiB free (need >= %d MiB for page classifier); using CPU",
+                free_bytes / (1024 ** 2),
+                _MIN_CUDA_FREE_BYTES // (1024 ** 2),
+            )
+            return torch.device("cpu")
+        return torch.device("cuda")
+    except Exception as exc:
+        logger.warning("CUDA device check failed (%s); using CPU", exc)
+        return torch.device("cpu")
+
+
+DEVICE = resolve_device()
 
 # ── Reproducibility ───────────────────────────────────────────────────────────
 SEED = 42
