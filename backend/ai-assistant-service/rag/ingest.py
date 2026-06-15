@@ -3,15 +3,14 @@
 from core.embedder import embed
 from ingestion.processor import merge_paragraphs, chunk_text
 from ingestion.fetcher import fetch_post_content
-from datetime import datetime
-
+from datetime import datetime, timezone
 def parse_timestamp(ts):
     """
     Parse backend timestamp (e.g., ISO string or numeric)
     You may need to adjust depending on format.
     """
     try:
-        return datetime.fromisoformat(ts)
+        return datetime.fromisoformat(ts).replace(tzinfo=timezone.utc)
     except:
         try:
             return datetime.fromtimestamp(float(ts))
@@ -60,7 +59,7 @@ def ingest_posts(store, posts: list[dict], ingested_set: set, max_posts=10, rece
     Optionally filter by recent_days (days old).
     Each post dict should have: postId, and optionally: title, timestamp.
     """
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     candidates = []
 
     for p in posts:

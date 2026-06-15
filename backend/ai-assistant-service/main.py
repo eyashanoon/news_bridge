@@ -1,4 +1,5 @@
 import logging
+import threading
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Header
@@ -36,15 +37,18 @@ async def lifespan(app: FastAPI):
         f"{len(ingested_posts)} ingested posts tracked"
     )
 
-    # Run initial ingestion synchronously on startup (before scheduler)
-    try:
-        logger.info("Running initial auto-ingestion on startup...")
-        auto_ingest_job()
-        store.save()
-        persist_ingested()
-        logger.info("Initial ingestion and persistence complete")
-    except Exception as e:
-        logger.warning(f"Initial auto-ingestion failed: {e}")
+    def run_initial_ingest():
+        try:
+            logger.info("Running initial auto-ingestion on startup...")
+            auto_ingest_job()
+            store.save()
+            persist_ingested()
+            logger.info("Initial ingestion and persistence complete")
+        except Exception as e:
+            logger.warning(f"Initial auto-ingestion failed: {e}")
+
+    # Do not block HTTP startup on ingestion (can take minutes when backend is slow)
+    threading.Thread(target=run_initial_ingest, daemon=True).start()
 
     # Start periodic auto-ingestion (every 15 minutes)
     scheduler.add_job(
@@ -80,6 +84,8 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,
 )
 
 
@@ -142,6 +148,7 @@ def ingest_single_post(post_id: int):
 def news_brief(
     user_id: str = Header(default="android-app-anonymous", alias="X-User-Id"),
     generate_summary: bool = Header(default=True, alias="X-Generate-Summary"),
+    language: str = Header(default="en", alias="X-Language"),
 ):
     """
     Generate a news brief for the user — like hourly news highlights on TV.
@@ -149,13 +156,14 @@ def news_brief(
     - Fetches recent posts (≤12 hours)
     - Scores them based on user preferences, recency, and importance
     - Dynamically determines how many to include
-    - Optionally generates an LLM-powered brief summary
+    - Optionally generates an LLM-powered brief summary in the user's language
     
-    Query params:
-      user_id: the user's ID (default: anonymous)
-      generate_summary: whether to generate an LLM summary (default: true)
+    Headers:
+      X-User-Id: the user's ID (default: anonymous)
+      X-Generate-Summary: whether to generate an LLM summary (default: true)
+      X-Language: 'en' for English, 'ar' for Arabic (default: en)
     """
-    logger.info(f"News brief requested for user={user_id}")
+    logger.info(f"News brief requested for user={user_id} language={language}")
 
     # Build the brief data (scored posts)
     brief_data = build_news_brief(user_id=user_id)
@@ -166,7 +174,7 @@ def news_brief(
     # Generate LLM summary if requested
     if generate_summary and brief_data.get("posts"):
         try:
-            brief_text = generate_news_brief(brief_data["posts"])
+            brief_text = generate_news_brief(brief_data["posts"], language=language)
             brief_data["brief"] = brief_text
         except Exception as e:
             logger.error(f"Failed to generate brief summary: {e}")

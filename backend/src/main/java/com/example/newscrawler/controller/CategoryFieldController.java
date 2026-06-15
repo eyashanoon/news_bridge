@@ -16,7 +16,10 @@ public class CategoryFieldController {
     private CategoryFieldService fieldService;
 
     @GetMapping
-    public List<CategoryFieldDto> getAllFields() {
+    public List<CategoryFieldDto> getAllFields(@RequestParam(required = false, defaultValue = "false") String hierarchical) {
+        if ("true".equalsIgnoreCase(hierarchical)) {
+            return fieldService.getAllFieldsHierarchical();
+        }
         return fieldService.getAllFields();
     }
 

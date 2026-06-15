@@ -1,15 +1,21 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useSession } from "../context/SessionContext";
 import { useTheme } from "../context/ThemeContext";
+import { useTranslation } from "react-i18next";
+import LanguageToggle from "./LanguageToggle";
+import SearchBar from "./SearchBar";
 
 export default function SiteLayout() {
   const { session, logout } = useSession();
   const { darkMode, toggleDarkMode } = useTheme();
+  const { t } = useTranslation();
   const nav = useNavigate();
 
   const isLimited = session?.type === "PRIMITIVE" || !session?.type;
   const isRegistered = session?.type === "REGISTERED";
   const isEditor = session?.type === "EDITOR";
+
+  const userTypeLabel = isLimited ? t("guest") : (isRegistered ? t("registered") : (isEditor ? t("editor") : ""));
 
   const handleLogout = () => {
     logout();
@@ -21,7 +27,7 @@ export default function SiteLayout() {
     if (isLimited) {
       return (
         <nav className="app-nav">
-          <Link to="/">Articles Home</Link>
+          <Link to="/">{t("articlesHome")}</Link>
         </nav>
       );
     }
@@ -39,9 +45,9 @@ export default function SiteLayout() {
     if (isEditor) {
       return (
         <nav className="app-nav">
-          <Link to="/">Editor Dashboard</Link>
-          <Link to="/editor/workspace">Workspace</Link>
-          <Link to="/editor/profile">Profile Info</Link>
+          <Link to="/">{t("editorDashboard")}</Link>
+          <Link to="/editor/workspace">{t("workspace")}</Link>
+          <Link to="/editor/profile">{t("profileInfo")}</Link>
         </nav>
       );
     }
@@ -52,31 +58,44 @@ export default function SiteLayout() {
   return (
     <div className="app-layout">
       <header className="app-header">
-        <div className="app-logo">
-            <Link to="/news">NewsBridge</Link>
+        <div className="app-header-left">
+          <div className="app-logo">
+            <Link to="/news">{t("appName")}</Link>
+          </div>
+          {renderNavLinks()}
         </div>
 
-        {renderNavLinks()}
+        <div className="app-user-type-bar">
+          <span className="user-type-indicator">{userTypeLabel}</span>
+        </div>
 
-        <div className="app-auth">
+        <div className="app-header-center">
+          <SearchBar />
+        </div>
+
+        <div className="app-header-right">
+          {/* Language toggle */}
+          <LanguageToggle />
+
           {/* Dark mode toggle */}
           <button
             onClick={toggleDarkMode}
             className="theme-toggle-btn"
-            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            title={darkMode ? t("switchToLight") : t("switchToDark")}
           >
             {darkMode ? "☀️" : "🌙"}
           </button>
 
           {isLimited ? (
             <div className="auth-buttons">
-              <Link to="/auth/login" className="btn-login">Sign In</Link>
-              <Link to="/auth/signup" className="btn-signup">Sign Up</Link>
+              <Link to="/auth/login" className="btn-login">{t("signIn")}</Link>
+              <Link to="/auth/signup" className="btn-signup">{t("signUp")}</Link>
             </div>
           ) : (
             <div className="auth-user">
+              <Link to="/profile" className="profile-link-btn">👤 Profile</Link>
               <span className="session-badge">{session?.type}</span>
-              <button onClick={handleLogout} className="btn-logout">Sign Out</button>
+              <button onClick={handleLogout} className="btn-logout">{t("signOut")}</button>
             </div>
           )}
         </div>

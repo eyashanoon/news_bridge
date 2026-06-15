@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../api";
 import { useSession } from "../context/SessionContext";
 import ArticleCard from "../components/article/ArticleCard";
 import ArticleOverlay from "../components/article/ArticleOverlay";
 
 function FeedArticle({ id, canInteract }) {
+  const { t } = useTranslation();
   const [article, setArticle] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
@@ -14,7 +16,7 @@ function FeedArticle({ id, canInteract }) {
     api.get(`/articles/${id}/blocks`).then((r) => setArticle(r.data)).catch(() => {});
   }, [id]);
 
-  if (!article) return <div className="article-placeholder">Loading article {id}...</div>;
+  if (!article) return <div className="article-placeholder">{t("loading")}</div>;
 
   return (
     <>
@@ -23,14 +25,14 @@ function FeedArticle({ id, canInteract }) {
       {canInteract && (
         <div className="panel compact">
           <div className="btn-row">
-            <button className="btn btn-secondary btn-sm" onClick={() => setLocalNotice("Reaction saved")}>React</button>
-            <button className="btn btn-secondary btn-sm" onClick={() => setShowComments((prev) => !prev)}>Comments</button>
+            <button className="btn btn-secondary btn-sm" onClick={() => setLocalNotice(t("like"))}>{t("like")}</button>
+            <button className="btn btn-secondary btn-sm" onClick={() => setShowComments((prev) => !prev)}>{t("comments")}</button>
           </div>
           {localNotice && <div className="notice">{localNotice}</div>}
           {showComments && (
             <div className="comments-section">
-              <input type="text" placeholder="Write a comment..." className="form-control" />
-              <button className="btn btn-primary btn-sm" style={{ marginTop: "8px" }} onClick={() => setLocalNotice("Comment posted")}>Post</button>
+              <input type="text" placeholder={t("writeComment")} className="form-control" />
+              <button className="btn btn-primary btn-sm" style={{ marginTop: "8px" }} onClick={() => setLocalNotice(t("postComment"))}>{t("postComment")}</button>
             </div>
           )}
         </div>
@@ -42,6 +44,7 @@ function FeedArticle({ id, canInteract }) {
 }
 
 export default function FeedPage() {
+  const { t } = useTranslation();
   const [ids, setIds] = useState([]);
   const { session, notice, editorMode } = useSession();
 
@@ -59,7 +62,7 @@ export default function FeedPage() {
   return (
     <div className="feed-page">
       <header className="feed-header">
-        <h1>Latest News {canInteract ? "(Registered Mode)" : ""}</h1>
+        <h1>{t("headerTitle")} {canInteract ? t("headerRegisteredMode") : ""}</h1>
       </header>
       {notice && <div className="notice">{notice}</div>}
       <div className="feed">

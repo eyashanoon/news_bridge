@@ -25,6 +25,11 @@ public class Post {
     private int numImages;
     @ManyToOne
     private Article article;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "telegram_post_id")
+    private TelegramPost telegramPost;
+
     private LocalDateTime createdAt;
 
 
@@ -64,6 +69,10 @@ public class Post {
 
         public Article getArticle() { return article; }
     public void setArticle(Article article) { this.article = article; }
+
+    public TelegramPost getTelegramPost() { return telegramPost; }
+    public void setTelegramPost(TelegramPost telegramPost) { this.telegramPost = telegramPost; }
+
     public void setNumImages(int numImages) {
         this.numImages = numImages;
     }

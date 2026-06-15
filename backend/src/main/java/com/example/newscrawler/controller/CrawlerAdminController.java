@@ -81,4 +81,17 @@ public class CrawlerAdminController {
         int minutes = body.getOrDefault("minutes", 5);
         return crawlerAdminService.setInterval(minutes);
     }
+
+    @PostMapping("/restart")
+    @PreAuthorize("hasRole('CONTROL_CRAWLER')")
+    public Map<String, Object> restartScheduler() {
+        return crawlerAdminService.restartScheduler();
+    }
+
+    @PostMapping("/run-endpoint")
+    @PreAuthorize("hasRole('CONTROL_CRAWLER')")
+    public Map<String, Object> runEndpointNow(@RequestBody Map<String, Long> body) {
+        long endpointId = body.getOrDefault("endpointId", 0L);
+        return crawlerAdminService.runEndpointNow(endpointId);
+    }
 }

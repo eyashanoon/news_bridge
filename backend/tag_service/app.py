@@ -10,23 +10,42 @@ from sqlalchemy import create_engine, text
 
 # --- CONFIGURATION ---
 DB_CONFIG = {
-    "user": "root",
-    "password": "1234",
-    "host": "localhost",
-    "database": "news_bridge_database"
+    "user": os.getenv("DB_USER", "news_user"),
+    "password": os.getenv("DB_PASSWORD", "news_pass"),
+    "host": os.getenv("DB_HOST", "localhost"),
+    "port": os.getenv("DB_PORT", "3307"),
+    "database": os.getenv("DB_NAME", "news_crawler_new"),
 }
 # Connection string: mysql+pymysql://user:pass@host/dbname
-DATABASE_URL = f"mysql+pymysql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}/{DB_CONFIG['database']}"
+DATABASE_URL = (
+    f"mysql+pymysql://{DB_CONFIG['user']}:{DB_CONFIG['password']}"
+    f"@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
+)
 
 engine = create_engine(DATABASE_URL)
 
-# --- MODEL LOADING (Same as before) ---
-print("🔄 Loading models...")
-ner_en = pipeline("ner", model="dslim/bert-base-NER", aggregation_strategy="simple")
-ner_ar = pipeline("ner", model="CAMeL-Lab/bert-base-arabic-camelbert-msa-ner", aggregation_strategy="simple")
-kw_extractor_en = yake.KeywordExtractor(lan="en", n=2, top=10)
-kw_extractor_ar = yake.KeywordExtractor(lan="ar", n=2, top=10)
-print("✅ Models loaded")
+# Model handles used by batch mode and the FastAPI startup hook.
+ner_en = None
+ner_ar = None
+kw_extractor_en = None
+kw_extractor_ar = None
+
+
+def load_models():
+    """Load NLP models once (batch CLI or FastAPI startup)."""
+    global ner_en, ner_ar, kw_extractor_en, kw_extractor_ar
+    if ner_en is not None:
+        return
+    print("Loading models...")
+    ner_en = pipeline("ner", model="dslim/bert-base-NER", aggregation_strategy="simple")
+    ner_ar = pipeline(
+        "ner",
+        model="CAMeL-Lab/bert-base-arabic-camelbert-msa-ner",
+        aggregation_strategy="simple",
+    )
+    kw_extractor_en = yake.KeywordExtractor(lan="en", n=2, top=10)
+    kw_extractor_ar = yake.KeywordExtractor(lan="ar", n=2, top=10)
+    print("Models loaded")
 
 # --- UTILITIES ---
 AR_STOPWORDS = {"في", "على", "من", "الى", "عن", "مع", "هذا", "ذلك", "علي", "فيه", "كما", "تم", "بعد", "قبل"}
@@ -104,10 +123,10 @@ def process_pending_posts():
         posts = result.fetchall()
 
         if not posts:
-            print("📭 No pending posts found.")
+            print("No pending posts found.")
             return
 
-        print(f"🚀 Processing {len(posts)} posts...")
+        print(f"Processing {len(posts)} posts...")
 
         for post_id, raw_text in posts:
             try:
@@ -134,13 +153,14 @@ def process_pending_posts():
                 )
 
                 conn.commit()
-                print(f"✅ Processed Post ID: {post_id}")
+                print(f"Processed Post ID: {post_id}")
 
             except Exception as e:
-                print(f"❌ Error processing post {post_id}: {e}")
+                print(f"Error processing post {post_id}: {e}")
                 conn.rollback()
 
 if __name__ == "__main__":
+    load_models()
     process_pending_posts()
 os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
 os.environ["TRANSFORMERS_NO_ADVISORY_WARNINGS"] = "1"
@@ -159,37 +179,8 @@ app = FastAPI(title="Advanced Tag Extraction Service")
 # 🔥 Load Models ONCE
 # ----------------------------
 @app.on_event("startup")
-def load_models():
-    global ner_en, ner_ar, kw_extractor_en, kw_extractor_ar
-
-    print("🔄 Loading models...")
-
-    ner_en = pipeline(
-        "ner",
-        model="dslim/bert-base-NER",
-        aggregation_strategy="simple"
-    )
-
-    ner_ar = pipeline(
-        "ner",
-        model="CAMeL-Lab/bert-base-arabic-camelbert-msa-ner",
-        aggregation_strategy="simple"
-    )
-
-    # ✅ YAKE keyword extractors
-    kw_extractor_en = yake.KeywordExtractor(
-        lan="en",
-        n=2,
-        top=10
-    )
-
-    kw_extractor_ar = yake.KeywordExtractor(
-        lan="ar",
-        n=2,
-        top=10
-    )
-
-    print("✅ Models loaded")
+def startup_load_models():
+    load_models()
 
 
 # ----------------------------

@@ -5,7 +5,6 @@ import traceback
 from datetime import datetime
 from typing import Iterable
 from urllib.parse import urljoin, urlparse
-import requests
 from bs4 import BeautifulSoup
 
 from backend_client import BackendClient
@@ -37,55 +36,121 @@ class CrawlerService:
                 for endpoint in endpoints:
                     listing_endpoint_id = int(endpoint["id"])
                     listing_url = str(endpoint["url"])
-
-                    discovered = self._extract_links(listing_url)
-                    stats.links_discovered += len(discovered)
-                    self._log(f"Endpoint {listing_url}: discovered {len(discovered)} link(s)")
-
-                    for link in discovered[: settings.crawler_max_links_per_listing]:
-                        stats.links_processed += 1
-                        try:
-                            self._process_candidate(root_id, listing_endpoint_id, link, stats)
-                        except Exception as ex:
-                            stats.failed += 1
-                            self._log(f"[ERROR] failed to process {link}: {type(ex).__name__}: {ex}")
-                            traceback.print_exc()
+                    created = self.crawl_endpoint(root_id, listing_endpoint_id, listing_url)
+                    stats.article_created += created
         finally:
             stats.finished_at = datetime.utcnow()
 
         return stats.as_dict()
 
-    def _process_candidate(self, root_id: int, source_endpoint_id: int, candidate_url: str, stats: RunStats) -> None:
-        cached = self.backend.get_cache_endpoint_by_url(source_endpoint_id, candidate_url)
-        if cached is not None:
-            stats.cache_hits += 1
-            self._log(f"[CACHE HIT] skip: {candidate_url}")
-            return
+    def crawl_endpoint(self, root_id: int, endpoint_id: int, listing_url: str) -> int:
+        """
+        Crawl a single listing endpoint.
 
-        is_article = self.is_article_fn(candidate_url)
+        Process:
+          1. Fetch the listing page and extract all hrefs.
+          2. Bulk-load all URLs already cached for this endpoint (one HTTP call).
+          3. Keep only URLs NOT in the cache.
+          4. For each new URL: classify → if article, extract and persist.
+          5. Every processed URL (article or not) is saved to the cache with a
+             timestamp so it is skipped on the next crawl.
+
+        Returns the number of new articles created.
+        """
+        all_links = self._extract_links(listing_url)
+        if not all_links:
+            self._log(f"[EP#{endpoint_id}] No links extracted from {listing_url}")
+            return 0
+
+        self._log(f"[EP#{endpoint_id}] Extracted {len(all_links)} link(s) from {listing_url}")
+
+        try:
+            cached_urls: set[str] = self.backend.get_all_cached_urls_for_endpoint(endpoint_id)
+        except Exception as ex:
+            self._log(f"[EP#{endpoint_id}] Cache bulk-load failed ({ex}), skipping cache filter")
+            cached_urls = set()
+
+        new_links = [url for url in all_links if url not in cached_urls]
+        self._log(
+            f"[EP#{endpoint_id}] {len(cached_urls)} cached  |  "
+            f"{len(new_links)} new link(s) to process"
+        )
+
+        if not new_links:
+            return 0
+
+        articles_created = 0
+        for link in new_links:
+            cached_urls.add(link)
+            try:
+                created = self._process_candidate(root_id, endpoint_id, link)
+                articles_created += created
+            except Exception as ex:
+                self._log(f"[ERROR] {link}: {type(ex).__name__}: {ex}")
+                traceback.print_exc()
+
+        return articles_created
+
+    def _process_candidate(self, root_id: int, source_endpoint_id: int, candidate_url: str) -> int:
+        """
+        Classify and optionally extract a single candidate URL.
+        The URL is guaranteed to NOT be in the cache already.
+        Saves the URL to the cache regardless of the outcome (with timestamp).
+        Returns 1 if a new article was created, else 0.
+        """
+        from web_fetch import fetch_html, looks_like_paywall
+
+        page = fetch_html(candidate_url, profile="news", timeout=settings.crawler_request_timeout_seconds)
+        if not page.ok:
+            detail = page.error or f"HTTP {page.status_code} via {page.method}"
+            self._log(f"[SKIP] fetch failed: {candidate_url} ({detail})")
+            try:
+                self.backend.create_cache_endpoint(
+                    url=candidate_url,
+                    result="UNKNOWN",
+                    source_endpoint_id=source_endpoint_id,
+                )
+            except Exception:
+                pass
+            return 0
+
+        if page.paywall or looks_like_paywall(page.html):
+            self._log(f"[SKIP] paywall: {candidate_url}")
+            try:
+                self.backend.create_cache_endpoint(
+                    url=candidate_url,
+                    result="UNKNOWN",
+                    source_endpoint_id=source_endpoint_id,
+                )
+            except Exception:
+                pass
+            return 0
+
+        is_article = self.is_article_fn(candidate_url, html=page.html)
         if not is_article:
             self._log(f"[SKIP] not an article: {candidate_url}")
-            self.backend.create_cache_endpoint(
-                url=candidate_url,
-                result="UNKNOWN",
-                source_endpoint_id=source_endpoint_id,
-            )
-            stats.cache_endpoint_cached += 1
-            return
+            try:
+                self.backend.create_cache_endpoint(
+                    url=candidate_url,
+                    result="UNKNOWN",
+                    source_endpoint_id=source_endpoint_id,
+                )
+            except Exception:
+                pass
+            return 0
 
         self._log(f"[ARTICLE] extracting: {candidate_url}")
-        article = self.extract_article_fn(candidate_url)
+        article = self.extract_article_fn(candidate_url, html=page.html)
         content_items = article.get("content", []) or []
         title = (article.get("title") or "").strip() or candidate_url
         self._log(f"[ARTICLE] extracted: \"{title[:80]}\" ({len(content_items)} blocks)")
+
         text_parts = [
             str(item.get("text", "")).strip()
             for item in content_items
             if item.get("type") == "text" and str(item.get("text", "")).strip()
         ]
-        flattened_text = "\n\n".join(text_parts)
-        if not flattened_text:
-            flattened_text = title or candidate_url
+        flattened_text = "\n\n".join(text_parts) or title or candidate_url
 
         article_blocks = []
         for index, item in enumerate(content_items, start=1):
@@ -94,16 +159,14 @@ class CrawlerService:
                 raw_type = "OTHER"
             media_url = str(item.get("src") or item.get("content") or "")
             text_content = str(item.get("text") or item.get("content") or "")
-            article_blocks.append(
-                {
-                    "sortOrder": int(item.get("order") or index),
-                    "blockType": raw_type,
-                    "textContent": text_content if raw_type == "TEXT" else "",
-                    "mediaUrl": media_url if raw_type != "TEXT" else "",
-                    "altText": str(item.get("alt") or ""),
-                    "score": float(item.get("score") or 0.0),
-                }
-            )
+            article_blocks.append({
+                "sortOrder": int(item.get("order") or index),
+                "blockType": raw_type,
+                "textContent": text_content if raw_type == "TEXT" else "",
+                "mediaUrl": media_url if raw_type != "TEXT" else "",
+                "altText": str(item.get("alt") or ""),
+                "score": float(item.get("score") or 0.0),
+            })
 
         created_cache = self.backend.create_cache_endpoint(
             url=candidate_url,
@@ -113,27 +176,40 @@ class CrawlerService:
             extracted_title=title[:2000],
             extracted_content_json=json.dumps(article, ensure_ascii=False)[:50000],
         )
-        if created_cache is not None:
-            stats.cache_endpoint_cached += 1
 
         if created_cache is not None:
-            self.backend.create_article_record(
-                {
-                    "url": candidate_url,
-                    "title": title,
-                    "text": flattened_text[:50000],
-                    "endpointId": source_endpoint_id,
-                    "cacheEndpointId": int(created_cache["id"]),
-                    "blocks": article_blocks,
-                }
-            )
-            stats.article_created += 1
+            self.backend.create_article_record({
+                "url": candidate_url,
+                "title": title,
+                "text": flattened_text[:50000],
+                "endpointId": source_endpoint_id,
+                "cacheEndpointId": int(created_cache["id"]),
+                "blocks": article_blocks,
+            })
+            return 1
+
+        return 0
 
     def _extract_links(self, page_url: str) -> list[str]:
-        response = requests.get(page_url, timeout=settings.crawler_request_timeout_seconds)
-        response.raise_for_status()
+        """Fetch a listing page and return all normalised absolute hrefs."""
+        try:
+            from web_fetch import fetch_soup
 
-        soup = BeautifulSoup(response.text, "html.parser")
+            soup, result = fetch_soup(
+                page_url,
+                profile="listing",
+                timeout=settings.crawler_request_timeout_seconds,
+                allow_browser=True,
+            )
+            if soup is None:
+                detail = result.error or f"HTTP {result.status_code} via {result.method}"
+                self._log(f"[ERROR] Failed to fetch listing page {page_url}: {detail}")
+                return []
+        except Exception as ex:
+            self._log(f"[ERROR] Failed to fetch listing page {page_url}: {ex}")
+            return []
+
+        soup = BeautifulSoup(str(soup), "html.parser")
         hrefs = self._normalize_links(page_url, [a.get("href") for a in soup.select("a[href]")])
         return list(hrefs)
 

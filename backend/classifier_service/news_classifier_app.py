@@ -27,7 +27,7 @@ print("Loading model from:", model_path)
 device = "cpu"
 
 tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
-model = AutoModelForSequenceClassification.from_pretrained(model_path, local_files_only=True)
+model = AutoModelForSequenceClassification.from_pretrained(model_path, local_files_only=True, low_cpu_mem_usage=False)
 
 model.to(device)
 model.eval()
@@ -66,6 +66,15 @@ def predict(text: str):
     label = model.config.id2label[pred_id]
 
     return label, confidence
+
+# -------------------------
+# Health endpoints
+# -------------------------
+@app.get("/")
+@app.get("/health")
+def health():
+    return {"status": "Classifier Service Running"}
+
 
 # -------------------------
 # API endpoint

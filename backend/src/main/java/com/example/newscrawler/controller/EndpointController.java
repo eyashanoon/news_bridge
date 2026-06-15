@@ -1,10 +1,12 @@
 package com.example.newscrawler.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,5 +67,13 @@ public class EndpointController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id, @RequestParam(defaultValue = "false") boolean hard) {
         endpointService.delete(id, hard);
+    }
+
+    @PatchMapping("/{id}/crawl-stats")
+    public EndpointResponse updateCrawlStats(
+            @PathVariable Long id,
+            @RequestBody Map<String, Integer> body) {
+        int articlesFound = body.getOrDefault("articlesFound", 0);
+        return endpointService.updateCrawlStats(id, articlesFound);
     }
 }

@@ -3,6 +3,8 @@ package com.example.newscrawler.repository;
 import com.example.newscrawler.entity.CacheEndpoint;
 import com.example.newscrawler.entity.AnalysisResult;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,4 +22,7 @@ public interface CacheEndpointRepository extends JpaRepository<CacheEndpoint, Lo
     List<CacheEndpoint> findBySourceEndpointId(Long endpointId);
     
     List<CacheEndpoint> findByResult(AnalysisResult result);
+
+    @Query("SELECT ce.url FROM CacheEndpoint ce WHERE ce.sourceEndpoint.id = :sourceEndpointId")
+    List<String> findUrlsBySourceEndpointId(@Param("sourceEndpointId") Long sourceEndpointId);
 }

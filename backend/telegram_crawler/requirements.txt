@@ -4,3 +4,4 @@ requests==2.32.4
 beautifulsoup4==4.13.5
 APScheduler==3.10.4
 python-dotenv==1.1.1
+telethon>=1.36

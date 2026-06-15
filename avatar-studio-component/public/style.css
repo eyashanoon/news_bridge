@@ -1,0 +1,87 @@
+/* ── Reset & base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #0f0f1a;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #e0e0e0;
+  overflow: hidden;
+}
+
+/* ── Full-screen 3D canvas ───────────────────────────────── */
+#canvas-container {
+  position: fixed;
+  inset: 0;
+}
+
+#canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── Overlay UI – pinned to bottom centre ─────────────────── */
+#app {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: min(640px, 90vw);
+}
+
+/* ── Input section ────────────────────────────────────────── */
+#input-section {
+  width: min(640px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#text-input {
+  flex: 1;
+  padding: 0.75rem 1.1rem;
+  border-radius: 2rem;
+  border: 2px solid #4a4aff;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#text-input:focus { border-color: #8080ff; }
+
+#speak-btn {
+  padding: 0.75rem 1.4rem;
+  border-radius: 2rem;
+  border: none;
+  background: #4a4aff;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+#speak-btn:hover  { background: #6666ff; }
+#speak-btn:active { transform: scale(0.97); }
+#speak-btn:disabled { background: #333; cursor: not-allowed; }
+
+#status-msg {
+  font-size: 0.85rem;
+  color: #888;
+  min-height: 1.2em;
+  text-align: center;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

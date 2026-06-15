@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Lip-Sync Avatar</title>
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    #tab-nav {
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: flex;
+      gap: 0.4rem;
+      background: rgba(10, 10, 26, 0.88);
+      border: 1px solid #2a2a5a;
+      border-radius: 2rem;
+      padding: 0.3rem;
+      backdrop-filter: blur(12px);
+    }
+    .tab-link {
+      padding: 0.4rem 1.3rem;
+      border-radius: 1.5rem;
+      border: none;
+      background: transparent;
+      color: #888;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      font-family: inherit;
+    }
+    .tab-link.active { background: #4a4aff; color: #fff; }
+    .tab-link:hover:not(.active) { background: rgba(74,74,255,0.2); color: #ccc; }
+
+    #anim-panel {
+      position: fixed;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 200;
+      background: rgba(8, 8, 24, 0.94);
+      border: 1px solid #2a2a5a;
+      border-radius: 1rem;
+      padding: 0.75rem 0.8rem;
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      width: 230px;
+      max-height: 88vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a5a transparent;
+    }
+    #anim-panel::-webkit-scrollbar { width: 4px; }
+    #anim-panel::-webkit-scrollbar-thumb { background: #2a2a5a; border-radius: 2px; }
+    .anim-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #5a5aff;
+      text-align: center;
+      margin-bottom: 0.1rem;
+    }
+    .anim-section { display: flex; flex-direction: column; gap: 0.28rem; }
+    .anim-label {
+      font-size: 0.6rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+    .anim-row { display: flex; gap: 0.28rem; }
+    .anim-btn {
+      flex: 1;
+      padding: 0.35rem 0.2rem;
+      border-radius: 0.45rem;
+      border: 1px solid #2a2a5a;
+      background: rgba(255,255,255,0.04);
+      color: #999;
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      font-family: inherit;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .anim-btn:hover  { background: rgba(74,74,255,0.22); border-color: #4a4aff; color: #fff; }
+    .anim-btn.active { background: rgba(74,74,255,0.32); border-color: #7a7aff; color: #fff; }
+    .anim-divider { height: 1px; background: #1e1e3a; margin: 0.05rem 0; }
+    .ps-tabs { display: flex; gap: 0.18rem; margin-bottom: 0.08rem; }
+    .ps-tab {
+      flex: 1;
+      padding: 0.28rem 0.1rem;
+      border-radius: 0.38rem;
+      border: 1px solid #1a1a36;
+      background: transparent;
+      color: #444;
+      font-size: 0.62rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+      white-space: nowrap;
+    }
+    .ps-tab:hover:not(.active) { background: rgba(74,74,255,0.1); color: #888; border-color: #2a2a5a; }
+    .ps-tab.active { background: rgba(74,74,255,0.28); border-color: #5a5aff; color: #ddf; }
+    .arm-tabs { display: flex; gap: 0.25rem; }
+    .arm-tab {
+      flex: 1;
+      padding: 0.32rem 0.2rem;
+      border-radius: 0.4rem;
+      border: 1px solid #2a2a5a;
+      background: transparent;
+      color: #555;
+      font-size: 0.67rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .arm-tab.active { background: rgba(74,74,255,0.3); border-color: #5a5aff; color: #ccc; }
+    .arm-tab:hover:not(.active) { background: rgba(74,74,255,0.12); color: #888; }
+    .ctrl-row { display: flex; align-items: center; gap: 0.35rem; }
+    .ctrl-name { font-size: 0.6rem; color: #666; width: 54px; flex-shrink: 0; white-space: nowrap; }
+    .ctrl-slider { flex: 1; height: 3px; accent-color: #5a5aff; cursor: pointer; }
+    .ctrl-val { font-size: 0.62rem; color: #5a5aff; font-weight: 700; width: 30px; text-align: right; flex-shrink: 0; }
+    #delay-control { position: fixed; bottom: 1rem; right: 1.2rem; z-index: 200; display: flex; align-items: center; gap: 0.6rem; background: rgba(10, 10, 26, 0.88); border: 1px solid #2a2a5a; border-radius: 2rem; padding: 0.4rem 1rem; backdrop-filter: blur(12px); }
+    #delay-control label { font-size: 0.75rem; color: #888; white-space: nowrap; }
+    #main-delay-slider { width: 100px; accent-color: #ff6b6b; cursor: pointer; height: 4px; }
+    #main-delay-label { font-size: 0.82rem; font-weight: 700; color: #ff9a9a; min-width: 3em; text-align: right; }
+    .feature-toggle-row { display: flex; justify-content: center; margin-top: 0.35rem; }
+    .feature-toggle { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.74rem; color: #9aa; background: rgba(255,255,255,0.05); border: 1px solid #2a2a5a; border-radius: 999px; padding: 0.3rem 0.6rem; user-select: none; }
+    .feature-toggle input { accent-color: #5a5aff; cursor: pointer; }
+    #pose-selects { display: flex; gap: 0.45rem; margin-bottom: 0.5rem; justify-content: center; }
+    .pose-quick-sel { flex: 1; max-width: 140px; padding: 0.38rem 0.5rem; border-radius: 0.5rem; border: 1px solid #3a3aaa; background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; font-family: inherit; cursor: pointer; outline: none; }
+    .pose-quick-sel:focus { border-color: #8080ff; }
+    .pose-quick-sel option { background: #0a0a1a; color: #ccc; }
+    .ps-ctrl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.22rem; margin-bottom: 0.1rem; }
+    .ctrl-joint-btn { padding: 0.3rem 0.15rem; border-radius: 0.4rem; border: 1px solid #2a2a5a; background: rgba(255,255,255,0.04); color: #aaa; font-size: 0.6rem; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.12s, border-color 0.12s, color 0.12s; text-align: center; }
+    .ctrl-joint-btn:hover:not([disabled]) { background: rgba(74,74,255,0.22); border-color: #4a4aff; color: #fff; }
+    .ctrl-joint-btn[disabled] { opacity: 0.2; cursor: not-allowed; }
+    .ctrl-joint-btn.ghost { border-color: #1a1a36; background: transparent; color: #444; }
+    .ctrl-joint-btn.ghost:hover { background: rgba(74,74,255,0.1); color: #888; border-color: #2a2a5a; }
+    .ctrl-joint-btn.span-2 { grid-column: span 2; }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div id="anim-panel">
+    <div class="anim-title">Pose Studio</div>
+    <div class="ps-tabs">
+      <button class="ps-tab active" data-part="R">R. Hand</button>
+      <button class="ps-tab"        data-part="L">L. Hand</button>
+      <button class="ps-tab"        data-part="H">Head</button>
+    </div>
+    <div class="ps-panel" id="ps-panel-L" style="display:none">
+      <div class="ps-section">
+        <div class="ps-label">Select Joint</div>
+        <div class="joint-list">
+          <div class="jl-row">
+            <button class="joint-btn" data-bone="DEF-upper_armL" data-part="L">Shoulder</button>
+            <button class="joint-btn" data-bone="DEF-forearmL"   data-part="L">Elbow</button>
+            <button class="joint-btn" data-bone="DEF-handL"      data-part="L">Wrist</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Thumb</span>
+            <button class="joint-btn seg" data-bone="DEF-thumb01L"   data-part="L">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-thumb02L"   data-part="L">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-thumb03L"   data-part="L">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Index</span>
+            <button class="joint-btn seg" data-bone="DEF-f_index01L"  data-part="L">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_index02L"  data-part="L">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_index03L"  data-part="L">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Middle</span>
+            <button class="joint-btn seg" data-bone="DEF-f_middle01L" data-part="L">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_middle02L" data-part="L">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_middle03L" data-part="L">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Ring</span>
+            <button class="joint-btn seg" data-bone="DEF-f_ring01L"   data-part="L">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_ring02L"   data-part="L">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_ring03L"   data-part="L">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Pinky</span>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky01L"  data-part="L">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky02L"  data-part="L">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky03L"  data-part="L">Tip</button>
+          </div>
+        </div>
+      </div>
+      <div class="anim-divider"></div>
+      <div class="ps-section">
+        <div class="ps-label">Rotate: <span id="ps-selected-name-L">— select —</span></div>
+        <div class="ps-ctrl-grid">
+          <button class="ctrl-joint-btn" id="ps-up-L">▲</button>
+          <button class="ctrl-joint-btn" id="ps-down-L">▼</button>
+          <button class="ctrl-joint-btn" id="ps-left-L">◄</button>
+          <button class="ctrl-joint-btn" id="ps-right-L">►</button>
+          <button class="ctrl-joint-btn" id="ps-rollin-L">↺</button>
+          <button class="ctrl-joint-btn" id="ps-rollout-L">↻</button>
+          <button class="ctrl-joint-btn ghost span-2" id="ps-reset-joint-L">● Reset</button>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-name">Step</span>
+          <input type="range" class="ctrl-slider" id="ps-step-L" min="1" max="30" value="5">
+          <span class="ctrl-val" id="ps-step-val-L">5°</span>
+        </div>
+      </div>
+      <div class="anim-divider"></div>
+      <div class="ps-section">
+        <div class="ps-label">Saved Poses</div>
+        <div class="ps-save-row">
+          <input class="ps-name-input" type="text" id="ps-pose-name-L" placeholder="Pose name…" maxlength="30">
+          <button class="ps-btn" id="ps-save-pose-L">Save</button>
+        </div>
+        <div id="ps-pose-list-L"></div>
+      </div>
+    </div>
+    <div class="ps-panel" id="ps-panel-H" style="display:none">
+      <div class="ps-section">
+        <div class="ps-label">Head Rotation</div>
+        <div class="ps-ctrl-grid">
+          <button class="ctrl-joint-btn" id="ps-up-H">▲ Look Up</button>
+          <button class="ctrl-joint-btn" id="ps-down-H">▼ Look Dn</button>
+          <button class="ctrl-joint-btn" id="ps-left-H">◄ Turn L</button>
+          <button class="ctrl-joint-btn" id="ps-right-H">Turn R ►</button>
+          <button class="ctrl-joint-btn" id="ps-rollin-H" style="display:none">↺</button>
+          <button class="ctrl-joint-btn" id="ps-rollout-H" style="display:none">↻</button>
+          <button class="ctrl-joint-btn ghost span-2" id="ps-reset-joint-H">● Reset</button>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-name">Step</span>
+          <input type="range" class="ctrl-slider" id="ps-step-H" min="1" max="30" value="5">
+          <span class="ctrl-val" id="ps-step-val-H">5°</span>
+        </div>
+      </div>
+      <div class="anim-divider"></div>
+      <div class="ps-section">
+        <div class="ps-label">Saved Poses</div>
+        <div class="ps-save-row">
+          <input class="ps-name-input" type="text" id="ps-pose-name-H" placeholder="Pose name…" maxlength="30">
+          <button class="ps-btn" id="ps-save-pose-H">Save</button>
+        </div>
+        <div id="ps-pose-list-H"></div>
+      </div>
+    </div>
+    <div class="ps-panel" id="ps-panel-R">
+      <div class="ps-section">
+        <div class="ps-label">Select Joint</div>
+        <div class="joint-list">
+          <div class="jl-row">
+            <button class="joint-btn" data-bone="DEF-upper_armR" data-part="R">Shoulder</button>
+            <button class="joint-btn" data-bone="DEF-forearmR"   data-part="R">Elbow</button>
+            <button class="joint-btn" data-bone="DEF-handR"      data-part="R">Wrist</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Thumb</span>
+            <button class="joint-btn seg" data-bone="DEF-thumb01R"   data-part="R">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-thumb02R"   data-part="R">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-thumb03R"   data-part="R">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Index</span>
+            <button class="joint-btn seg" data-bone="DEF-f_index01R"  data-part="R">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_index02R"  data-part="R">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_index03R"  data-part="R">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Middle</span>
+            <button class="joint-btn seg" data-bone="DEF-f_middle01R" data-part="R">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_middle02R" data-part="R">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_middle03R" data-part="R">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Ring</span>
+            <button class="joint-btn seg" data-bone="DEF-f_ring01R"   data-part="R">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_ring02R"   data-part="R">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_ring03R"   data-part="R">Tip</button>
+          </div>
+          <div class="jl-finger"><span class="jlf-lbl">Pinky</span>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky01R"  data-part="R">Base</button>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky02R"  data-part="R">Mid</button>
+            <button class="joint-btn seg" data-bone="DEF-f_pinky03R"  data-part="R">Tip</button>
+          </div>
+        </div>
+      </div>
+      <div class="anim-divider"></div>
+      <div class="ps-section">
+        <div class="ps-label">Rotate: <span id="ps-selected-name-R">— select —</span></div>
+        <div class="ps-ctrl-grid">
+          <button class="ctrl-joint-btn" id="ps-up-R">▲</button>
+          <button class="ctrl-joint-btn" id="ps-down-R">▼</button>
+          <button class="ctrl-joint-btn" id="ps-left-R">◄</button>
+          <button class="ctrl-joint-btn" id="ps-right-R">►</button>
+          <button class="ctrl-joint-btn" id="ps-rollin-R">↺</button>
+          <button class="ctrl-joint-btn" id="ps-rollout-R">↻</button>
+          <button class="ctrl-joint-btn ghost span-2" id="ps-reset-joint-R">● Reset</button>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-name">Step</span>
+          <input type="range" class="ctrl-slider" id="ps-step-R" min="1" max="30" value="5">
+          <span class="ctrl-val" id="ps-step-val-R">5°</span>
+        </div>
+      </div>
+      <div class="anim-divider"></div>
+      <div class="ps-section">
+        <div class="ps-label">Saved Poses</div>
+        <div class="ps-save-row">
+          <input class="ps-name-input" type="text" id="ps-pose-name-R" placeholder="Pose name…" maxlength="30">
+          <button class="ps-btn" id="ps-save-pose-R">Save</button>
+        </div>
+        <div id="ps-pose-list-R"></div>
+      </div>
+    </div>
+  </div>
+  <nav id="tab-nav">
+    <a href="/" class="tab-link active">Avatar</a>
+    <a href="/test.html" class="tab-link">Lip-Sync Lab</a>
+  </nav>
+  <main id="app">
+    <section id="input-section">
+      <div id="pose-selects">
+        <select id="pose-quick-R" class="pose-quick-sel"><option value="">— R. Hand pose —</option></select>
+        <select id="pose-quick-L" class="pose-quick-sel"><option value="">— L. Hand pose —</option></select>
+        <select id="pose-quick-H" class="pose-quick-sel"><option value="">— Head pose —</option></select>
+      </div>
+      <div id="input-row">
+        <input
+          type="text"
+          id="text-input"
+          placeholder="Type something for the avatar to say…"
+          autocomplete="off"
+        />
+        <button id="speak-btn" disabled>Speak</button>
+        <button id="replay-btn" disabled title="Replay the last speech without re-synthesising">↻</button>
+      </div>
+      <div class="feature-toggle-row">
+        <label class="feature-toggle" for="emotion-toggle-main">
+          <input id="emotion-toggle-main" type="checkbox" />
+          Emotion Hands + News Tone
+        </label>
+      </div>
+      <p id="status-msg"></p>
+    </section>
+  </main>
+  <script type="module" src="./main.js"></script>
+  <div id="delay-control">
+    <label for="main-delay-slider">Sync&nbsp;Delay</label>
+    <input id="main-delay-slider" type="range" min="0" max="2" step="0.05" value="0.1" />
+    <span id="main-delay-label">0.10s</span>
+  </div>
+</body>
+</html>

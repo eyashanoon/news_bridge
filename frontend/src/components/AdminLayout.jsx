@@ -23,7 +23,7 @@ export default function AdminLayout() {
     { to: "/admin/editor-requests", label: "Editor Requests", roles: ["VIEW_EDITOR_REQUESTS"] },
     { to: "/admin/crawler", label: "Manage Crawler", roles: ["VIEW_CRAWLER_LOGS", "CONTROL_CRAWLER"] },
     { to: "/admin/fields", label: "Manage Fields", roles: ["MANAGE_USERS", "APPROVE_EDITOR_REQUESTS"] },
-    { to: "/admin/events", label: "Live Events", roles: ["MANAGE_EVENTS", "MANAGE_USERS"] },
+    { to: "/admin/topics", label: "Topics", roles: ["MANAGE_EVENTS", "MANAGE_USERS"] },
     { to: "/admin/telegram", label: "Telegram", roles: ["MANAGE_TELEGRAM_CHANNELS", "VIEW_TELEGRAM_POSTS", "MANAGE_USERS"] },
   ];
 

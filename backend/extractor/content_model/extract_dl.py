@@ -4,7 +4,6 @@ import re
 from typing import Dict, List, Tuple
 from urllib.parse import urljoin, urlparse
 
-import requests
 import torch
 from bs4 import BeautifulSoup, Tag
 
@@ -119,25 +118,6 @@ UI_NOISE_TEXTS = {
     "performance of our site",
 }
 
-JS_SHELL_HINTS = {
-    '<div id="root"></div>',
-    "window['fp.prerender']",
-    'window["fp.prerender"]',
-    "__next",
-    "id=\"app\"",
-}
-
-BLOCKED_PAGE_HINTS = {
-    "access denied",
-    "you don't have permission",
-    "forbidden",
-    "attention required",
-    "verify you are human",
-    "cf-challenge",
-    "captcha",
-    "bot detection",
-    "temporarily unavailable",
-}
 
 NOISE_TOKEN_HINTS = {"nav", "menu", "header", "footer", "share", "social"}
 
@@ -573,189 +553,16 @@ def _link_density(node: Tag, text: str) -> float:
     return link_text_len / max(1, len(text))
 
 
-def _fetch_html_requests(url: str) -> Tuple[str, int]:
-    try:
-        response = requests.get(url, timeout=30, headers={"User-Agent": "Mozilla/5.0"})
-    except Exception:
-        return "", 0
-
-    status_code = response.status_code
-    if status_code == 403:
-        return response.text or "", status_code
-    if status_code >= 400:
-        return response.text or "", status_code
-
-    content_encoding = (response.headers.get("content-encoding") or "").lower()
-    if "br" in content_encoding:
-        try:
-            import brotli
-
-            return brotli.decompress(response.content).decode("utf-8", errors="replace"), status_code
-        except Exception:
-            pass
-
-    return response.text, status_code
-
-
-def _text_block_count(soup: BeautifulSoup) -> int:
-    count = 0
-    for node in soup.find_all(["h1", "h2", "h3", "p", "article"]):
-        if not isinstance(node, Tag):
-            continue
-        text = node.get_text(" ", strip=True)
-        if len(text) >= 24:
-            count += 1
-    return count
-
-
-def _looks_like_js_shell(html: str, soup: BeautifulSoup) -> bool:
-    lowered = (html or "").lower()
-    has_shell_hint = any(hint in lowered for hint in JS_SHELL_HINTS)
-    return has_shell_hint and _text_block_count(soup) <= 2
-
-
-def _looks_like_blocked_page(html: str) -> bool:
-    lowered = (html or "").lower()
-    if not lowered:
-        return False
-    return any(hint in lowered[:12000] for hint in BLOCKED_PAGE_HINTS)
-
-
-def _looks_like_corrupted_payload(html: str) -> bool:
-    sample = (html or "")[:5000]
-    if len(sample) < 400:
-        return False
-
-    lowered = sample.lower()
-    if "<html" in lowered or "<body" in lowered or "<!doctype" in lowered:
-        return False
-
-    replacement_count = sample.count("�")
-    lt_count = sample.count("<")
-    gt_count = sample.count(">")
-    control_count = sum(1 for ch in sample if ord(ch) < 9 or (13 < ord(ch) < 32))
-    weird_count = sum(1 for ch in sample if not (ch.isalnum() or ch.isspace() or ch in "<>=/\"'.,;:!?-_|()[]{}"))
-
-    mostly_not_html = lt_count < 8 and gt_count < 8
-    noisy_text = replacement_count > 20 or control_count > 20 or (weird_count / max(1, len(sample)) > 0.25)
-    return mostly_not_html and noisy_text
-
-
-def _looks_unusable_html(soup: BeautifulSoup) -> bool:
-    has_title = bool(soup.title and (soup.title.string or "").strip())
-    has_h1 = bool(soup.find("h1"))
-    text_blocks = _text_block_count(soup)
-
-    if not has_title and not has_h1 and text_blocks <= 1:
-        return True
-
-    visible_text = soup.get_text(" ", strip=True)[:4000]
-    if len(visible_text) < 300:
-        return False
-
-    weird_count = sum(
-        1
-        for ch in visible_text
-        if not (ch.isalnum() or ch.isspace() or ch in ".,;:!?\"'()[]{}-_/@#%&")
-    )
-    weird_ratio = weird_count / max(1, len(visible_text))
-    if text_blocks <= 3 and weird_ratio > 0.20:
-        return True
-
-    return False
-
-
-def _fetch_html_playwright(url: str) -> str:
-    try:
-        from playwright.sync_api import sync_playwright
-    except Exception:
-        return ""
-
-    try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            page = browser.new_page(user_agent="Mozilla/5.0")
-            page.goto(url, wait_until="domcontentloaded", timeout=45000)
-            try:
-                page.wait_for_load_state("networkidle", timeout=8000)
-            except Exception:
-                pass
-
-            for selector in [
-                "button:has-text('Accept')",
-                "button:has-text('Agree')",
-                "button:has-text('I agree')",
-                "button:has-text('Allow all')",
-                "button:has-text('Continue without agreeing')",
-                "text=Accept",
-                "text=Agree and close",
-                "text=Continue without agreeing",
-            ]:
-                try:
-                    locator = page.locator(selector).first
-                    if locator.count() > 0:
-                        locator.click(timeout=1500)
-                        break
-                except Exception:
-                    continue
-
-            try:
-                page.mouse.wheel(0, 1200)
-                page.wait_for_timeout(500)
-            except Exception:
-                pass
-
-            page.wait_for_timeout(1500)
-            html = page.content()
-            browser.close()
-            return html or ""
-    except Exception:
-        return ""
-
-
 def _fetch_html(url: str) -> str:
-    html, status_code = _fetch_html_requests(url)
+    from web_fetch import fetch_html
 
-    if status_code in {401, 403, 429, 451, 503}:
-        rendered = _fetch_html_playwright(url)
-        if rendered:
-            return rendered
-        return html
-
-    if not html:
-        rendered = _fetch_html_playwright(url)
-        if rendered:
-            return rendered
-        return html
-
-    if _looks_like_blocked_page(html) or _looks_like_corrupted_payload(html):
-        rendered = _fetch_html_playwright(url)
-        if rendered:
-            return rendered
-        return html
-
-    soup = BeautifulSoup(html, "lxml")
-    if _looks_unusable_html(soup):
-        rendered = _fetch_html_playwright(url)
-        if rendered:
-            return rendered
-        return html
-
-    if not _looks_like_js_shell(html, soup):
-        return html
-
-    rendered = _fetch_html_playwright(url)
-    if not rendered:
-        return html
-
-    rendered_soup = BeautifulSoup(rendered, "lxml")
-    if _text_block_count(rendered_soup) > _text_block_count(soup):
-        return rendered
-    return html
+    result = fetch_html(url, profile="news", timeout=30, allow_browser=True)
+    return result.html or ""
 
 
-def fetch_blocks(url: str) -> Tuple[str, List[Dict]]:
-    html = _fetch_html(url)
+def fetch_blocks(url: str, html: str | None = None) -> Tuple[str, List[Dict]]:
+    if html is None:
+        html = _fetch_html(url)
     soup = BeautifulSoup(html, "lxml")
     html_title = (soup.title.string or "").strip() if soup.title and soup.title.string else ""
 
@@ -925,11 +732,18 @@ def predict_blocks(blocks: List[Dict], checkpoint: Dict, device: torch.device):
     return outputs
 
 
-def extract(url: str, model_path: str, text_thr: float, media_thr: float, title_thr: float) -> Dict:
+def extract(
+    url: str,
+    model_path: str,
+    text_thr: float,
+    media_thr: float,
+    title_thr: float,
+    html: str | None = None,
+) -> Dict:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     checkpoint = torch.load(model_path, map_location=device)
 
-    html_title, blocks = fetch_blocks(url)
+    html_title, blocks = fetch_blocks(url, html=html)
     if not blocks:
         return {"url": url, "title": html_title, "content": []}
 

@@ -1,13 +1,14 @@
 // ChatWidget.jsx
 import { useEffect, useRef, useState } from "react";
 import { aiFetch } from "../utils/aiFetch";
+import { useTranslation } from "react-i18next";
 
 export default function ChatWidget({ category, selectedPost }) {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content:
-        "Hi! I'm your AI news assistant. Ask me anything about the latest news.",
+      content: t("chatTitle") + ". " + t("chatSubtitle") + ".",
     },
   ]);
 
@@ -25,15 +26,14 @@ export default function ChatWidget({ category, selectedPost }) {
       setMessages([
         {
           role: "assistant",
-          content: `You're asking about this post: "${selectedPost.title}".\n\nAsk your question and I will answer using this post as context.`,
+          content: `${t("selectedPost")} "${selectedPost.title}".\n\n${t("askPlaceholder")}`,
         },
       ]);
     } else {
       setMessages([
         {
           role: "assistant",
-          content:
-            "Hi! I'm your AI news assistant. Ask me anything about the latest news.",
+          content: t("chatTitle") + ". " + t("chatSubtitle") + ".",
         },
       ]);
     }
@@ -67,7 +67,7 @@ export default function ChatWidget({ category, selectedPost }) {
 
       const data = await res.json();
 
-      const answer = data.answer || "No answer returned.";
+      const answer = data.answer || t("aiThinking");
       const sources = Array.isArray(data.sources) ? data.sources : [];
 
       let sourcesText = "";
@@ -101,7 +101,7 @@ export default function ChatWidget({ category, selectedPost }) {
         ...prev,
         {
           role: "assistant",
-          content: "Sorry, the AI service is currently unavailable.",
+          content: t("aiUnavailable"),
         },
       ]);
     } finally {
@@ -124,17 +124,17 @@ export default function ChatWidget({ category, selectedPost }) {
           <div className="chat-header-info">
             <div className="chat-header-title">
               <span>🤖</span>
-              <span>AI Assistant</span>
+              <span>{t("aiAssistant")}</span>
             </div>
             <div className="chat-header-subtitle">
               {selectedPost
-                ? `Context: ${selectedPost.label} post (Post #${selectedPost.id})`
-                : `Category: ${category}`}
+                ? `${t("selectedPost")} ${selectedPost.label} (Post #${selectedPost.id})`
+                : `${t("category_General")}: ${category}`}
             </div>
           </div>
 
           {selectedPost && (
-            <span className="chat-header-badge">Post Mode</span>
+            <span className="chat-header-badge">{t("postMode") || "Post Mode"}</span>
           )}
         </div>
 
@@ -148,7 +148,7 @@ export default function ChatWidget({ category, selectedPost }) {
 
           {loading && (
             <div className="chat-msg assistant thinking">
-              <div className="chat-bubble">Thinking...</div>
+              <div className="chat-bubble">{t("aiThinking")}</div>
             </div>
           )}
 
@@ -164,8 +164,8 @@ export default function ChatWidget({ category, selectedPost }) {
               onKeyDown={handleKeyDown}
               placeholder={
                 selectedPost
-                  ? "Ask something about this post..."
-                  : `Ask about ${category} news...`
+                  ? t("askPlaceholder")
+                  : `${t("askPlaceholder")} ${category}...`
               }
               rows={2}
             />
@@ -175,12 +175,12 @@ export default function ChatWidget({ category, selectedPost }) {
               disabled={loading || !input.trim()}
               className="chat-send-btn"
             >
-              Send
+              {loading ? t("aiThinking") : t("send")}
             </button>
           </div>
 
           <div className="chat-tip">
-            Tip: Press Enter to send, Shift+Enter for new line.
+            Tip: Enter to send, Shift+Enter for new line.
           </div>
         </div>
       </div>

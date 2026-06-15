@@ -59,7 +59,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
         configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
@@ -81,6 +81,10 @@ public class SecurityConfig {
                     .requestMatchers("/api/primitive-users").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/auth/verify-email").permitAll()
+                    .requestMatchers("/auth/resend-code").permitAll()
+                    .requestMatchers("/auth/forgot-password").permitAll()
+                    .requestMatchers("/auth/reset-password").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/swagger-ui.html").permitAll()
@@ -93,11 +97,15 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/api/posts/*/media").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/posts/*/content").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/posts/by-tags").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/feed").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/feed/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/events/public").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/live-news").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/users/*/preferences").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/posts/by-tags").permitAll()
+                    .requestMatchers("/api/profile/**").authenticated()
+                    .requestMatchers("/api/upload/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
+                    .requestMatchers("/api/comments/**").authenticated()
                     .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -25,9 +25,13 @@ class VvAdapter:
             return str(result).upper(), text or "", pattern or ""
 
         # Fallback lightweight classifier if VV.py path is not configured.
-        response = requests.get(url, timeout=self._timeout_seconds)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, "html.parser")
+        from web_fetch import fetch_soup
+
+        soup, result = fetch_soup(url, profile="news", timeout=self._timeout_seconds)
+        if soup is None:
+            raise requests.RequestException(
+                result.error or f"HTTP {result.status_code} via {result.method}"
+            )
         text = " ".join(soup.stripped_strings)
         if len(text) > 400:
             return "ARTICLE", text[:20000], "fallback-text-length"

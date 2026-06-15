@@ -1,0 +1,11 @@
+{
+  "startR": "hr1",
+  "startL": "",
+  "keyframes": [
+    {
+      "frac": 0.25,
+      "hand": "R",
+      "pose": "pr1"
+    }
+  ]
+}

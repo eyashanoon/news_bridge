@@ -164,41 +164,18 @@ def _count_lines(text):
     return len([line for line in text.splitlines() if line.strip()])
 
 
-def extract_features(url):
+def extract_features(url, html: str | None = None):
     """
     Extract feature vector from a URL using generic, domain-agnostic signals.
     Returns None only if page can't be fetched or contains no usable text.
-
-    Feature list:
-        0  word_count_log      - log1p(total words in extracted text)
-        1  p_count            - Number of <p> tags
-        2  avg_p_length       - Avg words per paragraph
-        3  a_count            - Number of <a> tags
-        4  link_density       - Link word fraction
-        5  has_article_tag    - Page has <article> element
-        6  text_density       - Text vs total tags ratio
-        7  url_length_log      - log1p(URL length)
-        8  title_length       - Title word count
-        9  has_date           - URL or metadata has date
-        10 list_indicator     - % list items detect (lower = more article-like)
-        11 metadata_richness  - Has author + date metadata (0-2 scale)
-        12 img_density         - Images per paragraph
-        13 h1_count            - Number of H1 tags
-        14 content_code_ratio  - Visible text chars / HTML chars
-        15 social_share_count  - Detected social share links/buttons
-        16 has_og_article      - OpenGraph article-type marker
-        17 has_twitter_card    - Twitter card metadata exists
-        18 has_jsonld          - JSON-LD script exists
-        19 has_jsonld_article  - JSON-LD contains Article-like schema
-        20 heading_density     - Heading tags per paragraph
-        21 sentence_density    - Sentences per 100 words
     """
     if is_non_article_by_rule(url):
         return None
 
-    html = fetch_html(url)
-    if not html:
-        return None
+    if html is None:
+        html = fetch_html(url)
+        if not html:
+            return None
 
     raw_html = html
     soup = BeautifulSoup(raw_html, "html.parser")

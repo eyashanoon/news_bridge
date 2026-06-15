@@ -29,6 +29,9 @@ public class TelegramPostService {
     @Autowired
     private TelegramChannelRepository channelRepo;
 
+    @Autowired
+    private PostService postService;
+
     public Page<TelegramPostResponse> getAll(int page, int size) {
         Page<TelegramPost> p = postRepo.findAllByOrderByMessageDateDesc(
                 PageRequest.of(page, size));
@@ -72,6 +75,9 @@ public class TelegramPostService {
                 post.setViewCount(req.viewCount);
                 post.setEdited(req.edited);
                 postRepo.save(post);
+
+                // Mirror into the Post pipeline so tag extraction and feed scoring apply
+                postService.createFromTelegramPost(post);
 
                 ch.setTotalPostsCollected((int) postRepo.countByChannel_Id(ch.getId()));
                 ch.setLastCrawledAt(Instant.now());

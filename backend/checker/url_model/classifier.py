@@ -13,13 +13,13 @@ with _MODEL_PATH.open("rb") as handle:
     _MODEL = pickle.load(handle)
 
 
-def is_article(url: str, verbose: bool = False) -> bool:
+def is_article(url: str, html: str | None = None, verbose: bool = False) -> bool:
     if is_non_article_by_rule(url):
         if verbose:
             print(f"  [RULE REJECT] {url}")
         return False
 
-    features = extract_features(url)
+    features = extract_features(url, html=html)
     if not features:
         if verbose:
             print(f"  [FETCH FAIL] {url}")

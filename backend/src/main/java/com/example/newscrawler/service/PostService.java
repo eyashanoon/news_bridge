@@ -3,6 +3,7 @@ package com.example.newscrawler.service;
 import com.example.newscrawler.entity.Post;
 import com.example.newscrawler.entity.Article;
 import com.example.newscrawler.entity.PostTag;
+import com.example.newscrawler.entity.TelegramPost;
 import com.example.newscrawler.dto.CreatePostRequest;
 import com.example.newscrawler.dto.PostByTagResponse;
 import com.example.newscrawler.repository.PostRepository;
@@ -71,6 +72,17 @@ public class PostService {
 
     public java.util.List<Post> findByArticleId(Long articleId) {
         return postRepository.findByArticle_Id(articleId);
+    }
+
+    public Post createFromTelegramPost(TelegramPost telegramPost) {
+        Post post = new Post();
+        post.setTelegramPost(telegramPost);
+        String content = telegramPost.getContent() != null ? telegramPost.getContent() : "";
+        post.setText(content);
+        String firstLine = content.lines().findFirst().orElse("").strip();
+        post.setTitle(firstLine.length() > 120 ? firstLine.substring(0, 120) : firstLine);
+        post.setNumImages("photo".equals(telegramPost.getMediaType()) ? 1 : 0);
+        return postRepository.save(post);
     }
 
     public Post findById(Long id) {

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession } from "../context/SessionContext";
 import { api, authConfig } from "../api";
 import { useNavigate } from "react-router-dom";
@@ -154,7 +154,7 @@ export default function AdminPage({ target }) {
       {target === "editor-requests" && hasRole(session, "VIEW_EDITOR_REQUESTS") && <EditorRequests session={session} />}
       {target === "crawler" && hasRole(session, "VIEW_CRAWLER_LOGS", "CONTROL_CRAWLER") && <ManageCrawler session={session} />}
       {target === "fields" && hasRole(session, "MANAGE_USERS", "APPROVE_EDITOR_REQUESTS") && <ManageFields session={session} />}
-      {target === "events" && hasRole(session, "MANAGE_EVENTS", "MANAGE_USERS") && <ManageEvents session={session} />}
+      {target === "topics" && hasRole(session, "MANAGE_EVENTS", "MANAGE_USERS") && <ManageTopics session={session} />}
       {target === "telegram" && hasRole(session, "MANAGE_TELEGRAM_CHANNELS", "VIEW_TELEGRAM_POSTS", "MANAGE_USERS") && <ManageTelegram session={session} />}
     </div>
   );
@@ -841,6 +841,70 @@ function ManageArticles({ session }) {
   );
 }
 
+/* ===================== BIAS CHIP ===================================== */
+const BIAS_COLORS = {
+  "Far Left":    { bg: "#1e3a8a", fg: "#fff" },
+  "Left":        { bg: "#3b82f6", fg: "#fff" },
+  "Center-Left": { bg: "#93c5fd", fg: "#1e3a5f" },
+  "Center":      { bg: "#6b7280", fg: "#fff" },
+  "Center-Right":{ bg: "#fca5a5", fg: "#7f1d1d" },
+  "Right":       { bg: "#ef4444", fg: "#fff" },
+  "Far Right":   { bg: "#7f1d1d", fg: "#fff" },
+  "Unknown":     { bg: "#374151", fg: "#d1d5db" },
+};
+function BiasChip({ bias }) {
+  const c = BIAS_COLORS[bias] || BIAS_COLORS["Unknown"];
+  return (
+    <span style={{
+      display: "inline-block", padding: "2px 9px", borderRadius: "12px",
+      fontSize: "0.67rem", fontWeight: 700,
+      backgroundColor: c.bg, color: c.fg, letterSpacing: "0.03em"
+    }}>{bias || "Unknown"}</span>
+  );
+}
+
+/* ===================== RELIABILITY BAR =============================== */
+function ReliabilityBar({ score }) {
+  const pct = Math.max(0, Math.min(100, score ?? 0));
+  const color = pct >= 70 ? "#22c55e" : pct >= 40 ? "#f59e0b" : "#ef4444";
+  return (
+    <div style={{width:"100%", maxWidth:130}}>
+      <div style={{display:"flex", justifyContent:"space-between", fontSize:"0.62rem", color:"#94a3b8", marginBottom:2}}>
+        <span>Reliability</span><span>{pct}%</span>
+      </div>
+      <div style={{height:5, borderRadius:3, background:"#334155", overflow:"hidden"}}>
+        <div style={{width:`${pct}%`, height:"100%", background:color, borderRadius:3, transition:"width .4s"}} />
+      </div>
+    </div>
+  );
+}
+
+function TrustGauge({ trustScore, label }) {
+  const pct = Math.max(0, Math.min(100, trustScore ?? 0));
+  const color =
+    pct >= 70 ? "#22c55e" :
+    pct >= 40 ? "#f59e0b" : "#ef4444";
+
+  const angle = (pct / 100) * 180;
+  const toRad = (d) => (d * Math.PI) / 180;
+  const endX = 60 + 50 * Math.cos(toRad(180 - angle));
+  const endY = 60 - 50 * Math.sin(toRad(180 - angle));
+  const largeArc = angle > 180 ? 1 : 0;
+  const bgD = "M 10 60 A 50 50 0 0 1 110 60";
+  const fgD = pct === 0 ? "" : `M 10 60 A 50 50 0 ${largeArc} 1 ${endX.toFixed(2)} ${endY.toFixed(2)}`;
+
+  return (
+    <div className="trust-gauge-wrap">
+      <svg viewBox="0 0 120 70" width="140" height="82">
+        <path d={bgD} fill="none" stroke="#334155" strokeWidth="12" strokeLinecap="round" />
+        {fgD && <path d={fgD} fill="none" stroke={color} strokeWidth="12" strokeLinecap="round" />}
+        <text x="60" y="58" textAnchor="middle" fontSize="18" fontWeight="bold" fill={color}>{pct}%</text>
+      </svg>
+      <div className="trust-label" style={{ color }}>{label || "—"}</div>
+    </div>
+  );
+}
+
 /* ===================== MANAGE ROOTS ===================== */
 function ManageRoots({ session }) {
   const [roots, setRoots] = useState([]);
@@ -850,8 +914,28 @@ function ManageRoots({ session }) {
   const [editingId, setEditingId] = useState(null);
   const [editingForm, setEditingForm] = useState({ name: "", baseUrl: "" });
   const [error, setError] = useState("");
-  const { askConfirm, askTypedConfirm, Dialog } = useAdminDialog();
 
+  // trust verification state — keyed by rootId
+  const [verifying, setVerifying] = useState({});         // rootId → bool
+  const [trustResults, setTrustResults] = useState({});   // rootId → { domainAgeYears, trustScore, reliabilityScore, biasLabel, trustLabel, description, found }
+
+  // discovery state — only one root at a time
+  const [rootsSubTab, setRootsSubTab] = useState("list"); // "list" | "discovery"
+  const [discoveringId, setDiscoveringId] = useState(null);
+  const [discoveryJobId, setDiscoveryJobId] = useState(null);
+  const [discoveryLoading, setDiscoveryLoading] = useState(false);
+  const [discoveryStatus, setDiscoveryStatus] = useState(null);
+  const [discoveryLogs, setDiscoveryLogs] = useState([]);
+  const [discoveryEndpoints, setDiscoveryEndpoints] = useState([]); // { url, parent, confidence, selected, source, assessmentStatus, assessmentReason, classification }
+  const [discoveryOutcome, setDiscoveryOutcome] = useState(null); // success | partial | failed
+  const [discoveryReasons, setDiscoveryReasons] = useState([]);
+  const [discoveryManualMessage, setDiscoveryManualMessage] = useState("");
+  const [requiresManualEntry, setRequiresManualEntry] = useState(false);
+  const [savingEndpoints, setSavingEndpoints] = useState(false);
+  const [saveMsg, setSaveMsg] = useState("");
+  const pollRef = useRef(null);
+
+  const { askConfirm, askTypedConfirm, Dialog } = useAdminDialog();
   const cfg = authConfig(session.token);
 
   const load = useCallback(async () => {
@@ -909,11 +993,226 @@ function ManageRoots({ session }) {
     setError("");
     try {
       await api.delete(`/roots/${id}?hard=true`, cfg);
+      if (discoveringId === id) setDiscoveringId(null);
       load();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to delete root");
     }
   };
+
+  // ── Verify (NewsGuard) ──────────────────────────────────────────────────
+  const handleVerify = async (id) => {
+    // Clear any previous result so the button shows while loading
+    setTrustResults((t) => { const next = { ...t }; delete next[id]; return next; });
+    setVerifying((v) => ({ ...v, [id]: true }));
+    try {
+      const res = await api.post(`/roots/${id}/verify`, {}, cfg);
+      setTrustResults((t) => ({ ...t, [id]: { ...res.data, _error: null } }));
+    } catch (err) {
+      const msg =
+        err.response?.status === 404
+          ? "Endpoint not found — restart the backend server."
+          : err.response?.data?.message || err.message || "Verification failed";
+      setTrustResults((t) => ({
+        ...t,
+        [id]: { found: false, domainAgeYears: null, trustScore: null, reliabilityScore: null,
+                 biasLabel: null, trustLabel: null, description: null, _error: msg },
+      }));
+    } finally {
+      setVerifying((v) => ({ ...v, [id]: false }));
+    }
+  };
+
+  // ── Discover (async job with live logs) ─────────────────────────────────
+  const stopPolling = () => {
+    if (pollRef.current) {
+      clearTimeout(pollRef.current);
+      pollRef.current = null;
+    }
+  };
+
+  useEffect(() => () => stopPolling(), []);
+
+  const pollDiscoveryJob = useCallback(async (rootId, jobId, logOffset) => {
+    try {
+      const res = await api.get(
+        `/roots/${rootId}/discover/jobs/${jobId}?logOffset=${logOffset}`,
+        { ...cfg, timeout: 30000 }
+      );
+      const data = res.data;
+      if (data.logs?.length) {
+        setDiscoveryLogs((prev) => [...prev, ...data.logs]);
+      }
+      setDiscoveryStatus(data.status);
+
+      if (data.status === "completed" && data.result) {
+        const outcome = data.result.discovery_outcome || "success";
+        setDiscoveryOutcome(outcome);
+        setDiscoveryReasons(data.result.reasons || []);
+        setDiscoveryManualMessage(data.result.manual_entry_message || "");
+        setRequiresManualEntry(Boolean(data.result.requires_manual_entry));
+        const eps = (data.result.endpoints || []).map((e) => ({
+          url: e.url,
+          parent: e.parent || "",
+          confidence: e.confidence,
+          classification: e.classification || "listing_article",
+          selected: true,
+          source: "discovered",
+          assessmentStatus: "discovered",
+          assessmentReason: "Found by automatic discovery and classified as a listing page.",
+        }));
+        setDiscoveryEndpoints(eps);
+        setDiscoveryLoading(false);
+        stopPolling();
+      } else if (data.status === "failed") {
+        setError(data.error || "Discovery failed");
+        setDiscoveryLoading(false);
+        stopPolling();
+      } else {
+        pollRef.current = setTimeout(
+          () => pollDiscoveryJob(rootId, jobId, data.log_count ?? logOffset),
+          1500
+        );
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to poll discovery job");
+      setDiscoveryLoading(false);
+      stopPolling();
+    }
+  }, [cfg]);
+
+  const handleDiscover = async (id) => {
+    stopPolling();
+    setDiscoveringId(id);
+    setRootsSubTab("discovery");
+    setDiscoveryJobId(null);
+    setDiscoveryEndpoints([]);
+    setDiscoveryLogs([]);
+    setDiscoveryStatus("pending");
+    setDiscoveryOutcome(null);
+    setDiscoveryReasons([]);
+    setDiscoveryManualMessage("");
+    setRequiresManualEntry(false);
+    setSaveMsg("");
+    setError("");
+    setDiscoveryLoading(true);
+    try {
+      const res = await api.post(`/roots/${id}/discover`, {}, { ...cfg, timeout: 30000 });
+      const jobId = res.data.job_id;
+      if (!jobId) throw new Error("Discovery service did not return a job ID");
+      setDiscoveryJobId(jobId);
+      setDiscoveryLogs([`Job started: ${jobId}`]);
+      pollDiscoveryJob(id, jobId, 0);
+    } catch (err) {
+      setError(err.response?.data?.message || "Discovery failed — is the discovery service running on port 8004?");
+      setDiscoveryLoading(false);
+    }
+  };
+
+  const toggleEndpoint = (url) => {
+    setDiscoveryEndpoints((ep) =>
+      ep.map((e) => e.url === url ? { ...e, selected: !e.selected } : e)
+    );
+  };
+
+  const toggleAll = (val) => {
+    setDiscoveryEndpoints((ep) =>
+      ep.map((e) =>
+        (e.assessmentStatus === "discovered" || e.assessmentStatus === "good")
+          ? { ...e, selected: val }
+          : e
+      )
+    );
+  };
+
+  const assessEndpoint = async (url) => {
+    if (!url || !discoveringId) return;
+    const trimmed = url.trim();
+    if (!trimmed || discoveryEndpoints.some((e) => e.url === trimmed)) return;
+
+    setDiscoveryEndpoints((ep) => [
+      ...ep,
+      {
+        url: trimmed,
+        parent: "(manually added)",
+        confidence: null,
+        classification: null,
+        selected: false,
+        source: "manual",
+        assessmentStatus: "assessing",
+        assessmentReason: "Testing whether this URL can be crawled…",
+      },
+    ]);
+
+    try {
+      const res = await api.post(
+        `/roots/${discoveringId}/discover/assess`,
+        { url: trimmed },
+        { ...cfg, timeout: 120000 }
+      );
+      const data = res.data || {};
+      const crawlable = Boolean(data.crawlable);
+      const reason = (data.reasons || []).join(" ") || (crawlable ? "Suitable for crawling." : "Not suitable for crawling.");
+      setDiscoveryEndpoints((ep) =>
+        ep.map((e) =>
+          e.url === trimmed
+            ? {
+                ...e,
+                url: data.url || trimmed,
+                confidence: data.confidence ?? null,
+                classification: data.classification || null,
+                selected: crawlable,
+                assessmentStatus: crawlable ? "good" : "rejected",
+                assessmentReason: reason,
+              }
+            : e
+        )
+      );
+    } catch (err) {
+      const msg = err.response?.data?.message || "Assessment failed.";
+      setDiscoveryEndpoints((ep) =>
+        ep.map((e) =>
+          e.url === trimmed
+            ? {
+                ...e,
+                selected: false,
+                assessmentStatus: "rejected",
+                assessmentReason: msg,
+              }
+            : e
+        )
+      );
+    }
+  };
+
+  const removeEndpoint = (url) => {
+    setDiscoveryEndpoints((ep) => ep.filter((e) => e.url !== url));
+  };
+
+  // ── Save endpoints ──────────────────────────────────────────────────────
+  const handleSaveEndpoints = async () => {
+    if (!discoveringId) return;
+    const savable = discoveryEndpoints.filter(
+      (e) => e.selected && (e.assessmentStatus === "discovered" || e.assessmentStatus === "good")
+    );
+    const urls = savable.map((e) => e.url);
+    if (urls.length === 0) {
+      setSaveMsg("No assessed endpoints selected. Add and assess endpoints first.");
+      return;
+    }
+    setSavingEndpoints(true);
+    setSaveMsg("");
+    try {
+      const res = await api.post(`/roots/${discoveringId}/endpoints/bulk`, { urls }, cfg);
+      setSaveMsg(`Saved ${res.data.length} new endpoint(s) successfully.`);
+    } catch (err) {
+      setSaveMsg(err.response?.data?.message || "Failed to save endpoints.");
+    } finally {
+      setSavingEndpoints(false);
+    }
+  };
+
+  const discoveringRoot = roots.find((r) => r.id === discoveringId);
 
   return (
     <div>
@@ -922,15 +1221,70 @@ function ManageRoots({ session }) {
         <p>Configure root domains for content collection</p>
       </div>
 
+      <div className="roots-subtabs">
+        <button
+          type="button"
+          className={`roots-subtab ${rootsSubTab === "list" ? "active" : ""}`}
+          onClick={() => setRootsSubTab("list")}
+        >
+          Roots List
+        </button>
+        <button
+          type="button"
+          className={`roots-subtab ${rootsSubTab === "discovery" ? "active" : ""}`}
+          onClick={() => setRootsSubTab("discovery")}
+          disabled={!discoveringId && discoveryLogs.length === 0}
+        >
+          Discovery
+          {discoveryLoading && <span className="roots-subtab-badge">running</span>}
+        </button>
+      </div>
+
       {error && <div className="admin-error">{error}</div>}
 
-      <form className="admin-form" onSubmit={handleCreate}>
+      {rootsSubTab === "discovery" && (
+        <DiscoveryPanel
+          root={discoveringRoot}
+          jobId={discoveryJobId}
+          status={discoveryStatus}
+          loading={discoveryLoading}
+          logs={discoveryLogs}
+          endpoints={discoveryEndpoints}
+          outcome={discoveryOutcome}
+          reasons={discoveryReasons}
+          manualMessage={discoveryManualMessage}
+          requiresManualEntry={requiresManualEntry}
+          saveMsg={saveMsg}
+          saving={savingEndpoints}
+          onToggle={toggleEndpoint}
+          onToggleAll={toggleAll}
+          onAdd={assessEndpoint}
+          onRemove={removeEndpoint}
+          onSave={handleSaveEndpoints}
+          onClose={() => {
+            stopPolling();
+            setRootsSubTab("list");
+            setDiscoveringId(null);
+            setDiscoveryJobId(null);
+            setDiscoveryLogs([]);
+            setDiscoveryEndpoints([]);
+            setDiscoveryStatus(null);
+            setDiscoveryOutcome(null);
+            setDiscoveryReasons([]);
+            setDiscoveryManualMessage("");
+            setRequiresManualEntry(false);
+            setSaveMsg("");
+          }}
+        />
+      )}
+
+      {rootsSubTab === "list" && <form className="admin-form" onSubmit={handleCreate}>
         <input placeholder="Root name (e.g., BBC News)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
         <input placeholder="Base URL (https://example.com)" value={form.baseUrl} onChange={(e) => setForm({ ...form, baseUrl: e.target.value })} required />
         <button className="admin-btn primary" type="submit">Add Root</button>
-      </form>
+      </form>}
 
-      <div className="admin-filters-row">
+      {rootsSubTab === "list" && <div className="admin-filters-row">
         <input className="admin-search" placeholder="Search by name or URL" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
         <select className="admin-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="">All statuses</option>
@@ -938,43 +1292,340 @@ function ManageRoots({ session }) {
           <option value="SUSPENDED">SUSPENDED</option>
         </select>
         <button className="admin-btn small" onClick={load}>Search</button>
-      </div>
+      </div>}
 
-      <div className="admin-table-wrap">
+      {rootsSubTab === "list" && <div className="admin-table-wrap">
         <table className="admin-table">
-          <thead><tr><th>ID</th><th>Name</th><th>Base URL</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Base URL</th><th>Status</th>
+              <th>Trust Score</th><th>Actions</th>
+            </tr>
+          </thead>
           <tbody>
-            {roots.map((r) => (
-              <tr key={r.id}>
-                <td>{r.id}</td>
-                <td>{editingId === r.id ? <input value={editingForm.name} onChange={(e) => setEditingForm({ ...editingForm, name: e.target.value })} /> : r.name}</td>
-                <td>{editingId === r.id ? <input value={editingForm.baseUrl} onChange={(e) => setEditingForm({ ...editingForm, baseUrl: e.target.value })} /> : r.baseUrl}</td>
-                <td><span className={`status-badge ${(r.status || "").toLowerCase() === "active" ? "approved" : "rejected"}`}>{r.status || "ACTIVE"}</span></td>
-                <td className="action-cell">
-                  {editingId === r.id ? (
-                    <>
-                      <button className="admin-btn small primary" onClick={() => handleUpdate(r.id)}>Save</button>
-                      <button className="admin-btn small" onClick={() => setEditingId(null)}>Cancel</button>
-                    </>
-                  ) : (
-                    <>
-                      <button className="admin-btn small" onClick={() => { setEditingId(r.id); setEditingForm({ name: r.name, baseUrl: r.baseUrl }); }}>Edit</button>
-                      <button className="admin-btn small" onClick={() => handleStatus(r.id, "SUSPENDED")}>Suspend</button>
-                      <button className="admin-btn small" onClick={() => handleStatus(r.id, "ACTIVE")}>Activate</button>
-                      <button className="admin-btn small danger" onClick={() => handleDelete(r.id, r.name)}>Hard Delete</button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-            {roots.length === 0 && <tr><td colSpan="5" className="empty-row">No roots found</td></tr>}
+            {roots.map((r) => {
+              const trust = trustResults[r.id];
+              return (
+                <tr key={r.id}>
+                  <td>{r.id}</td>
+                  <td>
+                    {editingId === r.id
+                      ? <input value={editingForm.name} onChange={(e) => setEditingForm({ ...editingForm, name: e.target.value })} />
+                      : r.name}
+                  </td>
+                  <td>
+                    {editingId === r.id
+                      ? <input value={editingForm.baseUrl} onChange={(e) => setEditingForm({ ...editingForm, baseUrl: e.target.value })} />
+                      : r.baseUrl}
+                  </td>
+                  <td>
+                    <span className={`status-badge ${(r.status || "").toLowerCase() === "active" ? "approved" : "rejected"}`}>
+                      {r.status || "ACTIVE"}
+                    </span>
+                  </td>
+                  <td className="trust-cell">
+                    {trust?._error ? (
+                      <div className="trust-error-wrap">
+                        <span className="trust-error-msg" title={trust._error}>⚠ {trust._error}</span>
+                        <button className="admin-btn small" onClick={() => handleVerify(r.id)}>Retry</button>
+                      </div>
+                    ) : trust?.found ? (
+                      <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+                        <TrustGauge trustScore={trust.trustScore} label={trust.trustLabel} />
+                        <div style={{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap",justifyContent:"center"}}>
+                          <span style={{fontSize:"0.62rem",color:"#94a3b8"}}>Bias:</span>
+                          <BiasChip bias={trust.biasLabel} />
+                        </div>
+                        <ReliabilityBar score={trust.reliabilityScore} />
+                        <span className="trust-hint" style={{fontSize:"0.61rem",textAlign:"center"}}>{trust.description}</span>
+                      </div>
+                    ) : trust && !trust.found ? (
+                      <div className="trust-error-wrap">
+                        <span className="trust-not-found">{trust.trustLabel || "Not found"}</span>
+                        <span className="trust-hint">{trust.description || "Not found in archive"}</span>
+                        <button className="admin-btn small" style={{fontSize:"0.72rem",padding:"2px 8px"}} onClick={() => handleVerify(r.id)}>Retry</button>
+                      </div>
+                    ) : (
+                      <button
+                        className="admin-btn small"
+                        disabled={!!verifying[r.id]}
+                        onClick={() => handleVerify(r.id)}
+                      >
+                        {verifying[r.id] ? "Verifying…" : "Verify"}
+                      </button>
+                    )}
+                  </td>
+                  <td className="action-cell">
+                    {editingId === r.id ? (
+                      <>
+                        <button className="admin-btn small primary" onClick={() => handleUpdate(r.id)}>Save</button>
+                        <button className="admin-btn small" onClick={() => setEditingId(null)}>Cancel</button>
+                      </>
+                    ) : (
+                      <>
+                        <button className="admin-btn small" onClick={() => { setEditingId(r.id); setEditingForm({ name: r.name, baseUrl: r.baseUrl }); }}>Edit</button>
+                        <button
+                          className="admin-btn small accent"
+                          disabled={discoveryLoading && discoveringId === r.id}
+                          onClick={() => handleDiscover(r.id)}
+                        >
+                          {discoveryLoading && discoveringId === r.id ? "Discovering…" : "Discover"}
+                        </button>
+                        <button className="admin-btn small" onClick={() => handleStatus(r.id, "SUSPENDED")}>Suspend</button>
+                        <button className="admin-btn small" onClick={() => handleStatus(r.id, "ACTIVE")}>Activate</button>
+                        <button className="admin-btn small danger" onClick={() => handleDelete(r.id, r.name)}>Hard Delete</button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+            {roots.length === 0 && <tr><td colSpan="6" className="empty-row">No roots found</td></tr>}
           </tbody>
         </table>
-      </div>
+      </div>}
+
       {Dialog}
     </div>
   );
 }
+
+/* ===================== DISCOVERY PANEL ===================== */
+function DiscoveryPanel({
+  root, jobId, status, loading, logs, endpoints,
+  outcome, reasons, manualMessage, requiresManualEntry,
+  saveMsg, saving, onToggle, onToggleAll, onAdd, onRemove, onSave, onClose,
+}) {
+  const [customUrl, setCustomUrl] = useState("");
+  const [assessing, setAssessing] = useState(false);
+  const logRef = useRef(null);
+  const savableEndpoints = endpoints.filter(
+    (e) => e.assessmentStatus === "discovered" || e.assessmentStatus === "good"
+  );
+  const selectedCount = endpoints.filter(
+    (e) => e.selected && (e.assessmentStatus === "discovered" || e.assessmentStatus === "good")
+  ).length;
+
+  useEffect(() => {
+    if (logRef.current) {
+      logRef.current.scrollTop = logRef.current.scrollHeight;
+    }
+  }, [logs]);
+
+  const handleAddCustom = async (e) => {
+    e.preventDefault();
+    if (!customUrl.trim() || assessing) return;
+    setAssessing(true);
+    try {
+      await onAdd(customUrl.trim());
+      setCustomUrl("");
+    } finally {
+      setAssessing(false);
+    }
+  };
+
+  const outcomeLabels = {
+    success: "Discovery Successful",
+    partial: "Partial Discovery",
+    failed: "Discovery Failed",
+  };
+
+  const statusLabel = loading
+    ? "Running"
+    : status === "completed"
+      ? (outcomeLabels[outcome] || "Complete")
+      : status === "failed"
+        ? "Failed"
+        : status || "Idle";
+
+  const outcomeClass = outcome ? `outcome-${outcome}` : "";
+
+  return (
+    <div className="discovery-panel">
+      <div className="discovery-panel-header">
+        <div>
+          <h3>
+            Endpoint Discovery
+            {root && (
+              <> — <span className="discovery-root-name">{root.name || root.baseUrl}</span></>
+            )}
+          </h3>
+          <p className="discovery-subtitle">
+            {root?.baseUrl || "Select a root and click Discover to start"}
+            {jobId && <span className="discovery-job-id"> · Job {jobId.slice(0, 8)}…</span>}
+          </p>
+        </div>
+        <div className="discovery-header-actions">
+          <span className={`discovery-status-badge status-${statusLabel.toLowerCase().replace(/\s+/g, "-")} ${outcomeClass}`}>
+            {statusLabel}
+          </span>
+          <button className="modal-close-btn" onClick={onClose}>✕</button>
+        </div>
+      </div>
+
+      {!loading && status === "completed" && outcome && (
+        <div className={`discovery-outcome-banner ${outcomeClass}`}>
+          <div className="discovery-outcome-title">
+            {outcome === "success" && "Automatic discovery completed successfully."}
+            {outcome === "partial" && "Discovery worked with restrictions."}
+            {outcome === "failed" && "This domain could not be discovered automatically."}
+          </div>
+          {reasons?.length > 0 && (
+            <ul className="discovery-outcome-reasons">
+              {reasons.map((reason, i) => <li key={i}>{reason}</li>)}
+            </ul>
+          )}
+          {requiresManualEntry && manualMessage && (
+            <p className="discovery-outcome-manual">{manualMessage}</p>
+          )}
+        </div>
+      )}
+
+      <div className="discovery-log-section">
+        <div className="discovery-log-header">Discovery Log</div>
+        <div className="discovery-log-console" ref={logRef}>
+          {logs.length === 0 ? (
+            <span className="discovery-log-empty">
+              {loading ? "Waiting for log output…" : "No logs yet. Click Discover on a root to begin."}
+            </span>
+          ) : (
+            logs.map((line, i) => (
+              <div key={i} className="discovery-log-line">{line}</div>
+            ))
+          )}
+          {loading && <div className="discovery-log-line discovery-log-cursor">▌</div>}
+        </div>
+      </div>
+
+      {loading && (
+        <div className="discovery-loading">
+          <div className="discovery-spinner" />
+          <span>Crawling domain and classifying pages — this may take several minutes…</span>
+        </div>
+      )}
+
+      {!loading && endpoints.length === 0 && status === "completed" && !requiresManualEntry && (
+        <p className="discovery-empty">No listing endpoints discovered for this domain.</p>
+      )}
+
+      {(endpoints.length > 0 || (status === "completed" && requiresManualEntry)) && (
+        <>
+          {endpoints.length > 0 && (
+            <>
+              <div className="discovery-controls-row">
+                <span className="discovery-count">
+                  {selectedCount} / {savableEndpoints.length} savable selected
+                  {endpoints.length !== savableEndpoints.length && (
+                    <span className="discovery-count-muted">
+                      {" "}({endpoints.length - savableEndpoints.length} rejected)
+                    </span>
+                  )}
+                </span>
+                <button className="admin-btn small" onClick={() => onToggleAll(true)}>Select All Good</button>
+                <button className="admin-btn small" onClick={() => onToggleAll(false)}>Deselect All</button>
+              </div>
+
+              <div className="discovery-endpoints-table-wrap">
+                <table className="discovery-endpoints-table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Endpoint URL</th>
+                      <th>Found From (Parent)</th>
+                      <th>Confidence</th>
+                      <th>Assessment</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {endpoints.map((ep) => {
+                      const savable = ep.assessmentStatus === "discovered" || ep.assessmentStatus === "good";
+                      const statusClass = ep.assessmentStatus || "pending";
+                      return (
+                        <tr key={ep.url} className={ep.selected && savable ? "selected" : ""}>
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={ep.selected}
+                              disabled={!savable || ep.assessmentStatus === "assessing"}
+                              onChange={() => onToggle(ep.url)}
+                            />
+                          </td>
+                          <td className="discovery-ep-url-cell">
+                            <a href={ep.url} target="_blank" rel="noopener noreferrer">{ep.url}</a>
+                          </td>
+                          <td className="discovery-ep-parent-cell">
+                            {ep.parent && ep.parent !== "(manually added)" ? (
+                              <a href={ep.parent} target="_blank" rel="noopener noreferrer">{ep.parent}</a>
+                            ) : (
+                              <span className="discovery-ep-no-parent">{ep.parent || "—"}</span>
+                            )}
+                          </td>
+                          <td className="discovery-ep-conf-cell">
+                            {ep.confidence != null ? `${(ep.confidence * 100).toFixed(1)}%` : "—"}
+                          </td>
+                          <td className={`discovery-ep-assessment discovery-assess-${statusClass}`}>
+                            {ep.assessmentStatus === "assessing" && "Assessing…"}
+                            {ep.assessmentStatus === "discovered" && "Auto-discovered"}
+                            {ep.assessmentStatus === "good" && "Good for crawling"}
+                            {ep.assessmentStatus === "rejected" && "Rejected"}
+                            {ep.assessmentReason && (
+                              <span className="discovery-assess-detail" title={ep.assessmentReason}>
+                                {ep.assessmentReason.length > 60
+                                  ? `${ep.assessmentReason.slice(0, 60)}…`
+                                  : ep.assessmentReason}
+                              </span>
+                            )}
+                          </td>
+                          <td>
+                            <button className="discovery-ep-remove" title="Remove from list" onClick={() => onRemove(ep.url)}>✕</button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+
+          {(requiresManualEntry || status === "completed") && (
+            <form className="discovery-add-row" onSubmit={handleAddCustom}>
+              <input
+                placeholder="Enter endpoint URL to assess for crawling…"
+                value={customUrl}
+                onChange={(e) => setCustomUrl(e.target.value)}
+                className="admin-search"
+                disabled={assessing}
+              />
+              <button className="admin-btn small" type="submit" disabled={assessing || !customUrl.trim()}>
+                {assessing ? "Assessing…" : "Assess"}
+              </button>
+            </form>
+          )}
+
+          {saveMsg && (
+            <div className={`discovery-save-msg ${saveMsg.startsWith("Saved") ? "success" : "error"}`}>
+              {saveMsg}
+            </div>
+          )}
+
+          <div className="discovery-footer">
+            <button
+              className="admin-btn primary"
+              disabled={saving || selectedCount === 0}
+              onClick={onSave}
+            >
+              {saving ? "Saving…" : `Accept & Save ${selectedCount} Endpoint${selectedCount !== 1 ? "s" : ""}`}
+            </button>
+            <button className="admin-btn small" onClick={onClose}>Back to Roots</button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 
 /* ===================== MANAGE ENDPOINTS ===================== */
 function ManageEndpoints({ session }) {
@@ -1310,7 +1961,13 @@ function EditorRequests({ session }) {
     api.get("/api/editor-requests", cfg).then((r) => setRequests(r.data)).catch(console.error);
   }, [session.token]);
 
-  useEffect(load, [load]);
+  useEffect(() => { load(); }, [load]);
+
+  // Poll for new editor requests every 15 seconds so admin sees them without manual refresh
+  useEffect(() => {
+    const interval = setInterval(load, 15000);
+    return () => clearInterval(interval);
+  }, [load]);
 
   const handleApprove = async (id) => {
     try {
@@ -1356,7 +2013,7 @@ function EditorRequests({ session }) {
                 <td>{r.id}</td>
                 <td><img className="avatar-circle" src={resolveAvatar(r.profilePicture, "editor")} alt="editor request avatar" /></td>
                 <td>{r.userEmail}</td>
-                <td>{r.field?.name || "-"}</td>
+                <td>{(r.fields || []).map(f => f.name).join(", ") || "-"}</td>
                 <td className="title-cell">{r.experience?.substring(0, 80) || "-"}</td>
                 <td><span className={`status-badge ${r.status.toLowerCase()}`}>{r.status}</span></td>
                 {canApprove && (
@@ -1406,26 +2063,28 @@ function ManageCrawler({ session }) {
   );
 }
 
-/* â”€â”€â”€ Article Crawler Panel (original) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+﻿/* --- Article Crawler Panel --- */
 function ArticleCrawlerPanel({ session }) {
-  const [status, setStatus]       = useState(null);   // /control/status
-  const [health, setHealth]       = useState(null);   // /health
-  const [logs, setLogs]           = useState([]);     // log entries
-  const [lastLogTs, setLastLogTs] = useState(null);
-  const [actionMsg, setActionMsg] = useState("");
-  const [error, setError]         = useState("");
-  const [busy, setBusy]           = useState(false);
-  const [intervalInput, setIntervalInput] = useState("");
-  const [autoScroll, setAutoScroll]       = useState(true);
-  const logEndRef = useState(null)[0] || { current: null };
-  const [logEndEl, setLogEndEl]   = useState(null);
+  const [status, setStatus]         = useState(null);
+  const [health, setHealth]         = useState(null);
+  const [logs, setLogs]             = useState([]);
+  const [lastLogTs, setLastLogTs]   = useState(null);
+  const [actionMsg, setActionMsg]   = useState("");
+  const [error, setError]           = useState("");
+  const [busy, setBusy]             = useState(false);
+  const [intervalInput, setIntervalInput]   = useState("");
+  const [manualEpId, setManualEpId]         = useState("");
+  const [manualPause, setManualPause]       = useState(false);
+  const [manualMsg, setManualMsg]           = useState("");
+  const [autoScroll, setAutoScroll]         = useState(true);
+  const [logEndEl, setLogEndEl]             = useState(null);
 
   const cfg        = authConfig(session.token);
   const canControl = hasRole(session, "CONTROL_CRAWLER");
-  const isRunning  = status?.crawlRunning === true;
   const isOffline  = health === null;
+  const channels   = status?.channels || [];
+  const anyActive  = channels.some(c => c.status === "crawling");
 
-  // â”€â”€ fetch status + health â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const fetchStatus = useCallback(async () => {
     try {
       const [sRes, hRes] = await Promise.all([
@@ -1439,180 +2098,215 @@ function ArticleCrawlerPanel({ session }) {
       setHealth(null);
       setError("Crawler server unreachable");
     }
-  }, [session.token]);
+  }, [session.token]); // eslint-disable-line
 
-  // â”€â”€ fetch new logs (incremental) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const fetchLogs = useCallback(async () => {
     try {
-      const url = "/api/admin/crawler/logs" + (lastLogTs ? `?since=${encodeURIComponent(lastLogTs)}` : "?limit=200");
+      const url = "/api/admin/crawler/logs" +
+        (lastLogTs ? `?since=${encodeURIComponent(lastLogTs)}` : "?limit=200");
       const res = await api.get(url, cfg);
       const entries = res.data.logs || [];
       if (entries.length > 0) {
-        setLogs(prev => {
-          const merged = [...prev, ...entries].slice(-500);
-          return merged;
-        });
+        setLogs(prev => [...prev, ...entries].slice(-500));
         setLastLogTs(entries[entries.length - 1].ts);
       }
-    } catch {
-      // silent â€“ log fetching is best-effort
-    }
-  }, [session.token, lastLogTs]);
+    } catch { /* best-effort */ }
+  }, [session.token, lastLogTs]); // eslint-disable-line
 
-  // â”€â”€ polling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  useEffect(() => {
-    fetchStatus();
-    fetchLogs();
-  }, []);  // eslint-disable-line
+  useEffect(() => { fetchStatus(); fetchLogs(); }, []); // eslint-disable-line
 
   useEffect(() => {
-    const pollInterval = isRunning ? 2000 : 8000;
-    const id = setInterval(() => {
-      fetchStatus();
-      fetchLogs();
-    }, pollInterval);
+    const id = setInterval(() => { fetchStatus(); fetchLogs(); }, anyActive ? 2000 : 5000);
     return () => clearInterval(id);
-  }, [isRunning, fetchStatus, fetchLogs]);
+  }, [anyActive, fetchStatus, fetchLogs]);
 
-  // â”€â”€ auto-scroll log window â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
-    if (autoScroll && logEndEl) {
-      logEndEl.scrollIntoView({ behavior: "smooth" });
-    }
+    if (autoScroll && logEndEl) logEndEl.scrollIntoView({ behavior: "smooth" });
   }, [logs, autoScroll, logEndEl]);
 
-  // â”€â”€ control actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  const control = async (path, label, isPost = true) => {
-    setError("");
-    setBusy(true);
+  const control = async (path, label, method = "post") => {
+    setError(""); setBusy(true);
     try {
-      if (isPost) {
-        await api.post(`/api/admin/crawler/${path}`, {}, cfg);
-      } else {
-        await api.delete(`/api/admin/crawler/${path}`, cfg);
-      }
-      setActionMsg(`${label} - ${new Date().toLocaleTimeString()}`);
+      if (method === "delete") await api.delete(`/api/admin/crawler/${path}`, cfg);
+      else await api.post(`/api/admin/crawler/${path}`, {}, cfg);
+      setActionMsg(`${label} — ${new Date().toLocaleTimeString()}`);
       await fetchStatus();
       if (path !== "logs") await fetchLogs();
       if (path === "logs") setLogs([]);
     } catch (err) {
       setError(err.response?.data?.message || `${label} failed`);
-    } finally {
-      setBusy(false);
-    }
+    } finally { setBusy(false); }
   };
 
   const handleSetInterval = async (e) => {
     e.preventDefault();
-    const mins = parseInt(intervalInput, 10);
-    if (!mins || mins < 1 || mins > 1440) {
-      setError("Interval must be between 1 and 1440 minutes");
-      return;
-    }
-    setError("");
-    setBusy(true);
+    const val = parseInt(intervalInput, 10);
+    if (!val || val < 1 || val > 100) { setError("Staleness weight must be 1–100"); return; }
+    setError(""); setBusy(true);
     try {
-      await api.post("/api/admin/crawler/interval", { minutes: mins }, cfg);
-      setActionMsg(`Interval set to ${mins} min - ${new Date().toLocaleTimeString()}`);
-      setIntervalInput("");
-      await fetchStatus();
+      await api.post("/api/admin/crawler/interval", { minutes: val }, cfg);
+      setActionMsg(`Staleness weight set to ${val / 10} — ${new Date().toLocaleTimeString()}`);
+      setIntervalInput(""); await fetchStatus();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to set interval");
-    } finally {
-      setBusy(false);
-    }
+      setError(err.response?.data?.message || "Failed to set staleness weight");
+    } finally { setBusy(false); }
   };
 
-  const levelClass = (lvl) => {
-    if (!lvl) return "";
+  const handleManualRun = async (e) => {
+    e.preventDefault();
+    const epId = parseInt(manualEpId, 10);
+    if (!epId || epId < 1) { setManualMsg("Enter a valid endpoint ID."); return; }
+    setManualMsg(""); setError(""); setBusy(true);
+    try {
+      if (manualPause && !status?.paused) {
+        await api.post("/api/admin/crawler/stop", {}, cfg);
+      }
+      const res = await api.post("/api/admin/crawler/run-endpoint", { endpointId: epId }, cfg);
+      setManualMsg(`Crawl started: ${res.data?.message || "OK"}`);
+      setManualEpId("");
+      await fetchStatus();
+    } catch (err) {
+      setManualMsg(`Failed: ${err.response?.data?.message || err.response?.data?.detail || "Run failed"}`);
+    } finally { setBusy(false); }
+  };
+
+  const levelClass = lvl => {
+    if (!lvl) return "log-info";
     const l = lvl.toUpperCase();
     if (l === "ERROR") return "log-error";
     if (l === "WARN")  return "log-warn";
     return "log-info";
   };
 
-  const schedulerState = status
-    ? (status.paused ? "PAUSED" : "ACTIVE")
-    : (isOffline ? "OFFLINE" : "-");
+  const fmtPriority = p => {
+    if (p == null) return "—";
+    if (p >= 9999) return <span className="due-now">NEW</span>;
+    return p.toFixed(2);
+  };
 
-  const lastRun = status?.lastRun;
+  const fmtMinutes = m => {
+    if (m == null) return "never";
+    if (m < 1) return "<1m";
+    if (m < 60) return `${Math.round(m)}m`;
+    return `${Math.floor(m / 60)}h ${Math.round(m % 60)}m`;
+  };
+
+  const schedulerState = isOffline ? "OFFLINE" : status?.paused ? "PAUSED" : "ACTIVE";
+  const queued = status?.queuedEndpoints || [];
 
   return (
     <div className="crawler-sub-panel">
-      {error && <div className="admin-error">{error}</div>}
+      {error     && <div className="admin-error">{error}</div>}
       {actionMsg && <div className="crawler-action-toast">{actionMsg}</div>}
 
-      {/* â”€â”€ Status Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* Overview Cards */}
       <div className="crawler-status-grid">
         <div className={`crawler-status-card ${isOffline ? "card-offline" : health?.ok ? "card-ok" : "card-warn"}`}>
           <span className="card-label">Heartbeat</span>
           <span className="card-value">{isOffline ? "OFFLINE" : health?.ok ? "HEALTHY" : "WARN"}</span>
-          <span className="card-sub">{health?.backendBaseUrl || "-"}</span>
+          <span className="card-sub">{health?.backendBaseUrl || "—"}</span>
         </div>
         <div className={`crawler-status-card ${schedulerState === "ACTIVE" ? "card-ok" : schedulerState === "OFFLINE" ? "card-offline" : "card-warn"}`}>
           <span className="card-label">Scheduler</span>
           <span className="card-value">{schedulerState}</span>
-          <span className="card-sub">
-            {status?.nextRunAt ? `Next: ${new Date(status.nextRunAt).toLocaleTimeString()}` : "-"}
-          </span>
+          <span className="card-sub">{status?.queueSize != null ? `${status.queueSize} endpoints queued` : "—"}</span>
         </div>
-        <div className={`crawler-status-card ${isRunning ? "card-running" : "card-ok"}`}>
-          <span className="card-label">Crawl Status</span>
+        <div className={`crawler-status-card ${anyActive ? "card-running" : "card-ok"}`}>
+          <span className="card-label">Channels</span>
           <span className="card-value">
-            {isRunning ? <><span className="pulse-dot" /> RUNNING</> : "IDLE"}
+            {anyActive && <span className="pulse-dot" />}
+            {channels.filter(c => c.status === "crawling").length}
+            <small style={{fontSize:"0.8rem",fontWeight:500,color:"#94a3b8"}}>&nbsp;/ {channels.length} active</small>
           </span>
-          <span className="card-sub">
-            {lastRun?.status && lastRun.status !== "never-run"
-              ? `Last: ${lastRun.status} ${lastRun.finishedAt ? new Date(lastRun.finishedAt).toLocaleTimeString() : ""}`
-              : "Never run"}
-          </span>
+          <span className="card-sub">{anyActive ? "crawling now" : "all idle"}</span>
         </div>
         <div className="crawler-status-card card-ok">
-          <span className="card-label">Interval</span>
-          <span className="card-value">{status?.intervalMinutes ?? "-"}<small> min</small></span>
-          <span className="card-sub">Scheduled crawl frequency</span>
+          <span className="card-label">Articles Found</span>
+          <span className="card-value">{status?.totalArticlesFound ?? "—"}</span>
+          <span className="card-sub">{status?.totalCrawls != null ? `${status.totalCrawls} runs total` : "—"}</span>
         </div>
       </div>
 
-      {/* â”€â”€ Last Run Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      {lastRun && lastRun.status && lastRun.status !== "never-run" && (
-        <div className="crawler-run-stats">
-          <h4>Last Run Summary</h4>
-          <div className="run-stats-grid">
-            {[
-              ["Articles",      lastRun.articleCreated ?? "-"],
-              ["Cache Hits",    lastRun.cacheHits ?? "-"],
-              ["Links Found",   lastRun.linksDiscovered ?? "-"],
-              ["Processed",     lastRun.linksProcessed ?? "-"],
-              ["Failed",        lastRun.failed ?? "-"],
-              ["Status",        lastRun.status],
-            ].map(([k, v]) => (
-              <div key={k} className="run-stat-item">
-                <span className="run-stat-label">{k}</span>
-                <span className={`run-stat-value ${k === "Failed" && v > 0 ? "stat-bad" : k === "Articles" && v > 0 ? "stat-good" : ""}`}>{v}</span>
+      {/* Channel Status */}
+      {!isOffline && channels.length > 0 && (
+        <div className="crawler-section-block">
+          <div className="crawler-section-title">Channel Status</div>
+          <div className="crawler-channels-grid">
+            {channels.map(ch => (
+              <div key={ch.id}
+                className={`crawler-ch-card ${ch.status === "crawling" ? "ch-crawling" : ch.status === "stopped" ? "ch-stopped" : "ch-idle"}`}>
+                <div className="ch-header">
+                  <span className="ch-id">CH {ch.id}</span>
+                  <span className={`ch-badge ${ch.status === "crawling" ? "badge-crawling" : ch.status === "stopped" ? "badge-stopped" : "badge-idle"}`}>
+                    {ch.status === "crawling" && <span className="pulse-dot" />}
+                    {ch.status.toUpperCase()}
+                  </span>
+                </div>
+                {ch.endpointId != null && (
+                  <div className="ch-ep-id">EP #{ch.endpointId}</div>
+                )}
+                <div className={`ch-ep-url${!ch.endpoint ? " ch-no-ep" : ""}`} title={ch.endpoint || ""}>
+                  {ch.endpoint ? (ch.endpoint.length > 55 ? ch.endpoint.slice(0, 52) + "…" : ch.endpoint) : "—"}
+                </div>
+                {ch.startedAt && (
+                  <div className="ch-started">since {new Date(ch.startedAt + "Z").toLocaleTimeString()}</div>
+                )}
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* â”€â”€ Command Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* Pending Queue — sorted by priority */}
+      {!isOffline && queued.length > 0 && (
+        <div className="crawler-section-block">
+          <div className="crawler-section-title">Pending Endpoints — Priority Order</div>
+          <div className="crawler-queue-table-wrap">
+            <table className="crawler-queue-table">
+              <thead>
+                <tr><th>EP ID</th><th>URL</th><th>Priority</th><th>Prod Score</th><th>Last Crawled</th><th>Runs</th></tr>
+              </thead>
+              <tbody>
+                {queued.map(ep => (
+                  <tr key={ep.id} className={ep.priority >= 9999 ? "row-due" : ""}>
+                    <td className="ep-id-cell">#{ep.id}</td>
+                    <td className="ep-url-cell" title={ep.url}>
+                      {ep.url.length > 60 ? ep.url.slice(0, 57) + "…" : ep.url}
+                    </td>
+                    <td className="ep-due-cell">{fmtPriority(ep.priority)}</td>
+                    <td className="ep-score-cell">{ep.score}</td>
+                    <td className="ep-score-cell">{fmtMinutes(ep.minutesSinceCrawl)}</td>
+                    <td className="ep-score-cell">{ep.crawlCount ?? 0}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Control Bar */}
       {canControl && (
         <div className="crawler-command-bar">
           <button className="admin-btn primary"
-            onClick={() => control("start", "Start scheduler")}
-            disabled={busy || isOffline || (!status?.paused)}>
-            Start
+            onClick={() => control("start", "Scheduler resumed")}
+            disabled={busy || isOffline || !status?.paused}>
+            Resume
           </button>
           <button className="admin-btn danger"
-            onClick={() => control("stop", "Stop scheduler")}
+            onClick={() => control("stop", "Scheduler paused")}
             disabled={busy || isOffline || status?.paused}>
-            Stop
+            Pause
+          </button>
+          <button className="admin-btn" style={{background:"linear-gradient(135deg,#0f766e,#0d9488)",borderColor:"#134e4a"}}
+            onClick={() => control("restart", "Scheduler restarted")}
+            disabled={busy || isOffline}>
+            Restart
           </button>
           <button className="admin-btn accent"
-            onClick={() => control("run-now", "Run now")}
-            disabled={busy || isOffline || isRunning}>
-            {isRunning ? <><span className="spinner-sm" /> Running...</> : "Run Now"}
+            onClick={() => control("run-now", "All endpoints re-queued for immediate run")}
+            disabled={busy || isOffline}>
+            Run All Now
           </button>
           <button className="admin-btn"
             onClick={() => { fetchStatus(); fetchLogs(); }}
@@ -1620,32 +2314,67 @@ function ArticleCrawlerPanel({ session }) {
             Refresh
           </button>
           <button className="admin-btn muted"
-            onClick={() => control("logs", "Clear logs", false)}
+            onClick={() => control("logs", "Logs cleared", "delete")}
             disabled={busy}>
             Clear Logs
           </button>
         </div>
       )}
 
-      {/* â”€â”€ Interval Editor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* Manual Endpoint Run */}
+      {canControl && (
+        <div className="crawler-section-block">
+          <div className="crawler-section-title">Manual Endpoint Run</div>
+          <p className="crawler-section-desc">
+            Run a specific listing endpoint immediately. Optionally pause the scheduler first
+            so only this endpoint crawls.
+          </p>
+          <form className="crawler-manual-run-form" onSubmit={handleManualRun}>
+            <input
+              type="number" min="1"
+              placeholder="Endpoint ID"
+              value={manualEpId}
+              onChange={e => setManualEpId(e.target.value)}
+              className="manual-ep-input"
+            />
+            <label className="manual-pause-toggle">
+              <input type="checkbox" checked={manualPause}
+                onChange={e => setManualPause(e.target.checked)} />
+              Pause scheduler first
+            </label>
+            <button className="admin-btn accent" type="submit" disabled={busy || isOffline || !manualEpId}>
+              {busy ? <><span className="spinner-sm" /> Running…</> : "Run Endpoint Now"}
+            </button>
+            {status?.paused && (
+              <button className="admin-btn primary" type="button"
+                onClick={() => control("start", "Scheduler resumed")}
+                disabled={busy || isOffline}>
+                Resume Scheduler
+              </button>
+            )}
+          </form>
+          {manualMsg && (
+            <div className={`crawler-action-toast${manualMsg.startsWith("Failed") ? " toast-error" : ""}`}>
+              {manualMsg}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Staleness Weight */}
       {canControl && (
         <form className="crawler-interval-form" onSubmit={handleSetInterval}>
-          <label>Change Interval</label>
-          <input
-            type="number"
-            min="1"
-            max="1440"
-            placeholder={`Current: ${status?.intervalMinutes ?? "?"} min`}
+          <label>Staleness Weight</label>
+          <input type="number" min="1" max="100"
+            placeholder="1–100 (÷10)"
             value={intervalInput}
             onChange={e => setIntervalInput(e.target.value)}
           />
-          <button className="admin-btn primary" type="submit" disabled={busy || !intervalInput}>
-            Apply
-          </button>
+          <button className="admin-btn primary" type="submit" disabled={busy || !intervalInput}>Apply</button>
         </form>
       )}
 
-      {/* â”€â”€ Live Log Window â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* Live Log */}
       <div className="crawler-log-panel">
         <div className="log-panel-header">
           <span>Live Log Stream</span>
@@ -1656,7 +2385,7 @@ function ArticleCrawlerPanel({ session }) {
         </div>
         <div className="log-entries">
           {logs.length === 0
-            ? <span className="log-empty">No log entries yet. Start the crawler or trigger a run.</span>
+            ? <span className="log-empty">No log entries yet.</span>
             : logs.map((entry, i) => (
               <div key={i} className={`log-entry ${levelClass(entry.level)}`}>
                 <span className="log-ts">{entry.ts ? new Date(entry.ts).toLocaleTimeString() : ""}</span>
@@ -1672,29 +2401,36 @@ function ArticleCrawlerPanel({ session }) {
   );
 }
 
+
 /* ===================== MANAGE FIELDS ===================== */
 function ManageFields({ session }) {
   const [fields, setFields] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ name: "", description: "" });
+  const [form, setForm] = useState({ name: "", description: "", parentId: "" });
   const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({ name: "", description: "" });
+  const [editForm, setEditForm] = useState({ name: "", description: "", parentId: "" });
   const [error, setError] = useState("");
   const { askConfirm, Dialog } = useAdminDialog();
   const cfg = authConfig(session.token);
 
+  // Load flat fields for parent dropdown; also load hierarchical for display
   const load = useCallback(() => {
     api.get("/api/fields", cfg).then((r) => setFields(r.data)).catch(console.error);
   }, [session.token]);
 
   useEffect(load, [load]);
 
+  // Get only general fields (no parent) for the parent dropdown
+  const generalFields = fields.filter((f) => !f.parentId);
+
   const handleCreate = async (e) => {
     e.preventDefault();
     setError("");
     try {
-      await api.post("/api/fields", form, cfg);
-      setForm({ name: "", description: "" });
+      const body = { name: form.name, description: form.description };
+      if (form.parentId) body.parentId = Number(form.parentId);
+      await api.post("/api/fields", body, cfg);
+      setForm({ name: "", description: "", parentId: "" });
       setShowCreate(false);
       load();
     } catch (err) {
@@ -1704,7 +2440,10 @@ function ManageFields({ session }) {
 
   const handleUpdate = async (id) => {
     try {
-      await api.put(`/api/fields/${id}`, editForm, cfg);
+      const body = { name: editForm.name, description: editForm.description };
+      if (editForm.parentId) body.parentId = Number(editForm.parentId);
+      else body.parentId = null;
+      await api.put(`/api/fields/${id}`, body, cfg);
       setEditingId(null);
       load();
     } catch (err) {
@@ -1713,7 +2452,7 @@ function ManageFields({ session }) {
   };
 
   const handleDelete = async (id) => {
-    const ok = await askConfirm("Delete this category field?");
+    const ok = await askConfirm("Delete this category field? This will also remove all sub-fields under it.");
     if (!ok) return;
     try {
       await api.delete(`/api/fields/${id}`, cfg);
@@ -1723,11 +2462,17 @@ function ManageFields({ session }) {
     }
   };
 
+  const getParentName = (parentId) => {
+    if (!parentId) return "";
+    const p = fields.find((f) => f.id === parentId);
+    return p ? p.name : "";
+  };
+
   return (
     <div>
       <div className="admin-page-header">
         <h2>Manage Category Fields</h2>
-        <p>Create, edit, and remove news categories</p>
+        <p>Create general categories and specific sub-fields. Editors can pick up to 2 specific sub-fields under one general category.</p>
       </div>
 
       {error && <div className="admin-error">{error}</div>}
@@ -1738,23 +2483,42 @@ function ManageFields({ session }) {
 
       {showCreate && (
         <form className="admin-form" onSubmit={handleCreate}>
-          <input placeholder="Field name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+          <input placeholder="Field name (e.g. Football, Artificial Intelligence)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
           <input placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+          <select value={form.parentId} onChange={(e) => setForm({ ...form, parentId: e.target.value })} style={{ padding: "8px", borderRadius: 6, border: "1px solid #ccc" }}>
+            <option value="">— General Category (no parent) —</option>
+            {generalFields.map((gf) => (
+              <option key={gf.id} value={gf.id}>{gf.name}</option>
+            ))}
+          </select>
+          <p style={{ fontSize: "0.8rem", color: "#666", margin: 0 }}>Select a parent to create a sub-field, or leave empty for a general category.</p>
           <button className="admin-btn primary" type="submit">Create Field</button>
         </form>
       )}
 
       <div className="admin-table-wrap">
         <table className="admin-table">
-          <thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Actions</th></tr></thead>
+          <thead><tr><th>ID</th><th>Name</th><th>Parent</th><th>Description</th><th>Actions</th></tr></thead>
           <tbody>
             {fields.map((f) => (
-              <tr key={f.id}>
+              <tr key={f.id} style={{ background: !f.parentId ? "#f8fafc" : "white" }}>
                 <td>{f.id}</td>
-                <td>
+                <td style={{ fontWeight: !f.parentId ? 600 : 400, paddingLeft: !f.parentId ? "12px" : "24px" }}>
                   {editingId === f.id
                     ? <input value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
-                    : f.name}
+                    : <>{!f.parentId ? "📁 " : "• "}{f.name}</>}
+                </td>
+                <td style={{ color: "#888", fontSize: "0.85rem" }}>
+                  {editingId === f.id ? (
+                    <select value={editForm.parentId} onChange={(e) => setEditForm({ ...editForm, parentId: e.target.value })}>
+                      <option value="">— General —</option>
+                      {generalFields.filter((gf) => gf.id !== f.id).map((gf) => (
+                        <option key={gf.id} value={gf.id}>{gf.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    getParentName(f.parentId) || <span style={{ color: "#aaa" }}>General</span>
+                  )}
                 </td>
                 <td>
                   {editingId === f.id
@@ -1769,14 +2533,14 @@ function ManageFields({ session }) {
                     </>
                   ) : (
                     <>
-                      <button className="admin-btn small" onClick={() => { setEditingId(f.id); setEditForm({ name: f.name, description: f.description || "" }); }}>Edit</button>
+                      <button className="admin-btn small" onClick={() => { setEditingId(f.id); setEditForm({ name: f.name, description: f.description || "", parentId: f.parentId || "" }); }}>Edit</button>
                       <button className="admin-btn small danger" onClick={() => handleDelete(f.id)}>Delete</button>
                     </>
                   )}
                 </td>
               </tr>
             ))}
-            {fields.length === 0 && <tr><td colSpan="4" className="empty-row">No fields configured</td></tr>}
+            {fields.length === 0 && <tr><td colSpan="5" className="empty-row">No fields configured</td></tr>}
           </tbody>
         </table>
       </div>

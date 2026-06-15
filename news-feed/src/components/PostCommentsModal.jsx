@@ -1,14 +1,43 @@
 import React, { memo, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import EmojiPicker from "emoji-picker-react";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 import { Grid } from "@giphy/react-components";
+import { useTranslation } from "react-i18next";
 
+import { useSession } from "../context/SessionContext";
 import { apiFetch } from "../utils/apiFetch";
 import { ensureUserInitialized } from "../utils/auth";
 import { getUserId } from "../utils/userId";
+import { detectItemLanguage } from "../utils/languageUtils";
+import { AI_BASE_URL } from "../utils/aiFetch";
 
-const AVATAR_PLACEHOLDER =
-  "https://ui-avatars.com/api/?name=User&background=0f172a&color=ffffff";
+// Translate helper for comments
+async function translateText(text, sourceLang, targetLang) {
+  if (!text || !text.trim()) return "";
+  try {
+    const res = await fetch(`${AI_BASE_URL}/translate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, source_lang: sourceLang, target_lang: targetLang }),
+    });
+    if (!res.ok) throw new Error(`Translation failed: ${res.status}`);
+    const data = await res.json();
+    const translated = (data.translatedText || "").trim();
+    if (!translated || /^(i can'?t|cannot|sorry|i'm sorry|i will not|cannot fulfill)/i.test(translated)) {
+      return text;
+    }
+    return translated;
+  } catch (err) {
+    console.error("Comment translation error:", err.message);
+    return text;
+  }
+}
+
+function getAvatarUrl(comment) {
+  if (comment.profilePicture && comment.profilePicture.trim()) return comment.profilePicture;
+  return "https://ui-avatars.com/api/?name=User&background=0f172a&color=ffffff";
+}
 
 const POST_IMAGE_PLACEHOLDER =
   "https://media.istockphoto.com/id/1222357475/vector/image-preview-icon-picture-placeholder-for-website-or-ui-ux-design-vector-illustration.jpg?s=612x612&w=0&k=20&c=KuCo-dRBYV7nz2gbk4J9w1WtTAgpTdznHu55W9FjimE=";
@@ -21,18 +50,18 @@ function shorten(text, max = 45) {
   return `${text.slice(0, max - 1).trim()}...`;
 }
 
-function timeAgo(value) {
-  if (!value) return "just now";
+function timeAgo(value, lang = "en") {
+  if (!value) return lang === "ar" ? "الآن" : "just now";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "just now";
+  if (Number.isNaN(date.getTime())) return lang === "ar" ? "الآن" : "just now";
   const diffMs = Date.now() - date.getTime();
-  if (diffMs < 60000) return "just now";
+  if (diffMs < 60000) return lang === "ar" ? "الآن" : "just now";
   const min = Math.floor(diffMs / 60000);
-  if (min < 60) return `${min}m ago`;
+  if (min < 60) return lang === "ar" ? `منذ ${min} دقائق` : `${min}m ago`;
   const hrs = Math.floor(min / 60);
-  if (hrs < 24) return `${hrs}h ago`;
+  if (hrs < 24) return lang === "ar" ? `منذ ${hrs} ساعات` : `${hrs}h ago`;
   const days = Math.floor(hrs / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days < 7) return lang === "ar" ? `منذ ${days} أيام` : `${days}d ago`;
   return date.toLocaleDateString();
 }
 
@@ -84,27 +113,84 @@ const CommentItem = memo(function CommentItem({
   onReply,
   voteComment,
   onPreviewAttachment,
+  lang = "en",
+  navigate,
 }) {
+  const { t } = useTranslation();
   const [showReplies, setShowReplies] = useState(true);
   const hasReplies = (comment.replies || []).length > 0;
 
+  const commentLang = detectItemLanguage(comment);
+  const needsCommentTranslation = (lang === "ar" && commentLang !== "ar") || (lang !== "ar" && commentLang === "ar");
+  const [translatedComment, setTranslatedComment] = useState(null);
+  const [showTranslatedComment, setShowTranslatedComment] = useState(false);
+  const [isTranslatingComment, setIsTranslatingComment] = useState(false);
+
+  const handleTranslateComment = async () => {
+    if (showTranslatedComment) {
+      setShowTranslatedComment(false);
+      return;
+    }
+    if (!needsCommentTranslation || !comment.content) return;
+    setIsTranslatingComment(true);
+    try {
+      const targetLang = lang === "ar" ? "ar" : "en";
+      const sourceLang = lang === "ar" ? "en" : "ar";
+      const result = await translateText(comment.content, sourceLang, targetLang);
+      setTranslatedComment(result);
+      setShowTranslatedComment(true);
+    } catch (err) {
+      console.error("Comment translation error:", err.message);
+    } finally {
+      setIsTranslatingComment(false);
+    }
+  };
+
   return (
-    <div className={depth > 0 ? "comment-item reply" : "comment-item"}>
-      <div className="flex items-start gap-3">
-        <img
-          src={AVATAR_PLACEHOLDER}
-          alt="user avatar"
-          className="comment-avatar"
-        />
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2 text-sm">
-            <span className="comment-author">
-              {comment.userIdentifier || `User ${comment.userId}`}
-            </span>
-            <span className="comment-time">{timeAgo(comment.createdAt)}</span>
+        <div className={depth > 0 ? "comment-item reply" : "comment-item"}>
+          <div className="flex items-start gap-3">
+            <Link
+              to={comment.profileUsername ? `/profile/${comment.profileUsername}` : "#"}
+              onClick={(e) => { if (!comment.profileUsername) e.preventDefault(); }}
+              className="flex-shrink-0"
+            >
+              <img
+                src={getAvatarUrl(comment)}
+                alt="user avatar"
+                className="comment-avatar"
+                style={{ cursor: comment.profileUsername ? "pointer" : "default" }}
+              />
+            </Link>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <Link
+                  to={comment.profileUsername ? `/profile/${comment.profileUsername}` : "#"}
+                  className="comment-author"
+                  style={{ textDecoration: "none", cursor: comment.profileUsername ? "pointer" : "default" }}
+                >
+                  {comment.userIdentifier || `User ${comment.userId}`}
+                </Link>
+                <span className="comment-time">{timeAgo(comment.createdAt, lang)}</span>
+              </div>
+
+          <div className="comment-content">
+            {showTranslatedComment && translatedComment ? translatedComment : comment.content}
           </div>
 
-          <div className="comment-content">{comment.content}</div>
+          {needsCommentTranslation && comment.content && (
+            <button
+              onClick={handleTranslateComment}
+              disabled={isTranslatingComment}
+              style={{
+                marginTop: 4, fontSize: "0.78rem", fontWeight: 600,
+                color: "var(--text-muted)", background: "none", border: "none",
+                cursor: "pointer", fontFamily: "var(--font-sans)",
+                transition: "color var(--transition-fast)", padding: 0,
+              }}
+            >
+              {isTranslatingComment ? t("translating") : showTranslatedComment ? t("viewOriginal") : (lang === "ar" ? t("translateToAr") : t("translateToEn"))}
+            </button>
+          )}
 
           {renderAttachment(comment, onPreviewAttachment)}
 
@@ -131,8 +217,8 @@ const CommentItem = memo(function CommentItem({
               className="comment-action-btn text-blue-600"
               onClick={() => onReply(comment)}
             >
-              Reply
-            </button>
+                {t("reply")}
+              </button>
 
             {hasReplies && (
               <button
@@ -140,15 +226,15 @@ const CommentItem = memo(function CommentItem({
                 onClick={() => setShowReplies((prev) => !prev)}
               >
                 {showReplies
-                  ? "Hide replies"
-                  : `Show replies (${comment.replies.length})`}
+                  ? t("hideReplies")
+                  : t("showReplies", { count: comment.replies.length })}
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {hasReplies && showReplies && (
+              {hasReplies && showReplies && (
         <div className="mt-3">
           {comment.replies.map((reply) => (
             <CommentItem
@@ -158,6 +244,8 @@ const CommentItem = memo(function CommentItem({
               onReply={onReply}
               voteComment={voteComment}
               onPreviewAttachment={onPreviewAttachment}
+              lang={lang}
+              navigate={navigate}
             />
           ))}
         </div>
@@ -167,6 +255,14 @@ const CommentItem = memo(function CommentItem({
 });
 
 export default function PostCommentsModal({ post, onClose }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
+  const nav = useNavigate();
+  const { session } = useSession();
+
+  // Only REGISTERED or EDITOR users can comment
+  const canComment = session?.type === "REGISTERED" || session?.type === "EDITOR";
+
   const [sortBy, setSortBy] = useState("recency");
   const [loading, setLoading] = useState(false);
   const [comments, setComments] = useState([]);
@@ -178,12 +274,29 @@ export default function PostCommentsModal({ post, onClose }) {
   const [replyingTo, setReplyingTo] = useState(null);
   const [previewAttachment, setPreviewAttachment] = useState(null);
 
-  const fetchRepliesRecursively = async (comment, userId) => {
-    const res = await apiFetch(`/api/comments/${comment.id}/replies?userId=${userId}`);
+  // Helper to make authenticated API calls using the session token from context
+  const authFetch = async (url, options = {}) => {
+    // For reading comments (GET), we initialize a primitive user for anonymous users
+    if (!options.method || options.method === "GET") {
+      await ensureUserInitialized();
+    }
+    const token = session?.token || (await ensureUserInitialized()).token;
+    const headers = {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`,
+    };
+    if (options.body && !(options.body instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
+    }
+    return fetch(url, { ...options, headers });
+  };
+
+  const fetchRepliesRecursively = async (comment) => {
+    const res = await authFetch(`/api/comments/${comment.id}/replies`);
     if (!res.ok) return { ...comment, replies: [] };
     const replies = await res.json();
     const hydratedReplies = await Promise.all(
-      (replies || []).map((reply) => fetchRepliesRecursively(reply, userId))
+      (replies || []).map((reply) => fetchRepliesRecursively(reply))
     );
     return { ...comment, replies: hydratedReplies };
   };
@@ -213,17 +326,15 @@ export default function PostCommentsModal({ post, onClose }) {
     if (!post?.id) return;
     setLoading(true);
     try {
-      await ensureUserInitialized();
-      const userId = getUserId();
       const serverSort = sortBy === "most_popular" ? "popularity" : "recency";
-      const res = await apiFetch(
-        `/api/comments/post/${post.id}?sortBy=${serverSort}&page=0&size=50&userId=${userId}`
+      const res = await authFetch(
+        `/api/comments/post/${post.id}?sortBy=${serverSort}&page=0&size=50`
       );
       if (!res.ok) throw new Error("Failed to load comments");
       const payload = await res.json();
       const roots = payload.content || [];
       const threaded = await Promise.all(
-        roots.map((comment) => fetchRepliesRecursively(comment, userId))
+        roots.map((comment) => fetchRepliesRecursively(comment))
       );
       setComments(sortClientSide(threaded));
     } catch (error) {
@@ -248,9 +359,9 @@ export default function PostCommentsModal({ post, onClose }) {
   const submitComment = async ({ content, parentCommentId = null }) => {
     const trimmed = (content || "").trim();
     if (!trimmed && !attachment) return;
+    if (!canComment || !session?.token) return;
+
     try {
-      await ensureUserInitialized();
-      const userId = getUserId();
       let attachmentUrl = null;
       let attachmentType = null;
       if (attachment?.kind === "gif") {
@@ -260,7 +371,7 @@ export default function PostCommentsModal({ post, onClose }) {
         attachmentUrl = await readFileAsDataUrl(attachment.file);
         attachmentType = attachment.file.type.startsWith("video/") ? "video" : "image";
       }
-      const res = await apiFetch(`/api/comments?userId=${userId}`, {
+      const res = await authFetch(`/api/comments`, {
         method: "POST",
         body: JSON.stringify({
           postId: post.id,
@@ -270,7 +381,11 @@ export default function PostCommentsModal({ post, onClose }) {
           attachmentType,
         }),
       });
-      if (!res.ok) throw new Error("Failed to submit comment");
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error("Comment submission failed:", res.status, errText);
+        throw new Error("Failed to submit comment");
+      }
       const created = await res.json();
       setDraft("");
       setAttachment(null);
@@ -284,7 +399,6 @@ export default function PostCommentsModal({ post, onClose }) {
           ...prev,
         ]);
       });
-      await loadComments();
     } catch (error) {
       console.error(error);
     }
@@ -292,9 +406,7 @@ export default function PostCommentsModal({ post, onClose }) {
 
   const voteComment = async (commentId, voteType) => {
     try {
-      await ensureUserInitialized();
-      const userId = getUserId();
-      const res = await apiFetch(`/api/comments/${commentId}/vote?userId=${userId}`, {
+      const res = await authFetch(`/api/comments/${commentId}/vote`, {
         method: "POST",
         body: JSON.stringify({ voteType }),
       });
@@ -313,16 +425,15 @@ export default function PostCommentsModal({ post, onClose }) {
         <div className="comments-modal" onClick={(e) => e.stopPropagation()}>
           <div className="comments-modal-header">
             <h2>
-              Post {shorten(post?.title || "Untitled", 36)}
-              {'\'s'} comments
+              {t("postCommentsTitle", { title: shorten(post?.title || t("untitledPost"), 36) })}
             </h2>
             <button onClick={onClose} className="modal-close">✕</button>
           </div>
 
           <div className="comments-modal-body">
             <div className="comment-preview">
-              <h4>Post Preview</h4>
-              <h3 className="text-base font-semibold text-gray-800 mt-1">
+              <h4>{t("postPreview")}</h4>
+              <h3 className="text-base font-semibold mt-1" style={{ color: "var(--text-primary)" }}>
                 {post?.title}
               </h3>
               <p>{postPreview}</p>
@@ -340,27 +451,27 @@ export default function PostCommentsModal({ post, onClose }) {
               )}
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-100 p-4">
+            <div className="rounded-xl border p-4" style={{ background: "var(--bg-surface)", borderColor: "var(--border-light)" }}>
               <div className="flex items-center justify-between gap-3 mb-4">
-                <h3 className="font-semibold text-gray-800">Comments</h3>
+                <h3 className="font-semibold" style={{ color: "var(--text-primary)" }}>{t("comments")}</h3>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="form-control w-auto text-sm"
                 >
-                  <option value="recency">Recency (default)</option>
-                  <option value="newest">Newest</option>
-                  <option value="oldest">Oldest</option>
-                  <option value="most_popular">Most popular</option>
-                  <option value="relevance">Relevance</option>
+                  <option value="recency">{t("recencyDefault")}</option>
+                  <option value="newest">{t("newestFirst")}</option>
+                  <option value="oldest">{t("oldestFirst")}</option>
+                  <option value="most_popular">{t("mostPopular")}</option>
+                  <option value="relevance">{t("relevanceScore")}</option>
                 </select>
               </div>
 
               {loading ? (
-                <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-500">Loading comments...</div>
+                <div className="rounded-lg p-4 text-sm" style={{ background: "var(--bg-subtle)", color: "var(--text-muted)" }}>{t("loadingComments")}</div>
               ) : comments.length === 0 ? (
-                <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-500">
-                  No comments yet. Be the first to comment.
+                <div className="rounded-lg p-4 text-sm" style={{ background: "var(--bg-subtle)", color: "var(--text-muted)" }}>
+                  {t("noCommentsYetDetailed")}
                 </div>
               ) : (
                 comments.map((comment) => (
@@ -370,117 +481,129 @@ export default function PostCommentsModal({ post, onClose }) {
                     onReply={setReplyingTo}
                     voteComment={voteComment}
                     onPreviewAttachment={setPreviewAttachment}
+                    lang={lang}
+                    navigate={nav}
                   />
                 ))
               )}
             </div>
           </div>
 
-          <div className="comments-input-area">
-            {replyingTo && (
-              <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-sm mb-2">
-                <span className="truncate">
-                  Replying to {replyingTo.userIdentifier || `User ${replyingTo.userId}`}
-                </span>
-                <button className="text-blue-700 hover:underline" onClick={() => setReplyingTo(null)}>
-                  Cancel
+          {canComment ? (
+            <div className="comments-input-area">
+              {replyingTo && (
+                <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-sm mb-2">
+                  <span className="truncate">
+                    Replying to {replyingTo.userIdentifier || `User ${replyingTo.userId}`}
+                  </span>
+                  <button className="text-blue-700 hover:underline" onClick={() => setReplyingTo(null)}>
+                    Cancel
+                  </button>
+                </div>
+              )}
+
+              {attachment && (
+                <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2">
+                  <span className="truncate">
+                    Attachment: {attachment.title || attachment.file?.name || "selected"}
+                  </span>
+                  <button className="text-rose-600 hover:underline" onClick={() => setAttachment(null)}>
+                    Remove
+                  </button>
+                </div>
+              )}
+
+              <div className="comment-input-row">
+                <button
+                  className="btn btn-sm"
+                  onClick={() => document.getElementById("comment-attachment-input")?.click()}
+                >
+                  Attach
                 </button>
-              </div>
-            )}
-
-            {attachment && (
-              <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2">
-                <span className="truncate">
-                  Attachment: {attachment.title || attachment.file?.name || "selected"}
-                </span>
-                <button className="text-rose-600 hover:underline" onClick={() => setAttachment(null)}>
-                  Remove
-                </button>
-              </div>
-            )}
-
-            <div className="comment-input-row">
-              <button
-                className="btn btn-sm"
-                onClick={() => document.getElementById("comment-attachment-input")?.click()}
-              >
-                Attach
-              </button>
-              <input
-                id="comment-attachment-input"
-                type="file"
-                accept="image/*,video/*,.gif"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  setAttachment({ kind: "file", file, title: file.name });
-                }}
-              />
-              <button
-                className="btn btn-sm"
-                onClick={() => { setShowGifPicker((prev) => !prev); setShowEmojiPicker(false); }}
-              >
-                GIF
-              </button>
-              <button
-                className="btn btn-sm"
-                onClick={() => { setShowEmojiPicker((prev) => !prev); setShowGifPicker(false); }}
-              >
-                Emoji
-              </button>
-              <input
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                placeholder={replyingTo ? "Write a reply..." : "Write a comment..."}
-              />
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={() => submitComment({ content: draft, parentCommentId: replyingTo?.id || null })}
-              >
-                {replyingTo ? "Post Reply" : "Post Comment"}
-              </button>
-            </div>
-
-            {showEmojiPicker && (
-              <div className="mt-2 overflow-hidden rounded-xl border border-gray-200">
-                <EmojiPicker
-                  width="100%"
-                  height={420}
-                  searchDisabled={false}
-                  skinTonesDisabled={false}
-                  previewConfig={{ showPreview: true }}
-                  onEmojiClick={(emojiData) => setDraft((prev) => prev + emojiData.emoji)}
-                />
-              </div>
-            )}
-
-            {showGifPicker && (
-              <div className="mt-2 rounded-xl border border-gray-200 bg-gray-50 p-3">
                 <input
-                  value={gifSearch}
-                  onChange={(e) => setGifSearch(e.target.value)}
-                  placeholder="Search GIFs..."
-                  className="form-control mb-3"
+                  id="comment-attachment-input"
+                  type="file"
+                  accept="image/*,video/*,.gif"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setAttachment({ kind: "file", file, title: file.name });
+                  }}
                 />
-                <div className="max-h-[500px] overflow-y-auto rounded-lg">
-                  <Grid
-                    width={800}
-                    columns={3}
-                    gutter={8}
-                    noLink={true}
-                    key={gifSearch}
-                    fetchGifs={(offset) => gf.search(gifSearch || "trending", { offset, limit: 20, rating: "pg-13", lang: "en" })}
-                    onGifClick={(gif, e) => {
-                      e.preventDefault();
-                      setAttachment({ kind: "gif", url: gif.images.original.url, title: gif.title });
-                      setShowGifPicker(false);
-                    }}
+                <button
+                  className="btn btn-sm"
+                  onClick={() => { setShowGifPicker((prev) => !prev); setShowEmojiPicker(false); }}
+                >
+                  GIF
+                </button>
+                <button
+                  className="btn btn-sm"
+                  onClick={() => { setShowEmojiPicker((prev) => !prev); setShowGifPicker(false); }}
+                >
+                  Emoji
+                </button>
+                <input
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder={replyingTo ? "Write a reply..." : "Write a comment..."}
+                />
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => submitComment({ content: draft, parentCommentId: replyingTo?.id || null })}
+                >
+                  {replyingTo ? "Post Reply" : "Post Comment"}
+                </button>
+              </div>
+
+              {showEmojiPicker && (
+                <div className="mt-2 overflow-hidden rounded-xl border border-gray-200">
+                  <EmojiPicker
+                    width="100%"
+                    height={420}
+                    searchDisabled={false}
+                    skinTonesDisabled={false}
+                    previewConfig={{ showPreview: true }}
+                    onEmojiClick={(emojiData) => setDraft((prev) => prev + emojiData.emoji)}
                   />
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+
+              {showGifPicker && (
+                <div className="mt-2 rounded-xl border border-gray-200 bg-gray-50 p-3">
+                  <input
+                    value={gifSearch}
+                    onChange={(e) => setGifSearch(e.target.value)}
+                    placeholder="Search GIFs..."
+                    className="form-control mb-3"
+                  />
+                  <div className="max-h-[500px] overflow-y-auto rounded-lg">
+                    <Grid
+                      width={800}
+                      columns={3}
+                      gutter={8}
+                      noLink={true}
+                      key={gifSearch}
+                      fetchGifs={(offset) => gf.search(gifSearch || "trending", { offset, limit: 20, rating: "pg-13", lang: "en" })}
+                      onGifClick={(gif, e) => {
+                        e.preventDefault();
+                        setAttachment({ kind: "gif", url: gif.images.original.url, title: gif.title });
+                        setShowGifPicker(false);
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="comments-input-area">
+              <p className="text-sm text-center py-3" style={{ color: "var(--text-muted)" }}>
+                <Link to="/auth/login" style={{ color: "var(--accent-primary)", fontWeight: 600, textDecoration: "underline" }}>
+                  Log in
+                </Link> to leave a comment.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
